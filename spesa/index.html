@@ -153,17 +153,18 @@
         renderMembersList();
         try {
             // Scarica il file generato dal robot (Python)
+            // Aggiungiamo il timestamp per evitare la cache vecchia
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
             if(!res.ok) throw new Error("File Mancante");
             db = await res.json();
             
-            document.getElementById('updateInfo').innerText = "Dati: " + db.data_aggiornamento;
+            document.getElementById('updateInfo').innerText = "Dati: " + (db.data_aggiornamento || "N/D");
             
             // Popola Select Supermercati
             const storeSelect = document.getElementById('storeSelect');
             storeSelect.innerHTML = "";
             
-            // Gestione fallback se il file JSON è vecchio
+            // Gestione fallback
             const stores = Object.keys(db.offerte_per_supermercato || {"Generico":[]});
             
             stores.forEach(s => {
@@ -179,17 +180,24 @@
                 storeSelect.value = selectedStore;
             }
 
-            // Genera o Renderizza
             renderOffers();
-            if(!localStorage.getItem('family_menu_v7')) generateMenu();
-            else renderMenuUI(); // Mostra il menu salvato
+
+            // LOGICA CRITICA: Se il menu salvato è vuoto O non esiste, generalo ora
+            const savedMenu = JSON.parse(localStorage.getItem('family_menu_v7'));
+            if(!savedMenu || savedMenu.length === 0) {
+                console.log("Menu vuoto, genero...");
+                generateMenu();
+            } else {
+                console.log("Menu trovato, mostro...");
+                renderMenuUI();
+            }
 
         } catch(e) {
             console.error(e);
             document.getElementById('weeklyPlan').innerHTML = `
                 <div style="text-align:center; padding:50px 20px;">
                     <h3>⚠️ Dati non trovati</h3>
-                    <p>Assicurati che l'Action su GitHub abbia finito di girare.</p>
+                    <p>Il file dati_settimanali.json non è stato ancora creato dall'Action GitHub.</p>
                 </div>`;
         }
     }
@@ -213,9 +221,8 @@
         localStorage.setItem('fam_v7', JSON.stringify(familyMembers));
         
         renderMembersList();
-        generateMenu(); // Rigenera menu per sicurezza
+        generateMenu(); // Rigenera menu
         
-        // Reset
         document.getElementById('newMemberName').value = '';
         document.querySelectorAll('.intol').forEach(i => i.checked = false);
     }
@@ -244,18 +251,24 @@
 
     // --- CORE MENU ---
     function generateMenu() {
-        if(!db) return;
+        if(!db || !db.ricette || db.ricette.length === 0) {
+            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center'>Nessuna ricetta nel database!</div>";
+            return;
+        }
         
-        // 1. Filtra ricette sicure (rispetta intolleranze famiglia)
+        // 1. Filtra ricette sicure
         const safeRecipes = db.ricette.filter(r => {
             for(let m of familyMembers) {
-                for(let i of m.intolerances) if(r.contains.includes(i)) return false;
+                for(let i of m.intolerances) {
+                    // Controllo sicuro (anche se l'IA usa maiuscole/minuscole diverse)
+                    if(r.contains.map(c => c.toLowerCase()).includes(i.toLowerCase())) return false;
+                }
             }
             return true;
         });
 
         if(safeRecipes.length === 0) {
-            alert("Nessuna ricetta sicura trovata con queste intolleranze!");
+            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center; color:red;'>Nessuna ricetta sicura con queste intolleranze!</div>";
             return;
         }
 
@@ -275,14 +288,20 @@
     }
 
     function pickMeal(pool, type) {
-        let candidates = pool.filter(r => r.type === type);
-        if(!candidates.length) candidates = pool; // Fallback
+        // Cerca ricette del tipo giusto (es. "pranzo") ignorando maiuscole/minuscole
+        let candidates = pool.filter(r => r.type && r.type.toLowerCase() === type.toLowerCase());
+        
+        // Se non ne trovi nessuna, pesca dal mucchio generale per non lasciare il buco
+        if(!candidates.length) candidates = pool; 
+        
         return candidates[Math.floor(Math.random() * candidates.length)];
     }
 
     // --- RENDER UI ---
     function renderMenuUI() {
         const menu = JSON.parse(localStorage.getItem('family_menu_v7'));
+        if(!menu) return;
+
         const container = document.getElementById('weeklyPlan');
         container.innerHTML = "";
         const shop = {};
@@ -297,7 +316,7 @@
                 </div>`;
             
             // Popola lista spesa
-            Object.values(d.pasti).forEach(m => {
+            [d.pasti.colazione, d.pasti.pranzo, d.pasti.cena].forEach(m => {
                 if(m && m.ingredients) m.ingredients.forEach(i => shop[i] = (shop[i]||0)+1);
             });
         });
@@ -307,13 +326,13 @@
 
     function mealRow(icon, m) {
         if(!m) return "";
-        let tags = m.contains.length ? `<div class="tag-warn">CONTIENE: ${m.contains.join(', ')}</div>` : "";
+        let tags = (m.contains && m.contains.length) ? `<div class="tag-warn">CONTIENE: ${m.contains.join(', ')}</div>` : "";
         return `
             <div class="meal-row">
                 <span class="meal-icon">${icon}</span>
                 <div class="meal-info">
                     <div class="meal-name">${m.name}</div>
-                    <div class="meal-desc">${m.ingredients.join(', ')}</div>
+                    <div class="meal-desc">${m.ingredients ? m.ingredients.join(', ') : ''}</div>
                     ${tags}
                 </div>
             </div>`;
@@ -329,7 +348,6 @@
         const storeOffers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
 
         Object.keys(list).sort().forEach(item => {
-            // Logica Prezzo: Manuale > Offerta > 0
             const offer = storeOffers.find(o => item.toLowerCase().includes(o.name.toLowerCase()) || o.name.toLowerCase().includes(item.toLowerCase()));
             
             let price = 0;
@@ -366,7 +384,6 @@
     function updPrice(item, val) {
         customPrices[item] = parseFloat(val) || 0;
         localStorage.setItem('price_v7', JSON.stringify(customPrices));
-        // Ricalcolo veloce UI
         let t = 0; document.querySelectorAll('.price-inp').forEach(i=>t+=parseFloat(i.value)||0);
         document.getElementById('totalPrice').innerText = "€ "+t.toFixed(2);
     }
@@ -392,8 +409,8 @@
         selectedStore = document.getElementById('storeSelect').value;
         localStorage.setItem('store_pref_v7', selectedStore);
         renderOffers();
-        // Nota: non rigeneriamo il menu per non perdere le ricette, ma aggiorniamo i prezzi
-        renderMenuUI();
+        renderShop({}); // Pulisci spesa (o ricalcola se necessario)
+        renderMenuUI(); // Ricalcola prezzi
     }
 
     init();
