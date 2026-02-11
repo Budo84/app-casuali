@@ -1,97 +1,188 @@
 {
-    "data_aggiornamento": "11/02/2026 21:50",
+    "data_aggiornamento": "11/02/2026 22:04",
     "offerte_per_supermercato": {
         "Conad": [
             {
-                "name": "Offerte in arrivo",
-                "price": 0.0
+                "name": "Pasta Integrale Barilla 500g",
+                "price": 0.95
+            },
+            {
+                "name": "Passata Mutti",
+                "price": 0.89
+            },
+            {
+                "name": "Mele Melinda",
+                "price": 1.5
             }
         ],
         "Coop": [
             {
-                "name": "Offerte in arrivo",
-                "price": 0.0
+                "name": "Riso Gallo",
+                "price": 1.99
+            },
+            {
+                "name": "Latte Granarolo",
+                "price": 1.15
+            },
+            {
+                "name": "Pollo Amadori",
+                "price": 4.5
             }
         ],
         "Esselunga": [
             {
-                "name": "Offerte in arrivo",
-                "price": 0.0
+                "name": "Uova Bio",
+                "price": 2.1
+            },
+            {
+                "name": "Parmigiano Reggiano",
+                "price": 4.5
+            },
+            {
+                "name": "Zucchine",
+                "price": 1.2
             }
         ],
         "Lidl": [
             {
-                "name": "Offerte in arrivo",
-                "price": 0.0
-            }
-        ],
-        "Eurospin": [
+                "name": "Yogurt Greco",
+                "price": 0.99
+            },
             {
-                "name": "Offerte in arrivo",
-                "price": 0.0
-            }
-        ],
-        "Pewex": [
+                "name": "Biscotti Cereali",
+                "price": 1.5
+            },
             {
-                "name": "Offerte in arrivo",
-                "price": 0.0
-            }
-        ],
-        "MA Supermercati": [
-            {
-                "name": "Offerte in arrivo",
-                "price": 0.0
-            }
-        ],
-        "Ipercarni": [
-            {
-                "name": "Offerte in arrivo",
-                "price": 0.0
-            }
-        ],
-        "Todis": [
-            {
-                "name": "Offerte in arrivo",
-                "price": 0.0
+                "name": "Salmone",
+                "price": 3.99
             }
         ]
     },
     "ricette": [
         {
-            "title": "Caffè",
+            "title": "Latte e Biscotti",
             "type": "colazione",
             "ingredients": [
-                "Caffè"
+                "Latte Parzialmente Scremato",
+                "Biscotti Integrali"
             ],
-            "contains": []
+            "contains": [
+                "lattosio",
+                "glutine"
+            ]
         },
         {
-            "title": "Pasta al Pomodoro",
-            "type": "pranzo",
+            "title": "Yogurt e Frutta",
+            "type": "colazione",
             "ingredients": [
-                "Pasta",
-                "Pomodoro"
+                "Yogurt Bianco",
+                "Frutta Fresca"
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "title": "Fette Biscottate e Marmellata",
+            "type": "colazione",
+            "ingredients": [
+                "Fette biscottate",
+                "Marmellata di ciliegie"
             ],
             "contains": [
                 "glutine"
             ]
         },
         {
-            "title": "Mela",
-            "type": "merenda",
+            "title": "Pasta al Pomodoro e Basilico",
+            "type": "pranzo",
             "ingredients": [
-                "Mela"
+                "Pasta",
+                "Passata di pomodoro",
+                "Basilico",
+                "Olio EVO"
+            ],
+            "contains": [
+                "glutine"
+            ]
+        },
+        {
+            "title": "Risotto allo Zafferano",
+            "type": "pranzo",
+            "ingredients": [
+                "Riso",
+                "Zafferano",
+                "Brodo vegetale"
             ],
             "contains": []
         },
         {
-            "title": "Pollo e Insalata",
+            "title": "Pasta e Ceci",
+            "type": "pranzo",
+            "ingredients": [
+                "Pasta",
+                "Ceci",
+                "Rosmarino"
+            ],
+            "contains": [
+                "glutine"
+            ]
+        },
+        {
+            "title": "Mela e Noci",
+            "type": "merenda",
+            "ingredients": [
+                "Mela",
+                "Noci"
+            ],
+            "contains": [
+                "frutta_guscio"
+            ]
+        },
+        {
+            "title": "Yogurt",
+            "type": "merenda",
+            "ingredients": [
+                "Yogurt"
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "title": "Petto di Pollo e Insalata",
             "type": "cena",
             "ingredients": [
-                "Pollo",
-                "Insalata"
+                "Petto di pollo",
+                "Insalata mista",
+                "Olio EVO"
             ],
             "contains": []
+        },
+        {
+            "title": "Frittata di Zucchine",
+            "type": "cena",
+            "ingredients": [
+                "Uova",
+                "Zucchine",
+                "Parmigiano"
+            ],
+            "contains": [
+                "uova",
+                "lattosio"
+            ]
+        },
+        {
+            "title": "Pesce al Forno e Patate",
+            "type": "cena",
+            "ingredients": [
+                "Orata",
+                "Patate",
+                "Rosmarino"
+            ],
+            "contains": [
+                "pesce"
+            ]
         }
     ]
 }
