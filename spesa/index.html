@@ -3,28 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu & Spesa</title>
+    <title>Menu & Spesa Ibrida</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="theme-color" content="#2E7D32">
     <style>
-        :root { --primary: #2E7D32; --bg: #f4f4f4; --card: #fff; --text: #333; --accent: #ff9800; }
+        :root { --primary: #2E7D32; --bg: #f4f4f4; --card: #fff; --text: #333; --accent: #ff9800; --offer-color: #d32f2f; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
+        
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; }
         .page { display: none; padding: 15px; }
         .page.active { display: block; }
         
+        /* CARD MENU */
         .card { background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .day-header { font-weight: bold; color: var(--primary); margin-bottom: 8px; border-bottom: 1px solid #eee; }
+        .day-header { font-weight: bold; color: var(--primary); margin-bottom: 8px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
         .meal-row { display: flex; margin-bottom: 8px; align-items: center; }
         .meal-icon { width: 30px; font-size: 1.2rem; }
         .meal-info { flex: 1; }
         .meal-title { font-weight: bold; font-size: 0.95rem; }
         .meal-desc { font-size: 0.8rem; color: #666; }
         
-        .shop-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
-        .brand { color: #d32f2f; font-weight: bold; }
+        /* SPESA */
+        .shop-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
+        .shop-item.locked { border-left: 4px solid var(--accent); background: #fff8e1; }
         
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 60px; }
+        .item-name { font-weight: 600; }
+        .item-source { font-size: 0.75rem; color: #666; display: flex; align-items: center; gap: 4px; }
+        .store-tag { background: #333; color: white; padding: 1px 4px; border-radius: 3px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; }
+        .store-tag.manual { background: var(--accent); }
+        
+        /* OFFERTE */
+        .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; position: relative; text-align: center; cursor: pointer; transition: 0.2s; }
+        .offer-card:active { transform: scale(0.95); border-color: var(--primary); background: #e8f5e9; }
+        .offer-badge { position: absolute; top: -5px; right: -5px; background: var(--offer-color); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.65rem; font-weight: bold; }
+        .add-btn { margin-top: 5px; font-size: 0.8rem; color: var(--primary); font-weight: bold; }
+
+        /* NAV */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 60px; z-index: 1000; }
         .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; }
         .nav a.active { color: var(--primary); font-weight: bold; }
         .nav i { font-size: 24px; margin-bottom: 2px; }
@@ -45,71 +61,84 @@
 </div>
 
 <div id="p-spesa" class="page">
-    <h3>Lista Spesa <span id="storeName" style="font-weight:normal; font-size:0.9rem"></span></h3>
+    <h3>Lista Spesa</h3>
+    <p style="font-size:0.8rem; color:#666;">
+        Store principale: <b id="mainStoreLabel"></b>.<br>
+        Gli articoli gialli sono "bloccati" da altri negozi.
+    </p>
     <div id="shopList"></div>
-    <div style="margin-top:10px; font-weight:bold; text-align:right; font-size:1.2rem;">Totale: € <span id="totalPrice">0.00</span></div>
+    <div style="margin-top:15px; background:#333; color:white; padding:15px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+        <span>Totale Stimato</span>
+        <span id="totalPrice" style="font-size:1.3rem; font-weight:bold;">€ 0.00</span>
+    </div>
 </div>
 
 <div id="p-offerte" class="page">
-    <h3>Scegli Supermercato</h3>
+    <h3>Scegli Prodotti & Store</h3>
+    <p style="font-size:0.85rem; color:#555;">Tocca un'offerta per aggiungerla alla lista della spesa, anche se è di un altro supermercato!</p>
+    
     <select id="storeSelect" onchange="setStore()"></select>
     
-    <h3>Offerte Volantino</h3>
-    <div id="offerList"></div>
+    <h3>Volantino: <span id="flyerStoreName"></span></h3>
+    <div id="offerList" class="offer-grid"></div>
+    
+    <div style="margin-top:30px; border-top:1px solid #ddd; padding-top:10px;">
+        <button class="btn" onclick="generateMenu()" style="background:#ff9800;">🔄 Rigenera Menu Settimanale</button>
+    </div>
 </div>
 
 <div id="p-famiglia" class="page">
     <h3>Gestione</h3>
     <button class="btn" style="background:#d32f2f" onclick="hardReset()">⚠️ Reset Completo App</button>
-    <p style="font-size:0.8rem; color:#666; margin-top:5px;">Se i dati sono vecchi o strani, premi Reset.</p>
 </div>
 
 <nav class="nav">
     <a onclick="go('p-menu', this)" class="active"><i class="material-icons">restaurant</i>Menu</a>
     <a onclick="go('p-spesa', this)"><i class="material-icons">shopping_cart</i>Spesa</a>
-    <a onclick="go('p-offerte', this)"><i class="material-icons">store</i>Store</a>
+    <a onclick="go('p-offerte', this)"><i class="material-icons">local_offer</i>Offerte</a>
     <a onclick="go('p-famiglia', this)"><i class="material-icons">settings</i>Opzioni</a>
 </nav>
 
 <script>
     let db = null;
-    let menu = JSON.parse(localStorage.getItem('v11_menu')) || [];
-    let store = localStorage.getItem('v11_store') || "";
+    let menu = JSON.parse(localStorage.getItem('v12_menu')) || [];
+    let mainStore = localStorage.getItem('v12_store') || "";
+    // Qui salviamo le scelte manuali: { "Pasta": {store:"Lidl", price:0.79, name:"Pasta Combino"} }
+    let lockedItems = JSON.parse(localStorage.getItem('v12_locked')) || {};
 
     async function init() {
         try {
-            // Scarica dati con timestamp per evitare cache
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
             db = await res.json();
             document.getElementById('lastUpdate').innerText = db.data_aggiornamento;
 
-            // Popola Store Selector
+            // Setup Store
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
             const stores = Object.keys(db.offerte_per_supermercato);
             stores.forEach(s => {
-                const opt = document.createElement('option');
+                let opt = document.createElement('option');
                 opt.value = s; opt.innerText = s;
                 sel.appendChild(opt);
             });
 
-            // Imposta store
-            if(store && stores.includes(store)) sel.value = store;
-            else { store = stores[0]; sel.value = store; }
+            if(!mainStore) mainStore = stores[0];
+            sel.value = mainStore;
 
-            // Genera menu se vuoto
-            if(menu.length === 0) generateMenu();
+            if(!menu.length) generateMenu();
             
             renderAll();
 
         } catch(e) {
-            document.getElementById('menuList').innerHTML = "<p style='text-align:center; padding:20px'>Fai girare l'Action su GitHub!</p>";
+            document.getElementById('menuList').innerHTML = "<p style='text-align:center; padding:20px'>Attesa dati...</p>";
         }
     }
 
     function generateMenu() {
         if(!db) return;
         const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+        
+        // Semplice selezione casuale
         menu = days.map(d => ({
             day: d,
             meals: {
@@ -119,12 +148,15 @@
                 cena: pick('cena')
             }
         }));
-        localStorage.setItem('v11_menu', JSON.stringify(menu));
+        
+        // Quando si rigenera il menu, NON cancelliamo i lockedItems, 
+        // così se hai scelto la pasta al Lidl, ti rimane anche col nuovo menu.
+        localStorage.setItem('v12_menu', JSON.stringify(menu));
         renderAll();
     }
 
     function pick(type) {
-        if(!db.ricette) return {title: "Errore", ingredients: []};
+        if(!db.ricette) return {title: "...", ingredients: []};
         const pool = db.ricette.filter(r => r.type === type);
         if(!pool.length) return {title: "A scelta", ingredients: []};
         return pool[Math.floor(Math.random() * pool.length)];
@@ -142,97 +174,150 @@
         menu.forEach((d, i) => {
             c.innerHTML += `
                 <div class="card">
-                    <div class="day-header">${d.day}</div>
-                    ${row('☕', d.meals.colazione, i, 'colazione')}
-                    ${row('🍝', d.meals.pranzo, i, 'pranzo')}
-                    ${row('🍎', d.meals.merenda, i, 'merenda')}
-                    ${row('🌙', d.meals.cena, i, 'cena')}
+                    <div class="day-header">
+                        <span>${d.day}</span>
+                        <i class="material-icons" style="font-size:1rem; color:#ccc" onclick="changeMeal(${i}, 'pranzo')">refresh</i>
+                    </div>
+                    ${row('☕', d.meals.colazione)}
+                    ${row('🍝', d.meals.pranzo)}
+                    ${row('🍎', d.meals.merenda)}
+                    ${row('🌙', d.meals.cena)}
                 </div>`;
         });
     }
 
-    function row(ico, m, dIdx, type) {
-        return `
-            <div class="meal-row">
-                <div class="meal-icon">${ico}</div>
-                <div class="meal-info">
-                    <div class="meal-title">${m.title}</div>
-                    <div class="meal-desc">${m.ingredients.join(', ')}</div>
-                </div>
-                <i class="material-icons" style="color:#ccc; cursor:pointer;" onclick="changeMeal(${dIdx}, '${type}')">edit</i>
-            </div>`;
+    function row(ico, m) {
+        return `<div class="meal-row"><div class="meal-icon">${ico}</div><div class="meal-info"><div class="meal-title">${m.title}</div><div class="meal-desc">${m.ingredients.join(', ')}</div></div></div>`;
     }
 
     function changeMeal(dIdx, type) {
-        menu[dIdx].meals[type] = pick(type);
-        localStorage.setItem('v11_menu', JSON.stringify(menu));
-        renderAll();
+        if(confirm("Cambiare menu per questo giorno?")) {
+            menu[dIdx].meals.pranzo = pick('pranzo');
+            menu[dIdx].meals.cena = pick('cena');
+            localStorage.setItem('v12_menu', JSON.stringify(menu));
+            renderAll();
+        }
     }
 
+    // --- CUORE DELLA SPESA IBRIDA ---
     function renderShop() {
-        const list = {};
+        const c = document.getElementById('shopList');
+        c.innerHTML = "";
+        document.getElementById('mainStoreLabel').innerText = mainStore;
+        
+        // 1. Raccogli ingredienti necessari dal menu
+        const ingredientsNeeded = {};
         menu.forEach(d => {
             Object.values(d.meals).forEach(m => {
                 m.ingredients.forEach(ing => {
-                    // Gestione stringhe o oggetti
                     let name = (typeof ing === 'string') ? ing : ing.item;
-                    list[name] = (list[name]||0) + 1;
+                    ingredientsNeeded[name] = (ingredientsNeeded[name] || 0) + 1;
                 });
             });
         });
 
-        const c = document.getElementById('shopList');
-        c.innerHTML = "";
+        // 2. Se abbiamo "bloccato" un prodotto (es. Pasta) ma non è nel menu, lo mostriamo comunque?
+        //    Opzionale: per ora mostriamo solo ciò che serve per il menu.
+        
         let total = 0;
-        const offers = db.offerte_per_supermercato[store] || [];
-        document.getElementById('storeName').innerText = `(${store})`;
+        const mainStoreOffers = db.offerte_per_supermercato[mainStore] || [];
 
-        Object.keys(list).sort().forEach(item => {
-            // Logica Brand Match
-            const offer = offers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
-            let display = item;
+        Object.keys(ingredientsNeeded).sort().forEach(item => {
             let price = 0;
-            let isOffer = false;
+            let displayStore = mainStore;
+            let displayName = item;
+            let isLocked = false;
 
-            if(offer) {
-                display = offer.name;
-                price = offer.price;
-                isOffer = true;
+            // CASO A: L'utente ha scelto manualmente un'offerta per questo ingrediente
+            // Cerchiamo se c'è un lock che "assomiglia" a questo ingrediente
+            let lockedKey = Object.keys(lockedItems).find(k => item.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(item.toLowerCase()));
+            
+            if (lockedKey) {
+                const lock = lockedItems[lockedKey];
+                displayStore = lock.store;
+                displayName = lock.name; // Usa il nome dell'offerta (es. Pasta Combino)
+                price = lock.price;
+                isLocked = true;
+            } 
+            // CASO B: Nessun lock, usa il negozio principale
+            else {
+                const offer = mainStoreOffers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
+                if (offer) {
+                    displayName = offer.name;
+                    price = offer.price;
+                }
             }
 
             total += price;
 
             c.innerHTML += `
-                <div class="shop-item">
+                <div class="shop-item ${isLocked ? 'locked' : ''}">
                     <div style="flex:1">
-                        <div class="${isOffer ? 'brand' : ''}">${display}</div>
-                        <small style="color:#888">Base: ${item}</small>
+                        <div class="item-name">${displayName}</div>
+                        <div class="item-source">
+                            <span class="store-tag ${isLocked ? 'manual' : ''}">${displayStore}</span>
+                            <span>x${ingredientsNeeded[item]} ricette</span>
+                            ${isLocked ? `<i class="material-icons" style="font-size:12px; cursor:pointer; color:red; margin-left:5px;" onclick="unlockItem('${lockedKey}')">close</i>` : ''}
+                        </div>
                     </div>
-                    <div>€ ${price.toFixed(2)}</div>
+                    <div style="font-weight:bold;">€ ${price.toFixed(2)}</div>
                 </div>`;
         });
-        document.getElementById('totalPrice').innerText = total.toFixed(2);
+        
+        document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
+    }
+
+    // Aggiunge un prodotto specifico alla lista "bloccati"
+    function lockItem(offerName, price, storeName) {
+        // Chiediamo all'utente a quale categoria generica associare questa offerta
+        // (Semplificazione: usiamo il nome dell'offerta come chiave, o cerchiamo di indovinare)
+        // Per fare un match perfetto bisognerebbe che l'utente dicesse "Questo è per la Pasta".
+        // Qui usiamo una logica "fuzzy": salviamo l'offerta e speriamo che matcha col nome ingrediente.
+        
+        // Esempio: offerName="Pasta Barilla". Salviamo chiave="Pasta Barilla". 
+        // Nel renderShop, controlliamo se "Pasta" del menu è contenuta in "Pasta Barilla".
+        
+        lockedItems[offerName] = { store: storeName, price: price, name: offerName };
+        localStorage.setItem('v12_locked', JSON.stringify(lockedItems));
+        
+        alert(`Aggiunto ${offerName} (${storeName}) alla lista spesa!`);
+        renderShop();
+    }
+
+    function unlockItem(key) {
+        delete lockedItems[key];
+        localStorage.setItem('v12_locked', JSON.stringify(lockedItems));
+        renderShop();
     }
 
     function renderOffers() {
         const c = document.getElementById('offerList');
         c.innerHTML = "";
-        (db.offerte_per_supermercato[store]||[]).forEach(o => {
-            c.innerHTML += `<div style="background:white; padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between"><span>${o.name}</span> <b>€${o.price}</b></div>`;
+        document.getElementById('flyerStoreName').innerText = mainStore;
+        
+        const offers = db.offerte_per_supermercato[mainStore] || [];
+        
+        offers.forEach(o => {
+            c.innerHTML += `
+                <div class="offer-card" onclick="lockItem('${o.name}', ${o.price}, '${mainStore}')">
+                    <div class="offer-badge">Toccamì</div>
+                    <div style="font-size:0.9rem; margin-bottom:5px;">${o.name}</div>
+                    <b style="color:var(--offer-color); font-size:1.1rem;">€${o.price}</b>
+                    <div class="add-btn">+ Aggiungi alla Spesa</div>
+                </div>`;
         });
     }
 
     function setStore() {
-        store = document.getElementById('storeSelect').value;
-        localStorage.setItem('v11_store', store);
-        renderAll();
+        mainStore = document.getElementById('storeSelect').value;
+        localStorage.setItem('v12_store', mainStore);
+        renderOffers();
+        renderShop();
     }
 
     function hardReset() {
-        if(confirm("Vuoi cancellare tutto e ricaricare i dati?")) {
-            localStorage.clear();
-            location.reload();
-        }
+        localStorage.clear();
+        location.reload();
     }
 
     function go(pid, btn) {
