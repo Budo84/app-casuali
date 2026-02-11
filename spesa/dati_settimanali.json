@@ -4,40 +4,14 @@
         "Conad": [
             {
                 "name": "Pasta Barilla Spaghetti n.5",
-                "price": 0.89
+                "price": 0.85
             },
-            {
-                "name": "Latte Granarolo Intero UHT 1L",
-                "price": 1.19
-            },
-            {
-                "name": "Olio Extra Vergine d'Oliva Carapelli 1L",
-                "price": 5.99
-            },
-            {
-                "name": "Biscotti Mulino Bianco Galletti 800g",
-                "price": 1.75
-            },
-            {
-                "name": "Sottilette Kraft Classiche 200g",
-                "price": 2.19
-            },
-            {
-                "name": "Arance Tarocco (al kg)",
-                "price": 1.69
-            }
-        ],
-        "Coop": [
             {
                 "name": "Passata Mutti 700g",
-                "price": 0.95
+                "price": 0.99
             },
             {
-                "name": "Caffè Lavazza Qualità Rossa 250g",
-                "price": 2.99
-            },
-            {
-                "name": "Yogurt Vipiteno Frutta Mista 2x125g",
+                "name": "Latte Granarolo Parzialmente Scremato 1L",
                 "price": 1.25
             },
             {
@@ -45,194 +19,220 @@
                 "price": 3.49
             },
             {
-                "name": "Acqua Sant'Anna Naturale 1.5L (confezione 6 bottiglie)",
-                "price": 2.39
+                "name": "Acqua Sant'Anna Naturale 1.5L",
+                "price": 0.35
             },
             {
-                "name": "Detersivo Dixan Liquido Classico 23 lavaggi",
-                "price": 4.5
+                "name": "Biscotti Mulino Bianco Galletti",
+                "price": 1.89
+            }
+        ],
+        "Coop": [
+            {
+                "name": "Riso Gallo Arborio 1kg",
+                "price": 2.79
+            },
+            {
+                "name": "Olio Extra Vergine d'Oliva Farchioni 1L",
+                "price": 5.89
+            },
+            {
+                "name": "Yogurt Müller Frutta Mista 2x125g",
+                "price": 1.39
+            },
+            {
+                "name": "Caffè Lavazza Qualità Rossa Macinato 250g",
+                "price": 2.49
+            },
+            {
+                "name": "Detersivo Lavatrice Dash Pods 15 caps",
+                "price": 4.99
+            },
+            {
+                "name": "Prosciutto Cotto Alta Qualità Rovagnati 100g",
+                "price": 2.75
             }
         ],
         "Esselunga": [
-            {
-                "name": "Mozzarella Santa Lucia Galbani 125g",
-                "price": 1.15
-            },
-            {
-                "name": "Uova Grandi da Allevamento a Terra 6 pz",
-                "price": 1.89
-            },
             {
                 "name": "Nutella Ferrero 450g",
                 "price": 3.29
             },
             {
-                "name": "Filetto di Merluzzo Findus 400g",
-                "price": 4.99
+                "name": "Pane Carasau Giovanni Farris 250g",
+                "price": 2.15
             },
             {
-                "name": "Mele Fuji (al kg)",
-                "price": 1.99
+                "name": "Salmone Affumicato Fjord 100g",
+                "price": 4.89
             },
             {
-                "name": "Vino Chianti Classico Gallo Nero (bottiglia)",
-                "price": 7.5
+                "name": "Vino Chianti Classico Banfi 75cl",
+                "price": 7.99
+            },
+            {
+                "name": "Patatine San Carlo Classica 180g",
+                "price": 1.69
+            },
+            {
+                "name": "Formaggio Parmigiano Reggiano DOP Zanetti 200g",
+                "price": 4.3
             }
         ],
         "Lidl": [
             {
-                "name": "Pasta Barilla Penne Rigate n.73",
-                "price": 0.79
+                "name": "Pasta Garofalo Fusilli 500g",
+                "price": 0.99
             },
             {
-                "name": "Latte Parmalat Intero Fresco 1L",
-                "price": 1.09
+                "name": "Latte Fresco Centrale del Latte di Roma 1L",
+                "price": 1.15
             },
             {
-                "name": "Philadelphia Original 175g",
-                "price": 1.89
+                "name": "Mozzarella Santa Lucia Galbani 125g",
+                "price": 1.19
+            },
+            {
+                "name": "Cioccolato Fondente Novi 100g",
+                "price": 1.49
             },
             {
                 "name": "Birra Peroni 3x33cl",
-                "price": 2.49
+                "price": 2.89
             },
             {
-                "name": "Wurstel AIA Würstel di Suino 250g",
-                "price": 1.59
-            },
-            {
-                "name": "Cioccolato al Latte Milka 100g",
-                "price": 0.99
+                "name": "Detersivo Piatti Svelto Limone 1L",
+                "price": 1.29
             }
         ],
         "Eurospin": [
             {
-                "name": "Biscotti Pavesini Classici 200g",
-                "price": 1.49
-            },
-            {
-                "name": "Olio Extra Vergine d'Oliva Farchioni 1L",
-                "price": 5.49
-            },
-            {
-                "name": "Farina 00 Caputo 1Kg",
+                "name": "Passata Cirio Rustica 700g",
                 "price": 0.85
             },
             {
-                "name": "Patatine San Carlo Classiche 180g",
-                "price": 1.39
+                "name": "Olio di Semi di Girasole Olita 1L",
+                "price": 1.89
             },
             {
-                "name": "Salame Negroni (affettato sottile) 100g",
-                "price": 2.5
+                "name": "Uova Fresche da Allevamento a Terra Le Naturelle 6pz",
+                "price": 1.79
             },
             {
-                "name": "Coca-Cola Original Taste 1.25L",
-                "price": 1.39
+                "name": "Cotolette di Pollo Aia 280g",
+                "price": 3.19
+            },
+            {
+                "name": "Gelato Algida Cornetto Classico 6pz",
+                "price": 2.99
+            },
+            {
+                "name": "Biscotti Oro Saiwa 250g",
+                "price": 1.35
             }
         ],
         "Pewex": [
             {
-                "name": "Pollo Intero (al kg)",
-                "price": 3.99
+                "name": "Pane Casareccio Artigianale 500g",
+                "price": 2.2
             },
             {
-                "name": "Pane Casereccio (al kg)",
-                "price": 2.9
+                "name": "Prosciutto Crudo Ferrari 100g",
+                "price": 2.8
             },
             {
-                "name": "Pomodori Pelati Cirio 400g",
-                "price": 0.75
+                "name": "Uva Italia 500g",
+                "price": 1.6
             },
             {
-                "name": "Riso Gallo Blond Integrale 1kg",
+                "name": "Coca-Cola Original Taste 1.25L",
+                "price": 1.49
+            },
+            {
+                "name": "Zucchero Eridania Semolato 1kg",
+                "price": 1.19
+            },
+            {
+                "name": "Sapone Liquido Palmolive 300ml",
                 "price": 1.99
-            },
-            {
-                "name": "Aceto Ponti di Vino Bianco 1L",
-                "price": 0.99
-            },
-            {
-                "name": "Salsicce Fresche di Suino (al kg)",
-                "price": 7.9
             }
         ],
         "MA Supermercati": [
             {
-                "name": "Fagioli Borlotti Valfrutta 400g",
-                "price": 0.89
+                "name": "Pomodori Ramati 500g",
+                "price": 1.49
             },
             {
-                "name": "Zucchero Eridania Semolato 1kg",
-                "price": 1.15
+                "name": "Filetti di Merluzzo Frosta 400g",
+                "price": 3.99
             },
             {
-                "name": "Dentifricio Mentadent P Protezione Completa 75ml",
-                "price": 1.79
+                "name": "Gorgonzola IGOR Dolce 200g",
+                "price": 2.65
             },
             {
-                "name": "Carta Igienica Scottonelle 4 rotoli",
-                "price": 2.59
+                "name": "Birra Nastro Azzurro 6x33cl",
+                "price": 4.89
             },
             {
-                "name": "Petti di Pollo AIA (confezione 500g)",
-                "price": 5.99
+                "name": "Fette Biscottate Buitoni 320g",
+                "price": 1.59
             },
             {
-                "name": "Pesche Noci (al kg)",
-                "price": 2.49
+                "name": "Dentifricio Mentadent P 75ml",
+                "price": 1.89
             }
         ],
         "Ipercarni": [
             {
-                "name": "Macinato Scelto di Bovino (al kg)",
-                "price": 8.9
+                "name": "Fesa di Vitello a Fette 500g",
+                "price": 7.9
             },
             {
-                "name": "Costine di Maiale Fresche (al kg)",
-                "price": 6.5
-            },
-            {
-                "name": "Salsiccia di Suino Fresca (al kg)",
-                "price": 7.2
-            },
-            {
-                "name": "Formaggio Parmigiano Reggiano DOP 200g",
-                "price": 4.8
-            },
-            {
-                "name": "Uova Fresche Grandi 10 pz",
-                "price": 2.2
-            },
-            {
-                "name": "Vino Rosso Montepulciano d'Abruzzo (bottiglia)",
+                "name": "Salsiccia di Suino Fresca 500g",
                 "price": 4.5
+            },
+            {
+                "name": "Petto di Pollo Intero 1kg",
+                "price": 6.9
+            },
+            {
+                "name": "Macinato di Manzo Scelto 400g",
+                "price": 4.2
+            },
+            {
+                "name": "Pane Rustico di Altamura 400g",
+                "price": 2.5
+            },
+            {
+                "name": "Vino Rosso Salice Salentino Leone de Castris 75cl",
+                "price": 6.5
             }
         ],
         "Todis": [
             {
-                "name": "Olio di Semi di Girasole Friol 1L",
-                "price": 1.99
+                "name": "Pasta De Cecco Penne Rigate n.41 500g",
+                "price": 0.95
             },
             {
-                "name": "Detersivo per Piatti Svelto Limone 1L",
+                "name": "Legumi Valfrutta Fagioli Borlotti 400g",
+                "price": 0.79
+            },
+            {
+                "name": "Wurstel Wudy AIA Classico 4pz",
+                "price": 1.1
+            },
+            {
+                "name": "Cereali Kellogg's Special K 300g",
+                "price": 2.69
+            },
+            {
+                "name": "Detersivo Pavimenti Rio Casa Mia Marsiglia 1L",
                 "price": 1.49
             },
             {
-                "name": "Biscotti Oro Saiwa Classici 250g",
-                "price": 1.55
-            },
-            {
-                "name": "Affettati Fini Aia Petto di Tacchino 100g",
-                "price": 1.99
-            },
-            {
-                "name": "Pera Abate (al kg)",
-                "price": 1.79
-            },
-            {
-                "name": "Pasta Garofalo Fusilli n.62 500g",
-                "price": 1.05
+                "name": "Succhi di Frutta Yoga Ace 3x200ml",
+                "price": 1.69
             }
         ]
     },
@@ -240,40 +240,14 @@
         "Conad": [
             {
                 "name": "Pasta Barilla Spaghetti n.5",
-                "price": 0.89
+                "price": 0.85
             },
-            {
-                "name": "Latte Granarolo Intero UHT 1L",
-                "price": 1.19
-            },
-            {
-                "name": "Olio Extra Vergine d'Oliva Carapelli 1L",
-                "price": 5.99
-            },
-            {
-                "name": "Biscotti Mulino Bianco Galletti 800g",
-                "price": 1.75
-            },
-            {
-                "name": "Sottilette Kraft Classiche 200g",
-                "price": 2.19
-            },
-            {
-                "name": "Arance Tarocco (al kg)",
-                "price": 1.69
-            }
-        ],
-        "Coop": [
             {
                 "name": "Passata Mutti 700g",
-                "price": 0.95
+                "price": 0.99
             },
             {
-                "name": "Caffè Lavazza Qualità Rossa 250g",
-                "price": 2.99
-            },
-            {
-                "name": "Yogurt Vipiteno Frutta Mista 2x125g",
+                "name": "Latte Granarolo Parzialmente Scremato 1L",
                 "price": 1.25
             },
             {
@@ -281,194 +255,220 @@
                 "price": 3.49
             },
             {
-                "name": "Acqua Sant'Anna Naturale 1.5L (confezione 6 bottiglie)",
-                "price": 2.39
+                "name": "Acqua Sant'Anna Naturale 1.5L",
+                "price": 0.35
             },
             {
-                "name": "Detersivo Dixan Liquido Classico 23 lavaggi",
-                "price": 4.5
+                "name": "Biscotti Mulino Bianco Galletti",
+                "price": 1.89
+            }
+        ],
+        "Coop": [
+            {
+                "name": "Riso Gallo Arborio 1kg",
+                "price": 2.79
+            },
+            {
+                "name": "Olio Extra Vergine d'Oliva Farchioni 1L",
+                "price": 5.89
+            },
+            {
+                "name": "Yogurt Müller Frutta Mista 2x125g",
+                "price": 1.39
+            },
+            {
+                "name": "Caffè Lavazza Qualità Rossa Macinato 250g",
+                "price": 2.49
+            },
+            {
+                "name": "Detersivo Lavatrice Dash Pods 15 caps",
+                "price": 4.99
+            },
+            {
+                "name": "Prosciutto Cotto Alta Qualità Rovagnati 100g",
+                "price": 2.75
             }
         ],
         "Esselunga": [
-            {
-                "name": "Mozzarella Santa Lucia Galbani 125g",
-                "price": 1.15
-            },
-            {
-                "name": "Uova Grandi da Allevamento a Terra 6 pz",
-                "price": 1.89
-            },
             {
                 "name": "Nutella Ferrero 450g",
                 "price": 3.29
             },
             {
-                "name": "Filetto di Merluzzo Findus 400g",
-                "price": 4.99
+                "name": "Pane Carasau Giovanni Farris 250g",
+                "price": 2.15
             },
             {
-                "name": "Mele Fuji (al kg)",
-                "price": 1.99
+                "name": "Salmone Affumicato Fjord 100g",
+                "price": 4.89
             },
             {
-                "name": "Vino Chianti Classico Gallo Nero (bottiglia)",
-                "price": 7.5
+                "name": "Vino Chianti Classico Banfi 75cl",
+                "price": 7.99
+            },
+            {
+                "name": "Patatine San Carlo Classica 180g",
+                "price": 1.69
+            },
+            {
+                "name": "Formaggio Parmigiano Reggiano DOP Zanetti 200g",
+                "price": 4.3
             }
         ],
         "Lidl": [
             {
-                "name": "Pasta Barilla Penne Rigate n.73",
-                "price": 0.79
+                "name": "Pasta Garofalo Fusilli 500g",
+                "price": 0.99
             },
             {
-                "name": "Latte Parmalat Intero Fresco 1L",
-                "price": 1.09
+                "name": "Latte Fresco Centrale del Latte di Roma 1L",
+                "price": 1.15
             },
             {
-                "name": "Philadelphia Original 175g",
-                "price": 1.89
+                "name": "Mozzarella Santa Lucia Galbani 125g",
+                "price": 1.19
+            },
+            {
+                "name": "Cioccolato Fondente Novi 100g",
+                "price": 1.49
             },
             {
                 "name": "Birra Peroni 3x33cl",
-                "price": 2.49
+                "price": 2.89
             },
             {
-                "name": "Wurstel AIA Würstel di Suino 250g",
-                "price": 1.59
-            },
-            {
-                "name": "Cioccolato al Latte Milka 100g",
-                "price": 0.99
+                "name": "Detersivo Piatti Svelto Limone 1L",
+                "price": 1.29
             }
         ],
         "Eurospin": [
             {
-                "name": "Biscotti Pavesini Classici 200g",
-                "price": 1.49
-            },
-            {
-                "name": "Olio Extra Vergine d'Oliva Farchioni 1L",
-                "price": 5.49
-            },
-            {
-                "name": "Farina 00 Caputo 1Kg",
+                "name": "Passata Cirio Rustica 700g",
                 "price": 0.85
             },
             {
-                "name": "Patatine San Carlo Classiche 180g",
-                "price": 1.39
+                "name": "Olio di Semi di Girasole Olita 1L",
+                "price": 1.89
             },
             {
-                "name": "Salame Negroni (affettato sottile) 100g",
-                "price": 2.5
+                "name": "Uova Fresche da Allevamento a Terra Le Naturelle 6pz",
+                "price": 1.79
             },
             {
-                "name": "Coca-Cola Original Taste 1.25L",
-                "price": 1.39
+                "name": "Cotolette di Pollo Aia 280g",
+                "price": 3.19
+            },
+            {
+                "name": "Gelato Algida Cornetto Classico 6pz",
+                "price": 2.99
+            },
+            {
+                "name": "Biscotti Oro Saiwa 250g",
+                "price": 1.35
             }
         ],
         "Pewex": [
             {
-                "name": "Pollo Intero (al kg)",
-                "price": 3.99
+                "name": "Pane Casareccio Artigianale 500g",
+                "price": 2.2
             },
             {
-                "name": "Pane Casereccio (al kg)",
-                "price": 2.9
+                "name": "Prosciutto Crudo Ferrari 100g",
+                "price": 2.8
             },
             {
-                "name": "Pomodori Pelati Cirio 400g",
-                "price": 0.75
+                "name": "Uva Italia 500g",
+                "price": 1.6
             },
             {
-                "name": "Riso Gallo Blond Integrale 1kg",
+                "name": "Coca-Cola Original Taste 1.25L",
+                "price": 1.49
+            },
+            {
+                "name": "Zucchero Eridania Semolato 1kg",
+                "price": 1.19
+            },
+            {
+                "name": "Sapone Liquido Palmolive 300ml",
                 "price": 1.99
-            },
-            {
-                "name": "Aceto Ponti di Vino Bianco 1L",
-                "price": 0.99
-            },
-            {
-                "name": "Salsicce Fresche di Suino (al kg)",
-                "price": 7.9
             }
         ],
         "MA Supermercati": [
             {
-                "name": "Fagioli Borlotti Valfrutta 400g",
-                "price": 0.89
+                "name": "Pomodori Ramati 500g",
+                "price": 1.49
             },
             {
-                "name": "Zucchero Eridania Semolato 1kg",
-                "price": 1.15
+                "name": "Filetti di Merluzzo Frosta 400g",
+                "price": 3.99
             },
             {
-                "name": "Dentifricio Mentadent P Protezione Completa 75ml",
-                "price": 1.79
+                "name": "Gorgonzola IGOR Dolce 200g",
+                "price": 2.65
             },
             {
-                "name": "Carta Igienica Scottonelle 4 rotoli",
-                "price": 2.59
+                "name": "Birra Nastro Azzurro 6x33cl",
+                "price": 4.89
             },
             {
-                "name": "Petti di Pollo AIA (confezione 500g)",
-                "price": 5.99
+                "name": "Fette Biscottate Buitoni 320g",
+                "price": 1.59
             },
             {
-                "name": "Pesche Noci (al kg)",
-                "price": 2.49
+                "name": "Dentifricio Mentadent P 75ml",
+                "price": 1.89
             }
         ],
         "Ipercarni": [
             {
-                "name": "Macinato Scelto di Bovino (al kg)",
-                "price": 8.9
+                "name": "Fesa di Vitello a Fette 500g",
+                "price": 7.9
             },
             {
-                "name": "Costine di Maiale Fresche (al kg)",
-                "price": 6.5
-            },
-            {
-                "name": "Salsiccia di Suino Fresca (al kg)",
-                "price": 7.2
-            },
-            {
-                "name": "Formaggio Parmigiano Reggiano DOP 200g",
-                "price": 4.8
-            },
-            {
-                "name": "Uova Fresche Grandi 10 pz",
-                "price": 2.2
-            },
-            {
-                "name": "Vino Rosso Montepulciano d'Abruzzo (bottiglia)",
+                "name": "Salsiccia di Suino Fresca 500g",
                 "price": 4.5
+            },
+            {
+                "name": "Petto di Pollo Intero 1kg",
+                "price": 6.9
+            },
+            {
+                "name": "Macinato di Manzo Scelto 400g",
+                "price": 4.2
+            },
+            {
+                "name": "Pane Rustico di Altamura 400g",
+                "price": 2.5
+            },
+            {
+                "name": "Vino Rosso Salice Salentino Leone de Castris 75cl",
+                "price": 6.5
             }
         ],
         "Todis": [
             {
-                "name": "Olio di Semi di Girasole Friol 1L",
-                "price": 1.99
+                "name": "Pasta De Cecco Penne Rigate n.41 500g",
+                "price": 0.95
             },
             {
-                "name": "Detersivo per Piatti Svelto Limone 1L",
+                "name": "Legumi Valfrutta Fagioli Borlotti 400g",
+                "price": 0.79
+            },
+            {
+                "name": "Wurstel Wudy AIA Classico 4pz",
+                "price": 1.1
+            },
+            {
+                "name": "Cereali Kellogg's Special K 300g",
+                "price": 2.69
+            },
+            {
+                "name": "Detersivo Pavimenti Rio Casa Mia Marsiglia 1L",
                 "price": 1.49
             },
             {
-                "name": "Biscotti Oro Saiwa Classici 250g",
-                "price": 1.55
-            },
-            {
-                "name": "Affettati Fini Aia Petto di Tacchino 100g",
-                "price": 1.99
-            },
-            {
-                "name": "Pera Abate (al kg)",
-                "price": 1.79
-            },
-            {
-                "name": "Pasta Garofalo Fusilli n.62 500g",
-                "price": 1.05
+                "name": "Succhi di Frutta Yoga Ace 3x200ml",
+                "price": 1.69
             }
         ]
     }
