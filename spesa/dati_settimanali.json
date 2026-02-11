@@ -1,60 +1,100 @@
 {
-    "data_aggiornamento": "11/02/2026",
+    "data_aggiornamento": "11/02/2026 21:42",
     "offerte_per_supermercato": {
         "Conad": [
             {
-                "name": "Pasta Barilla",
-                "price": 0.9
+                "name": "Offerte in aggiornamento",
+                "price": 0.0
             }
         ],
         "Coop": [
             {
-                "name": "Pasta Barilla",
-                "price": 0.9
+                "name": "Offerte in aggiornamento",
+                "price": 0.0
             }
         ],
         "Esselunga": [
             {
-                "name": "Pasta Barilla",
-                "price": 0.9
+                "name": "Offerte in aggiornamento",
+                "price": 0.0
             }
         ],
         "Lidl": [
             {
-                "name": "Pasta Barilla",
-                "price": 0.9
+                "name": "Offerte in aggiornamento",
+                "price": 0.0
             }
         ],
         "Eurospin": [
             {
-                "name": "Pasta Barilla",
-                "price": 0.9
+                "name": "Offerte in aggiornamento",
+                "price": 0.0
             }
         ],
         "Pewex": [
             {
-                "name": "Pasta Barilla",
-                "price": 0.9
+                "name": "Offerte in aggiornamento",
+                "price": 0.0
             }
         ],
         "MA Supermercati": [
             {
-                "name": "Pasta Barilla",
-                "price": 0.9
+                "name": "Offerte in aggiornamento",
+                "price": 0.0
             }
         ],
         "Ipercarni": [
             {
-                "name": "Pasta Barilla",
-                "price": 0.9
+                "name": "Offerte in aggiornamento",
+                "price": 0.0
             }
         ],
         "Todis": [
             {
-                "name": "Pasta Barilla",
-                "price": 0.9
+                "name": "Offerte in aggiornamento",
+                "price": 0.0
             }
         ]
     },
-    "ricette": []
+    "ricette": [
+        {
+            "title": "Latte e Caffè",
+            "type": "colazione",
+            "ingredients": [
+                "Latte",
+                "Caffè"
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "title": "Pasta al Pomodoro",
+            "type": "pranzo",
+            "ingredients": [
+                "Pasta",
+                "Passata di pomodoro"
+            ],
+            "contains": [
+                "glutine"
+            ]
+        },
+        {
+            "title": "Mela",
+            "type": "merenda",
+            "ingredients": [
+                "Mela"
+            ],
+            "contains": []
+        },
+        {
+            "title": "Petto di Pollo e Insalata",
+            "type": "cena",
+            "ingredients": [
+                "Petto di pollo",
+                "Insalata"
+            ],
+            "contains": []
+        }
+    ]
 }
