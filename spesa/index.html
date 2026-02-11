@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="theme-color" content="#FF9800">
     <style>
-        :root { --primary: #FF9800; --accent: #8BC34A; --bg: #f5f5f5; --text: #333; --card: #fff; --danger: #e53935; --offer: #4CAF50; }
+        :root { --primary: #FF9800; --accent: #8BC34A; --bg: #f5f5f5; --text: #333; --card: #fff; --danger: #e53935; --offer: #2E7D32; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
         
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; }
@@ -33,31 +33,29 @@
         .meal-desc { font-size: 0.8rem; color: #888; line-height: 1.2; }
         .tag-warn { font-size: 0.65rem; background: #ffebee; color: var(--danger); padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-top: 3px; display: inline-block; }
 
-        /* FAMILY */
-        .member-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
-        .tag { padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; color: white; font-weight: bold; margin-right: 4px; background: #e57373; }
-
-        /* FORMS */
-        input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 10px; box-sizing: border-box; }
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .checkbox-item { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 8px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
-        .checkbox-item input { margin-right: 8px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #E65100; }
-        .btn-green { background: var(--accent); box-shadow: 0 4px 0 #689F38; }
-
         /* SPESA */
         .shop-item { padding: 12px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; background: white; margin-bottom: 2px; border-radius: 8px; }
         .shop-check { display:flex; align-items:center; }
         .shop-check input { margin-right: 15px; width: 20px; height: 20px; }
         .price-inp { width: 70px; padding: 8px; border: 1px solid #ddd; border-radius: 8px; text-align: right; font-weight: bold; background: #fafafa; }
         .price-inp.offer { background: #e8f5e9; border-color: var(--offer); color: #2e7d32; }
-        .is-branded { color: var(--offer); font-weight: bold; }
+        .brand-name { color: var(--offer); font-weight: bold; font-size: 0.95rem; }
+        .generic-name { font-size: 0.8rem; color: #888; }
 
-        .total-bar { position: fixed; bottom: 70px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
-        .store-box { background: #fff3e0; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ffcc80; }
+        /* OFFERTE */
         .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
         .offer-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e0e0e0; position: relative; }
         .offer-badge { position: absolute; top: -8px; right: -8px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
+        .store-box { background: #fff3e0; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ffcc80; }
+        select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
+
+        /* FAMIGLIA */
+        .member-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .checkbox-item { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 8px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
+        .checkbox-item input { margin-right: 8px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #E65100; margin-top:10px; }
+        .btn-green { background: var(--accent); box-shadow: 0 4px 0 #689F38; }
         
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -81,45 +79,41 @@
 
 <div id="p-spesa" class="page">
     <h2>🛒 Lista Spesa</h2>
-    <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">
-        Prezzi basati su: <b id="storeLabelSpesa">...</b>
-    </div>
+    <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">Prezzi da: <b id="storeLabelSpesa">...</b></div>
     <div id="shoppingListContainer" style="padding-bottom:80px;"></div>
-    <div class="total-bar">
+    <div class="total-bar" style="position:fixed; bottom:70px; left:15px; right:15px; background:#333; color:white; padding:15px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
         <div><div style="font-size:0.8rem; opacity:0.8;">Totale Stimato</div></div>
-        <div class="total-val" id="totalPrice">€ 0.00</div>
+        <div class="total-val" id="totalPrice" style="font-size:1.4rem; font-weight:bold; color:#b2dfdb;">€ 0.00</div>
     </div>
 </div>
 
 <div id="p-offerte" class="page">
-    <h2>⚡ Generatore & Offerte</h2>
+    <h2>⚡ Generatore</h2>
     <div class="store-box">
-        <label style="font-size:0.8rem; font-weight:bold;">Seleziona Supermercato:</label>
-        <select id="storeSelect" onchange="changeStore()" style="margin-top:5px; margin-bottom:0;">
-            <option value="">Caricamento store...</option>
+        <label>Seleziona Supermercato:</label>
+        <select id="storeSelect" onchange="changeStore()">
+            <option value="">Caricamento...</option>
         </select>
     </div>
-    <button class="btn btn-green" onclick="generateMenu()">🔄 Rigenera Menu Completo</button>
-    <p style="font-size:0.8rem; color:#666; text-align:center; margin-top:15px; margin-bottom:20px;">Include Colazione, Pranzo, Merenda e Cena.</p>
+    <button class="btn btn-green" onclick="generateMenu()">🔄 Rigenera Menu</button>
     <h3>Offerte Attuali</h3>
     <div class="offer-grid" id="offerContainer"></div>
 </div>
 
 <div id="p-famiglia" class="page">
-    <h2>👨‍👩‍👧‍👦 I tuoi commensali</h2>
+    <h2>👨‍👩‍👧‍👦 Famiglia</h2>
     <div id="membersList"></div>
     <div style="background: white; padding:15px; border-radius:15px; margin-top:20px; border: 1px solid #ddd;">
         <h3>Aggiungi Membro</h3>
-        <input type="text" id="newMemberName" placeholder="Nome (es. Papà)">
-        <label style="font-size:0.9rem; font-weight:bold; display:block; margin-bottom:10px;">Intolleranze:</label>
+        <input type="text" id="newMemberName" placeholder="Nome">
         <div class="checkbox-group">
             <label class="checkbox-item"><input type="checkbox" class="intol" value="glutine"> Glutine</label>
             <label class="checkbox-item"><input type="checkbox" class="intol" value="lattosio"> Lattosio</label>
             <label class="checkbox-item"><input type="checkbox" class="intol" value="uova"> Uova</label>
             <label class="checkbox-item"><input type="checkbox" class="intol" value="pesce"> Pesce</label>
-            <label class="checkbox-item"><input type="checkbox" class="intol" value="frutta_guscio"> Frutta Guscio</label>
+            <label class="checkbox-item"><input type="checkbox" class="intol" value="frutta_guscio"> Noci</label>
         </div>
-        <button class="btn" onclick="addMember()">➕ Aggiungi alla Tavola</button>
+        <button class="btn" onclick="addMember()">➕ Aggiungi</button>
     </div>
 </div>
 
@@ -132,9 +126,9 @@
 
 <script>
     let db = null;
-    let familyMembers = JSON.parse(localStorage.getItem('fam_v9')) || [];
-    let customPrices = JSON.parse(localStorage.getItem('price_v9')) || {};
-    let selectedStore = localStorage.getItem('store_pref_v9') || "";
+    let familyMembers = JSON.parse(localStorage.getItem('fam_v10')) || [];
+    let customPrices = JSON.parse(localStorage.getItem('price_v10')) || {};
+    let selectedStore = localStorage.getItem('store_pref_v10') || "";
 
     async function init() {
         renderMembersList();
@@ -145,32 +139,33 @@
             
             document.getElementById('updateInfo').innerText = "Dati: " + (db.data_aggiornamento || "N/D");
             
+            // Popola Store
             const storeSelect = document.getElementById('storeSelect');
             storeSelect.innerHTML = "";
-            const stores = Object.keys(db.offerte_per_supermercato || {"Generico":[]});
+            const stores = Object.keys(db.offerte_per_supermercato || {});
             
-            stores.forEach(s => {
-                let opt = document.createElement('option');
-                opt.value = s; opt.innerText = s;
-                storeSelect.appendChild(opt);
-            });
-
-            if(selectedStore && stores.includes(selectedStore)) storeSelect.value = selectedStore;
-            else { selectedStore = stores[0]; storeSelect.value = selectedStore; }
+            if(stores.length === 0) {
+                storeSelect.innerHTML = "<option>Nessuna offerta</option>";
+            } else {
+                stores.forEach(s => {
+                    let opt = document.createElement('option');
+                    opt.value = s; opt.innerText = s;
+                    storeSelect.appendChild(opt);
+                });
+                
+                if(selectedStore && stores.includes(selectedStore)) storeSelect.value = selectedStore;
+                else { selectedStore = stores[0]; storeSelect.value = selectedStore; }
+            }
 
             renderOffers();
 
-            const savedMenu = JSON.parse(localStorage.getItem('family_menu_v9'));
+            const savedMenu = JSON.parse(localStorage.getItem('family_menu_v10'));
             if(!savedMenu || savedMenu.length === 0) generateMenu();
             else renderMenuUI();
 
         } catch(e) {
             console.error(e);
-            document.getElementById('weeklyPlan').innerHTML = `
-                <div style="text-align:center; padding:50px 20px;">
-                    <h3>⚠️ Dati non trovati</h3>
-                    <p>Fai girare l'Action su GitHub per creare il menu.</p>
-                </div>`;
+            document.getElementById('weeklyPlan').innerHTML = "<div style='text-align:center; padding:50px;'><h3>⚠️ Nessun Dato</h3><p>Fai girare l'Action su GitHub.</p></div>";
         }
     }
 
@@ -187,49 +182,43 @@
         const intolerances = [];
         document.querySelectorAll('.intol:checked').forEach(i => intolerances.push(i.value));
         familyMembers.push({ id: Date.now(), name, intolerances });
-        localStorage.setItem('fam_v9', JSON.stringify(familyMembers));
-        renderMembersList();
-        generateMenu();
+        localStorage.setItem('fam_v10', JSON.stringify(familyMembers));
+        renderMembersList(); generateMenu();
         document.getElementById('newMemberName').value = '';
         document.querySelectorAll('.intol').forEach(i => i.checked = false);
     }
 
     function removeMember(id) {
         familyMembers = familyMembers.filter(m => m.id !== id);
-        localStorage.setItem('fam_v9', JSON.stringify(familyMembers));
-        renderMembersList();
-        generateMenu();
+        localStorage.setItem('fam_v10', JSON.stringify(familyMembers));
+        renderMembersList(); generateMenu();
     }
 
     function renderMembersList() {
         const container = document.getElementById('membersList');
-        container.innerHTML = familyMembers.length ? '' : '<p>Nessun membro inserito.</p>';
+        container.innerHTML = familyMembers.length ? '' : '<p>Nessuno inserito.</p>';
         familyMembers.forEach(m => {
-            container.innerHTML += `
-                <div class="member-card">
-                    <div><strong>${m.name}</strong><div style="margin-top:5px;">${m.intolerances.map(i => `<span class="tag">${i}</span>`).join('')}</div></div>
-                    <span class="material-icons" style="color:red; cursor:pointer;" onclick="removeMember(${m.id})">delete</span>
-                </div>`;
+            container.innerHTML += `<div class="member-card"><div><strong>${m.name}</strong> <span>${m.intolerances.join(', ')}</span></div><span class="material-icons" style="color:red; cursor:pointer;" onclick="removeMember(${m.id})">delete</span></div>`;
         });
     }
 
     function generateMenu() {
-        if(!db || !db.ricette || db.ricette.length === 0) {
-            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center'>Nessuna ricetta scaricata!</div>";
+        if(!db || !db.ricette || !Array.isArray(db.ricette)) {
+            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center'>Attesa dati dal robot...</div>";
             return;
         }
         
         const safeRecipes = db.ricette.filter(r => {
             for(let m of familyMembers) {
                 for(let i of m.intolerances) {
-                    if(r.contains && r.contains.map(c => c.toLowerCase()).includes(i.toLowerCase())) return false;
+                    if(r.contains && r.contains.map(c=>c.toLowerCase()).includes(i.toLowerCase())) return false;
                 }
             }
             return true;
         });
 
         if(safeRecipes.length === 0) {
-            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center; color:red;'>Nessuna ricetta sicura!</div>";
+            alert("Nessuna ricetta sicura!");
             return;
         }
 
@@ -244,7 +233,7 @@
             }
         }));
 
-        localStorage.setItem('family_menu_v9', JSON.stringify(newMenu));
+        localStorage.setItem('family_menu_v10', JSON.stringify(newMenu));
         renderMenuUI();
     }
 
@@ -255,9 +244,8 @@
     }
 
     function renderMenuUI() {
-        const menu = JSON.parse(localStorage.getItem('family_menu_v9'));
+        const menu = JSON.parse(localStorage.getItem('family_menu_v10'));
         if(!menu) return;
-
         const container = document.getElementById('weeklyPlan');
         container.innerHTML = "";
         const shop = {};
@@ -275,66 +263,50 @@
             [d.pasti.colazione, d.pasti.pranzo, d.pasti.merenda, d.pasti.cena].forEach(m => {
                 if(m && m.ingredients) {
                     m.ingredients.forEach(ing => {
-                        let name = (typeof ing === 'string') ? ing : ing.item;
+                        let name = (typeof ing === 'string') ? ing : ing.item || ing; // Gestisce stringhe o oggetti
                         shop[name] = (shop[name]||0)+1;
                     });
                 }
             });
         });
-        
         renderShop(shop);
     }
 
     function mealRow(icon, m) {
         if(!m) return "";
-        let title = m.name || m.title || "Ricetta sconosciuta";
+        let title = m.title || m.name || "Ricetta";
         let desc = "";
-        if(m.ingredients) desc = m.ingredients.map(i => (typeof i === 'string') ? i : i.item).join(', ');
-        let tags = (m.contains && m.contains.length) ? `<div class="tag-warn">⚠️ ${m.contains.join(', ')}</div>` : "";
-        
-        return `
-            <div class="meal-row">
-                <span class="meal-icon">${icon}</span>
-                <div class="meal-info">
-                    <div class="meal-name">${title}</div>
-                    <div class="meal-desc">${desc}</div>
-                    ${tags}
-                </div>
-            </div>`;
+        if(m.ingredients) desc = m.ingredients.map(i => (typeof i === 'string') ? i : i.item || i).join(', ');
+        return `<div class="meal-row"><span class="meal-icon">${icon}</span><div class="meal-info"><div class="meal-name">${title}</div><div class="meal-desc">${desc}</div></div></div>`;
     }
 
-    // --- FUNZIONE CRUCIALE: MAPPA INGREDIENTE GENERICO -> OFFERTA DI MARCA ---
     function renderShop(list) {
         const c = document.getElementById('shoppingListContainer');
         c.innerHTML = "";
         let total = 0;
-        
         document.getElementById('storeLabelSpesa').innerText = selectedStore;
+        
         const storeOffers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
 
         Object.keys(list).sort().forEach(item => {
-            // Cerchiamo se il supermercato ha un prodotto che contiene il nome generico
-            // Es. Ingrediente "Pasta" -> Match con Offerta "Pasta Barilla"
-            const offer = storeOffers.find(o => 
-                o.name.toLowerCase().includes(item.toLowerCase()) || 
-                item.toLowerCase().includes(o.name.toLowerCase())
-            );
+            // MATCHING INTELLIGENTE: Cerca l'ingrediente nell'offerta
+            const offer = storeOffers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
             
-            // DECIDIAMO COSA MOSTRARE:
-            // Se c'è l'offerta, usiamo il nome figo dell'offerta (es. "Pasta Barilla")
-            // Altrimenti usiamo il nome generico dell'ingrediente (es. "Pasta")
-            let displayName = offer ? offer.name : item;
-            let displayClass = offer ? "is-branded" : "";
-            
+            let displayName = item;
+            let subText = "";
             let price = 0;
             let isOffer = false;
 
-            if(customPrices[item]) {
-                price = parseFloat(customPrices[item]);
-            } else if (offer) {
-                price = parseFloat(offer.price);
+            if(offer) {
+                displayName = offer.name; // Usa il nome di marca (es. Pasta Barilla)
+                subText = `(Base: ${item})`; 
                 isOffer = true;
+                if(!customPrices[item]) price = parseFloat(offer.price);
+            } else {
+                subText = "(Nessuna offerta)";
             }
+
+            if(customPrices[item]) price = parseFloat(customPrices[item]);
 
             total += price;
 
@@ -343,8 +315,8 @@
                     <div class="shop-check">
                         <input type="checkbox">
                         <div>
-                            <div class="${displayClass}" style="font-weight:600;">${displayName}</div>
-                            <small style="color:#888;">Ingrediente base: ${item} (x${list[item]})</small>
+                            <div class="${isOffer ? 'brand-name' : ''}" style="font-weight:600;">${displayName}</div>
+                            <small style="color:#888;">${subText}</small>
                         </div>
                     </div>
                     <div>
@@ -353,13 +325,12 @@
                     </div>
                 </div>`;
         });
-        
         document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
     }
 
     function updPrice(item, val) {
         customPrices[item] = parseFloat(val) || 0;
-        localStorage.setItem('price_v9', JSON.stringify(customPrices));
+        localStorage.setItem('price_v10', JSON.stringify(customPrices));
         let t = 0; document.querySelectorAll('.price-inp').forEach(i=>t+=parseFloat(i.value)||0);
         document.getElementById('totalPrice').innerText = "€ "+t.toFixed(2);
     }
@@ -368,23 +339,15 @@
         const c = document.getElementById('offerContainer');
         c.innerHTML = '';
         const offers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
-        if(!offers.length) c.innerHTML = "<p>Nessuna offerta disponibile.</p>";
         offers.forEach(o => {
-            c.innerHTML += `
-                <div class="offer-card">
-                    <div class="offer-badge">%</div>
-                    <div style="font-size:0.9rem;">${o.name}</div>
-                    <b style="color:var(--accent);">€${o.price.toFixed(2)}</b>
-                </div>`;
+            c.innerHTML += `<div class="offer-card"><div class="offer-badge">%</div><div style="font-size:0.9rem;">${o.name}</div><b style="color:var(--accent);">€${o.price.toFixed(2)}</b></div>`;
         });
     }
 
     function changeStore() {
         selectedStore = document.getElementById('storeSelect').value;
-        localStorage.setItem('store_pref_v9', selectedStore);
-        renderOffers();
-        renderShop({}); // Forza il ricalcolo della lista con i nuovi nomi di marca
-        renderMenuUI(); 
+        localStorage.setItem('store_pref_v10', selectedStore);
+        renderOffers(); renderShop({}); renderMenuUI();
     }
 
     init();
