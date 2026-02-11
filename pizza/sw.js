@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pizze-db-v1';
+const CACHE_NAME = 'pizza-app-v3';
 const urlsToCache = [
   './',
   './index.html',
