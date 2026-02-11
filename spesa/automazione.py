@@ -3,6 +3,7 @@ import json
 import google.generativeai as genai
 from datetime import datetime
 import sys
+import random
 
 # --- CONFIGURAZIONE ---
 if "GEMINI_KEY" in os.environ:
@@ -25,11 +26,14 @@ model = trova_modello()
 
 def pulisci_json(testo):
     testo = testo.replace("```json", "").replace("```", "").strip()
-    start = testo.find('{')
-    end = testo.rfind('}') + 1
-    if start == -1: # Fallback per array
+    # Cerca parentesi quadre per array (ricette) o graffe per oggetti (offerte)
+    if testo.startswith("{"):
+        start = testo.find('{')
+        end = testo.rfind('}') + 1
+    else:
         start = testo.find('[')
         end = testo.rfind(']') + 1
+        
     if start != -1 and end != -1:
         return testo[start:end]
     return testo
@@ -47,56 +51,83 @@ def genera_tutto():
     ]
     
     prompt_offerte = f"""
-    Genera un database JSON di offerte per: {', '.join(supermercati)}.
-    
-    IMPORTANTE: Usa NOMI REALI E MARCHE (es. "Pasta Barilla", "Nutella", "Tonno Rio Mare", "Latte Granarolo", "Biscotti Mulino Bianco").
+    Genera un database JSON di offerte reali per: {', '.join(supermercati)}.
+    Usa NOMI DI MARCA (es. "Pasta Barilla", "Tonno Rio Mare", "Biscotti Mulino Bianco").
     Per ogni supermercato inserisci 6 prodotti vari con prezzi realistici.
     
     RISPONDI SOLO JSON:
     {{
-      "Conad": [{{"name": "Pasta Barilla", "price": 0.79}}, {{"name": "Passata Mutti", "price": 0.99}}],
+      "Conad": [{{"name": "Pasta Barilla 500g", "price": 0.79}}],
       ...
     }}
     """
     
     try:
+        print("1. Genero Offerte...")
         resp = model.generate_content(prompt_offerte)
         offerte_db = json.loads(pulisci_json(resp.text))
-        print("✅ Offerte (con marche) generate.")
     except Exception as e:
         print(f"⚠️ Errore Offerte: {e}")
         offerte_db = {s: [{"name": "Pasta Barilla", "price": 0.90}] for s in supermercati}
 
     # 2. RICETTE (INGREDIENTI GENERICI)
-    # Estraiamo i nomi per dare un contesto, ma chiediamo ricette generiche
+    # Estraiamo i nomi grezzi
     ingredienti_raw = []
     for s in offerte_db:
         for p in offerte_db[s]:
-            ingredienti_raw.append(p['name'])
-            
+            # Pulizia grezza del nome per dare spunto (es. "Pasta Barilla" -> "Pasta")
+            nome = p['name'].split()[0] 
+            if len(nome) > 3: ingredienti_raw.append(nome)
+    
+    ingredienti_input = ', '.join(list(set(ingredienti_raw))[:40])
+    
     prompt_ricette = f"""
-    Crea 28 ricette italiane (colazione, pranzo, merenda, cena) ispirate a questi prodotti in offerta: {', '.join(list(set(ingredienti_raw))[:30])}.
+    Sei uno Chef. Crea un menu settimanale (28 ricette: colazione, pranzo, merenda, cena).
     
-    REGOLA FONDAMENTALE: 
-    Nei campi "title" e "ingredients", usa SOLO TERMINI GENERICI. 
-    Esempio: Se l'offerta è "Pasta Barilla", tu scrivi solo "Pasta". Se è "Nutella", scrivi "Crema di nocciole".
+    INGREDIENTI DA USARE:
+    Usa come ispirazione questi ingredienti in offerta: {ingredienti_input}.
+    IMPORTANTE: Puoi usare anche ingredienti comuni da dispensa (farina, uova, olio, verdure base) per completare le ricette.
     
-    FORMATO JSON:
+    REGOLE FONDAMENTALI:
+    1. Usa SOLO nomi GENERICI per gli ingredienti (es. scrivi "Pasta", NON "Pasta Barilla").
+    2. NON inserire prezzi nelle ricette.
+    3. Il formato deve essere una LISTA DI OGGETTI.
+    
+    RISPONDI SOLO CON QUESTO JSON:
     [
       {{
         "title": "Pasta al Pomodoro",
         "type": "pranzo",
-        "ingredients": [ {{"item": "Pasta", "quantity": "100g"}}, {{"item": "Passata di pomodoro", "quantity": "100g"}} ],
+        "ingredients": ["Pasta", "Passata di pomodoro", "Basilico"],
         "contains": ["glutine"],
+        "description": "Piatto semplice..."
+      }},
+      {{
+        "title": "Yogurt e Cereali",
+        "type": "colazione",
+        "ingredients": ["Yogurt", "Cereali"],
+        "contains": ["lattosio"],
         "description": "..."
       }}
     ]
     """
     
+    print("2. Genero Ricette...")
     try:
         resp_ric = model.generate_content(prompt_ricette)
         ricette = json.loads(pulisci_json(resp.text))
-        print(f"✅ {len(ricette)} ricette generiche generate.")
+        
+        # Controllo di sicurezza: se ricette è un dizionario (errore AI), lo forziamo a lista
+        if isinstance(ricette, dict):
+            print("⚠️ AI ha sbagliato formato (dict invece di list). Tento fix.")
+            nuova_lista = []
+            for k in ricette: # Se ha raggruppato per chiavi strane
+                if isinstance(ricette[k], list):
+                    nuova_lista.extend(ricette[k])
+            ricette = nuova_lista
+
+        print(f"✅ {len(ricette)} ricette generate.")
+        
     except Exception as e:
         print(f"❌ Errore Ricette: {e}")
         ricette = []
@@ -110,7 +141,7 @@ def genera_tutto():
 
     with open(file_out, "w", encoding="utf-8") as f:
         json.dump(database, f, indent=4, ensure_ascii=False)
-    print("💾 Dati salvati.")
+    print("💾 Salvato.")
 
 if __name__ == "__main__":
     genera_tutto()
