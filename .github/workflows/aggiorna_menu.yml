@@ -23,21 +23,22 @@ jobs:
       - name: Installa librerie
         run: pip install google-generativeai
 
-      # ESEGUE LO SCRIPT DENTRO LA CARTELLA SPESA
-      - name: Esegui il Generatore IA
+      - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      # DEBUG: CONTROLLA SE IL FILE È STATO CREATO
-      - name: Controlla file
-        run: ls -l spesa/
+      # DEBUG: Ci mostra quali file esistono dopo lo script
+      - name: Mostra file generati (Debug)
+        run: |
+          echo "VEDIAMO COSA C'È NELLA CARTELLA SPESA:"
+          ls -l spesa/
 
-      # SALVA IL FILE DALLA CARTELLA SPESA
-      - name: Salva i risultati
+      - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Menu'
           git config --global user.email 'robot@menu.app'
-          git add spesa/dati_settimanali.json
-          git commit -m "Aggiornamento Menu Automatico" || echo "Nessuna modifica"
+          # AGGIUNGE TUTTO (molto più sicuro)
+          git add .
+          git commit -m "Auto-Update Menu" || echo "Nessuna modifica rilevata"
           git push
