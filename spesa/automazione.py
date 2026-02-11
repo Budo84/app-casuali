@@ -3,64 +3,74 @@ import json
 import google.generativeai as genai
 from datetime import datetime
 
-# 1. SETUP API KEY
+# CONFIGURAZIONE
 if "GEMINI_KEY" in os.environ:
     API_KEY = os.environ["GEMINI_KEY"]
 else:
-    print("❌ ERRORE GRAVE: Chiave GEMINI_KEY non trovata nei Secrets!")
+    print("❌ Chiave GEMINI_KEY mancante.")
     exit(1)
 
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 def genera_tutto():
-    print("🤖 START: Inizio generazione...")
+    print("🤖 START...")
     
-    # 2. CALCOLO PERCORSO ASSOLUTO (Così non sbaglia mai cartella)
-    # Trova la cartella dove si trova QUESTO file python (cioè 'spesa')
-    cartella_script = os.path.dirname(os.path.abspath(__file__))
-    file_output = os.path.join(cartella_script, "dati_settimanali.json")
-    
-    print(f"📂 Il file verrà salvato qui: {file_output}")
+    # PERCORSO
+    path_script = os.path.dirname(os.path.abspath(__file__))
+    path_file = os.path.join(path_script, "dati_settimanali.json")
 
-    # 3. OFFERTE
+    # 1. OFFERTE
     try:
-        print("🔍 Cerco offerte...")
         mese = datetime.now().strftime("%B")
-        prompt = f"""Genera JSON puro di 15 prodotti alimentari in offerta a {mese}. Format: [{{"name": "pasta", "price": 0.99}}]"""
+        prompt = f"""Genera JSON di 15 cibi in offerta a {mese} (supermercato ita). Format: [{{"name":"pasta","price":0.99}}]"""
         resp = model.generate_content(prompt)
         offerte = json.loads(resp.text.replace("```json", "").replace("```", "").strip())
         nomi = [o['name'] for o in offerte]
-    except Exception as e:
-        print(f"❌ ERRORE IA (Offerte): {e}")
-        # Creiamo dati finti per non rompere l'app se l'IA fallisce
-        offerte = [{"name": "Errore Generazione", "price": 0.00}]
-        nomi = ["Pane"]
+    except:
+        offerte = []
+        nomi = ["Pasta", "Riso", "Pollo", "Uova", "Zucchine"]
 
-    # 4. RICETTE
+    # 2. RICETTE (IL PUNTO CRUCIALE: LE PAROLE CHIAVE)
     try:
-        print("👨‍🍳 Creo ricette...")
-        prompt = f"""Crea 21 ricette con: {', '.join(nomi)}. Format JSON: [{{ "name": "Nome", "type": "pranzo", "contains": [], "ingredients": [], "desc": "" }}]"""
+        print("👨‍🍳 Genero ricette...")
+        prompt = f"""
+        Crea 25 ricette usando: {', '.join(nomi)}.
+        
+        REGOLE FONDAMENTALI PER 'contains':
+        Devi segnalare gli allergeni usando ESATTAMENTE queste parole chiave (e nessun'altra):
+        - "glutine" (per pane, pasta, farina, orzo)
+        - "lattosio" (per latte, burro, formaggio, panna)
+        - "uova"
+        - "pesce"
+        - "frutta_guscio" (per noci, mandorle, pistacchi, nocciole)
+        
+        Se non c'è allergene, lascia la lista vuota: [].
+        
+        Format JSON:
+        [
+            {{ 
+                "name": "Pasta al pesto", 
+                "type": "pranzo", 
+                "contains": ["glutine", "lattosio", "frutta_guscio"], 
+                "ingredients": ["pasta", "basilico", "pinoli", "parmigiano"], 
+                "desc": "Piatto classico" 
+            }}
+        ]
+        """
         resp = model.generate_content(prompt)
         ricette = json.loads(resp.text.replace("```json", "").replace("```", "").strip())
     except Exception as e:
-        print(f"❌ ERRORE IA (Ricette): {e}")
+        print(f"❌ Errore Ricette: {e}")
         ricette = []
 
-    # 5. SALVATAGGIO
-    database = {
-        "data_aggiornamento": datetime.now().strftime("%d/%m/%Y"),
-        "offerte": offerte,
-        "ricette": ricette
-    }
-
-    try:
-        with open(file_output, "w", encoding="utf-8") as f:
-            json.dump(database, f, indent=4, ensure_ascii=False)
-        print("✅ SALVATAGGIO RIUSCITO!")
-    except Exception as e:
-        print(f"❌ ERRORE SCRITTURA FILE: {e}")
-        exit(1)
+    # 3. SALVATAGGIO
+    database = { "data_aggiornamento": datetime.now().strftime("%d/%m/%Y"), "offerte": offerte, "ricette": ricette }
+    
+    if not os.path.exists(path_script): os.makedirs(path_script)
+    with open(path_file, "w", encoding="utf-8") as f:
+        json.dump(database, f, indent=4, ensure_ascii=False)
+    print("✅ Salvato.")
 
 if __name__ == "__main__":
     genera_tutto()
