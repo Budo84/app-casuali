@@ -13,11 +13,9 @@ else:
 
 genai.configure(api_key=API_KEY)
 
-# Trova modello (Auto-Configurante)
 def trova_modello():
     try:
         mods = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        # Cerca Flash > Pro > Altro
         best = next((m for m in mods if "flash" in m), next((m for m in mods if "pro" in m), mods[0]))
         return genai.GenerativeModel(best)
     except:
@@ -27,9 +25,11 @@ model = trova_modello()
 
 def pulisci_json(testo):
     testo = testo.replace("```json", "").replace("```", "").strip()
-    start, end = testo.find('['), testo.rfind(']') + 1
-    if start == -1: start, end = testo.find('{'), testo.rfind('}') + 1
-    if start != -1 and end != -1: return testo[start:end]
+    # Cerchiamo l'inizio e la fine dell'oggetto JSON
+    start = testo.find('{')
+    end = testo.rfind('}') + 1
+    if start != -1 and end != -1:
+        return testo[start:end]
     return testo
 
 def genera_tutto():
@@ -37,67 +37,61 @@ def genera_tutto():
     file_out = os.path.join(cartella, "dati_settimanali.json")
 
     # 1. OFFERTE PER SUPERMERCATO
-    print("1. Genero OFFERTE MULTI-STORE...")
+    print(f"🤖 Uso modello: {model.model_name}")
     supermercati = ["Conad", "Coop", "Esselunga", "Lidl", "Eurospin"]
-    offerte_db = {}
-    tutti_prodotti = set()
-
+    
+    prompt_offerte = f"""
+    Genera un database JSON di offerte alimentari realistiche per questi supermercati italiani: {', '.join(supermercati)}.
+    Per ogni supermercato includi 8 prodotti diversi con prezzi realistici in Euro.
+    
+    RISPONDI ESATTAMENTE IN QUESTO FORMATO JSON (SOLO IL JSON):
+    {{
+      "Conad": [{{"name": "Pasta", "price": 0.85}}],
+      "Coop": [{{"name": "Pasta", "price": 0.80}}],
+      ...
+    }}
+    """
+    
     try:
-        prompt = f"""
-        Agisci come un database di prezzi italiano.
-        Genera offerte realistiche per questi supermercati: {', '.join(supermercati)}.
-        Per OGNI supermercato, elenca 8 prodotti in offerta (pasta, carne, verdura, scatolame).
-        
-        Rispondi SOLO con questo JSON esatto:
-        {{
-            "Conad": [{{"name": "Pasta Barilla", "price": 0.79}}, {{"name": "Passata", "price": 0.89}}],
-            "Lidl": [{{"name": "Pasta Combino", "price": 0.65}}, {{"name": "Pollo", "price": 3.99}}],
-            ... (fai così per tutti)
-        }}
-        """
-        resp = model.generate_content(prompt)
+        resp = model.generate_content(prompt_offerte)
         offerte_db = json.loads(pulisci_json(resp.text))
-        
-        # Raccogliamo tutti i nomi dei prodotti per creare le ricette
-        for store in offerte_db:
-            for item in offerte_db[store]:
-                tutti_prodotti.add(item['name'])
-        
-        print(f"✅ Offerte generate per: {list(offerte_db.keys())}")
-        
+        print("✅ Offerte generate con successo per tutti gli store.")
     except Exception as e:
-        print(f"❌ Errore Offerte: {e}")
-        offerte_db = {"Genarico": [{"name": "Pasta", "price": 1.00}]}
-        tutti_prodotti = ["Pasta", "Pomodoro", "Uova"]
+        print(f"⚠️ Errore Offerte: {e}. Uso fallback.")
+        offerte_db = {s: [{"name": "Pasta", "price": 0.90}] for s in supermercati}
 
+    # Estraiamo i prodotti per le ricette
+    ingredienti_base = []
+    for s in offerte_db:
+        for p in offerte_db[s]:
+            ingredienti_base.append(p['name'])
+    
     # 2. RICETTE
-    print("2. Genero RICETTE...")
-    lista_ing = list(tutti_prodotti)[:20] # Prendiamo i primi 20 per non confondere l'AI
+    prompt_ricette = f"""
+    Crea 21 ricette italiane varie usando questi ingredienti: {', '.join(list(set(ingredienti_base))[:15])}.
+    Usa SOLO questi tag per 'contains': "glutine", "lattosio", "uova", "pesce", "frutta_guscio".
+    RISPONDI SOLO COL JSON (Array di oggetti).
+    """
+    
     try:
-        prompt = f"""
-        Crea 21 ricette italiane usando: {', '.join(lista_ing)}.
-        Usa ESATTAMENTE questi tag 'contains': "glutine", "lattosio", "uova", "pesce", "frutta_guscio".
-        Format JSON:
-        [{{ "name": "Nome", "type": "pranzo", "contains": ["glutine"], "ingredients": ["pasta", "pomodoro"], "desc": "..." }}]
-        """
-        resp = model.generate_content(prompt)
-        ricette = json.loads(pulisci_json(resp.text))
-        print(f"✅ {len(ricette)} ricette generate.")
-    except Exception as e:
-        print(f"❌ Errore Ricette: {e}")
+        resp_ric = model.generate_content(prompt_ricette)
+        # Pulizia specifica per array
+        testo_ric = resp_ric.text.replace("```json", "").replace("```", "").strip()
+        start, end = testo_ric.find('['), testo_ric.rfind(']') + 1
+        ricette = json.loads(testo_ric[start:end])
+    except:
         ricette = []
 
     # 3. SALVATAGGIO
     database = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y"),
-        "offerte_per_supermercato": offerte_db, # Nuova struttura
+        "offerte_per_supermercato": offerte_db,
         "ricette": ricette
     }
 
-    if not os.path.exists(os.path.dirname(file_out)): os.makedirs(os.path.dirname(file_out))
     with open(file_out, "w", encoding="utf-8") as f:
         json.dump(database, f, indent=4, ensure_ascii=False)
-    print("💾 Salvato.")
+    print("💾 Dati salvati.")
 
 if __name__ == "__main__":
     genera_tutto()
