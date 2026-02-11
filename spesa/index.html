@@ -3,108 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu & Spesa Ibrida</title>
+    <title>Menu & Spesa Pro</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="theme-color" content="#2E7D32">
     <style>
         :root { --primary: #2E7D32; --bg: #f4f4f4; --card: #fff; --text: #333; --accent: #ff9800; --offer-color: #d32f2f; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 85px; }
         
-        header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; }
+        header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .page { display: none; padding: 15px; }
-        .page.active { display: block; }
+        .page.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         /* CARD MENU */
-        .card { background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .day-header { font-weight: bold; color: var(--primary); margin-bottom: 8px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
-        .meal-row { display: flex; margin-bottom: 8px; align-items: center; }
-        .meal-icon { width: 30px; font-size: 1.2rem; }
-        .meal-info { flex: 1; }
-        .meal-title { font-weight: bold; font-size: 0.95rem; }
-        .meal-desc { font-size: 0.8rem; color: #666; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 5px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .day-header { font-weight: bold; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         
+        .meal-row { display: flex; margin-bottom: 10px; align-items: flex-start; position: relative; }
+        .meal-row:last-child { margin-bottom: 0; }
+        .meal-icon { width: 30px; font-size: 1.2rem; padding-top: 2px; }
+        .meal-info { flex: 1; padding-right: 35px; } /* Spazio per il bottone edit */
+        .meal-title { font-weight: 600; font-size: 0.95rem; color: #333; }
+        .meal-desc { font-size: 0.8rem; color: #777; line-height: 1.2; margin-top: 2px; }
+        .btn-edit { position: absolute; right: 0; top: 0; background: none; border: none; cursor: pointer; color: #bbb; padding: 5px; }
+        .btn-edit:hover { color: var(--accent); transform: scale(1.1); }
+
         /* SPESA */
-        .shop-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
+        .shop-item { background: white; padding: 12px; margin-bottom: 6px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .shop-item.locked { border-left: 4px solid var(--accent); background: #fff8e1; }
         
-        .item-name { font-weight: 600; }
-        .item-source { font-size: 0.75rem; color: #666; display: flex; align-items: center; gap: 4px; }
-        .store-tag { background: #333; color: white; padding: 1px 4px; border-radius: 3px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; }
-        .store-tag.manual { background: var(--accent); }
+        .item-name { font-weight: 600; font-size: 0.95rem; }
+        .item-source { font-size: 0.75rem; color: #666; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+        .store-tag { background: #455a64; color: white; padding: 2px 5px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; }
+        .store-tag.manual { background: var(--accent); color: #3e2723; }
         
         /* OFFERTE */
-        .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; position: relative; text-align: center; cursor: pointer; transition: 0.2s; }
-        .offer-card:active { transform: scale(0.95); border-color: var(--primary); background: #e8f5e9; }
-        .offer-badge { position: absolute; top: -5px; right: -5px; background: var(--offer-color); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.65rem; font-weight: bold; }
-        .add-btn { margin-top: 5px; font-size: 0.8rem; color: var(--primary); font-weight: bold; }
+        .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 15px; }
+        .offer-card { background: white; padding: 12px; border-radius: 10px; border: 1px solid #e0e0e0; position: relative; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .offer-card:active { transform: scale(0.96); border-color: var(--primary); background: #e8f5e9; }
+        .offer-badge { position: absolute; top: -8px; right: -8px; background: var(--offer-color); color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .add-btn { margin-top: 8px; font-size: 0.8rem; color: var(--primary); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* NAV */
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 60px; z-index: 1000; }
-        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; }
-        .nav a.active { color: var(--primary); font-weight: bold; }
-        .nav i { font-size: 24px; margin-bottom: 2px; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 65px; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #90a4ae; text-decoration: none; font-size: 0.7rem; transition: 0.2s; }
+        .nav a.active { color: var(--primary); transform: translateY(-2px); }
+        .nav a.active i { color: var(--primary); }
+        .nav i { font-size: 26px; margin-bottom: 3px; color: #cfd8dc; }
         
-        select, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 5px; margin-top: 10px; font-weight: bold; }
+        /* UTILS */
+        select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; font-size: 1rem; }
+        .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; margin-top: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn:active { transform: translateY(2px); box-shadow: none; }
+        
+        .total-float { position: fixed; bottom: 80px; left: 15px; right: 15px; background: #263238; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 900; }
     </style>
 </head>
 <body>
 
 <header>
     <h3>Menu & Spesa</h3>
-    <small id="lastUpdate" style="font-size:0.7rem;">...</small>
+    <small id="lastUpdate" style="font-size:0.7rem; opacity:0.8;">Sync...</small>
 </header>
 
 <div id="p-menu" class="page active">
-    <div id="menuList"></div>
+    <div id="menuList" style="padding-bottom: 20px;"></div>
 </div>
 
 <div id="p-spesa" class="page">
-    <h3>Lista Spesa</h3>
-    <p style="font-size:0.8rem; color:#666;">
-        Store principale: <b id="mainStoreLabel"></b>.<br>
-        Gli articoli gialli sono "bloccati" da altri negozi.
+    <h3>🛒 Lista Spesa</h3>
+    <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">
+        Store base: <b id="mainStoreLabel"></b>
     </p>
-    <div id="shopList"></div>
-    <div style="margin-top:15px; background:#333; color:white; padding:15px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Totale Stimato</span>
-        <span id="totalPrice" style="font-size:1.3rem; font-weight:bold;">€ 0.00</span>
+    <div id="shopList" style="padding-bottom: 80px;"></div>
+    
+    <div class="total-float">
+        <span style="font-size:0.9rem; opacity:0.8;">Totale Stimato</span>
+        <span id="totalPrice" style="font-size:1.4rem; font-weight:bold; color:#b2dfdb;">€ 0.00</span>
     </div>
 </div>
 
 <div id="p-offerte" class="page">
-    <h3>Scegli Prodotti & Store</h3>
-    <p style="font-size:0.85rem; color:#555;">Tocca un'offerta per aggiungerla alla lista della spesa, anche se è di un altro supermercato!</p>
+    <h3>⚡ Spesa Ibrida</h3>
+    <p style="font-size:0.9rem; color:#555; line-height:1.4;">
+        1. Seleziona un negozio diverso.<br>
+        2. Tocca un prodotto in offerta.<br>
+        3. Verrà aggiunto alla lista spesa (bloccato).
+    </p>
     
     <select id="storeSelect" onchange="setStore()"></select>
     
-    <h3>Volantino: <span id="flyerStoreName"></span></h3>
+    <h3 style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">Volantino: <span id="flyerStoreName" style="color:var(--primary)"></span></h3>
     <div id="offerList" class="offer-grid"></div>
     
-    <div style="margin-top:30px; border-top:1px solid #ddd; padding-top:10px;">
-        <button class="btn" onclick="generateMenu()" style="background:#ff9800;">🔄 Rigenera Menu Settimanale</button>
+    <div style="margin-top:40px;">
+        <button class="btn" onclick="generateMenu()" style="background:#ff9800;">🎲 Rigenera Menu Casuale</button>
     </div>
 </div>
 
 <div id="p-famiglia" class="page">
-    <h3>Gestione</h3>
-    <button class="btn" style="background:#d32f2f" onclick="hardReset()">⚠️ Reset Completo App</button>
+    <h3>⚙️ Gestione</h3>
+    <button class="btn" style="background:#d32f2f" onclick="hardReset()">⚠️ Reset Dati App</button>
+    <p style="font-size:0.85rem; color:#888; margin-top:10px;">Usa questo tasto se l'app sembra bloccata o i dati sono vecchi.</p>
 </div>
 
 <nav class="nav">
     <a onclick="go('p-menu', this)" class="active"><i class="material-icons">restaurant</i>Menu</a>
     <a onclick="go('p-spesa', this)"><i class="material-icons">shopping_cart</i>Spesa</a>
     <a onclick="go('p-offerte', this)"><i class="material-icons">local_offer</i>Offerte</a>
-    <a onclick="go('p-famiglia', this)"><i class="material-icons">settings</i>Opzioni</a>
+    <a onclick="go('p-famiglia', this)"><i class="material-icons">settings</i>Opz</a>
 </nav>
 
 <script>
     let db = null;
-    let menu = JSON.parse(localStorage.getItem('v12_menu')) || [];
-    let mainStore = localStorage.getItem('v12_store') || "";
-    // Qui salviamo le scelte manuali: { "Pasta": {store:"Lidl", price:0.79, name:"Pasta Combino"} }
-    let lockedItems = JSON.parse(localStorage.getItem('v12_locked')) || {};
+    let menu = JSON.parse(localStorage.getItem('v13_menu')) || [];
+    let mainStore = localStorage.getItem('v13_store') || "";
+    let lockedItems = JSON.parse(localStorage.getItem('v13_locked')) || {};
 
     async function init() {
         try {
@@ -112,33 +126,32 @@
             db = await res.json();
             document.getElementById('lastUpdate').innerText = db.data_aggiornamento;
 
-            // Setup Store
+            // Setup Store Selector
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
-            const stores = Object.keys(db.offerte_per_supermercato);
+            const stores = Object.keys(db.offerte_per_supermercato || {});
             stores.forEach(s => {
                 let opt = document.createElement('option');
                 opt.value = s; opt.innerText = s;
                 sel.appendChild(opt);
             });
 
-            if(!mainStore) mainStore = stores[0];
+            if(!mainStore && stores.length > 0) mainStore = stores[0];
             sel.value = mainStore;
 
             if(!menu.length) generateMenu();
-            
-            renderAll();
+            else renderAll();
 
         } catch(e) {
-            document.getElementById('menuList').innerHTML = "<p style='text-align:center; padding:20px'>Attesa dati...</p>";
+            document.getElementById('menuList').innerHTML = "<div style='text-align:center; padding:40px; color:#777;'><h3>Caricamento...</h3><p>Assicurati che l'Action GitHub sia verde.</p></div>";
         }
     }
 
+    // --- MENU ---
     function generateMenu() {
-        if(!db) return;
+        if(!db || !db.ricette) return;
         const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
         
-        // Semplice selezione casuale
         menu = days.map(d => ({
             day: d,
             meals: {
@@ -149,9 +162,7 @@
             }
         }));
         
-        // Quando si rigenera il menu, NON cancelliamo i lockedItems, 
-        // così se hai scelto la pasta al Lidl, ti rimane anche col nuovo menu.
-        localStorage.setItem('v12_menu', JSON.stringify(menu));
+        localStorage.setItem('v13_menu', JSON.stringify(menu));
         renderAll();
     }
 
@@ -174,77 +185,104 @@
         menu.forEach((d, i) => {
             c.innerHTML += `
                 <div class="card">
-                    <div class="day-header">
-                        <span>${d.day}</span>
-                        <i class="material-icons" style="font-size:1rem; color:#ccc" onclick="changeMeal(${i}, 'pranzo')">refresh</i>
-                    </div>
-                    ${row('☕', d.meals.colazione)}
-                    ${row('🍝', d.meals.pranzo)}
-                    ${row('🍎', d.meals.merenda)}
-                    ${row('🌙', d.meals.cena)}
+                    <div class="day-header">${d.day}</div>
+                    ${row('☕', d.meals.colazione, i, 'colazione')}
+                    ${row('🍝', d.meals.pranzo, i, 'pranzo')}
+                    ${row('🍎', d.meals.merenda, i, 'merenda')}
+                    ${row('🌙', d.meals.cena, i, 'cena')}
                 </div>`;
         });
     }
 
-    function row(ico, m) {
-        return `<div class="meal-row"><div class="meal-icon">${ico}</div><div class="meal-info"><div class="meal-title">${m.title}</div><div class="meal-desc">${m.ingredients.join(', ')}</div></div></div>`;
-    }
-
-    function changeMeal(dIdx, type) {
-        if(confirm("Cambiare menu per questo giorno?")) {
-            menu[dIdx].meals.pranzo = pick('pranzo');
-            menu[dIdx].meals.cena = pick('cena');
-            localStorage.setItem('v12_menu', JSON.stringify(menu));
-            renderAll();
+    // ECCO LA FUNZIONE CHE MANCAVA!
+    function row(ico, m, dIdx, type) {
+        // Gestione ingredienti: possono essere stringhe o oggetti {item, quantity}
+        let desc = "";
+        if(m.ingredients) {
+            desc = m.ingredients.map(ing => (typeof ing === 'string' ? ing : ing.item)).join(', ');
         }
+
+        return `
+            <div class="meal-row">
+                <div class="meal-icon">${ico}</div>
+                <div class="meal-info">
+                    <div class="meal-title">${m.title}</div>
+                    <div class="meal-desc">${desc}</div>
+                </div>
+                <button class="btn-edit" onclick="changeMeal(${dIdx}, '${type}')">
+                    <i class="material-icons">edit</i>
+                </button>
+            </div>`;
     }
 
-    // --- CUORE DELLA SPESA IBRIDA ---
+    // LOGICA MODIFICA MENU (CASUALE O MANUALE)
+    function changeMeal(dIdx, type) {
+        const pool = db.ricette.filter(r => r.type === type);
+        // Trova una ricetta diversa
+        let next = pool[Math.floor(Math.random() * pool.length)] || {title: "Libero", ingredients:[]};
+        
+        let manual = prompt(`Modifica ${type} di ${menu[dIdx].day}.\n\nLascia vuoto per: "${next.title}"\nOppure scrivi il tuo piatto:`);
+        
+        if (manual === null) return; // Annulla
+
+        if (manual.trim() === "") {
+            menu[dIdx].meals[type] = next;
+        } else {
+            menu[dIdx].meals[type] = {
+                title: manual,
+                ingredients: [manual], // L'ingrediente è il nome stesso per la spesa
+                type: type,
+                contains: []
+            };
+        }
+        
+        localStorage.setItem('v13_menu', JSON.stringify(menu));
+        renderAll();
+    }
+
+    // --- SPESA IBRIDA ---
     function renderShop() {
         const c = document.getElementById('shopList');
         c.innerHTML = "";
         document.getElementById('mainStoreLabel').innerText = mainStore;
         
-        // 1. Raccogli ingredienti necessari dal menu
-        const ingredientsNeeded = {};
+        // 1. Conta ingredienti
+        const needed = {};
         menu.forEach(d => {
             Object.values(d.meals).forEach(m => {
-                m.ingredients.forEach(ing => {
+                if(m.ingredients) m.ingredients.forEach(ing => {
                     let name = (typeof ing === 'string') ? ing : ing.item;
-                    ingredientsNeeded[name] = (ingredientsNeeded[name] || 0) + 1;
+                    needed[name] = (needed[name] || 0) + 1;
                 });
             });
         });
 
-        // 2. Se abbiamo "bloccato" un prodotto (es. Pasta) ma non è nel menu, lo mostriamo comunque?
-        //    Opzionale: per ora mostriamo solo ciò che serve per il menu.
-        
         let total = 0;
-        const mainStoreOffers = db.offerte_per_supermercato[mainStore] || [];
+        const baseOffers = db.offerte_per_supermercato[mainStore] || [];
 
-        Object.keys(ingredientsNeeded).sort().forEach(item => {
+        Object.keys(needed).sort().forEach(item => {
             let price = 0;
-            let displayStore = mainStore;
-            let displayName = item;
+            let dStore = mainStore;
+            let dName = item;
             let isLocked = false;
 
-            // CASO A: L'utente ha scelto manualmente un'offerta per questo ingrediente
-            // Cerchiamo se c'è un lock che "assomiglia" a questo ingrediente
-            let lockedKey = Object.keys(lockedItems).find(k => item.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(item.toLowerCase()));
+            // CASO 1: Prodotto Bloccato Manualmente (Lidl, Eurospin, ecc)
+            // Cerca match parziale nelle chiavi bloccate
+            let lockKey = Object.keys(lockedItems).find(k => item.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(item.toLowerCase()));
             
-            if (lockedKey) {
-                const lock = lockedItems[lockedKey];
-                displayStore = lock.store;
-                displayName = lock.name; // Usa il nome dell'offerta (es. Pasta Combino)
+            if (lockKey) {
+                const lock = lockedItems[lockKey];
+                dStore = lock.store;
+                dName = lock.name;
                 price = lock.price;
                 isLocked = true;
             } 
-            // CASO B: Nessun lock, usa il negozio principale
+            // CASO 2: Offerta nello Store Base
             else {
-                const offer = mainStoreOffers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
-                if (offer) {
-                    displayName = offer.name;
-                    price = offer.price;
+                const off = baseOffers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
+                if(off) {
+                    dName = off.name;
+                    price = off.price;
                 }
             }
 
@@ -253,71 +291,71 @@
             c.innerHTML += `
                 <div class="shop-item ${isLocked ? 'locked' : ''}">
                     <div style="flex:1">
-                        <div class="item-name">${displayName}</div>
+                        <div class="item-name">${dName}</div>
                         <div class="item-source">
-                            <span class="store-tag ${isLocked ? 'manual' : ''}">${displayStore}</span>
-                            <span>x${ingredientsNeeded[item]} ricette</span>
-                            ${isLocked ? `<i class="material-icons" style="font-size:12px; cursor:pointer; color:red; margin-left:5px;" onclick="unlockItem('${lockedKey}')">close</i>` : ''}
+                            <span class="store-tag ${isLocked ? 'manual' : ''}">${dStore}</span>
+                            <span>x${needed[item]}</span>
+                            ${isLocked ? `<i class="material-icons" style="font-size:14px; color:#d32f2f; margin-left:5px; cursor:pointer;" onclick="unlock('${lockKey}')">close</i>` : ''}
                         </div>
                     </div>
-                    <div style="font-weight:bold;">€ ${price.toFixed(2)}</div>
+                    <div style="font-weight:bold; font-size:1.1rem;">€ ${price.toFixed(2)}</div>
                 </div>`;
         });
         
         document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
     }
 
-    // Aggiunge un prodotto specifico alla lista "bloccati"
-    function lockItem(offerName, price, storeName) {
-        // Chiediamo all'utente a quale categoria generica associare questa offerta
-        // (Semplificazione: usiamo il nome dell'offerta come chiave, o cerchiamo di indovinare)
-        // Per fare un match perfetto bisognerebbe che l'utente dicesse "Questo è per la Pasta".
-        // Qui usiamo una logica "fuzzy": salviamo l'offerta e speriamo che matcha col nome ingrediente.
-        
-        // Esempio: offerName="Pasta Barilla". Salviamo chiave="Pasta Barilla". 
-        // Nel renderShop, controlliamo se "Pasta" del menu è contenuta in "Pasta Barilla".
-        
-        lockedItems[offerName] = { store: storeName, price: price, name: offerName };
-        localStorage.setItem('v12_locked', JSON.stringify(lockedItems));
-        
-        alert(`Aggiunto ${offerName} (${storeName}) alla lista spesa!`);
+    function lockItem(name, price, store) {
+        lockedItems[name] = { store, price, name };
+        localStorage.setItem('v13_locked', JSON.stringify(lockedItems));
+        alert(`Aggiunto: ${name} da ${store}`);
         renderShop();
     }
 
-    function unlockItem(key) {
+    function unlock(key) {
         delete lockedItems[key];
-        localStorage.setItem('v12_locked', JSON.stringify(lockedItems));
+        localStorage.setItem('v13_locked', JSON.stringify(lockedItems));
         renderShop();
     }
 
     function renderOffers() {
         const c = document.getElementById('offerList');
         c.innerHTML = "";
-        document.getElementById('flyerStoreName').innerText = mainStore;
+        const curStore = document.getElementById('storeSelect').value || mainStore;
+        document.getElementById('flyerStoreName').innerText = curStore;
         
-        const offers = db.offerte_per_supermercato[mainStore] || [];
-        
+        const offers = db.offerte_per_supermercato[curStore] || [];
         offers.forEach(o => {
             c.innerHTML += `
-                <div class="offer-card" onclick="lockItem('${o.name}', ${o.price}, '${mainStore}')">
-                    <div class="offer-badge">Toccamì</div>
+                <div class="offer-card" onclick="lockItem('${o.name}', ${o.price}, '${curStore}')">
+                    <div class="offer-badge">Usa Questa</div>
                     <div style="font-size:0.9rem; margin-bottom:5px;">${o.name}</div>
-                    <b style="color:var(--offer-color); font-size:1.1rem;">€${o.price}</b>
-                    <div class="add-btn">+ Aggiungi alla Spesa</div>
+                    <b style="color:var(--offer-color); font-size:1.1rem;">€${o.price.toFixed(2)}</b>
+                    <div class="add-btn">+ Aggiungi</div>
                 </div>`;
         });
     }
 
     function setStore() {
-        mainStore = document.getElementById('storeSelect').value;
-        localStorage.setItem('v12_store', mainStore);
+        // Se siamo nella pagina Offerte, cambia solo la visualizzazione volantino
+        // Se vogliamo cambiare lo store principale della spesa, dovremmo farlo in pagina spesa?
+        // Per semplicità: Il selettore in Offerte cambia solo cosa vedi per bloccare.
+        // Lo store principale rimane quello salvato o il primo.
+        // MA se l'utente vuole cambiare lo store principale?
+        
+        // Facciamo che se cambi store in OFFERTE, vedi solo le offerte.
+        // Se vuoi cambiare il principale, aggiungiamo una logica:
+        // Il principale è sempre quello di default finché non lo cambi con un confirm.
+        
+        // Per ora: Il menu a tendina serve solo a vedere le offerte per i blocchi.
         renderOffers();
-        renderShop();
     }
 
     function hardReset() {
-        localStorage.clear();
-        location.reload();
+        if(confirm("Cancellare tutti i dati e ricominciare?")) {
+            localStorage.clear();
+            location.reload();
+        }
     }
 
     function go(pid, btn) {
