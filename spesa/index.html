@@ -7,25 +7,27 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="theme-color" content="#FF9800">
     <style>
-        :root { --primary: #FF9800; --accent: #8BC34A; --bg: #f2f2f2; --text: #333; --card: #fff; --danger: #e53935; }
+        :root { --primary: #FF9800; --accent: #8BC34A; --bg: #f5f5f5; --text: #333; --card: #fff; --danger: #e53935; --offer: #4CAF50; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
         
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; }
         h1 { margin: 0; font-size: 1.3rem; display:flex; align-items:center; gap:10px;}
         .status-badge { font-size: 0.7rem; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 12px; }
 
+        /* NAVIGAZIONE */
         .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #999; text-decoration: none; font-size: 0.75rem; cursor: pointer; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #999; text-decoration: none; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
+        .nav-item.active { color: var(--primary); font-weight: bold; transform: scale(1.1); }
         .nav-item .material-icons { font-size: 26px; margin-bottom: 2px; }
 
         .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Cards Menu */
+        /* CARDS MENU */
         .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
         .day-title { font-weight: 800; color: var(--primary); margin-bottom: 10px; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px;}
+        
         .meal-row { display: flex; align-items: flex-start; margin-bottom: 12px; }
         .meal-icon { font-size: 1.2rem; margin-right: 12px; margin-top: 2px; }
         .meal-info { flex: 1; }
@@ -33,11 +35,11 @@
         .meal-desc { font-size: 0.8rem; color: #888; line-height: 1.2; }
         .tag-warn { font-size: 0.65rem; background: #ffebee; color: var(--danger); padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-top: 3px; display: inline-block; }
 
-        /* Family Members */
+        /* FAMIGLIA */
         .member-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
         .tag { padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; color: white; font-weight: bold; margin-right: 4px; background: #e57373; }
 
-        /* Forms */
+        /* FORMS */
         input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 10px; box-sizing: border-box; }
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
         .checkbox-item { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 8px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
@@ -47,12 +49,26 @@
         .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #E65100; }
         .btn-green { background: var(--accent); box-shadow: 0 4px 0 #689F38; }
 
-        /* Spesa */
-        .shop-item { padding: 12px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: white; margin-bottom: 2px; border-radius: 8px; }
-        .shop-item input { margin-right: 15px; width: 20px; height: 20px; }
+        /* SPESA */
+        .shop-item { padding: 12px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; background: white; margin-bottom: 2px; border-radius: 8px; }
+        .shop-check { display:flex; align-items:center; }
+        .shop-check input { margin-right: 15px; width: 20px; height: 20px; }
+        .price-inp { width: 70px; padding: 8px; border: 1px solid #ddd; border-radius: 8px; text-align: right; font-weight: bold; background: #fafafa; }
+        .price-inp.offer { background: #e8f5e9; border-color: var(--offer); color: #2e7d32; }
 
-        /* Store Selector */
+        /* TOTAL BAR */
+        .total-bar { position: fixed; bottom: 70px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
+
+        /* STORE SELECTOR */
         .store-box { background: #fff3e0; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ffcc80; }
+        
+        /* OFFERTE */
+        .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        .offer-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e0e0e0; position: relative; }
+        .offer-badge { position: absolute; top: -8px; right: -8px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
+        
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -66,18 +82,25 @@
     <div id="weeklyPlan">
         <div style="text-align:center; padding:50px 20px; color:#888;">
             <div class="loader"></div>
-            Sto scaricando le ricette dal cloud...
+            Sto preparando il menu...
         </div>
     </div>
 </div>
 
 <div id="p-spesa" class="page">
     <h2>🛒 Lista Spesa</h2>
-    <div id="shoppingListContainer"></div>
+    <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">Prezzi basati su: <b id="storeLabelSpesa">...</b></div>
+    <div id="shoppingListContainer" style="padding-bottom:80px;"></div>
+    
+    <div class="total-bar">
+        <div><div style="font-size:0.8rem; opacity:0.8;">Totale Stimato</div></div>
+        <div class="total-val" id="totalPrice">€ 0.00</div>
+    </div>
 </div>
 
 <div id="p-offerte" class="page">
-    <h2>⚡ Generatore Menu</h2>
+    <h2>⚡ Generatore & Offerte</h2>
+    
     <div class="store-box">
         <label style="font-size:0.8rem; font-weight:bold;">Seleziona Supermercato:</label>
         <select id="storeSelect" onchange="changeStore()" style="margin-top:5px; margin-bottom:0;">
@@ -86,7 +109,10 @@
     </div>
     
     <button class="btn btn-green" onclick="generateMenu()">🔄 Rigenera Menu Settimanale</button>
-    <p style="font-size:0.8rem; color:#666; text-align:center; margin-top:15px;">Il menu userà le offerte dello store scelto e rispetterà le intolleranze della famiglia.</p>
+    <p style="font-size:0.8rem; color:#666; text-align:center; margin-top:15px; margin-bottom:20px;">Il menu userà le offerte dello store scelto.</p>
+
+    <h3>Offerte Attuali</h3>
+    <div class="offer-grid" id="offerContainer"></div>
 </div>
 
 <div id="p-famiglia" class="page">
@@ -116,36 +142,59 @@
 </nav>
 
 <script>
+    // --- STATO ---
     let db = null;
-    let familyMembers = JSON.parse(localStorage.getItem('fam_v6')) || [];
-    let selectedStore = localStorage.getItem('store_pref_v6') || "";
+    let familyMembers = JSON.parse(localStorage.getItem('fam_v7')) || [];
+    let customPrices = JSON.parse(localStorage.getItem('price_v7')) || {};
+    let selectedStore = localStorage.getItem('store_pref_v7') || "";
 
+    // --- AVVIO ---
     async function init() {
         renderMembersList();
         try {
+            // Scarica il file generato dal robot (Python)
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
+            if(!res.ok) throw new Error("File Mancante");
             db = await res.json();
-            document.getElementById('updateInfo').innerText = db.data_aggiornamento;
             
-            // Popola store select
+            document.getElementById('updateInfo').innerText = "Dati: " + db.data_aggiornamento;
+            
+            // Popola Select Supermercati
             const storeSelect = document.getElementById('storeSelect');
             storeSelect.innerHTML = "";
+            
+            // Gestione fallback se il file JSON è vecchio
             const stores = Object.keys(db.offerte_per_supermercato || {"Generico":[]});
+            
             stores.forEach(s => {
                 let opt = document.createElement('option');
                 opt.value = s; opt.innerText = s;
                 storeSelect.appendChild(opt);
             });
-            if(selectedStore && stores.includes(selectedStore)) storeSelect.value = selectedStore;
-            else selectedStore = stores[0];
 
-            if(!localStorage.getItem('family_menu_v6')) generateMenu();
-            else renderMenuUI();
+            // Imposta lo store salvato o il primo disponibile
+            if(selectedStore && stores.includes(selectedStore)) storeSelect.value = selectedStore;
+            else {
+                selectedStore = stores[0];
+                storeSelect.value = selectedStore;
+            }
+
+            // Genera o Renderizza
+            renderOffers();
+            if(!localStorage.getItem('family_menu_v7')) generateMenu();
+            else renderMenuUI(); // Mostra il menu salvato
+
         } catch(e) {
-            document.getElementById('weeklyPlan').innerHTML = "⚠️ Errore caricamento. Controlla GitHub Actions.";
+            console.error(e);
+            document.getElementById('weeklyPlan').innerHTML = `
+                <div style="text-align:center; padding:50px 20px;">
+                    <h3>⚠️ Dati non trovati</h3>
+                    <p>Assicurati che l'Action su GitHub abbia finito di girare.</p>
+                </div>`;
         }
     }
 
+    // --- NAVIGAZIONE ---
     function nav(pageId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
@@ -153,20 +202,27 @@
         btn.classList.add('active');
     }
 
+    // --- FAMIGLIA ---
     function addMember() {
         const name = document.getElementById('newMemberName').value;
         if(!name) return;
         const intolerances = [];
         document.querySelectorAll('.intol:checked').forEach(i => intolerances.push(i.value));
+        
         familyMembers.push({ id: Date.now(), name, intolerances });
-        localStorage.setItem('fam_v6', JSON.stringify(familyMembers));
+        localStorage.setItem('fam_v7', JSON.stringify(familyMembers));
+        
         renderMembersList();
-        generateMenu();
+        generateMenu(); // Rigenera menu per sicurezza
+        
+        // Reset
+        document.getElementById('newMemberName').value = '';
+        document.querySelectorAll('.intol').forEach(i => i.checked = false);
     }
 
     function removeMember(id) {
         familyMembers = familyMembers.filter(m => m.id !== id);
-        localStorage.setItem('fam_v6', JSON.stringify(familyMembers));
+        localStorage.setItem('fam_v7', JSON.stringify(familyMembers));
         renderMembersList();
         generateMenu();
     }
@@ -186,8 +242,11 @@
         });
     }
 
+    // --- CORE MENU ---
     function generateMenu() {
         if(!db) return;
+        
+        // 1. Filtra ricette sicure (rispetta intolleranze famiglia)
         const safeRecipes = db.ricette.filter(r => {
             for(let m of familyMembers) {
                 for(let i of m.intolerances) if(r.contains.includes(i)) return false;
@@ -195,6 +254,12 @@
             return true;
         });
 
+        if(safeRecipes.length === 0) {
+            alert("Nessuna ricetta sicura trovata con queste intolleranze!");
+            return;
+        }
+
+        // 2. Crea menu casuale
         const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
         const newMenu = days.map(day => ({
             day,
@@ -205,18 +270,19 @@
             }
         }));
 
-        localStorage.setItem('family_menu_v6', JSON.stringify(newMenu));
+        localStorage.setItem('family_menu_v7', JSON.stringify(newMenu));
         renderMenuUI();
     }
 
     function pickMeal(pool, type) {
         let candidates = pool.filter(r => r.type === type);
-        if(!candidates.length) candidates = pool;
+        if(!candidates.length) candidates = pool; // Fallback
         return candidates[Math.floor(Math.random() * candidates.length)];
     }
 
+    // --- RENDER UI ---
     function renderMenuUI() {
-        const menu = JSON.parse(localStorage.getItem('family_menu_v6'));
+        const menu = JSON.parse(localStorage.getItem('family_menu_v7'));
         const container = document.getElementById('weeklyPlan');
         container.innerHTML = "";
         const shop = {};
@@ -229,8 +295,13 @@
                     ${mealRow('☀️', d.pasti.pranzo)}
                     ${mealRow('🌙', d.pasti.cena)}
                 </div>`;
-            Object.values(d.pasti).forEach(m => m.ingredients.forEach(i => shop[i] = (shop[i]||0)+1));
+            
+            // Popola lista spesa
+            Object.values(d.pasti).forEach(m => {
+                if(m && m.ingredients) m.ingredients.forEach(i => shop[i] = (shop[i]||0)+1);
+            });
         });
+        
         renderShop(shop);
     }
 
@@ -248,22 +319,81 @@
             </div>`;
     }
 
+    // --- SPESA E PREZZI ---
     function renderShop(list) {
         const c = document.getElementById('shoppingListContainer');
         c.innerHTML = "";
-        Object.keys(list).sort().forEach(ing => {
+        let total = 0;
+        
+        document.getElementById('storeLabelSpesa').innerText = selectedStore;
+        const storeOffers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
+
+        Object.keys(list).sort().forEach(item => {
+            // Logica Prezzo: Manuale > Offerta > 0
+            const offer = storeOffers.find(o => item.toLowerCase().includes(o.name.toLowerCase()) || o.name.toLowerCase().includes(item.toLowerCase()));
+            
+            let price = 0;
+            let isOffer = false;
+
+            if(customPrices[item]) {
+                price = parseFloat(customPrices[item]);
+            } else if (offer) {
+                price = parseFloat(offer.price);
+                isOffer = true;
+            }
+
+            total += price;
+
             c.innerHTML += `
                 <div class="shop-item">
-                    <input type="checkbox">
-                    <span>${ing} <small style="color:#888;">(x${list[ing]})</small></span>
+                    <div class="shop-check">
+                        <input type="checkbox">
+                        <div>
+                            <div style="font-weight:600;">${item}</div>
+                            <small style="color:#888;">x${list[item]}</small>
+                        </div>
+                    </div>
+                    <div>
+                        € <input type="number" step="0.1" class="price-inp ${isOffer?'offer':''}" 
+                                 value="${price.toFixed(2)}" onchange="updPrice('${item}', this.value)">
+                    </div>
+                </div>`;
+        });
+        
+        document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
+    }
+
+    function updPrice(item, val) {
+        customPrices[item] = parseFloat(val) || 0;
+        localStorage.setItem('price_v7', JSON.stringify(customPrices));
+        // Ricalcolo veloce UI
+        let t = 0; document.querySelectorAll('.price-inp').forEach(i=>t+=parseFloat(i.value)||0);
+        document.getElementById('totalPrice').innerText = "€ "+t.toFixed(2);
+    }
+
+    function renderOffers() {
+        const c = document.getElementById('offerContainer');
+        c.innerHTML = '';
+        const offers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
+        
+        if(!offers.length) c.innerHTML = "<p>Nessuna offerta disponibile.</p>";
+
+        offers.forEach(o => {
+            c.innerHTML += `
+                <div class="offer-card">
+                    <div class="offer-badge">%</div>
+                    <div style="font-size:0.9rem;">${o.name}</div>
+                    <b style="color:var(--accent);">€${o.price.toFixed(2)}</b>
                 </div>`;
         });
     }
 
     function changeStore() {
         selectedStore = document.getElementById('storeSelect').value;
-        localStorage.setItem('store_pref_v6', selectedStore);
-        generateMenu();
+        localStorage.setItem('store_pref_v7', selectedStore);
+        renderOffers();
+        // Nota: non rigeneriamo il menu per non perdere le ricette, ma aggiorniamo i prezzi
+        renderMenuUI();
     }
 
     init();
