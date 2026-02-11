@@ -164,7 +164,6 @@
             const storeSelect = document.getElementById('storeSelect');
             storeSelect.innerHTML = "";
             
-            // Gestione fallback
             const stores = Object.keys(db.offerte_per_supermercato || {"Generico":[]});
             
             stores.forEach(s => {
@@ -173,7 +172,6 @@
                 storeSelect.appendChild(opt);
             });
 
-            // Imposta lo store salvato o il primo disponibile
             if(selectedStore && stores.includes(selectedStore)) storeSelect.value = selectedStore;
             else {
                 selectedStore = stores[0];
@@ -185,10 +183,8 @@
             // LOGICA CRITICA: Se il menu salvato è vuoto O non esiste, generalo ora
             const savedMenu = JSON.parse(localStorage.getItem('family_menu_v7'));
             if(!savedMenu || savedMenu.length === 0) {
-                console.log("Menu vuoto, genero...");
                 generateMenu();
             } else {
-                console.log("Menu trovato, mostro...");
                 renderMenuUI();
             }
 
@@ -221,7 +217,7 @@
         localStorage.setItem('fam_v7', JSON.stringify(familyMembers));
         
         renderMembersList();
-        generateMenu(); // Rigenera menu
+        generateMenu(); 
         
         document.getElementById('newMemberName').value = '';
         document.querySelectorAll('.intol').forEach(i => i.checked = false);
@@ -252,7 +248,7 @@
     // --- CORE MENU ---
     function generateMenu() {
         if(!db || !db.ricette || db.ricette.length === 0) {
-            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center'>Nessuna ricetta nel database!</div>";
+            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center'>Nessuna ricetta scaricata nel database!</div>";
             return;
         }
         
@@ -260,8 +256,7 @@
         const safeRecipes = db.ricette.filter(r => {
             for(let m of familyMembers) {
                 for(let i of m.intolerances) {
-                    // Controllo sicuro (anche se l'IA usa maiuscole/minuscole diverse)
-                    if(r.contains.map(c => c.toLowerCase()).includes(i.toLowerCase())) return false;
+                    if(r.contains && r.contains.map(c => c.toLowerCase()).includes(i.toLowerCase())) return false;
                 }
             }
             return true;
@@ -272,7 +267,7 @@
             return;
         }
 
-        // 2. Crea menu casuale
+        // 2. Crea menu casuale (Gestisce ricette senza 'type')
         const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
         const newMenu = days.map(day => ({
             day,
@@ -288,10 +283,9 @@
     }
 
     function pickMeal(pool, type) {
-        // Cerca ricette del tipo giusto (es. "pranzo") ignorando maiuscole/minuscole
-        let candidates = pool.filter(r => r.type && r.type.toLowerCase() === type.toLowerCase());
-        
-        // Se non ne trovi nessuna, pesca dal mucchio generale per non lasciare il buco
+        // Cerca tipo con Case Insensitive o fallback
+        let candidates = pool.filter(r => r.type && r.type.toLowerCase() === type);
+        // Se non trovo (o se il JSON non ha 'type'), prendo dal mucchio generale
         if(!candidates.length) candidates = pool; 
         
         return candidates[Math.floor(Math.random() * candidates.length)];
@@ -315,9 +309,15 @@
                     ${mealRow('🌙', d.pasti.cena)}
                 </div>`;
             
-            // Popola lista spesa
+            // Popola lista spesa gestendo OGGETTI ingredienti
             [d.pasti.colazione, d.pasti.pranzo, d.pasti.cena].forEach(m => {
-                if(m && m.ingredients) m.ingredients.forEach(i => shop[i] = (shop[i]||0)+1);
+                if(m && m.ingredients) {
+                    m.ingredients.forEach(ing => {
+                        // Supporta sia stringa "Pasta" che oggetto {item: "Pasta", quantity: "100g"}
+                        let name = (typeof ing === 'string') ? ing : ing.item;
+                        shop[name] = (shop[name]||0)+1;
+                    });
+                }
             });
         });
         
@@ -326,13 +326,22 @@
 
     function mealRow(icon, m) {
         if(!m) return "";
-        let tags = (m.contains && m.contains.length) ? `<div class="tag-warn">CONTIENE: ${m.contains.join(', ')}</div>` : "";
+        // Supporta 'name' o 'title'
+        let title = m.name || m.title || "Ricetta sconosciuta";
+        // Gestione ingredienti complessi per la descrizione
+        let desc = "";
+        if(m.ingredients) {
+            desc = m.ingredients.map(i => (typeof i === 'string') ? i : i.item).join(', ');
+        }
+        
+        let tags = (m.contains && m.contains.length) ? `<div class="tag-warn">⚠️ ${m.contains.join(', ')}</div>` : "";
+        
         return `
             <div class="meal-row">
                 <span class="meal-icon">${icon}</span>
                 <div class="meal-info">
-                    <div class="meal-name">${m.name}</div>
-                    <div class="meal-desc">${m.ingredients ? m.ingredients.join(', ') : ''}</div>
+                    <div class="meal-name">${title}</div>
+                    <div class="meal-desc">${desc}</div>
                     ${tags}
                 </div>
             </div>`;
@@ -348,6 +357,7 @@
         const storeOffers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
 
         Object.keys(list).sort().forEach(item => {
+            // Logica Prezzo: Cerca match parziale
             const offer = storeOffers.find(o => item.toLowerCase().includes(o.name.toLowerCase()) || o.name.toLowerCase().includes(item.toLowerCase()));
             
             let price = 0;
@@ -409,8 +419,8 @@
         selectedStore = document.getElementById('storeSelect').value;
         localStorage.setItem('store_pref_v7', selectedStore);
         renderOffers();
-        renderShop({}); // Pulisci spesa (o ricalcola se necessario)
-        renderMenuUI(); // Ricalcola prezzi
+        renderShop({}); 
+        renderMenuUI(); 
     }
 
     init();
