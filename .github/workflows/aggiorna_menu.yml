@@ -29,7 +29,7 @@ jobs:
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         # NOTA: Qui diciamo al robot di entrare nella cartella 'menu' per trovare lo script
-        run: python menu/automazione.py
+        run: python spesa/automazione.py
 
       - name: Salva i risultati (Commit)
         run: |
