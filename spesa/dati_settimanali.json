@@ -3,183 +3,192 @@
     "offerte_per_supermercato": {
         "Conad": [
             {
-                "name": "Pasta di semola 500g",
+                "name": "Pasta di semola (500g)",
                 "price": 0.89
             },
             {
-                "name": "Latte UHT Parzialmente Scremato 1L",
-                "price": 1.15
+                "name": "Latte UHT (1L)",
+                "price": 0.98
             },
             {
-                "name": "Uova medie 6 pz",
+                "name": "Uova fresche (6 pz)",
                 "price": 1.79
             },
             {
-                "name": "Yogurt bianco 2x125g",
-                "price": 0.99
+                "name": "Passata di pomodoro (700g)",
+                "price": 0.75
             },
             {
-                "name": "Olio Extra Vergine d'Oliva 1L",
-                "price": 5.49
+                "name": "Yogurt (2x125g)",
+                "price": 1.1
             },
             {
-                "name": "Pane casereccio 500g",
-                "price": 2.2
+                "name": "Pane a fette (400g)",
+                "price": 1.25
             },
             {
-                "name": "Petto di pollo a fette 500g",
-                "price": 4.99
+                "name": "Mele Golden (al kg)",
+                "price": 1.99
             },
             {
-                "name": "Mele Golden 1kg",
-                "price": 1.89
+                "name": "Olio extra vergine d'oliva (1L)",
+                "price": 6.49
             }
         ],
         "Coop": [
             {
-                "name": "Pasta 500g",
-                "price": 0.85
+                "name": "Pasta di semola (500g)",
+                "price": 0.8
             },
             {
-                "name": "Latte fresco intero 1L",
-                "price": 1.4
+                "name": "Latte UHT (1L)",
+                "price": 0.95
             },
             {
-                "name": "Uova biologiche 6 pz",
-                "price": 2.5
+                "name": "Uova fresche (6 pz)",
+                "price": 1.85
             },
             {
-                "name": "Riso Arborio 1kg",
-                "price": 2.8
+                "name": "Passata di pomodoro (700g)",
+                "price": 0.69
             },
             {
-                "name": "Caffè macinato 250g",
-                "price": 2.7
+                "name": "Mozzarella (2x125g)",
+                "price": 2.1
             },
             {
-                "name": "Pomodori pelati 400g",
-                "price": 0.75
+                "name": "Riso Arborio (1kg)",
+                "price": 2.3
             },
             {
-                "name": "Biscotti secchi 700g",
-                "price": 1.8
+                "name": "Banane (al kg)",
+                "price": 1.6
             },
             {
-                "name": "Arance 1kg",
-                "price": 1.7
+                "name": "Caffè macinato (250g)",
+                "price": 2.99
             }
         ],
         "Esselunga": [
             {
-                "name": "Pasta di Gragnano 500g",
-                "price": 1.49
+                "name": "Pasta di semola (500g)",
+                "price": 0.95
             },
             {
-                "name": "Latte Alta Qualità fresco 1L",
-                "price": 1.6
+                "name": "Latte fresco alta qualità (1L)",
+                "price": 1.45
             },
             {
-                "name": "Prosciutto Cotto Alta Qualità 100g",
-                "price": 2.4
+                "name": "Uova bio (6 pz)",
+                "price": 2.75
             },
             {
-                "name": "Parmigiano Reggiano DOP 200g",
-                "price": 4.8
+                "name": "Prosciutto cotto (100g)",
+                "price": 2.15
             },
             {
-                "name": "Passata di pomodoro 700g",
-                "price": 1.3
+                "name": "Parmigiano Reggiano (200g)",
+                "price": 5.4
             },
             {
-                "name": "Salmone affumicato 100g",
+                "name": "Salmone affumicato (100g)",
                 "price": 3.99
             },
             {
-                "name": "Pane integrale 400g",
-                "price": 2.1
+                "name": "Arance (al kg)",
+                "price": 1.7
             },
             {
-                "name": "Banane 1kg",
-                "price": 1.99
+                "name": "Vino Chianti (750ml)",
+                "price": 4.99
             }
         ],
         "Lidl": [
             {
-                "name": "Pasta 500g",
-                "price": 0.69
+                "name": "Pasta di semola (500g)",
+                "price": 0.75
             },
             {
-                "name": "Latte UHT 1L",
+                "name": "Latte UHT (1L)",
+                "price": 0.89
+            },
+            {
+                "name": "Uova fresche (6 pz)",
+                "price": 1.69
+            },
+            {
+                "name": "Passata di pomodoro (700g)",
+                "price": 0.65
+            },
+            {
+                "name": "Yogurt greco (150g)",
                 "price": 0.99
             },
             {
-                "name": "Uova 10 pz",
-                "price": 1.99
+                "name": "Formaggio spalmabile (200g)",
+                "price": 1.19
             },
             {
-                "name": "Prosciutto Cotto 200g",
-                "price": 2.19
-            },
-            {
-                "name": "Birra Lager 6x33cl",
-                "price": 3.49
-            },
-            {
-                "name": "Patatine fritte surgelate 500g",
+                "name": "Patate (1.5kg)",
                 "price": 1.59
             },
             {
-                "name": "Marmellata di frutta 400g",
-                "price": 1.29
-            },
-            {
-                "name": "Zucchine 1kg",
-                "price": 1.49
+                "name": "Birra chiara (0.5L)",
+                "price": 0.79
             }
         ],
         "Eurospin": [
             {
-                "name": "Pasta 500g",
-                "price": 0.65
-            },
-            {
-                "name": "Latte UHT 1L",
-                "price": 0.95
-            },
-            {
-                "name": "Merendine 10 pz",
-                "price": 1.8
-            },
-            {
-                "name": "Salsa Pronta 400g",
+                "name": "Pasta di semola (500g)",
                 "price": 0.69
             },
             {
-                "name": "Pancetta a cubetti 200g",
+                "name": "Latte UHT (1L)",
+                "price": 0.85
+            },
+            {
+                "name": "Uova fresche (6 pz)",
+                "price": 1.59
+            },
+            {
+                "name": "Passata di pomodoro (700g)",
+                "price": 0.59
+            },
+            {
+                "name": "Affettato misto (150g)",
                 "price": 1.79
             },
             {
-                "name": "Biscotti assortiti 700g",
-                "price": 1.65
-            },
-            {
-                "name": "Yogurt alla frutta 4x125g",
+                "name": "Biscotti secchi (700g)",
                 "price": 1.39
             },
             {
-                "name": "Petti di pollo congelati 1kg",
-                "price": 4.5
+                "name": "Mele (1kg)",
+                "price": 1.49
+            },
+            {
+                "name": "Acqua minerale naturale (6x2L)",
+                "price": 1.55
             }
         ]
     },
     "ricette": [
         {
-            "name": "Pasta al Parmigiano e Olio EVO",
-            "description": "Un piatto semplice e gustoso di Pasta di Gragnano condita con abbondante Parmigiano Reggiano grattugiato e un filo d'olio extra vergine d'oliva.",
+            "title": "Tramezzini Semplici Prosciutto e Formaggio",
+            "description": "Un classico spuntino italiano, semplice e veloce da preparare con ingredienti freschi. Perfetto per una pausa pranzo o una merenda.",
             "ingredients": [
-                "Pasta di Gragnano",
-                "Parmigiano Reggiano DOP",
-                "Olio Extra Vergine d'Oliva"
+                {
+                    "item": "Pane a fette",
+                    "quantity": "150g"
+                },
+                {
+                    "item": "Prosciutto cotto",
+                    "quantity": "30g"
+                },
+                {
+                    "item": "Formaggio spalmabile",
+                    "quantity": "50g"
+                }
             ],
             "contains": [
                 "glutine",
@@ -187,122 +196,98 @@
             ]
         },
         {
-            "name": "Petto di Pollo alla Piastra con Olio EVO",
-            "description": "Fette di petto di pollo cotte alla piastra fino a doratura, servite con un filo d'olio extra vergine d'oliva per esaltarne il sapore.",
+            "title": "Frittata di Patate e Prosciutto Cotto",
+            "description": "Una gustosa frittata rustica con patate lesse e pezzetti di prosciutto cotto, ideale come secondo piatto o per un brunch.",
             "ingredients": [
-                "Petto di pollo a fette",
-                "Olio Extra Vergine d'Oliva"
-            ],
-            "contains": []
-        },
-        {
-            "name": "Frittata di Uova e Parmigiano",
-            "description": "Una soffice frittata preparata con uova sbattute e Parmigiano Reggiano, cotta lentamente in padella con olio extra vergine d'oliva.",
-            "ingredients": [
-                "Uova biologiche",
-                "Parmigiano Reggiano DOP",
-                "Olio Extra Vergine d'Oliva"
+                {
+                    "item": "Patate",
+                    "quantity": "300g"
+                },
+                {
+                    "item": "Uova bio",
+                    "quantity": "2 pz"
+                },
+                {
+                    "item": "Prosciutto cotto",
+                    "quantity": "30g"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "20ml"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "q.b."
+                }
             ],
             "contains": [
-                "uova",
-                "lattosio"
+                "uova"
             ]
         },
         {
-            "name": "Risotto al Parmigiano con Latte",
-            "description": "Un cremoso risotto Arborio mantecato con Parmigiano Reggiano e un tocco di latte UHT per una consistenza vellutata, condito con olio EVO.",
+            "title": "Risotto Semplice al Pomodoro",
+            "description": "Un risotto cremoso e saporito con passata di pomodoro, un comfort food italiano per eccellenza.",
             "ingredients": [
-                "Riso Arborio",
-                "Parmigiano Reggiano DOP",
-                "Latte UHT Parzialmente Scremato",
-                "Olio Extra Vergine d'Oliva"
-            ],
-            "contains": [
-                "lattosio"
-            ]
-        },
-        {
-            "name": "Coppa di Yogurt, Banana e Biscotti Secchi",
-            "description": "Strati alternati di yogurt bianco cremoso, fette di banana fresca e biscotti secchi sbriciolati, un dessert o colazione rinfrescante.",
-            "ingredients": [
-                "Yogurt bianco",
-                "Banane",
-                "Biscotti secchi"
-            ],
-            "contains": [
-                "glutine",
-                "lattosio"
-            ]
-        },
-        {
-            "name": "Caffè Latte Cremoso",
-            "description": "Una bevanda calda e confortante, preparata con caffè macinato e latte UHT schiumato, perfetta per la colazione o una pausa.",
-            "ingredients": [
-                "Caffè macinato",
-                "Latte UHT Parzialmente Scremato"
-            ],
-            "contains": [
-                "lattosio"
-            ]
-        },
-        {
-            "name": "Pasta con Prosciutto Cotto e Olio EVO",
-            "description": "Pasta di Gragnano condita con striscioline di Prosciutto Cotto Alta Qualità e un generoso filo d'olio extra vergine d'oliva.",
-            "ingredients": [
-                "Pasta di Gragnano",
-                "Prosciutto Cotto Alta Qualità",
-                "Olio Extra Vergine d'Oliva"
+                {
+                    "item": "Riso Arborio",
+                    "quantity": "150g"
+                },
+                {
+                    "item": "Passata di pomodoro",
+                    "quantity": "150g"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "20ml"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "400ml"
+                }
             ],
             "contains": [
                 "glutine"
             ]
         },
         {
-            "name": "Petti di Pollo al Parmigiano in Padella",
-            "description": "Fette di petti di pollo rosolate in padella e cosparse di Parmigiano Reggiano, che si scioglie creando una crosticina saporita.",
+            "title": "Patate Lesse Condite con Olio e Prosciutto",
+            "description": "Un contorno semplice e nutriente di patate lesse, arricchite con un filo d'olio EVO e striscioline di prosciutto cotto.",
             "ingredients": [
-                "Petti di pollo congelati",
-                "Parmigiano Reggiano DOP",
-                "Olio Extra Vergine d'Oliva"
+                {
+                    "item": "Patate",
+                    "quantity": "250g"
+                },
+                {
+                    "item": "Prosciutto cotto",
+                    "quantity": "20g"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "15ml"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "q.b."
+                }
             ],
-            "contains": [
-                "lattosio"
-            ]
+            "contains": []
         },
         {
-            "name": "Omelette con Prosciutto e Parmigiano",
-            "description": "Una ricca omelette ripiena di Prosciutto Cotto Alta Qualità a dadini e Parmigiano Reggiano grattugiato, cotta alla perfezione.",
+            "title": "Crema di Banana e Biscotti al Latte",
+            "description": "Un dessert facile e goloso, una crema vellutata di banana frullata con biscotti e latte, perfetta per i più piccoli.",
             "ingredients": [
-                "Uova",
-                "Prosciutto Cotto Alta Qualità",
-                "Parmigiano Reggiano DOP",
-                "Olio Extra Vergine d'Oliva"
-            ],
-            "contains": [
-                "uova",
-                "lattosio"
-            ]
-        },
-        {
-            "name": "Risotto con Pollo e Parmigiano",
-            "description": "Un gustoso risotto preparato con Riso Arborio, bocconcini di petto di pollo, Parmigiano Reggiano e un tocco di latte UHT per la cremosità.",
-            "ingredients": [
-                "Riso Arborio",
-                "Petto di pollo a fette",
-                "Parmigiano Reggiano DOP",
-                "Olio Extra Vergine d'Oliva",
-                "Latte UHT Parzialmente Scremato"
-            ],
-            "contains": [
-                "lattosio"
-            ]
-        },
-        {
-            "name": "Biscotti Secchi e Latte Fresco",
-            "description": "Un classico della colazione italiana: biscotti secchi inzuppati nel latte UHT freddo o caldo.",
-            "ingredients": [
-                "Biscotti secchi",
-                "Latte UHT Parzialmente Scremato"
+                {
+                    "item": "Banane",
+                    "quantity": "200g"
+                },
+                {
+                    "item": "Biscotti secchi",
+                    "quantity": "150g"
+                },
+                {
+                    "item": "Latte UHT",
+                    "quantity": "150ml"
+                }
             ],
             "contains": [
                 "glutine",
@@ -310,82 +295,119 @@
             ]
         },
         {
-            "name": "Smoothie Energetico Banana e Latte",
-            "description": "Uno smoothie cremoso e nutriente preparato frullando banane mature, latte UHT e yogurt bianco.",
+            "title": "Risotto Bianco al Latte e Mela",
+            "description": "Un'insolita ma deliziosa combinazione, un risotto dolce-salato con riso, latte e pezzetti di mela.",
             "ingredients": [
-                "Banane",
-                "Latte UHT Parzialmente Scremato",
-                "Yogurt bianco"
+                {
+                    "item": "Riso Arborio",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Latte UHT",
+                    "quantity": "200ml"
+                },
+                {
+                    "item": "Mele",
+                    "quantity": "150g"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "10ml"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "100ml"
+                }
             ],
             "contains": [
+                "glutine",
                 "lattosio"
             ]
         },
         {
-            "name": "Pasta Fredda con Pollo e Olio EVO",
-            "description": "Un'insalata di pasta fredda con bocconcini di petto di pollo cotti, condita semplicemente con olio extra vergine d'oliva, ideale per l'estate.",
+            "title": "Pane Tostato con Mela e Formaggio Spalmabile",
+            "description": "Una colazione o merenda leggera e saporita, pane tostato con formaggio spalmabile e fettine di mela fresca.",
             "ingredients": [
-                "Pasta di Gragnano",
-                "Petto di pollo a fette",
-                "Olio Extra Vergine d'Oliva"
+                {
+                    "item": "Pane a fette",
+                    "quantity": "80g"
+                },
+                {
+                    "item": "Mele Golden",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Formaggio spalmabile",
+                    "quantity": "40g"
+                }
+            ],
+            "contains": [
+                "glutine",
+                "lattosio"
+            ]
+        },
+        {
+            "title": "Uova Strapazzate con Prosciutto Cotto",
+            "description": "Una colazione o un brunch classico, uova strapazzate morbide e cremose con l'aggiunta di prosciutto cotto a cubetti.",
+            "ingredients": [
+                {
+                    "item": "Uova bio",
+                    "quantity": "2 pz"
+                },
+                {
+                    "item": "Prosciutto cotto",
+                    "quantity": "20g"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "10ml"
+                }
+            ],
+            "contains": [
+                "uova"
+            ]
+        },
+        {
+            "title": "Zuppa Rustica di Riso e Passata di Pomodoro",
+            "description": "Una zuppa calda e confortante, con riso e passata di pomodoro, ideale per le giornate fredde.",
+            "ingredients": [
+                {
+                    "item": "Riso Arborio",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Passata di pomodoro",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "500ml"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "15ml"
+                }
             ],
             "contains": [
                 "glutine"
             ]
         },
         {
-            "name": "Uova Strapazzate con Olio EVO",
-            "description": "Uova strapazzate morbide e cremose, cotte con un filo d'olio extra vergine d'oliva.",
+            "title": "Toast Semplice al Formaggio Spalmabile",
+            "description": "Un toast croccante e goloso, arricchito da una generosa spalmatura di formaggio fresco.",
             "ingredients": [
-                "Uova",
-                "Olio Extra Vergine d'Oliva"
-            ],
-            "contains": [
-                "uova"
-            ]
-        },
-        {
-            "name": "Merendine Inzuppate nel Caffè",
-            "description": "Un modo semplice per gustare le merendine, inzuppandole nel caffè caldo, per una colazione o merenda veloce.",
-            "ingredients": [
-                "Merendine",
-                "Caffè macinato"
-            ],
-            "contains": [
-                "glutine",
-                "lattosio",
-                "uova"
-            ]
-        },
-        {
-            "name": "Risotto al Pollo Semplice",
-            "description": "Un risotto essenziale preparato con Riso Arborio e bocconcini di petto di pollo scongelati, condito con olio extra vergine d'oliva.",
-            "ingredients": [
-                "Riso Arborio",
-                "Petti di pollo congelati",
-                "Olio Extra Vergine d'Oliva"
-            ],
-            "contains": []
-        },
-        {
-            "name": "Mousse Leggera di Yogurt e Banana",
-            "description": "Una mousse fresca e leggera ottenuta frullando yogurt bianco e banane mature fino a ottenere una consistenza omogenea.",
-            "ingredients": [
-                "Yogurt bianco",
-                "Banane"
-            ],
-            "contains": [
-                "lattosio"
-            ]
-        },
-        {
-            "name": "Torta Fredda di Biscotti al Caffè e Yogurt",
-            "description": "Una torta fredda semplice e veloce con strati di biscotti secchi inzuppati nel caffè e una crema leggera a base di yogurt e un goccio di latte UHT.",
-            "ingredients": [
-                "Biscotti secchi",
-                "Caffè macinato",
-                "Yogurt bianco",
-                "Latte UHT Parzialmente Scremato"
+                {
+                    "item": "Pane a fette",
+                    "quantity": "80g"
+                },
+                {
+                    "item": "Formaggio spalmabile",
+                    "quantity": "40g"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "5ml"
+                }
             ],
             "contains": [
                 "glutine",
@@ -393,41 +415,231 @@
             ]
         },
         {
-            "name": "Merendine con Prosciutto Cotto",
-            "description": "Un insolito abbinamento per una merenda veloce o un piccolo spuntino, merendine servite con fette di Prosciutto Cotto Alta Qualità.",
+            "title": "Risotto alla Birra Chiara",
+            "description": "Un risotto dal sapore unico, sfumato con birra chiara per un tocco inaspettato e aromatico.",
             "ingredients": [
-                "Merendine",
-                "Prosciutto Cotto Alta Qualità"
+                {
+                    "item": "Riso Arborio",
+                    "quantity": "150g"
+                },
+                {
+                    "item": "Birra chiara",
+                    "quantity": "200ml"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "20ml"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "300ml"
+                }
             ],
             "contains": [
-                "glutine",
-                "lattosio",
-                "uova"
+                "glutine"
             ]
         },
         {
-            "name": "Pollo Bollito con Riso e Olio EVO",
-            "description": "Petto di pollo bollito e servito con riso bianco e un filo d'olio extra vergine d'oliva, un piatto leggero e nutriente.",
+            "title": "Patate al Forno (o in Padella) con Olio EVO",
+            "description": "Un contorno classico e versatile, patate cotte al forno o in padella fino a doratura, condite con olio extra vergine d'oliva.",
             "ingredients": [
-                "Petti di pollo congelati",
-                "Riso Arborio",
-                "Olio Extra Vergine d'Oliva"
+                {
+                    "item": "Patate",
+                    "quantity": "300g"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "25ml"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "q.b."
+                }
             ],
             "contains": []
         },
         {
-            "name": "Pasta all'Uovo e Parmigiano 'Bianca'",
-            "description": "Una pasta cremosa condita con uova sbattute e Parmigiano Reggiano, emulsionato con un po' di acqua di cottura della pasta e olio EVO.",
+            "title": "Macedonia di Mele e Banane",
+            "description": "Una macedonia di frutta fresca e naturale, perfetta per una merenda salutare o un fine pasto leggero.",
             "ingredients": [
-                "Pasta di Gragnano",
-                "Uova",
-                "Parmigiano Reggiano DOP",
-                "Olio Extra Vergine d'Oliva"
+                {
+                    "item": "Mele",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Mele Golden",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Banane",
+                    "quantity": "200g"
+                }
+            ],
+            "contains": []
+        },
+        {
+            "title": "Smoothie di Banana e Latte",
+            "description": "Una bevanda rinfrescante e nutriente, un frullato cremoso di banana e latte, ideale per colazione o come spuntino.",
+            "ingredients": [
+                {
+                    "item": "Banane",
+                    "quantity": "200g"
+                },
+                {
+                    "item": "Latte UHT",
+                    "quantity": "200ml"
+                }
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "title": "Purè di Patate Cremoso al Latte",
+            "description": "Un purè di patate classico e vellutato, preparato con latte e un filo d'olio, ideale come contorno.",
+            "ingredients": [
+                {
+                    "item": "Patate",
+                    "quantity": "300g"
+                },
+                {
+                    "item": "Latte UHT",
+                    "quantity": "150ml"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "15ml"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "q.b."
+                }
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "title": "Biscotti Inzuppati nel Latte",
+            "description": "Una colazione o merenda semplice ma intramontabile, biscotti secchi immersi nel latte.",
+            "ingredients": [
+                {
+                    "item": "Biscotti secchi",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Latte UHT",
+                    "quantity": "100ml"
+                }
             ],
             "contains": [
                 "glutine",
+                "lattosio"
+            ]
+        },
+        {
+            "title": "Omelette con Formaggio Spalmabile",
+            "description": "Un'omelette morbida e saporita, farcita con formaggio spalmabile cremoso.",
+            "ingredients": [
+                {
+                    "item": "Uova bio",
+                    "quantity": "2 pz"
+                },
+                {
+                    "item": "Formaggio spalmabile",
+                    "quantity": "40g"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "10ml"
+                }
+            ],
+            "contains": [
                 "uova",
                 "lattosio"
+            ]
+        },
+        {
+            "title": "Mele Cotte Semplici",
+            "description": "Mele cotte al forno, un dessert leggero e naturale, senza zuccheri aggiunti.",
+            "ingredients": [
+                {
+                    "item": "Mele Golden",
+                    "quantity": "300g"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "50ml"
+                }
+            ],
+            "contains": []
+        },
+        {
+            "title": "Pappa di Riso al Latte e Banana",
+            "description": "Un piatto semplice e digeribile, ideale per i più piccoli o per una cena leggera, con riso cotto nel latte e banana schiacciata.",
+            "ingredients": [
+                {
+                    "item": "Riso Arborio",
+                    "quantity": "50g"
+                },
+                {
+                    "item": "Latte UHT",
+                    "quantity": "150ml"
+                },
+                {
+                    "item": "Banane",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "50ml"
+                }
+            ],
+            "contains": [
+                "glutine",
+                "lattosio"
+            ]
+        },
+        {
+            "title": "Pane Tostato con Passata di Pomodoro",
+            "description": "Uno spuntino semplice e tradizionale, pane tostato condito con passata di pomodoro e un filo d'olio EVO.",
+            "ingredients": [
+                {
+                    "item": "Pane a fette",
+                    "quantity": "80g"
+                },
+                {
+                    "item": "Passata di pomodoro",
+                    "quantity": "50g"
+                },
+                {
+                    "item": "Olio extra vergine d'oliva",
+                    "quantity": "10ml"
+                }
+            ],
+            "contains": [
+                "glutine"
+            ]
+        },
+        {
+            "title": "Zuppa Dolce di Mele Cotte e Biscotti",
+            "description": "Una zuppa dolce e comforting, con mele cotte e pezzetti di biscotti, per una merenda o un dessert leggero.",
+            "ingredients": [
+                {
+                    "item": "Mele",
+                    "quantity": "200g"
+                },
+                {
+                    "item": "Biscotti secchi",
+                    "quantity": "150g"
+                },
+                {
+                    "item": "Acqua minerale naturale",
+                    "quantity": "100ml"
+                }
+            ],
+            "contains": [
+                "glutine"
             ]
         }
     ]
