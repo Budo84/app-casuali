@@ -3,85 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione Pizze Pro</title>
-    <link rel="manifest" href="manifest.json">
+    <title>Gestione Pizze</title>
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#e74c3c">
     <style>
         :root {
             --primary: #e74c3c;
-            --secondary: #f1c40f;
-            --bg: #f0f2f5;
+            --bg: #f4f4f4;
             --text: #333;
             --card-bg: #fff;
         }
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         
-        /* Header */
         header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display:flex; justify-content:space-between; align-items:center; }
-        h1 { margin: 0; font-size: 1.3rem; }
+        h1 { margin: 0; font-size: 1.2rem; }
 
-        /* Search Bar & Filters */
-        .search-container { padding: 1rem; background: white; border-bottom: 1px solid #ddd; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .search-container { padding: 1rem; background: white; border-bottom: 1px solid #ddd; }
         input[type="text"], select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #f9f9f9; }
+        
+        /* Filtri a pillola */
         .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
-        .filter-chip { background: #eee; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; white-space: nowrap; border: none; transition: all 0.2s; font-weight: 500; }
-        .filter-chip.active { background: var(--primary); color: white; box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3); }
+        .filter-chip { background: #eee; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; border: none; transition: 0.2s; white-space: nowrap;}
+        .filter-chip.active { background: var(--primary); color: white; }
 
-        /* Pizza List & Cards */
-        .pizza-list { padding: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.2rem; }
-        .pizza-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.08); position: relative; border-top: 4px solid #ccc; transition: transform 0.2s; }
+        /* Griglia Pizze */
+        .pizza-list { padding: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+        .pizza-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative; border-top: 4px solid #ccc; }
         .pizza-card.Rossa { border-top-color: var(--primary); }
         .pizza-card.Bianca { border-top-color: #bdc3c7; }
 
-        .pizza-img-container { width: 100%; height: 180px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        /* Immagini */
+        .pizza-img-container { width: 100%; height: 180px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .pizza-img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .pizza-placeholder { color: #aaa; font-size: 3rem; }
+        .pizza-placeholder { font-size: 3rem; }
 
-        .card-content { padding: 1rem; padding-top: 1.5rem; } /* Extra padding top for buttons */
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-        .pizza-name { font-weight: 700; font-size: 1.2rem; color: #2c3e50; }
-        .pizza-season { font-size: 0.7rem; background: #e8f5e9; color: #27ae60; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-        .pizza-ingredients { font-size: 0.95rem; color: #555; line-height: 1.5; }
-        
-        /* Action Buttons on Card */
-        .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; z-index: 10; }
-        .action-btn { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: none; }
-        .edit-btn { background: white; color: #2980b9; }
-        .delete-btn { background: white; color: #c0392b; }
+        /* Contenuto Card */
+        .card-content { padding: 1rem; padding-top: 2.5rem; position: relative; }
+        .card-header { margin-bottom: 5px; }
+        .pizza-name { font-weight: bold; font-size: 1.1rem; }
+        .pizza-season { font-size: 0.75rem; background: #e8f5e9; color: #2ecc71; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; display:inline-block; margin-top:4px;}
+        .pizza-ingredients { font-size: 0.9rem; color: #666; line-height: 1.4; margin-top: 5px; }
 
-        /* Add Modal */
-        #addModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: flex-end; }
-        .modal-content { background: white; width: 100%; max-width: 500px; padding: 25px; border-radius: 20px 20px 0 0; max-height: 90vh; overflow-y: auto; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); animation: slideUp 0.3s ease-out; }
-        @media (min-width: 600px) {
-             #addModal { align-items: center; }
-             .modal-content { border-radius: 20px; width: 90%; }
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .modal-title { margin-top: 0; display:flex; justify-content:space-between; align-items:center; }
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 14px 20px; border-radius: 10px; width: 100%; font-size: 1.1rem; font-weight: 600; margin-top: 15px; cursor: pointer; }
-        .btn-secondary { background: #eee; color: #555; border: none; padding: 12px; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: 600; }
+        /* Bottoni Azione (Edit/Delete) */
+        .card-actions { position: absolute; top: -20px; right: 10px; display: flex; gap: 8px; }
+        .action-btn { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: none; background: white; }
+        .edit-btn { color: #2980b9; }
+        .delete-btn { color: #c0392b; }
 
-        /* Image Upload Styles */
-        .image-upload-label { display: block; margin-bottom: 10px; font-weight: 600; color: #555; }
-        .file-input-container { position: relative; overflow: hidden; display: inline-block; width: 100%; }
-        .file-input-button { background: #3498db; color: white; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; display: block; font-weight: 600; }
-        #newImageInput { position: absolute; font-size: 100px; opacity: 0; right: 0; top: 0; cursor: pointer; }
-        #imagePreviewContainer { margin-top: 15px; text-align: center; display: none; position: relative; }
-        #imagePreview { max-width: 100%; max-height: 200px; border-radius: 12px; border: 2px solid #eee; }
-        .remove-img-btn { position: absolute; top: -10px; right: -10px; background: red; color: white; border-radius: 50%; width: 25px; height: 25px; border:none; cursor: pointer; display:none; }
+        /* Modale */
+        #addModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 90%; max-width: 500px; padding: 20px; border-radius: 12px; max-height: 90vh; overflow-y: auto; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-size: 1rem; margin-top: 10px; cursor: pointer; }
+        .btn-secondary { background: #ddd; color: #333; border: none; padding: 10px; border-radius: 8px; width: 100%; margin-top: 5px; cursor: pointer; }
 
-        /* Floating Action Button */
-        .fab { position: fixed; bottom: 25px; right: 25px; background: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); cursor: pointer; border: none; transition: transform 0.2s; z-index: 90; }
-        .fab:active { transform: scale(0.95); }
+        /* Upload Foto */
+        .file-input-container { position: relative; margin-bottom: 15px; }
+        .file-input-button { background: #3498db; color: white; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; display: block; }
+        #newImageInput { position: absolute; top: 0; right: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+        #imagePreview { max-width: 100%; max-height: 200px; display:none; border-radius: 8px; margin-top: 10px; margin: 0 auto; display: block;}
 
+        /* FAB */
+        .fab { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; border: none; z-index: 90; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>🍕 Archivio Pizze</h1>
-    <div style="font-size:0.8rem; opacity:0.8;">v2.1</div>
 </header>
 
 <div class="search-container">
@@ -91,8 +79,8 @@
         <button class="filter-chip" onclick="setFilter('Rossa', this)">Rosse</button>
         <button class="filter-chip" onclick="setFilter('Bianca', this)">Bianche</button>
     </div>
-    <div class="filters" style="margin-top: 8px;">
-        <select id="seasonFilter" onchange="renderPizzas()" style="margin:0; padding: 8px; font-size: 0.9rem; border-radius: 20px; background: #eee; border:none;">
+    <div class="filters" style="margin-top: 5px;">
+        <select id="seasonFilter" onchange="renderPizzas()" style="padding: 5px; border-radius: 20px; border: 1px solid #ccc;">
             <option value="">📅 Tutte le stagioni</option>
             <option value="Tutto l'anno">Tutto l'anno</option>
             <option value="Estate">Estate</option>
@@ -103,49 +91,41 @@
     </div>
 </div>
 
-<div class="pizza-list" id="pizzaList">
-    </div>
+<div class="pizza-list" id="pizzaList"></div>
 
 <button class="fab" onclick="openModal()">+</button>
 
 <div id="addModal">
     <div class="modal-content">
-        <h2 class="modal-title" id="modalTitle">Nuova Pizza</h2>
+        <h2 id="modalTitle">Nuova Pizza</h2>
         
-        <label class="image-upload-label">Foto della Pizza</label>
         <div class="file-input-container">
-            <label for="newImageInput" class="file-input-button">
-                📷 Scatta o Seleziona Foto
-            </label>
+            <label class="file-input-button">📷 Scatta/Carica Foto</label>
             <input type="file" id="newImageInput" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
         </div>
-        <div id="imagePreviewContainer">
-             <img id="imagePreview" src="" alt="Anteprima">
-             <canvas id="compressionCanvas" style="display:none;"></canvas>
-        </div>
-        <br>
+        <img id="imagePreview" src="">
+        <canvas id="compressionCanvas" style="display:none;"></canvas>
 
-        <input type="text" id="newName" placeholder="Nome Pizza (es. Margherita)">
+        <input type="text" id="newName" placeholder="Nome Pizza" style="margin-top:15px;">
         <select id="newCategory">
-            <option value="Bianca">Categoria: Bianca</option>
-            <option value="Rossa">Categoria: Rossa</option>
+            <option value="Bianca">Bianca</option>
+            <option value="Rossa">Rossa</option>
         </select>
         <select id="newSeason">
-            <option value="Tutto l'anno">Stagionalità: Tutto l'anno</option>
+            <option value="Tutto l'anno">Tutto l'anno</option>
             <option value="Primavera">Primavera</option>
             <option value="Estate">Estate</option>
             <option value="Autunno">Autunno</option>
             <option value="Inverno">Inverno</option>
         </select>
-        <textarea id="newIngredients" rows="4" placeholder="Ingredienti separati da virgola (es. pomodoro, mozzarella, basilico)"></textarea>
+        <textarea id="newIngredients" rows="3" placeholder="Ingredienti..."></textarea>
         
-        <button class="btn-primary" onclick="savePizza()">Salva Pizza</button>
+        <button class="btn-primary" onclick="savePizza()">Salva</button>
         <button class="btn-secondary" onclick="closeModal()">Annulla</button>
     </div>
 </div>
 
 <script>
-    // DATI CSV ORIGINALI
     const rawCsvData = `id,Nome,Categoria,Ingrediente1,Ingrediente2,Ingrediente3,Ingrediente4,Ingrediente5,Ingrediente6,Ingrediente7,Ingrediente8,Ingrediente9,Ingrediente10
 1,Margherita,Rossa,pomodoro,fior di latte,,parmigiano,,parmigiano,basilico,,olio,sale
 2,Margherita con bufala,Rossa,pomodoro,mozzarella di bufala,,parmigiano,,parmigiano,basilico,,olio,sale
@@ -224,25 +204,27 @@
 
     let pizzas = [];
     let currentFilter = 'Tutte';
-    let tempImageBase64 = null; 
-    let editingPizzaId = null; // ID della pizza che stiamo modificando (null se nuova)
+    let tempImageBase64 = null;
+    let editingId = null;
 
-    // Inizializzazione
     function init() {
-        const stored = localStorage.getItem('pizzaDb_v2'); 
+        // Carica dati
+        const stored = localStorage.getItem('pizzaDb_v3');
         if (stored) {
             pizzas = JSON.parse(stored);
         } else {
             parseCSV(rawCsvData);
         }
         renderPizzas();
-        
+
+        // REGISTRAZIONE SERVICE WORKER (Percorso Relativo per sottocartella 'pizza')
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log('SW Registered in ./pizza/'))
+            .catch(err => console.error('SW Error:', err));
         }
     }
 
-    // Parser CSV
     function parseCSV(csv) {
         const lines = csv.split('\n');
         for (let i = 1; i < lines.length; i++) {
@@ -259,7 +241,6 @@
                     ingredients.push(parts[j].replace(/"/g, '').trim().toLowerCase());
                 }
             }
-
             pizzas.push({
                 id: Date.now() + i,
                 name: name,
@@ -274,43 +255,36 @@
 
     function saveData() {
         try {
-            localStorage.setItem('pizzaDb_v2', JSON.stringify(pizzas));
+            localStorage.setItem('pizzaDb_v3', JSON.stringify(pizzas));
             renderPizzas();
-        } catch (e) {
-            alert("Memoria piena! Impossibile salvare. Prova a cancellare qualche foto.");
-        }
+        } catch(e) { alert('Memoria piena! Cancella qualche foto.'); }
     }
 
-    // --- GESTIONE IMMAGINI ---
-    
+    // Compressione Immagini
     function handleImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = function(e) {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.getElementById('compressionCanvas');
                 const ctx = canvas.getContext('2d');
-                const MAX_WIDTH = 400;
-                const scaleSize = MAX_WIDTH / img.width;
-                canvas.width = MAX_WIDTH;
-                canvas.height = img.height * scaleSize;
+                const MAX_W = 400; 
+                const scale = MAX_W / img.width;
+                canvas.width = MAX_W;
+                canvas.height = img.height * scale;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 tempImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
-
                 document.getElementById('imagePreview').src = tempImageBase64;
-                document.getElementById('imagePreviewContainer').style.display = 'block';
+                document.getElementById('imagePreview').style.display = 'block';
             }
             img.src = e.target.result;
         }
         reader.readAsDataURL(file);
     }
 
-
-    // --- FUNZIONI UI ---
-
+    // UI & Logica
     function setFilter(type, btn) {
         currentFilter = type;
         document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
@@ -321,136 +295,93 @@
     function renderPizzas() {
         const list = document.getElementById('pizzaList');
         const search = document.getElementById('searchInput').value.toLowerCase();
-        const seasonFilter = document.getElementById('seasonFilter').value;
-        
+        const season = document.getElementById('seasonFilter').value;
         list.innerHTML = '';
 
-        const filtered = pizzas.filter(pizza => {
-            if (currentFilter !== 'Tutte' && pizza.category !== currentFilter) return false;
-            if (seasonFilter && pizza.season !== seasonFilter) return false;
-            const matchName = pizza.name.toLowerCase().includes(search);
-            const matchIng = pizza.ingredients.some(ing => ing.includes(search));
-            return matchName || matchIng;
+        const filtered = pizzas.filter(p => {
+            if(currentFilter !== 'Tutte' && p.category !== currentFilter) return false;
+            if(season && p.season !== season) return false;
+            return p.name.toLowerCase().includes(search) || p.ingredients.some(i => i.includes(search));
         });
 
-        filtered.forEach(pizza => {
-            const div = document.createElement('div');
-            div.className = `pizza-card ${pizza.category}`;
-            
-            const imageHtml = pizza.image 
-                ? `<div class="pizza-img-container"><img src="${pizza.image}" alt="${pizza.name}" loading="lazy"></div>`
+        filtered.forEach(p => {
+            const imgHtml = p.image 
+                ? `<div class="pizza-img-container"><img src="${p.image}"></div>` 
                 : `<div class="pizza-img-container"><span class="pizza-placeholder">🍕</span></div>`;
-
-            // Nota: ho aggiunto il div "card-actions" con il pulsante Edit e Delete
+            
+            const div = document.createElement('div');
+            div.className = `pizza-card ${p.category}`;
             div.innerHTML = `
-                <div class="card-actions">
-                    <button class="action-btn edit-btn" onclick="openModal(${pizza.id})">✏️</button>
-                    <button class="action-btn delete-btn" onclick="deletePizza(${pizza.id})">&times;</button>
-                </div>
-                ${imageHtml}
+                ${imgHtml}
                 <div class="card-content">
+                    <div class="card-actions">
+                        <button class="action-btn edit-btn" onclick="openModal(${p.id})">✏️</button>
+                        <button class="action-btn delete-btn" onclick="deletePizza(${p.id})">&times;</button>
+                    </div>
                     <div class="card-header">
-                        <div class="pizza-name">${pizza.name}</div>
-                        <span class="pizza-season">${pizza.season}</span>
+                        <div class="pizza-name">${p.name}</div>
+                        <span class="pizza-season">${p.season}</span>
                     </div>
-                    <div class="pizza-ingredients">
-                        ${pizza.ingredients.join(', ')}
-                    </div>
+                    <div class="pizza-ingredients">${p.ingredients.join(', ')}</div>
                 </div>
             `;
             list.appendChild(div);
         });
     }
 
-    // Apre il modale (Vuoto se new, Popolato se edit)
-    function openModal(pizzaId = null) {
-        editingPizzaId = pizzaId; // Salviamo l'ID se stiamo modificando
-
-        // Reset campi base
-        document.getElementById('newImageInput').value = '';
-        document.getElementById('imagePreviewContainer').style.display = 'none';
+    function openModal(id = null) {
+        editingId = id;
         tempImageBase64 = null;
-
-        if (pizzaId) {
-            // MODALITÀ MODIFICA
-            const pizza = pizzas.find(p => p.id === pizzaId);
-            if (!pizza) return;
-
-            document.getElementById('modalTitle').innerText = "Modifica Pizza";
-            document.getElementById('newName').value = pizza.name;
-            document.getElementById('newCategory').value = pizza.category;
-            document.getElementById('newSeason').value = pizza.season;
-            document.getElementById('newIngredients').value = pizza.ingredients.join(', ');
-            
-            // Se c'è già una foto, mostrala e salvala nella variabile temporanea
-            if (pizza.image) {
-                tempImageBase64 = pizza.image;
-                document.getElementById('imagePreview').src = pizza.image;
-                document.getElementById('imagePreviewContainer').style.display = 'block';
+        document.getElementById('imagePreview').style.display = 'none';
+        
+        if(id) {
+            const p = pizzas.find(x => x.id === id);
+            document.getElementById('modalTitle').innerText = 'Modifica Pizza';
+            document.getElementById('newName').value = p.name;
+            document.getElementById('newCategory').value = p.category;
+            document.getElementById('newSeason').value = p.season;
+            document.getElementById('newIngredients').value = p.ingredients.join(', ');
+            if(p.image) {
+                tempImageBase64 = p.image;
+                document.getElementById('imagePreview').src = p.image;
+                document.getElementById('imagePreview').style.display = 'block';
             }
-
         } else {
-            // MODALITÀ NUOVA PIZZA
-            document.getElementById('modalTitle').innerText = "Nuova Pizza";
+            document.getElementById('modalTitle').innerText = 'Nuova Pizza';
             document.getElementById('newName').value = '';
             document.getElementById('newIngredients').value = '';
-            document.getElementById('newSeason').value = "Tutto l'anno";
         }
-
-        document.getElementById('addModal').style.display = 'flex'; 
+        document.getElementById('addModal').style.display = 'flex';
     }
-    
+
     function closeModal() { document.getElementById('addModal').style.display = 'none'; }
 
     function savePizza() {
         const name = document.getElementById('newName').value;
+        if(!name) return alert('Nome obbligatorio');
+        
         const cat = document.getElementById('newCategory').value;
         const season = document.getElementById('newSeason').value;
-        const ingRaw = document.getElementById('newIngredients').value;
-        
-        if(!name) return alert("Inserisci il nome della pizza!");
+        const ings = document.getElementById('newIngredients').value.split(',').map(s=>s.trim().toLowerCase()).filter(s=>s);
 
-        const ingredients = ingRaw.split(',').map(s => s.trim().toLowerCase()).filter(s => s);
-
-        if (editingPizzaId) {
-            // MODIFICA ESISTENTE
-            const index = pizzas.findIndex(p => p.id === editingPizzaId);
-            if (index !== -1) {
-                pizzas[index].name = name;
-                pizzas[index].category = cat;
-                pizzas[index].season = season;
-                pizzas[index].ingredients = ingredients;
-                // Aggiorna foto solo se è stata caricata o se esisteva già (la variabile tempImageBase64 gestisce entrambi i casi)
-                pizzas[index].image = tempImageBase64; 
-            }
+        if(editingId) {
+            const idx = pizzas.findIndex(p => p.id === editingId);
+            pizzas[idx] = { ...pizzas[idx], name, category: cat, season, ingredients: ings, image: tempImageBase64 || pizzas[idx].image };
         } else {
-            // AGGIUNTA NUOVA
-            pizzas.unshift({ 
-                id: Date.now(),
-                name: name,
-                category: cat,
-                season: season,
-                ingredients: ingredients,
-                image: tempImageBase64 
-            });
+            pizzas.unshift({ id: Date.now(), name, category: cat, season, ingredients: ings, image: tempImageBase64 });
         }
-
         saveData();
         closeModal();
     }
 
     function deletePizza(id) {
-        // Evita che il click sul delete propaghi e magari apra il modale per sbaglio (se il layout cambiasse)
-        if(confirm('Sei sicuro di voler eliminare questa pizza?')) {
+        if(confirm('Eliminare?')) {
             pizzas = pizzas.filter(p => p.id !== id);
             saveData();
         }
     }
 
-    // Avvio
     init();
-
 </script>
-
 </body>
 </html>
