@@ -1,238 +1,202 @@
 {
-    "data_aggiornamento": "11/02/2026 22:10",
+    "data_aggiornamento": "11/02/2026 22:20",
     "offerte_per_supermercato": {
         "Conad": [
             {
-                "name": "Pasta Barilla formati vari",
-                "price": 0.79
+                "name": "Pasta Barilla Spaghetti N.5",
+                "price": 0.89
             },
             {
-                "name": "Passata di pomodoro Mutti",
+                "name": "Passata di Pomodoro Mutti",
                 "price": 0.99
             },
             {
-                "name": "Olio Extra Vergine di Oliva Farchioni",
-                "price": 5.89
-            },
-            {
                 "name": "Caffè Lavazza Qualità Rossa 2x250g",
-                "price": 3.49
+                "price": 4.49
             },
             {
-                "name": "Yogurt Activia Danone gusti assortiti",
-                "price": 1.99
+                "name": "Olio Extra Vergine d'Oliva Monini Classico 1L",
+                "price": 6.79
             },
             {
-                "name": "Latte UHT Parmalat Parzialmente Scremato 1L",
-                "price": 1.09
+                "name": "Biscotti Mulino Bianco Galletti",
+                "price": 1.55
             }
         ],
         "Coop": [
             {
-                "name": "Riso Arborio Scotti 1kg",
-                "price": 2.49
+                "name": "Riso Carnaroli Gallo 1kg",
+                "price": 2.75
             },
             {
-                "name": "Tonno Rio Mare all'olio d'oliva 3x80g",
-                "price": 2.99
+                "name": "Latte Granarolo Parzialmente Scremato 1L",
+                "price": 0.95
             },
             {
-                "name": "Biscotti Mulino Bianco Galletti",
-                "price": 1.79
+                "name": "Tonno Rio Mare all'Olio d'Oliva 3x80g",
+                "price": 3.69
             },
             {
-                "name": "Acqua Minerale Naturale San Benedetto 6x1.5L",
-                "price": 1.69
+                "name": "Detersivo Lavatrice Dash Pods Classico 18pz",
+                "price": 7.99
             },
             {
-                "name": "Mozzarella Galbani Santa Lucia 125g",
-                "price": 1.49
-            },
-            {
-                "name": "Detersivo Lavatrice Dixan Power Caps",
-                "price": 5.99
+                "name": "Birra Peroni Original 66cl",
+                "price": 0.85
             }
         ],
         "Esselunga": [
             {
-                "name": "Pomodorini Cirio in scatola",
-                "price": 1.29
+                "name": "Filetto di Salmone Norvegese Fresco",
+                "price": 15.9
             },
             {
-                "name": "Prosciutto Cotto Alta Qualità Rovagnati 100g",
-                "price": 2.89
+                "name": "Parmigiano Reggiano DOP stagionatura 24 mesi",
+                "price": 14.5
             },
             {
-                "name": "Vino Ferrari Maximum Brut",
-                "price": 9.99
+                "name": "Succhi di Frutta Yoga Vari Gusti 1L",
+                "price": 1.35
             },
             {
-                "name": "Mele Melinda Golden Delicious al kg",
-                "price": 1.89
-            },
-            {
-                "name": "Pesto Genovese Saclà 180g",
-                "price": 2.19
-            },
-            {
-                "name": "Detersivo Dash Pods All-in-1",
+                "name": "Vino Chianti Classico DOCG",
                 "price": 6.49
+            },
+            {
+                "name": "Cereali Kellogg's Special K Classic",
+                "price": 2.79
             }
         ],
         "Lidl": [
             {
-                "name": "Uova Fresche da Allevamento a Terra 6 pz",
-                "price": 1.99
+                "name": "Uova Fresche da Allevamento a Terra 6pz",
+                "price": 1.79
             },
             {
-                "name": "Formaggio Spalmabile Philadelphia Original 175g",
-                "price": 1.69
+                "name": "Acqua Naturale Sant'Anna 2L",
+                "price": 0.28
             },
             {
-                "name": "Wurstel Wudy Aia Classico",
-                "price": 1.29
+                "name": "Yogurt Greco Fage Total 0% 170g",
+                "price": 0.99
             },
             {
-                "name": "Patatine Lay's Classiche 150g",
-                "price": 1.49
+                "name": "Cioccolato Fondente Novi Nocciolato 100g",
+                "price": 1.59
             },
             {
-                "name": "Bevanda Vegetale Alpro Mandorla 1L",
-                "price": 1.99
-            },
-            {
-                "name": "Gelato Coppa Oro Algida",
-                "price": 2.29
+                "name": "Pizza Ristorante Cameo Vari Gusti",
+                "price": 2.19
             }
         ],
         "Eurospin": [
             {
-                "name": "Pasta Tre Mulini formati base 500g",
-                "price": 0.59
+                "name": "Passata di Pomodoro Cirio 700g",
+                "price": 0.75
             },
             {
-                "name": "Sugo Pronto al Pomodoro Ponti 400g",
-                "price": 1.19
+                "name": "Fagioli Borlotti Valfrutta 400g",
+                "price": 0.65
             },
             {
-                "name": "Olio di Semi di Girasole 1L",
-                "price": 1.79
+                "name": "Caffè Borbone Miscela Nobile Macinato 250g",
+                "price": 3.89
             },
             {
-                "name": "Biscotti Misura Fibrextra",
-                "price": 2.19
+                "name": "Biscotti Oro Saiwa",
+                "price": 1.09
             },
             {
-                "name": "Detersivo Piatti Svelto Limone 1L",
-                "price": 1.29
-            },
-            {
-                "name": "Yogurt Naturale MIlbona 500g",
-                "price": 0.89
+                "name": "Arance Rosse di Sicilia IGP 1kg",
+                "price": 1.69
             }
         ],
         "Pewex": [
             {
-                "name": "Polpa fine di pomodoro Valfrutta 400g",
-                "price": 0.85
+                "name": "Olio di Semi di Girasole Friol 1L",
+                "price": 1.99
             },
             {
-                "name": "Biscotti Oro Saiwa",
-                "price": 1.19
+                "name": "Affettato Prosciutto Cotto Beretta 120g",
+                "price": 1.85
             },
             {
-                "name": "Fette Biscottate Gentilini Osvego",
-                "price": 1.89
+                "name": "Mozzarella Galbani Santa Lucia 125g",
+                "price": 1.15
             },
             {
-                "name": "Acqua Tonica Schweppes",
-                "price": 0.99
+                "name": "Coca-Cola Original Taste 1.25L",
+                "price": 1.29
             },
             {
-                "name": "Cereali Kellogg's Special K",
-                "price": 2.99
-            },
-            {
-                "name": "Salmone Affumicato Riunione 100g",
-                "price": 3.49
+                "name": "Patatine San Carlo Classiche 150g",
+                "price": 1.49
             }
         ],
         "MA Supermercati": [
             {
-                "name": "Passata Pomi extra fine 700g",
-                "price": 0.89
+                "name": "Pasta De Cecco Rigatoni N.127",
+                "price": 1.09
             },
             {
-                "name": "Olio di Oliva Sasso 1L",
-                "price": 4.99
+                "name": "Gelato Algida Magnum Classico/Bianco 4pz",
+                "price": 2.89
             },
             {
-                "name": "Zucchero Eridania Semolato 1kg",
-                "price": 1.19
+                "name": "Salsa Pronta Barilla Basilico 400g",
+                "price": 1.69
             },
             {
-                "name": "Succhi di Frutta Yoga gusti vari 1L",
-                "price": 1.49
+                "name": "Detersivo Piatti Svelto Limone 1L",
+                "price": 1.39
             },
             {
-                "name": "Cioccolato Kinder Bueno multipack 3x43g",
-                "price": 2.69
-            },
-            {
-                "name": "Cotolette di Pollo Aia",
-                "price": 3.19
+                "name": "Mele Melinda Golden Delicius 1kg",
+                "price": 1.99
             }
         ],
         "Ipercarni": [
             {
-                "name": "Coscia di Pollo AIA con osso al kg",
-                "price": 4.99
+                "name": "Fesa di Tacchino a Fette Fresca",
+                "price": 9.8
             },
             {
-                "name": "Bistecche di Suino sceltissime al kg",
-                "price": 6.99
+                "name": "Salsiccia Fresca di Suino",
+                "price": 6.9
             },
             {
-                "name": "Salsicce Fresche Miste di Suino al kg",
-                "price": 5.49
+                "name": "Macinato Scelto di Bovino",
+                "price": 8.5
             },
             {
-                "name": "Prosciutto Crudo stagionato Parmacotto 100g",
-                "price": 3.29
+                "name": "Petto di Pollo Intero con osso",
+                "price": 7.2
             },
             {
-                "name": "Grana Padano DOP Ferrari a spicchio 300g circa",
-                "price": 3.99
-            },
-            {
-                "name": "Hamburger di Bovino 200g",
-                "price": 2.49
+                "name": "Costolette di Maiale",
+                "price": 5.9
             }
         ],
         "Todis": [
             {
-                "name": "Pasta De Cecco formati lunghi 500g",
-                "price": 0.95
+                "name": "Passata di Pomodoro Santa Rosa 700g",
+                "price": 0.85
             },
             {
-                "name": "Pancarrè Roberto 400g",
-                "price": 0.79
+                "name": "Fette Biscottate Mulino Bianco Dorate",
+                "price": 1.29
             },
             {
-                "name": "Yogurt Greco Fage Total 0% 170g",
-                "price": 1.99
+                "name": "Salame Milano Negroni Affettato 100g",
+                "price": 2.19
             },
             {
-                "name": "Birra Peroni 33cl",
-                "price": 0.89
+                "name": "Uva da Tavola Bianca 500g",
+                "price": 1.79
             },
             {
-                "name": "Detersivo Lavatrice Chanteclair Sgrassatore",
-                "price": 3.79
-            },
-            {
-                "name": "Patate Selenella al kg",
-                "price": 0.99
+                "name": "Detersivo Pavimenti Chanteclair Sgrassatore",
+                "price": 1.89
             }
         ]
     },
