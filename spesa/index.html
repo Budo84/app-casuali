@@ -26,7 +26,6 @@
         /* CARDS */
         .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
         .day-title { font-weight: 800; color: var(--primary); margin-bottom: 10px; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px;}
-        
         .meal-row { display: flex; align-items: flex-start; margin-bottom: 12px; }
         .meal-icon { font-size: 1.2rem; margin-right: 12px; margin-top: 2px; }
         .meal-info { flex: 1; }
@@ -43,9 +42,7 @@
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
         .checkbox-item { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 8px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
         .checkbox-item input { margin-right: 8px; }
-
         .btn { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #E65100; }
-        .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #E65100; }
         .btn-green { background: var(--accent); box-shadow: 0 4px 0 #689F38; }
 
         /* SPESA */
@@ -54,6 +51,7 @@
         .shop-check input { margin-right: 15px; width: 20px; height: 20px; }
         .price-inp { width: 70px; padding: 8px; border: 1px solid #ddd; border-radius: 8px; text-align: right; font-weight: bold; background: #fafafa; }
         .price-inp.offer { background: #e8f5e9; border-color: var(--offer); color: #2e7d32; }
+        .is-branded { color: var(--offer); font-weight: bold; }
 
         .total-bar { position: fixed; bottom: 70px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
         .store-box { background: #fff3e0; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ffcc80; }
@@ -83,7 +81,9 @@
 
 <div id="p-spesa" class="page">
     <h2>🛒 Lista Spesa</h2>
-    <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">Prezzi basati su: <b id="storeLabelSpesa">...</b></div>
+    <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">
+        Prezzi basati su: <b id="storeLabelSpesa">...</b>
+    </div>
     <div id="shoppingListContainer" style="padding-bottom:80px;"></div>
     <div class="total-bar">
         <div><div style="font-size:0.8rem; opacity:0.8;">Totale Stimato</div></div>
@@ -132,9 +132,9 @@
 
 <script>
     let db = null;
-    let familyMembers = JSON.parse(localStorage.getItem('fam_v8')) || [];
-    let customPrices = JSON.parse(localStorage.getItem('price_v8')) || {};
-    let selectedStore = localStorage.getItem('store_pref_v8') || "";
+    let familyMembers = JSON.parse(localStorage.getItem('fam_v9')) || [];
+    let customPrices = JSON.parse(localStorage.getItem('price_v9')) || {};
+    let selectedStore = localStorage.getItem('store_pref_v9') || "";
 
     async function init() {
         renderMembersList();
@@ -160,7 +160,7 @@
 
             renderOffers();
 
-            const savedMenu = JSON.parse(localStorage.getItem('family_menu_v8'));
+            const savedMenu = JSON.parse(localStorage.getItem('family_menu_v9'));
             if(!savedMenu || savedMenu.length === 0) generateMenu();
             else renderMenuUI();
 
@@ -169,7 +169,7 @@
             document.getElementById('weeklyPlan').innerHTML = `
                 <div style="text-align:center; padding:50px 20px;">
                     <h3>⚠️ Dati non trovati</h3>
-                    <p>Fai girare l'Action su GitHub per creare il menu con le merende.</p>
+                    <p>Fai girare l'Action su GitHub per creare il menu.</p>
                 </div>`;
         }
     }
@@ -187,7 +187,7 @@
         const intolerances = [];
         document.querySelectorAll('.intol:checked').forEach(i => intolerances.push(i.value));
         familyMembers.push({ id: Date.now(), name, intolerances });
-        localStorage.setItem('fam_v8', JSON.stringify(familyMembers));
+        localStorage.setItem('fam_v9', JSON.stringify(familyMembers));
         renderMembersList();
         generateMenu();
         document.getElementById('newMemberName').value = '';
@@ -196,7 +196,7 @@
 
     function removeMember(id) {
         familyMembers = familyMembers.filter(m => m.id !== id);
-        localStorage.setItem('fam_v8', JSON.stringify(familyMembers));
+        localStorage.setItem('fam_v9', JSON.stringify(familyMembers));
         renderMembersList();
         generateMenu();
     }
@@ -244,7 +244,7 @@
             }
         }));
 
-        localStorage.setItem('family_menu_v8', JSON.stringify(newMenu));
+        localStorage.setItem('family_menu_v9', JSON.stringify(newMenu));
         renderMenuUI();
     }
 
@@ -255,7 +255,7 @@
     }
 
     function renderMenuUI() {
-        const menu = JSON.parse(localStorage.getItem('family_menu_v8'));
+        const menu = JSON.parse(localStorage.getItem('family_menu_v9'));
         if(!menu) return;
 
         const container = document.getElementById('weeklyPlan');
@@ -303,6 +303,7 @@
             </div>`;
     }
 
+    // --- FUNZIONE CRUCIALE: MAPPA INGREDIENTE GENERICO -> OFFERTA DI MARCA ---
     function renderShop(list) {
         const c = document.getElementById('shoppingListContainer');
         c.innerHTML = "";
@@ -312,12 +313,28 @@
         const storeOffers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
 
         Object.keys(list).sort().forEach(item => {
-            const offer = storeOffers.find(o => item.toLowerCase().includes(o.name.toLowerCase()) || o.name.toLowerCase().includes(item.toLowerCase()));
+            // Cerchiamo se il supermercato ha un prodotto che contiene il nome generico
+            // Es. Ingrediente "Pasta" -> Match con Offerta "Pasta Barilla"
+            const offer = storeOffers.find(o => 
+                o.name.toLowerCase().includes(item.toLowerCase()) || 
+                item.toLowerCase().includes(o.name.toLowerCase())
+            );
+            
+            // DECIDIAMO COSA MOSTRARE:
+            // Se c'è l'offerta, usiamo il nome figo dell'offerta (es. "Pasta Barilla")
+            // Altrimenti usiamo il nome generico dell'ingrediente (es. "Pasta")
+            let displayName = offer ? offer.name : item;
+            let displayClass = offer ? "is-branded" : "";
+            
             let price = 0;
             let isOffer = false;
 
-            if(customPrices[item]) price = parseFloat(customPrices[item]);
-            else if (offer) { price = parseFloat(offer.price); isOffer = true; }
+            if(customPrices[item]) {
+                price = parseFloat(customPrices[item]);
+            } else if (offer) {
+                price = parseFloat(offer.price);
+                isOffer = true;
+            }
 
             total += price;
 
@@ -326,8 +343,8 @@
                     <div class="shop-check">
                         <input type="checkbox">
                         <div>
-                            <div style="font-weight:600;">${item}</div>
-                            <small style="color:#888;">x${list[item]}</small>
+                            <div class="${displayClass}" style="font-weight:600;">${displayName}</div>
+                            <small style="color:#888;">Ingrediente base: ${item} (x${list[item]})</small>
                         </div>
                     </div>
                     <div>
@@ -342,7 +359,7 @@
 
     function updPrice(item, val) {
         customPrices[item] = parseFloat(val) || 0;
-        localStorage.setItem('price_v8', JSON.stringify(customPrices));
+        localStorage.setItem('price_v9', JSON.stringify(customPrices));
         let t = 0; document.querySelectorAll('.price-inp').forEach(i=>t+=parseFloat(i.value)||0);
         document.getElementById('totalPrice').innerText = "€ "+t.toFixed(2);
     }
@@ -364,9 +381,9 @@
 
     function changeStore() {
         selectedStore = document.getElementById('storeSelect').value;
-        localStorage.setItem('store_pref_v8', selectedStore);
+        localStorage.setItem('store_pref_v9', selectedStore);
         renderOffers();
-        renderShop({});
+        renderShop({}); // Forza il ricalcolo della lista con i nuovi nomi di marca
         renderMenuUI(); 
     }
 
