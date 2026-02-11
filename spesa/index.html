@@ -14,7 +14,6 @@
         h1 { margin: 0; font-size: 1.3rem; display:flex; align-items:center; gap:10px;}
         .status-badge { font-size: 0.7rem; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 12px; }
 
-        /* NAVIGAZIONE */
         .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #999; text-decoration: none; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
         .nav-item.active { color: var(--primary); font-weight: bold; transform: scale(1.1); }
@@ -24,7 +23,7 @@
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* CARDS MENU */
+        /* CARDS */
         .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
         .day-title { font-weight: 800; color: var(--primary); margin-bottom: 10px; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px;}
         
@@ -35,7 +34,7 @@
         .meal-desc { font-size: 0.8rem; color: #888; line-height: 1.2; }
         .tag-warn { font-size: 0.65rem; background: #ffebee; color: var(--danger); padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-top: 3px; display: inline-block; }
 
-        /* FAMIGLIA */
+        /* FAMILY */
         .member-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
         .tag { padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; color: white; font-weight: bold; margin-right: 4px; background: #e57373; }
 
@@ -56,13 +55,8 @@
         .price-inp { width: 70px; padding: 8px; border: 1px solid #ddd; border-radius: 8px; text-align: right; font-weight: bold; background: #fafafa; }
         .price-inp.offer { background: #e8f5e9; border-color: var(--offer); color: #2e7d32; }
 
-        /* TOTAL BAR */
         .total-bar { position: fixed; bottom: 70px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
-
-        /* STORE SELECTOR */
         .store-box { background: #fff3e0; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ffcc80; }
-        
-        /* OFFERTE */
         .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
         .offer-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e0e0e0; position: relative; }
         .offer-badge { position: absolute; top: -8px; right: -8px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
@@ -91,7 +85,6 @@
     <h2>🛒 Lista Spesa</h2>
     <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">Prezzi basati su: <b id="storeLabelSpesa">...</b></div>
     <div id="shoppingListContainer" style="padding-bottom:80px;"></div>
-    
     <div class="total-bar">
         <div><div style="font-size:0.8rem; opacity:0.8;">Totale Stimato</div></div>
         <div class="total-val" id="totalPrice">€ 0.00</div>
@@ -100,17 +93,14 @@
 
 <div id="p-offerte" class="page">
     <h2>⚡ Generatore & Offerte</h2>
-    
     <div class="store-box">
         <label style="font-size:0.8rem; font-weight:bold;">Seleziona Supermercato:</label>
         <select id="storeSelect" onchange="changeStore()" style="margin-top:5px; margin-bottom:0;">
             <option value="">Caricamento store...</option>
         </select>
     </div>
-    
-    <button class="btn btn-green" onclick="generateMenu()">🔄 Rigenera Menu Settimanale</button>
-    <p style="font-size:0.8rem; color:#666; text-align:center; margin-top:15px; margin-bottom:20px;">Il menu userà le offerte dello store scelto.</p>
-
+    <button class="btn btn-green" onclick="generateMenu()">🔄 Rigenera Menu Completo</button>
+    <p style="font-size:0.8rem; color:#666; text-align:center; margin-top:15px; margin-bottom:20px;">Include Colazione, Pranzo, Merenda e Cena.</p>
     <h3>Offerte Attuali</h3>
     <div class="offer-grid" id="offerContainer"></div>
 </div>
@@ -118,7 +108,6 @@
 <div id="p-famiglia" class="page">
     <h2>👨‍👩‍👧‍👦 I tuoi commensali</h2>
     <div id="membersList"></div>
-    
     <div style="background: white; padding:15px; border-radius:15px; margin-top:20px; border: 1px solid #ddd;">
         <h3>Aggiungi Membro</h3>
         <input type="text" id="newMemberName" placeholder="Nome (es. Papà)">
@@ -142,28 +131,22 @@
 </nav>
 
 <script>
-    // --- STATO ---
     let db = null;
-    let familyMembers = JSON.parse(localStorage.getItem('fam_v7')) || [];
-    let customPrices = JSON.parse(localStorage.getItem('price_v7')) || {};
-    let selectedStore = localStorage.getItem('store_pref_v7') || "";
+    let familyMembers = JSON.parse(localStorage.getItem('fam_v8')) || [];
+    let customPrices = JSON.parse(localStorage.getItem('price_v8')) || {};
+    let selectedStore = localStorage.getItem('store_pref_v8') || "";
 
-    // --- AVVIO ---
     async function init() {
         renderMembersList();
         try {
-            // Scarica il file generato dal robot (Python)
-            // Aggiungiamo il timestamp per evitare la cache vecchia
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
             if(!res.ok) throw new Error("File Mancante");
             db = await res.json();
             
             document.getElementById('updateInfo').innerText = "Dati: " + (db.data_aggiornamento || "N/D");
             
-            // Popola Select Supermercati
             const storeSelect = document.getElementById('storeSelect');
             storeSelect.innerHTML = "";
-            
             const stores = Object.keys(db.offerte_per_supermercato || {"Generico":[]});
             
             stores.forEach(s => {
@@ -173,32 +156,24 @@
             });
 
             if(selectedStore && stores.includes(selectedStore)) storeSelect.value = selectedStore;
-            else {
-                selectedStore = stores[0];
-                storeSelect.value = selectedStore;
-            }
+            else { selectedStore = stores[0]; storeSelect.value = selectedStore; }
 
             renderOffers();
 
-            // LOGICA CRITICA: Se il menu salvato è vuoto O non esiste, generalo ora
-            const savedMenu = JSON.parse(localStorage.getItem('family_menu_v7'));
-            if(!savedMenu || savedMenu.length === 0) {
-                generateMenu();
-            } else {
-                renderMenuUI();
-            }
+            const savedMenu = JSON.parse(localStorage.getItem('family_menu_v8'));
+            if(!savedMenu || savedMenu.length === 0) generateMenu();
+            else renderMenuUI();
 
         } catch(e) {
             console.error(e);
             document.getElementById('weeklyPlan').innerHTML = `
                 <div style="text-align:center; padding:50px 20px;">
                     <h3>⚠️ Dati non trovati</h3>
-                    <p>Il file dati_settimanali.json non è stato ancora creato dall'Action GitHub.</p>
+                    <p>Fai girare l'Action su GitHub per creare il menu con le merende.</p>
                 </div>`;
         }
     }
 
-    // --- NAVIGAZIONE ---
     function nav(pageId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
@@ -206,26 +181,22 @@
         btn.classList.add('active');
     }
 
-    // --- FAMIGLIA ---
     function addMember() {
         const name = document.getElementById('newMemberName').value;
         if(!name) return;
         const intolerances = [];
         document.querySelectorAll('.intol:checked').forEach(i => intolerances.push(i.value));
-        
         familyMembers.push({ id: Date.now(), name, intolerances });
-        localStorage.setItem('fam_v7', JSON.stringify(familyMembers));
-        
+        localStorage.setItem('fam_v8', JSON.stringify(familyMembers));
         renderMembersList();
-        generateMenu(); 
-        
+        generateMenu();
         document.getElementById('newMemberName').value = '';
         document.querySelectorAll('.intol').forEach(i => i.checked = false);
     }
 
     function removeMember(id) {
         familyMembers = familyMembers.filter(m => m.id !== id);
-        localStorage.setItem('fam_v7', JSON.stringify(familyMembers));
+        localStorage.setItem('fam_v8', JSON.stringify(familyMembers));
         renderMembersList();
         generateMenu();
     }
@@ -236,23 +207,18 @@
         familyMembers.forEach(m => {
             container.innerHTML += `
                 <div class="member-card">
-                    <div>
-                        <strong>${m.name}</strong>
-                        <div style="margin-top:5px;">${m.intolerances.map(i => `<span class="tag">${i}</span>`).join('')}</div>
-                    </div>
+                    <div><strong>${m.name}</strong><div style="margin-top:5px;">${m.intolerances.map(i => `<span class="tag">${i}</span>`).join('')}</div></div>
                     <span class="material-icons" style="color:red; cursor:pointer;" onclick="removeMember(${m.id})">delete</span>
                 </div>`;
         });
     }
 
-    // --- CORE MENU ---
     function generateMenu() {
         if(!db || !db.ricette || db.ricette.length === 0) {
-            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center'>Nessuna ricetta scaricata nel database!</div>";
+            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center'>Nessuna ricetta scaricata!</div>";
             return;
         }
         
-        // 1. Filtra ricette sicure
         const safeRecipes = db.ricette.filter(r => {
             for(let m of familyMembers) {
                 for(let i of m.intolerances) {
@@ -263,37 +229,33 @@
         });
 
         if(safeRecipes.length === 0) {
-            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center; color:red;'>Nessuna ricetta sicura con queste intolleranze!</div>";
+            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center; color:red;'>Nessuna ricetta sicura!</div>";
             return;
         }
 
-        // 2. Crea menu casuale (Gestisce ricette senza 'type')
         const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
         const newMenu = days.map(day => ({
             day,
             pasti: {
                 colazione: pickMeal(safeRecipes, 'colazione'),
                 pranzo: pickMeal(safeRecipes, 'pranzo'),
+                merenda: pickMeal(safeRecipes, 'merenda'),
                 cena: pickMeal(safeRecipes, 'cena')
             }
         }));
 
-        localStorage.setItem('family_menu_v7', JSON.stringify(newMenu));
+        localStorage.setItem('family_menu_v8', JSON.stringify(newMenu));
         renderMenuUI();
     }
 
     function pickMeal(pool, type) {
-        // Cerca tipo con Case Insensitive o fallback
         let candidates = pool.filter(r => r.type && r.type.toLowerCase() === type);
-        // Se non trovo (o se il JSON non ha 'type'), prendo dal mucchio generale
         if(!candidates.length) candidates = pool; 
-        
         return candidates[Math.floor(Math.random() * candidates.length)];
     }
 
-    // --- RENDER UI ---
     function renderMenuUI() {
-        const menu = JSON.parse(localStorage.getItem('family_menu_v7'));
+        const menu = JSON.parse(localStorage.getItem('family_menu_v8'));
         if(!menu) return;
 
         const container = document.getElementById('weeklyPlan');
@@ -306,14 +268,13 @@
                     <div class="day-title">${d.day}</div>
                     ${mealRow('☕', d.pasti.colazione)}
                     ${mealRow('☀️', d.pasti.pranzo)}
+                    ${mealRow('🍎', d.pasti.merenda)}
                     ${mealRow('🌙', d.pasti.cena)}
                 </div>`;
             
-            // Popola lista spesa gestendo OGGETTI ingredienti
-            [d.pasti.colazione, d.pasti.pranzo, d.pasti.cena].forEach(m => {
+            [d.pasti.colazione, d.pasti.pranzo, d.pasti.merenda, d.pasti.cena].forEach(m => {
                 if(m && m.ingredients) {
                     m.ingredients.forEach(ing => {
-                        // Supporta sia stringa "Pasta" che oggetto {item: "Pasta", quantity: "100g"}
                         let name = (typeof ing === 'string') ? ing : ing.item;
                         shop[name] = (shop[name]||0)+1;
                     });
@@ -326,14 +287,9 @@
 
     function mealRow(icon, m) {
         if(!m) return "";
-        // Supporta 'name' o 'title'
         let title = m.name || m.title || "Ricetta sconosciuta";
-        // Gestione ingredienti complessi per la descrizione
         let desc = "";
-        if(m.ingredients) {
-            desc = m.ingredients.map(i => (typeof i === 'string') ? i : i.item).join(', ');
-        }
-        
+        if(m.ingredients) desc = m.ingredients.map(i => (typeof i === 'string') ? i : i.item).join(', ');
         let tags = (m.contains && m.contains.length) ? `<div class="tag-warn">⚠️ ${m.contains.join(', ')}</div>` : "";
         
         return `
@@ -347,7 +303,6 @@
             </div>`;
     }
 
-    // --- SPESA E PREZZI ---
     function renderShop(list) {
         const c = document.getElementById('shoppingListContainer');
         c.innerHTML = "";
@@ -357,18 +312,12 @@
         const storeOffers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
 
         Object.keys(list).sort().forEach(item => {
-            // Logica Prezzo: Cerca match parziale
             const offer = storeOffers.find(o => item.toLowerCase().includes(o.name.toLowerCase()) || o.name.toLowerCase().includes(item.toLowerCase()));
-            
             let price = 0;
             let isOffer = false;
 
-            if(customPrices[item]) {
-                price = parseFloat(customPrices[item]);
-            } else if (offer) {
-                price = parseFloat(offer.price);
-                isOffer = true;
-            }
+            if(customPrices[item]) price = parseFloat(customPrices[item]);
+            else if (offer) { price = parseFloat(offer.price); isOffer = true; }
 
             total += price;
 
@@ -393,7 +342,7 @@
 
     function updPrice(item, val) {
         customPrices[item] = parseFloat(val) || 0;
-        localStorage.setItem('price_v7', JSON.stringify(customPrices));
+        localStorage.setItem('price_v8', JSON.stringify(customPrices));
         let t = 0; document.querySelectorAll('.price-inp').forEach(i=>t+=parseFloat(i.value)||0);
         document.getElementById('totalPrice').innerText = "€ "+t.toFixed(2);
     }
@@ -402,9 +351,7 @@
         const c = document.getElementById('offerContainer');
         c.innerHTML = '';
         const offers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
-        
         if(!offers.length) c.innerHTML = "<p>Nessuna offerta disponibile.</p>";
-
         offers.forEach(o => {
             c.innerHTML += `
                 <div class="offer-card">
@@ -417,9 +364,9 @@
 
     function changeStore() {
         selectedStore = document.getElementById('storeSelect').value;
-        localStorage.setItem('store_pref_v7', selectedStore);
+        localStorage.setItem('store_pref_v8', selectedStore);
         renderOffers();
-        renderShop({}); 
+        renderShop({});
         renderMenuUI(); 
     }
 
