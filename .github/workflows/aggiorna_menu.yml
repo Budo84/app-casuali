@@ -18,27 +18,23 @@ jobs:
       - name: Imposta Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10' 
 
       - name: Installa librerie
-        run: pip install google-generativeai
+        run: pip install -U google-generativeai
 
       - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      # DEBUG: Ci mostra quali file esistono dopo lo script
       - name: Mostra file generati (Debug)
-        run: |
-          echo "VEDIAMO COSA C'È NELLA CARTELLA SPESA:"
-          ls -l spesa/
+        run: ls -l spesa/
 
       - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Menu'
           git config --global user.email 'robot@menu.app'
-          # AGGIUNGE TUTTO (molto più sicuro)
           git add .
           git commit -m "Auto-Update Menu" || echo "Nessuna modifica rilevata"
           git push
