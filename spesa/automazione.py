@@ -27,6 +27,9 @@ def pulisci_json(testo):
     testo = testo.replace("```json", "").replace("```", "").strip()
     start = testo.find('{')
     end = testo.rfind('}') + 1
+    if start == -1: # Fallback per array
+        start = testo.find('[')
+        end = testo.rfind(']') + 1
     if start != -1 and end != -1:
         return testo[start:end]
     return testo
@@ -35,20 +38,23 @@ def genera_tutto():
     cartella = os.path.dirname(os.path.abspath(__file__))
     file_out = os.path.join(cartella, "dati_settimanali.json")
 
-    # 1. OFFERTE
-    print(f"🤖 Uso modello: {model.model_name}")
+    print(f"🤖 Modello: {model.model_name}")
+    
+    # 1. OFFERTE (MARCHE SPECIFICHE)
     supermercati = [
         "Conad", "Coop", "Esselunga", "Lidl", "Eurospin", 
         "Pewex", "MA Supermercati", "Ipercarni", "Todis"
     ]
     
     prompt_offerte = f"""
-    Genera un database JSON di offerte alimentari realistiche per: {', '.join(supermercati)}.
-    Per ogni supermercato includi 6 prodotti (pasta, carne, verdura, frutta, snack).
+    Genera un database JSON di offerte per: {', '.join(supermercati)}.
+    
+    IMPORTANTE: Usa NOMI REALI E MARCHE (es. "Pasta Barilla", "Nutella", "Tonno Rio Mare", "Latte Granarolo", "Biscotti Mulino Bianco").
+    Per ogni supermercato inserisci 6 prodotti vari con prezzi realistici.
     
     RISPONDI SOLO JSON:
     {{
-      "Conad": [{{"name": "Pasta", "price": 0.85}}, {{"name": "Mele", "price": 1.50}}],
+      "Conad": [{{"name": "Pasta Barilla", "price": 0.79}}, {{"name": "Passata Mutti", "price": 0.99}}],
       ...
     }}
     """
@@ -56,44 +62,41 @@ def genera_tutto():
     try:
         resp = model.generate_content(prompt_offerte)
         offerte_db = json.loads(pulisci_json(resp.text))
-        print("✅ Offerte generate.")
+        print("✅ Offerte (con marche) generate.")
     except Exception as e:
         print(f"⚠️ Errore Offerte: {e}")
-        offerte_db = {s: [{"name": "Pasta", "price": 0.90}] for s in supermercati}
+        offerte_db = {s: [{"name": "Pasta Barilla", "price": 0.90}] for s in supermercati}
 
-    # 2. RICETTE (Include MERENDA)
-    ingredienti_base = []
+    # 2. RICETTE (INGREDIENTI GENERICI)
+    # Estraiamo i nomi per dare un contesto, ma chiediamo ricette generiche
+    ingredienti_raw = []
     for s in offerte_db:
         for p in offerte_db[s]:
-            ingredienti_base.append(p['name'])
+            ingredienti_raw.append(p['name'])
             
     prompt_ricette = f"""
-    Crea 28 ricette italiane per una famiglia (colazione, pranzo, merenda, cena) usando: {', '.join(list(set(ingredienti_base))[:25])}.
+    Crea 28 ricette italiane (colazione, pranzo, merenda, cena) ispirate a questi prodotti in offerta: {', '.join(list(set(ingredienti_raw))[:30])}.
     
-    REGOLE JSON:
-    1. Usa "title" per il nome.
-    2. "type" deve essere SOLO: "colazione", "pranzo", "merenda", "cena".
-    3. "ingredients": lista di oggetti {{"item": "Nome", "quantity": "..."}}.
-    4. "contains": lista allergeni ("glutine", "lattosio", "uova", "pesce", "frutta_guscio").
+    REGOLA FONDAMENTALE: 
+    Nei campi "title" e "ingredients", usa SOLO TERMINI GENERICI. 
+    Esempio: Se l'offerta è "Pasta Barilla", tu scrivi solo "Pasta". Se è "Nutella", scrivi "Crema di nocciole".
     
-    FORMATO:
+    FORMATO JSON:
     [
       {{
-        "title": "Yogurt e Frutta",
-        "type": "merenda",
-        "ingredients": [ {{"item": "Yogurt", "quantity": "1 vasetto"}} ],
-        "contains": ["lattosio"],
-        "description": "Snack sano..."
+        "title": "Pasta al Pomodoro",
+        "type": "pranzo",
+        "ingredients": [ {{"item": "Pasta", "quantity": "100g"}}, {{"item": "Passata di pomodoro", "quantity": "100g"}} ],
+        "contains": ["glutine"],
+        "description": "..."
       }}
     ]
     """
     
     try:
         resp_ric = model.generate_content(prompt_ricette)
-        testo_ric = resp_ric.text.replace("```json", "").replace("```", "").strip()
-        start, end = testo_ric.find('['), testo_ric.rfind(']') + 1
-        ricette = json.loads(testo_ric[start:end])
-        print(f"✅ {len(ricette)} ricette generate.")
+        ricette = json.loads(pulisci_json(resp.text))
+        print(f"✅ {len(ricette)} ricette generiche generate.")
     except Exception as e:
         print(f"❌ Errore Ricette: {e}")
         ricette = []
