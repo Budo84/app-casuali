@@ -3,27 +3,406 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APP-CASUALI</title>
+    <title>Family Menu Planner</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="theme-color" content="#FF9800">
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #333; color: white; margin: 0; }
-        h1 { margin-bottom: 30px; }
-        .btn {
-            background: white; color: #333; text-decoration: none;
-            padding: 20px 40px; margin: 10px; border-radius: 10px;
-            font-size: 1.2rem; font-weight: bold; width: 200px; text-align: center;
-            display: block; box-shadow: 0 4px 0 #ccc; transition: transform 0.1s;
-        }
+        :root { --primary: #FF9800; --accent: #8BC34A; --bg: #f2f2f2; --text: #333; --card: #fff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+        
+        header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { margin: 0; font-size: 1.3rem; display:flex; align-items:center; gap:10px;}
+        
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #999; text-decoration: none; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
+        .nav-item.active { color: var(--primary); font-weight: bold; transform: scale(1.1); }
+        .nav-item .material-icons { font-size: 26px; margin-bottom: 2px; }
+
+        .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Cards */
+        .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
+        .day-title { font-weight: 800; color: var(--primary); margin-bottom: 10px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .meal-row { display: flex; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .meal-icon { font-size: 1.2rem; margin-right: 10px; width: 25px; text-align: center; }
+        .meal-info { flex-grow: 1; }
+        .meal-name { font-weight: 600; font-size: 1rem; color: #444; }
+        .meal-ingredients { font-size: 0.8rem; color: #888; }
+        
+        /* Family Members Styles */
+        .member-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 10px; position: relative; border: 1px solid #e0e0e0; }
+        .delete-member { position: absolute; top: 10px; right: 10px; color: #f44336; cursor: pointer; }
+        .tags-container { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+        .tag { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; color: white; font-weight: bold; }
+        .tag-int { background: #e57373; } /* Red for intolerances */
+        .tag-dis { background: #90a4ae; } /* Grey for dislikes */
+
+        /* Form Controls */
+        input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; }
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #E65100; margin-top: 10px; }
         .btn:active { transform: translateY(4px); box-shadow: none; }
-        .btn-pizza { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-        .btn-spesa { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
+        .btn-green { background: var(--accent); box-shadow: 0 4px 0 #689F38; }
+
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        .checkbox-item { display: flex; align-items: center; background: #eee; padding: 5px 10px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; }
+        .checkbox-item input { margin-right: 5px; }
+        .checkbox-item.checked { background: #ffcc80; }
+
+        .warning-box { background: #ffebee; color: #c62828; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; border: 1px solid #ef9a9a; display:none;}
     </style>
 </head>
 <body>
 
-    <h1>APP-CASUALI</h1>
+<header>
+    <h1><span class="material-icons">diversity_3</span> Family Menu</h1>
+</header>
 
-    <a href="pizza/index.html" class="btn btn-pizza">🍕 Pizze</a>
-    <a href="spesa/index.html" class="btn btn-spesa">🍕 Spesa</a>
+<div id="p-menu" class="page active">
+    <div id="familyWarning" class="warning-box"></div>
+    <div id="weeklyPlan">
+        <div style="text-align:center; padding:50px 20px; color:#888;">
+            <span class="material-icons" style="font-size:60px; color:#ddd;">soup_kitchen</span><br><br>
+            Nessun menu generato.<br>Vai su <b>Famiglia</b> per impostare i membri, poi su <b>Offerte</b> per creare il menu.
+        </div>
+    </div>
+</div>
 
+<div id="p-spesa" class="page">
+    <h2>🛒 Lista Spesa Famiglia</h2>
+    <div id="shoppingListContainer"></div>
+</div>
+
+<div id="p-offerte" class="page">
+    <h2>⚡ Generatore Menu</h2>
+    <p style="font-size:0.9rem; color:#666;">Il menu verrà creato rispettando le intolleranze di <b>tutti</b> i membri della famiglia.</p>
+
+    <div style="background: white; padding:15px; border-radius:10px; margin-bottom:20px;">
+        <label>Link Google Sheet (CSV) per Offerte</label>
+        <input type="text" id="sheetUrl" placeholder="Incolla link CSV qui...">
+        <button class="btn btn-green" onclick="saveSheetUrl()">Salva Link Cloud</button>
+        <div id="offersStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></div>
+    </div>
+
+    <button class="btn" onclick="fetchOffersAndGenerate()">🔄 Scarica Offerte & Crea Menu</button>
+    <button class="btn" style="background:#607d8b; box-shadow:0 4px 0 #455a64;" onclick="generateMenu([])">🎲 Crea Menu Senza Offerte</button>
+</div>
+
+<div id="p-famiglia" class="page">
+    <h2>👨‍👩‍👧‍👦 I tuoi commensali</h2>
+    <div id="membersList"></div>
+
+    <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
+    
+    <h3>Aggiungi Membro</h3>
+    <input type="text" id="newMemberName" placeholder="Nome (es. Papà)">
+    
+    <label>Intolleranze (Esclude le ricette):</label>
+    <div class="checkbox-group" id="intoleranceOptions">
+        <label class="checkbox-item"><input type="checkbox" value="glutine"> Glutine</label>
+        <label class="checkbox-item"><input type="checkbox" value="lattosio"> Lattosio</label>
+        <label class="checkbox-item"><input type="checkbox" value="uova"> Uova</label>
+        <label class="checkbox-item"><input type="checkbox" value="pesce"> Pesce</label>
+        <label class="checkbox-item"><input type="checkbox" value="noci"> Frutta Guscio</label>
+        <label class="checkbox-item"><input type="checkbox" value="funghi"> Funghi</label>
+    </div>
+
+    <label>Non gli piace (Evita se possibile):</label>
+    <input type="text" id="newMemberDislikes" placeholder="Es. broccoli, cipolla (separati da virgola)">
+
+    <button class="btn btn-green" onclick="addMember()">➕ Aggiungi alla Tavola</button>
+</div>
+
+<nav class="nav-bar">
+    <a class="nav-item active" onclick="nav('p-menu', this)">
+        <span class="material-icons">restaurant_menu</span>Menu
+    </a>
+    <a class="nav-item" onclick="nav('p-spesa', this)">
+        <span class="material-icons">shopping_cart</span>Spesa
+    </a>
+    <a class="nav-item" onclick="nav('p-offerte', this)">
+        <span class="material-icons">local_offer</span>Offerte
+    </a>
+    <a class="nav-item" onclick="nav('p-famiglia', this)">
+        <span class="material-icons">group</span>Famiglia
+    </a>
+</nav>
+
+<script>
+    // --- DATABASE RICETTE (Espanso con tag e ingredienti) ---
+    // IMPORTANTE: I tag 'allergeni' indicano cosa CONTIENE la ricetta.
+    const recipesDB = [
+        { name: 'Pasta al Pomodoro', type: 'pranzo', contains: ['glutine'], ingredients: ['pasta', 'pomodoro', 'basilico'] },
+        { name: 'Riso e Pollo', type: 'pranzo', contains: [], ingredients: ['riso', 'pollo', 'olio'] },
+        { name: 'Frittata di Zucchine', type: 'cena', contains: ['uova'], ingredients: ['uova', 'zucchine', 'parmigiano'] },
+        { name: 'Salmone e Patate', type: 'cena', contains: ['pesce'], ingredients: ['salmone', 'patate', 'rosmarino'] },
+        { name: 'Vellutata di Zucca', type: 'cena', contains: [], ingredients: ['zucca', 'patate', 'cipolla'] },
+        { name: 'Carbonara', type: 'pranzo', contains: ['glutine', 'uova', 'lattosio'], ingredients: ['pasta', 'uova', 'pecorino', 'guanciale'] },
+        { name: 'Bistecca e Insalata', type: 'cena', contains: [], ingredients: ['manzo', 'insalata', 'olio'] },
+        { name: 'Pasta al Pesto', type: 'pranzo', contains: ['glutine', 'lattosio', 'noci'], ingredients: ['pasta', 'basilico', 'pinoli', 'parmigiano'] },
+        { name: 'Risotto ai Funghi', type: 'pranzo', contains: ['funghi', 'lattosio'], ingredients: ['riso', 'funghi porcini', 'burro'] },
+        { name: 'Hummus e Crudité', type: 'cena', contains: [], ingredients: ['ceci', 'carote', 'sedano', 'tahina'] },
+        { name: 'Yogurt e Muesli', type: 'colazione', contains: ['lattosio', 'glutine'], ingredients: ['yogurt', 'muesli'] },
+        { name: 'Fette e Marmellata', type: 'colazione', contains: ['glutine'], ingredients: ['fette biscottate', 'marmellata'] },
+        { name: 'Latte e Cereali', type: 'colazione', contains: ['lattosio', 'glutine'], ingredients: ['latte', 'cereali'] },
+        { name: 'Frutta Fresca e Tè', type: 'colazione', contains: [], ingredients: ['mela', 'tè'] }
+    ];
+
+    let familyMembers = [];
+    let currentMenu = [];
+    
+    // --- INIZIALIZZAZIONE ---
+    function init() {
+        // UI Checkbox logic
+        document.querySelectorAll('.checkbox-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') {
+                    let box = this.querySelector('input');
+                    box.checked = !box.checked;
+                }
+                this.classList.toggle('checked', this.querySelector('input').checked);
+            });
+        });
+
+        // Load Data
+        const savedMembers = localStorage.getItem('family_members');
+        if(savedMembers) familyMembers = JSON.parse(savedMembers);
+        
+        const savedMenu = localStorage.getItem('family_menu');
+        if(savedMenu) {
+            currentMenu = JSON.parse(savedMenu);
+            renderMenuUI();
+            renderShoppingList();
+        }
+
+        const savedUrl = localStorage.getItem('sheet_url');
+        if(savedUrl) document.getElementById('sheetUrl').value = savedUrl;
+
+        renderMembersList();
+    }
+
+    // --- NAVIGAZIONE ---
+    function nav(pageId, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // --- GESTIONE FAMIGLIA ---
+    function addMember() {
+        const name = document.getElementById('newMemberName').value;
+        if(!name) return alert("Inserisci un nome!");
+
+        const intolerances = [];
+        document.querySelectorAll('#intoleranceOptions input:checked').forEach(box => {
+            intolerances.push(box.value);
+        });
+
+        const dislikesRaw = document.getElementById('newMemberDislikes').value;
+        const dislikes = dislikesRaw.split(',').map(s => s.trim().toLowerCase()).filter(s => s);
+
+        familyMembers.push({ id: Date.now(), name, intolerances, dislikes });
+        localStorage.setItem('family_members', JSON.stringify(familyMembers));
+        
+        renderMembersList();
+        
+        // Reset Form
+        document.getElementById('newMemberName').value = '';
+        document.getElementById('newMemberDislikes').value = '';
+        document.querySelectorAll('#intoleranceOptions input').forEach(box => {
+            box.checked = false;
+            box.parentElement.classList.remove('checked');
+        });
+        alert(`${name} aggiunto! Il prossimo menu terrà conto delle sue esigenze.`);
+    }
+
+    function removeMember(id) {
+        if(confirm("Rimuovere questo membro?")) {
+            familyMembers = familyMembers.filter(m => m.id !== id);
+            localStorage.setItem('family_members', JSON.stringify(familyMembers));
+            renderMembersList();
+        }
+    }
+
+    function renderMembersList() {
+        const container = document.getElementById('membersList');
+        container.innerHTML = '';
+        if(familyMembers.length === 0) container.innerHTML = '<p>Nessun membro inserito.</p>';
+
+        familyMembers.forEach(m => {
+            let tagsHtml = '';
+            m.intolerances.forEach(i => tagsHtml += `<span class="tag tag-int">🚫 ${i}</span>`);
+            m.dislikes.forEach(d => tagsHtml += `<span class="tag tag-dis">👎 ${d}</span>`);
+
+            container.innerHTML += `
+                <div class="member-card">
+                    <span class="delete-member" onclick="removeMember(${m.id})"><span class="material-icons">delete</span></span>
+                    <strong>${m.name}</strong>
+                    <div class="tags-container">${tagsHtml}</div>
+                </div>
+            `;
+        });
+    }
+
+    // --- LOGICA DI SICUREZZA ALIMENTARE (IL CUORE DELL'APP) ---
+    function isRecipeSafe(recipe) {
+        // Controllo Intolleranze (Bloccante)
+        for (let member of familyMembers) {
+            for (let intolerance of member.intolerances) {
+                if (recipe.contains.includes(intolerance)) {
+                    return false; // Ricetta VIETATA
+                }
+            }
+        }
+        return true; // Ricetta sicura per tutti
+    }
+
+    function getRecipeScore(recipe, offers) {
+        let score = 0;
+        
+        // Punti per offerte
+        const hasOffer = recipe.ingredients.some(ing => offers.some(off => ing.includes(off)));
+        if (hasOffer) score += 10;
+
+        // Penalità per "Non mi piace" (Non bloccante, ma riduce probabilità)
+        for (let member of familyMembers) {
+            for (let dislike of member.dislikes) {
+                if (recipe.ingredients.some(ing => ing.includes(dislike))) {
+                    score -= 5;
+                }
+            }
+        }
+        return score;
+    }
+
+    // --- INTEGRAZIONE GOOGLE SHEETS & GENERAZIONE ---
+    function saveSheetUrl() {
+        const url = document.getElementById('sheetUrl').value;
+        localStorage.setItem('sheet_url', url);
+        alert('Link salvato!');
+    }
+
+    async function fetchOffersAndGenerate() {
+        const url = localStorage.getItem('sheet_url');
+        let offers = [];
+        
+        if(url) {
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                const rows = text.split('\n').slice(1);
+                offers = rows.map(r => r.split(',')[0] ? r.split(',')[0].trim().toLowerCase() : null).filter(i=>i);
+                document.getElementById('offersStatus').innerText = `Trovate ${offers.length} offerte: ${offers.slice(0,3).join(', ')}...`;
+            } catch(e) {
+                console.error(e);
+                alert("Impossibile scaricare le offerte. Genero menu base.");
+            }
+        }
+        generateMenu(offers);
+    }
+
+    function generateMenu(offers) {
+        if(familyMembers.length === 0) return alert("Inserisci prima i membri della famiglia!");
+
+        const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+        const newMenu = [];
+        const safeRecipes = recipesDB.filter(r => isRecipeSafe(r));
+
+        if(safeRecipes.length === 0) {
+            return alert("ATTENZIONE: Con le attuali intolleranze, non ci sono ricette sicure nel database! Aggiungi ricette compatibili.");
+        }
+
+        days.forEach(day => {
+            const getBestMeal = (type) => {
+                let candidates = safeRecipes.filter(r => r.type === type);
+                if(candidates.length === 0) candidates = safeRecipes.filter(r => r.type === type); // Fallback se filtro troppo stretto
+                
+                // Ordina per punteggio (Offerte - Dislikes) e aggiungi casualità
+                candidates.sort((a, b) => getRecipeScore(b, offers) - getRecipeScore(a, offers) + (Math.random() - 0.5));
+                
+                return candidates.length > 0 ? candidates[0] : { name: "Pasto Libero (Nessuna ricetta adatta)", ingredients: [] };
+            };
+
+            newMenu.push({
+                day,
+                colazione: getBestMeal('colazione'),
+                pranzo: getBestMeal('pranzo'),
+                cena: getBestMeal('cena')
+            });
+        });
+
+        currentMenu = newMenu;
+        localStorage.setItem('family_menu', JSON.stringify(currentMenu));
+        renderMenuUI();
+        renderShoppingList();
+        
+        // Vai al menu
+        document.querySelector('.nav-item').click();
+    }
+
+    // --- RENDER MENU & SPESA ---
+    function renderMenuUI() {
+        const container = document.getElementById('weeklyPlan');
+        container.innerHTML = '';
+        
+        currentMenu.forEach(d => {
+            container.innerHTML += `
+                <div class="card">
+                    <div class="day-title">${d.day}</div>
+                    <div class="meal-row">
+                        <span class="meal-icon">☕</span>
+                        <div class="meal-info">
+                            <div class="meal-name">${d.colazione.name}</div>
+                        </div>
+                    </div>
+                    <div class="meal-row">
+                        <span class="meal-icon">☀️</span>
+                        <div class="meal-info">
+                            <div class="meal-name">${d.pranzo.name}</div>
+                            <div class="meal-ingredients">${d.pranzo.ingredients.join(', ')}</div>
+                        </div>
+                    </div>
+                    <div class="meal-row">
+                        <span class="meal-icon">🌙</span>
+                        <div class="meal-info">
+                            <div class="meal-name">${d.cena.name}</div>
+                            <div class="meal-ingredients">${d.cena.ingredients.join(', ')}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function renderShoppingList() {
+        const container = document.getElementById('shoppingListContainer');
+        container.innerHTML = '';
+        const list = {};
+        
+        currentMenu.forEach(d => {
+            [d.colazione, d.pranzo, d.cena].forEach(meal => {
+                if(meal.ingredients) {
+                    meal.ingredients.forEach(ing => {
+                        list[ing] = (list[ing] || 0) + 1;
+                    });
+                }
+            });
+        });
+
+        const sortedIngs = Object.keys(list).sort();
+        sortedIngs.forEach(ing => {
+            container.innerHTML += `
+                <div style="padding:12px; border-bottom:1px solid #eee; display:flex; align-items:center;">
+                    <input type="checkbox" style="width:20px; margin:0 10px 0 0;">
+                    <span style="font-size:1rem;">${ing} <small style="color:#888;">(x${list[ing]})</small></span>
+                </div>
+            `;
+        });
+    }
+
+    init();
+</script>
 </body>
 </html>
