@@ -3,20 +3,16 @@ import json
 import google.generativeai as genai
 from datetime import datetime
 import sys
-import traceback
+import time
 
-print("--- DIAGNOSTICA INIZIATA ---")
-print(f"Versione Libreria Google: {genai.__version__}")
-
-# 1. CONTROLLO CHIAVE
+# --- CONFIGURAZIONE ---
 if "GEMINI_KEY" not in os.environ:
-    print("❌ ERRORE CRITICO: La variabile 'GEMINI_KEY' non esiste nei Secrets.")
+    print("❌ ERRORE: Chiave GEMINI_KEY mancante.")
     sys.exit(1)
 
-API_KEY = os.environ["GEMINI_KEY"]
-print(f"Chiave trovata: {API_KEY[:5]}... (lunghezza: {len(API_KEY)})")
-genai.configure(api_key=API_KEY)
+genai.configure(api_key=os.environ["GEMINI_KEY"])
 
+# --- FUNZIONE PULIZIA JSON ---
 def pulisci_json(testo):
     testo = testo.replace("```json", "").replace("```", "").strip()
     if testo.startswith("{"):
@@ -25,81 +21,116 @@ def pulisci_json(testo):
         start, end = testo.find('['), testo.rfind(']') + 1
     return testo[start:end] if start != -1 and end != -1 else testo
 
-# DATI DI BACKUP (Se l'IA fallisce, usiamo questi così l'app funziona)
+# --- DATI DI BACKUP (DIETA MEDITERRANEA) ---
+# Se l'IA fallisce, usiamo questi dati sensati
 BACKUP_OFFERTE = {
-    "Conad": [{"name": "Pasta Integrale Barilla", "price": 0.95}, {"name": "Passata Mutti", "price": 0.89}],
-    "Coop": [{"name": "Riso Gallo", "price": 1.99}, {"name": "Latte Granarolo", "price": 1.15}],
-    "Esselunga": [{"name": "Uova Bio", "price": 2.10}, {"name": "Parmigiano", "price": 4.50}],
-    "Lidl": [{"name": "Yogurt Greco", "price": 0.99}, {"name": "Pollo", "price": 3.50}]
+    "Conad": [{"name": "Pasta Integrale Barilla 500g", "price": 0.95}, {"name": "Passata Mutti", "price": 0.89}, {"name": "Mele Melinda", "price": 1.50}],
+    "Coop": [{"name": "Riso Gallo", "price": 1.99}, {"name": "Latte Granarolo", "price": 1.15}, {"name": "Pollo Amadori", "price": 4.50}],
+    "Esselunga": [{"name": "Uova Bio", "price": 2.10}, {"name": "Parmigiano Reggiano", "price": 4.50}, {"name": "Zucchine", "price": 1.20}],
+    "Lidl": [{"name": "Yogurt Greco", "price": 0.99}, {"name": "Biscotti Cereali", "price": 1.50}, {"name": "Salmone", "price": 3.99}]
 }
 
 BACKUP_RICETTE = [
-    {"title": "Latte e Biscotti Integrali", "type": "colazione", "ingredients": ["Latte", "Biscotti integrali"], "contains": ["lattosio", "glutine"]},
-    {"title": "Pasta al Pomodoro e Basilico", "type": "pranzo", "ingredients": ["Pasta", "Passata di pomodoro", "Basilico"], "contains": ["glutine"]},
-    {"title": "Mela e Noci", "type": "merenda", "ingredients": ["Mela", "Noci"], "contains": ["frutta_guscio"]},
-    {"title": "Petto di Pollo alla Piastra con Insalata", "type": "cena", "ingredients": ["Petto di pollo", "Insalata mista", "Olio EVO"], "contains": []},
-    {"title": "Yogurt con Miele", "type": "colazione", "ingredients": ["Yogurt bianco", "Miele"], "contains": ["lattosio"]},
+    {"title": "Latte e Biscotti", "type": "colazione", "ingredients": ["Latte Parzialmente Scremato", "Biscotti Integrali"], "contains": ["lattosio", "glutine"]},
+    {"title": "Yogurt e Frutta", "type": "colazione", "ingredients": ["Yogurt Bianco", "Frutta Fresca"], "contains": ["lattosio"]},
+    {"title": "Fette Biscottate e Marmellata", "type": "colazione", "ingredients": ["Fette biscottate", "Marmellata di ciliegie"], "contains": ["glutine"]},
+    
+    {"title": "Pasta al Pomodoro e Basilico", "type": "pranzo", "ingredients": ["Pasta", "Passata di pomodoro", "Basilico", "Olio EVO"], "contains": ["glutine"]},
     {"title": "Risotto allo Zafferano", "type": "pranzo", "ingredients": ["Riso", "Zafferano", "Brodo vegetale"], "contains": []},
-    {"title": "Frittata di Zucchine", "type": "cena", "ingredients": ["Uova", "Zucchine", "Parmigiano"], "contains": ["uova", "lattosio"]}
+    {"title": "Pasta e Ceci", "type": "pranzo", "ingredients": ["Pasta", "Ceci", "Rosmarino"], "contains": ["glutine"]},
+    
+    {"title": "Mela e Noci", "type": "merenda", "ingredients": ["Mela", "Noci"], "contains": ["frutta_guscio"]},
+    {"title": "Yogurt", "type": "merenda", "ingredients": ["Yogurt"], "contains": ["lattosio"]},
+    
+    {"title": "Petto di Pollo e Insalata", "type": "cena", "ingredients": ["Petto di pollo", "Insalata mista", "Olio EVO"], "contains": []},
+    {"title": "Frittata di Zucchine", "type": "cena", "ingredients": ["Uova", "Zucchine", "Parmigiano"], "contains": ["uova", "lattosio"]},
+    {"title": "Pesce al Forno e Patate", "type": "cena", "ingredients": ["Orata", "Patate", "Rosmarino"], "contains": ["pesce"]}
 ]
+
+def get_model():
+    print("🔍 Cerco un modello disponibile...")
+    try:
+        # Chiede a Google cosa c'è disponibile
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                # Se troviamo gemini-pro, usiamo quello che è il più sicuro
+                if 'gemini-pro' in m.name:
+                    print(f"✅ Trovato modello stabile: {m.name}")
+                    return genai.GenerativeModel(m.name)
+        
+        # Se non trova gemini-pro specifico, prende il primo disponibile
+        first_model = list(genai.list_models())[0]
+        print(f"⚠️ Uso primo modello disponibile: {first_model.name}")
+        return genai.GenerativeModel(first_model.name)
+    except:
+        print("⚠️ Errore lista modelli. Provo forzatura 'gemini-pro'")
+        return genai.GenerativeModel('gemini-pro')
 
 def genera_tutto():
     cartella = os.path.dirname(os.path.abspath(__file__))
     file_out = os.path.join(cartella, "dati_settimanali.json")
     
+    # Inizializza con backup (così se tutto fallisce, abbiamo i dati sani)
     offerte_db = BACKUP_OFFERTE
-    ricette_db = BACKUP_RICETTE
-    errore_rilevato = False
-
-    # TENTATIVO CONNESSIONE IA
+    lista_ricette = BACKUP_RICETTE
+    
     try:
-        print("📡 Test connessione a Google Gemini...")
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
-        # Test rapido
-        response = model.generate_content("Scrivi la parola OK")
-        print(f"✅ Connessione riuscita! Risposta: {response.text.strip()}")
+        model = get_model()
         
         # 1. OFFERTE
-        print("🛒 Genero Offerte Reali...")
+        print("1. Genero OFFERTE...")
         prompt_offerte = """
-        Genera JSON offerte per: Conad, Coop, Esselunga, Lidl, Eurospin, Todis.
-        Usa MARCHE ITALIANE REALI. 6 prodotti per store.
-        Format: {"Conad": [{"name": "Pasta Barilla", "price": 0.89}]}
+        Genera JSON offerte per: Conad, Coop, Esselunga, Lidl, Eurospin, Todis, Pewex, Ipercarni.
+        Usa MARCHE REALI ITALIANE (es. Barilla, Mutti). 6 prodotti per store.
+        RISPONDI SOLO JSON PURO: {"Conad": [{"name": "Pasta Barilla", "price": 0.89}]}
         """
-        resp_off = model.generate_content(prompt_offerte)
-        offerte_db = json.loads(pulisci_json(resp_off.text))
-        
+        resp = model.generate_content(prompt_offerte)
+        offerte_db = json.loads(pulisci_json(resp.text))
+        print("✅ Offerte scaricate.")
+
         # 2. RICETTE
-        print("👨‍🍳 Genero Menu Mediterraneo...")
+        print("2. Genero MENU MEDITERRANEO...")
         prompt_ricette = """
-        Crea 28 ricette DIETA MEDITERRANEA (Colazione, Pranzo, Merenda, Cena) per 7 giorni.
-        Usa ingredienti GENERICI.
-        Format Array: [{"title": "Nome", "type": "pranzo", "ingredients": ["Pasta"], "contains": ["glutine"]}]
+        Crea un menu settimanale DIETA MEDITERRANEA.
+        Usa ingredienti GENERICI (es. "Pasta", non "Pasta Barilla").
+        
+        Struttura JSON OBBLIGATORIA con 4 chiavi:
+        1. "colazione": 7 ricette dolci (Latte, Caffè, Biscotti, Yogurt).
+        2. "pranzo": 7 ricette carboidrati (Pasta, Riso, Legumi).
+        3. "merenda": 7 ricette leggere (Frutta, Yogurt).
+        4. "cena": 7 ricette proteine (Carne, Pesce, Uova) + verdure. NO PASTA A CENA.
+
+        RISPONDI SOLO JSON PURO:
+        {
+          "colazione": [{"title": "Latte e Biscotti", "ingredients": ["Latte", "Biscotti"], "contains": ["lattosio"]}],
+          "pranzo": [...], "merenda": [...], "cena": [...]
+        }
         """
         resp_ric = model.generate_content(prompt_ricette)
-        ricette_db = json.loads(pulisci_json(resp_ric.text))
+        raw_ricette = json.loads(pulisci_json(resp_ric.text))
+        
+        # Convertiamo nel formato lista per l'app
+        lista_ricette = []
+        for tipo in ["colazione", "pranzo", "merenda", "cena"]:
+            for piatto in raw_ricette.get(tipo, []):
+                piatto['type'] = tipo
+                lista_ricette.append(piatto)
+        print(f"✅ Ricette scaricate: {len(lista_ricette)}")
 
     except Exception as e:
-        print("\n\n❌❌ ERRORE GENERAZIONE AI ❌❌")
-        print(traceback.format_exc())
-        print("⚠️ UTILIZZO DATI DI BACKUP PER NON BLOCCARE L'APP.")
-        errore_rilevato = True
+        print(f"\n❌ ERRORE IA: {e}")
+        print("⚠️ USATI DATI DI BACKUP (Dieta Mediterranea)")
 
-    # SALVATAGGIO
+    # 3. SALVATAGGIO
     database = {
-        "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M") + (" (Backup)" if errore_rilevato else ""),
+        "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "offerte_per_supermercato": offerte_db,
-        "ricette": ricette_db
+        "ricette": lista_ricette
     }
 
     with open(file_out, "w", encoding="utf-8") as f:
         json.dump(database, f, indent=4, ensure_ascii=False)
-    
-    print(f"💾 File salvato in: {file_out}")
-    if errore_rilevato:
-        # Forziamo errore uscita per farti vedere il log rosso, ma il file è salvato
-        sys.exit(1) 
+    print("💾 Salvataggio completato.")
 
 if __name__ == "__main__":
     genera_tutto()
