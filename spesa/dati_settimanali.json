@@ -1,79 +1,76 @@
 {
-    "data_aggiornamento": "11/02/2026 21:42",
+    "data_aggiornamento": "11/02/2026 21:50",
     "offerte_per_supermercato": {
         "Conad": [
             {
-                "name": "Offerte in aggiornamento",
+                "name": "Offerte in arrivo",
                 "price": 0.0
             }
         ],
         "Coop": [
             {
-                "name": "Offerte in aggiornamento",
+                "name": "Offerte in arrivo",
                 "price": 0.0
             }
         ],
         "Esselunga": [
             {
-                "name": "Offerte in aggiornamento",
+                "name": "Offerte in arrivo",
                 "price": 0.0
             }
         ],
         "Lidl": [
             {
-                "name": "Offerte in aggiornamento",
+                "name": "Offerte in arrivo",
                 "price": 0.0
             }
         ],
         "Eurospin": [
             {
-                "name": "Offerte in aggiornamento",
+                "name": "Offerte in arrivo",
                 "price": 0.0
             }
         ],
         "Pewex": [
             {
-                "name": "Offerte in aggiornamento",
+                "name": "Offerte in arrivo",
                 "price": 0.0
             }
         ],
         "MA Supermercati": [
             {
-                "name": "Offerte in aggiornamento",
+                "name": "Offerte in arrivo",
                 "price": 0.0
             }
         ],
         "Ipercarni": [
             {
-                "name": "Offerte in aggiornamento",
+                "name": "Offerte in arrivo",
                 "price": 0.0
             }
         ],
         "Todis": [
             {
-                "name": "Offerte in aggiornamento",
+                "name": "Offerte in arrivo",
                 "price": 0.0
             }
         ]
     },
     "ricette": [
         {
-            "title": "Latte e Caffè",
+            "title": "Caffè",
             "type": "colazione",
             "ingredients": [
-                "Latte",
                 "Caffè"
             ],
-            "contains": [
-                "lattosio"
-            ]
+            "contains": []
         },
         {
             "title": "Pasta al Pomodoro",
             "type": "pranzo",
             "ingredients": [
                 "Pasta",
-                "Passata di pomodoro"
+                "Pomodoro"
             ],
             "contains": [
                 "glutine"
@@ -88,10 +85,10 @@
             "contains": []
         },
         {
-            "title": "Petto di Pollo e Insalata",
+            "title": "Pollo e Insalata",
             "type": "cena",
             "ingredients": [
-                "Petto di pollo",
+                "Pollo",
                 "Insalata"
             ],
             "contains": []
