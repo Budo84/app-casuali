@@ -3,207 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Smart</title>
+    <title>Menu & Spesa Smart</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta name="theme-color" content="#00796b">
+    <meta name="theme-color" content="#2E7D32">
     <style>
-        :root { --primary: #00796b; --bg: #f0f2f5; --card: #fff; --text: #333; --danger: #d32f2f; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
-        header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-        .page { display: none; padding: 15px; }
-        .page.active { display: block; }
+        :root { --primary: #2E7D32; --bg: #f5f5f5; --card: #fff; --text: #333; --danger: #c62828; --offer: #ef6c00; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
         
-        /* CARD */
-        .card { background: var(--card); padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .day { font-weight: bold; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid #eee; }
-        .meal { display: flex; margin-bottom: 10px; }
-        .meal i { width: 30px; color: #607d8b; }
-        .meal div { flex: 1; }
-        .tags span { font-size: 0.7rem; background: #ffebee; color: var(--danger); padding: 2px 6px; border-radius: 4px; margin-right:4px; }
-        
-        /* FAMILY */
-        .check-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .chk-lbl { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; align-items: center; }
-        .chk-lbl input { margin-right: 10px; transform: scale(1.2); }
-        .member { background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary); }
+        /* HEADER */
+        header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display:flex; justify-content:space-between; align-items:center; }
+        h1 { margin: 0; font-size: 1.1rem; display:flex; align-items:center; gap:8px;}
+        .status-badge { font-size: 0.7rem; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; }
+        .status-ok { color: #81c784; font-weight:bold; } 
+        .status-err { color: #ef9a9a; font-weight:bold; }
 
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; height: 60px; border-top: 1px solid #ddd; }
-        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; }
-        .nav a.active { color: var(--primary); font-weight: bold; }
+        /* PAGINE */
+        .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+        /* CARD MENU */
+        .card { background: var(--card); padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
+        .day { font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; font-size: 0.9rem; }
         
-        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+        .meal { display: flex; margin-bottom: 12px; align-items: flex-start; }
+        .meal:last-child { margin-bottom: 0; }
+        .meal i { margin-right: 12px; font-size: 1.3rem; color: #555; padding-top: 2px; }
+        .meal div { flex: 1; }
+        .meal strong { display: block; font-size: 1rem; color: #333; margin-bottom: 2px; }
+        .meal span { font-size: 0.85rem; color: #777; line-height: 1.3; display:block; }
+        .meal-tags { margin-top: 4px; display:flex; gap: 4px; flex-wrap: wrap;}
+        .meal-tag { font-size: 0.7rem; background: #ffebee; color: var(--danger); padding: 2px 6px; border-radius: 4px; font-weight:bold;}
+
+        /* LISTA SPESA */
+        .shop-item { background: white; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e0e0e0; }
+        .shop-info b { font-size: 0.95rem; }
+        .shop-info small { color: #888; display: block; font-size: 0.75rem; }
+        .price-group { display: flex; align-items: center; gap: 5px; }
+        .price-inp { width: 70px; padding: 8px; border: 1px solid #cfd8dc; border-radius: 8px; text-align: right; font-weight: bold; color: #333; background: #fafafa; }
+        .price-inp.is-offer { background: #fff3e0; border-color: var(--offer); color: #e65100; }
+        
+        .total-bar { position: fixed; bottom: 70px; left: 15px; right: 15px; background: #37474f; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 900; }
+        .total-val { font-size: 1.4rem; font-weight: bold; color: #b2dfdb; }
+
+        /* OFFERTE */
+        .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        .offer-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e0e0e0; position: relative; }
+        .offer-card b { display: block; color: var(--offer); margin-top: 5px; font-size: 1.1rem; }
+        .offer-badge { position: absolute; top: -8px; right: -8px; background: var(--offer); color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
+
+        /* FAMIGLIA */
+        .member { background: white; padding: 12px; margin-bottom: 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e0e0e0; }
+        .tag-bad { background: #ffebee; color: var(--danger); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-left: 5px; }
+
+        .checkbox-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .check-label { display:flex; align-items:center; background:#fff; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:0.85rem; cursor: pointer; user-select: none; }
+        .check-label input { margin-right: 10px; transform: scale(1.2); }
+        .check-label:active { background: #f0f0f0; }
+
+        /* NAVIGAZIONE */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #eee; display: flex; height: 60px; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #b0bec5; text-decoration: none; font-size: 0.7rem; transition: 0.2s; }
+        .nav a.active { color: var(--primary); transform: translateY(-3px); }
+        .nav a.active i { color: var(--primary); }
+        .nav i { font-size: 24px; margin-bottom: 2px; color: #cfd8dc; }
+
+        /* UTILS */
+        .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <header>
-    <h3>Menu Smart</h3>
+    <div>
+        <h1><i class="material-icons">restaurant</i> Menu IA</h1>
+        <div class="status-badge" id="statusText">Connessione...</div>
+    </div>
     <button onclick="location.reload()" style="background:none; border:none; color:white;"><i class="material-icons">refresh</i></button>
 </header>
 
 <div id="p-menu" class="page active">
-    <div id="statusBox" style="text-align:center; padding:20px; color:#666;">Caricamento...</div>
-    <div id="menuContainer"></div>
+    <div id="menuContainer">
+        <div style="text-align:center; padding: 50px 20px;">
+            <div class="loader"></div>
+            <p style="color:#666;">Controllo aggiornamenti da GitHub...</p>
+        </div>
+    </div>
+</div>
+
+<div id="p-spesa" class="page">
+    <h2 style="margin-top:0;">🛒 Spesa Stimata</h2>
+    <div id="shopContainer" style="padding-bottom: 80px;"></div>
+    <div class="total-bar">
+        <div><div class="total-lbl" style="font-size:0.8rem; opacity:0.8;">Totale</div></div>
+        <div class="total-val" id="totalPrice">€ 0.00</div>
+    </div>
+</div>
+
+<div id="p-offerte" class="page">
+    <h2 style="margin-top:0;">🏷️ Offerte dal Volantino</h2>
+    <p style="color:#666; font-size:0.9rem;">Prodotti trovati in offerta:</p>
+    <div class="offer-grid" id="offerContainer"></div>
 </div>
 
 <div id="p-famiglia" class="page">
-    <h2>La tua Famiglia</h2>
+    <h2 style="margin-top:0;">👨‍👩‍👧‍👦 La Famiglia</h2>
     <div id="familyList"></div>
 
-    <div style="background:#e0f2f1; padding:15px; border-radius:12px; margin-top:20px;">
-        <h3>Nuova Persona</h3>
-        <input type="text" id="memName" placeholder="Nome" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+    <div style="background:white; padding:15px; border-radius:12px; margin-top:20px; border:1px solid #e0e0e0;">
+        <h3>Aggiungi Membro</h3>
+        <input type="text" id="memName" placeholder="Nome (es. Marco)" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box; margin-bottom:15px;">
         
-        <p>Seleziona le Intolleranze:</p>
-        <div class="check-group">
-            <label class="chk-lbl"><input type="checkbox" class="chk" value="glutine"> Glutine</label>
-            <label class="chk-lbl"><input type="checkbox" class="chk" value="lattosio"> Lattosio</label>
-            <label class="chk-lbl"><input type="checkbox" class="chk" value="uova"> Uova</label>
-            <label class="chk-lbl"><input type="checkbox" class="chk" value="pesce"> Pesce</label>
-            <label class="chk-lbl"><input type="checkbox" class="chk" value="frutta_guscio"> Frutta Guscio</label>
+        <p style="margin:0 0 10px 0; font-weight:bold; color:#666;">Intolleranze:</p>
+        <div class="checkbox-container">
+            <label class="check-label"><input type="checkbox" class="chk" value="glutine"> No Glutine</label>
+            <label class="check-label"><input type="checkbox" class="chk" value="lattosio"> No Lattosio</label>
+            <label class="check-label"><input type="checkbox" class="chk" value="uova"> No Uova</label>
+            <label class="check-label"><input type="checkbox" class="chk" value="pesce"> No Pesce</label>
+            <label class="check-label"><input type="checkbox" class="chk" value="frutta_guscio"> No Noci/Guscio</label>
         </div>
-        <button class="btn" onclick="addMember()">Aggiungi</button>
+        <button class="btn" onclick="addMember()">Salva Membro</button>
     </div>
 </div>
 
 <nav class="nav">
-    <a onclick="go('p-menu', this)" class="active"><i class="material-icons">restaurant</i>Menu</a>
+    <a onclick="go('p-menu', this)" class="active"><i class="material-icons">calendar_today</i>Menu</a>
+    <a onclick="go('p-spesa', this)"><i class="material-icons">shopping_cart</i>Spesa</a>
+    <a onclick="go('p-offerte', this)"><i class="material-icons">local_offer</i>Offerte</a>
     <a onclick="go('p-famiglia', this)"><i class="material-icons">group</i>Famiglia</a>
 </nav>
 
 <script>
+    // --- STATO ---
     let db = null;
-    let family = JSON.parse(localStorage.getItem('smart_family')) || [];
+    let family = JSON.parse(localStorage.getItem('menu_family_final')) || [];
+    let customPrices = JSON.parse(localStorage.getItem('menu_prices_final')) || {};
 
+    // --- 1. AVVIO E CONNESSIONE ---
     async function init() {
         renderFamily();
+        const statusEl = document.getElementById('statusText');
+        
         try {
-            // Scarica il file generato dal robot
-            const res = await fetch('dati_settimanali.json?t=' + Date.now());
-            if(!res.ok) throw new Error("File non trovato");
-            db = await res.json();
+            // SCARICAMENTO DATI (Con trucco per evitare la cache vecchia)
+            const response = await fetch('dati_settimanali.json?t=' + Date.now());
             
-            document.getElementById('statusBox').innerText = "Dati aggiornati il: " + db.data_aggiornamento;
-            generateMenu();
-        } catch(e) {
-            document.getElementById('statusBox').innerHTML = `
-                <p>⚠️ Nessun dato trovato.</p>
-                <small>Assicurati di aver fatto partire l'Action su GitHub.</small>
-            `;
+            if (!response.ok) {
+                // Se errore 404, vuol dire che il file non esiste
+                throw new Error("File JSON non trovato. Controlla GitHub Actions.");
+            }
+            
+            db = await response.json();
+            
+            // Aggiorna Stato UI
+            statusEl.innerHTML = `<span class="status-ok">✔ Dati: ${db.data_aggiornamento}</span>`;
+            
+            // Renderizza tutto
+            renderOffers();
+            generateFilteredMenu();
+
+        } catch (error) {
+            console.error(error);
+            statusEl.innerHTML = `<span class="status-err">❌ Errore Dati</span>`;
+            document.getElementById('menuContainer').innerHTML = `
+                <div style="text-align:center; padding:40px;">
+                    <i class="material-icons" style="font-size:48px; color:#ef9a9a;">cloud_off</i>
+                    <h3>Impossibile scaricare i dati</h3>
+                    <p style="color:#666;">Il file <b>dati_settimanali.json</b> non esiste ancora o c'è un errore di rete.</p>
+                    <hr>
+                    <small>Se è la prima volta, vai su GitHub > Actions e fai partire "Run workflow".</small>
+                </div>`;
         }
     }
 
-    function generateMenu() {
-        if(!db) return;
+    // --- 2. LOGICA MENU E FILTRI ---
+    function generateFilteredMenu() {
+        if(!db || !db.ricette) return;
         const container = document.getElementById('menuContainer');
         container.innerHTML = '';
 
-        // 1. FILTRO DI SICUREZZA
-        // Questo è il punto dove Python e HTML si "parlano"
-        const safeRecipes = db.ricette.filter(r => {
-            for(let member of family) {
-                for(let intolerance of member.intolerances) {
-                    // Se la ricetta contiene l'intolleranza del membro -> SCARTATA
-                    if(r.contains.includes(intolerance)) return false;
+        // FILTRO FAMIGLIA
+        const safeRecipes = db.ricette.filter(recipe => {
+            for(let person of family) {
+                for(let intolerance of person.intolerances) {
+                    if(recipe.contains && recipe.contains.includes(intolerance)) return false;
                 }
             }
             return true;
         });
 
-        // Feedback se tutto viene filtrato
         if(safeRecipes.length === 0) {
-            container.innerHTML = "<div style='padding:20px; text-align:center; color:red;'>🚨 Nessuna ricetta sicura trovata!<br>Le intolleranze selezionate escludono tutte le ricette del database.</div>";
+            container.innerHTML = `<div style="text-align:center; padding:30px; color:#c62828;"><h3>Nessuna ricetta adatta!</h3><p>Le intolleranze selezionate bloccano tutte le ricette scaricate.</p></div>`;
             return;
         }
 
-        // Genera i giorni
+        // GENERAZIONE GIORNI
         const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+        const shoppingList = {};
+
         days.forEach(day => {
             const pick = (type) => {
-                let pool = safeRecipes.filter(x => x.type === type);
+                let pool = safeRecipes.filter(r => r.type === type);
                 if(!pool.length) pool = safeRecipes; 
                 return pool[Math.floor(Math.random() * pool.length)];
             };
-
-            const m1 = pick('colazione');
-            const m2 = pick('pranzo');
-            const m3 = pick('cena');
+            
+            const meals = [pick('colazione'), pick('pranzo'), pick('cena')];
+            
+            // Popola lista spesa
+            meals.forEach(m => {
+                if(m && m.ingredients) m.ingredients.forEach(i => shoppingList[i] = (shoppingList[i] || 0) + 1);
+            });
 
             container.innerHTML += `
                 <div class="card">
                     <div class="day">${day}</div>
-                    ${mealHtml(m1, '☕')}
-                    ${mealHtml(m2, '☀️')}
-                    ${mealHtml(m3, '🌙')}
-                </div>
-            `;
+                    ${renderMealHtml('☕', meals[0])}
+                    ${renderMealHtml('☀️', meals[1])}
+                    ${renderMealHtml('🌙', meals[2])}
+                </div>`;
         });
+
+        renderShop(shoppingList);
     }
 
-    function mealHtml(m, icon) {
-        if(!m) return '';
-        let tags = m.contains.map(t => `<span>⚠️ ${t}</span>`).join('');
+    function renderMealHtml(icon, meal) {
+        if(!meal) return '';
+        let tags = '';
+        if(meal.contains && meal.contains.length) {
+            tags = `<div class="meal-tags">${meal.contains.map(c => `<span class="meal-tag">⚠️ ${c}</span>`).join('')}</div>`;
+        }
         return `
             <div class="meal">
-                <i>${icon}</i>
+                <i class="material-icons">${icon}</i>
                 <div>
-                    <strong>${m.name}</strong><br>
-                    <small>${m.ingredients.join(', ')}</small>
-                    <div class="tags">${tags}</div>
+                    <strong>${meal.name}</strong>
+                    <span>${meal.desc || meal.ingredients.join(', ')}</span>
+                    ${tags}
                 </div>
             </div>`;
     }
 
-    // --- LOGICA FAMIGLIA ---
+    // --- 3. LOGICA SPESA E PREZZI ---
+    function renderShop(list) {
+        const c = document.getElementById('shopContainer');
+        c.innerHTML = '';
+        let total = 0;
+
+        Object.keys(list).sort().forEach(item => {
+            // Cerca match nelle offerte
+            const offer = db.offerte.find(o => 
+                item.toLowerCase().includes(o.name.toLowerCase()) || 
+                o.name.toLowerCase().includes(item.toLowerCase())
+            );
+
+            // Logica Prezzo: Manuale > Offerta > 0
+            let price = 0;
+            let isOffer = false;
+
+            if (customPrices[item] !== undefined) {
+                price = parseFloat(customPrices[item]);
+            } else if (offer) {
+                price = parseFloat(offer.price);
+                isOffer = true;
+            }
+
+            total += price;
+
+            c.innerHTML += `
+                <div class="shop-item">
+                    <div class="shop-info"><b>${item}</b><small>x${list[item]} pasti</small></div>
+                    <div class="price-group">
+                        <span style="font-size:0.8rem; color:#888;">€</span>
+                        <input type="number" step="0.10" 
+                               class="price-inp ${isOffer ? 'is-offer' : ''}" 
+                               value="${price.toFixed(2)}" 
+                               onchange="updatePrice('${item}', this.value)">
+                    </div>
+                </div>`;
+        });
+        document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
+    }
+
+    function updatePrice(item, val) {
+        customPrices[item] = parseFloat(val) || 0;
+        localStorage.setItem('menu_prices_final', JSON.stringify(customPrices));
+        // Ricalcolo rapido totale
+        let tot = 0;
+        document.querySelectorAll('.price-inp').forEach(i => tot += parseFloat(i.value)||0);
+        document.getElementById('totalPrice').innerText = "€ " + tot.toFixed(2);
+    }
+
+    // --- 4. OFFERTE E FAMIGLIA ---
+    function renderOffers() {
+        const c = document.getElementById('offerContainer');
+        c.innerHTML = '';
+        if(!db.offerte) return;
+        db.offerte.forEach(o => {
+            c.innerHTML += `<div class="offer-card"><div class="offer-badge">OFFERTA</div><div>${o.name}</div><b>€${o.price.toFixed(2)}</b></div>`;
+        });
+    }
+
     function addMember() {
         const name = document.getElementById('memName').value;
         if(!name) return;
-        
         const ints = [];
-        // Raccoglie i valori delle checkbox selezionate
         document.querySelectorAll('.chk:checked').forEach(c => ints.push(c.value));
         
         family.push({ id: Date.now(), name, intolerances: ints });
-        localStorage.setItem('smart_family', JSON.stringify(family));
+        localStorage.setItem('menu_family_final', JSON.stringify(family));
         
         renderFamily();
-        generateMenu(); // Rigenera il menu subito!
+        generateFilteredMenu();
         
         document.getElementById('memName').value = '';
         document.querySelectorAll('.chk').forEach(c => c.checked = false);
     }
 
     function removeMember(id) {
-        family = family.filter(f => f.id !== id);
-        localStorage.setItem('smart_family', JSON.stringify(family));
+        family = family.filter(m => m.id !== id);
+        localStorage.setItem('menu_family_final', JSON.stringify(family));
         renderFamily();
-        generateMenu();
+        generateFilteredMenu();
     }
 
     function renderFamily() {
-        const div = document.getElementById('familyList');
-        div.innerHTML = '';
-        if(family.length === 0) div.innerHTML = "<p>Nessuno inserito.</p>";
+        const c = document.getElementById('familyList');
+        c.innerHTML = '';
+        if(family.length === 0) { c.innerHTML = '<p style="text-align:center; color:#999;">Nessun membro inserito.</p>'; return; }
         
         family.forEach(m => {
-            let badge = m.intolerances.length ? `<small style="color:red">(${m.intolerances.join(', ')})</small>` : '<small style="color:green">Ok</small>';
-            div.innerHTML += `
+            const t = m.intolerances.map(i => `<span class="tag-bad">${i}</span>`).join('');
+            c.innerHTML += `
                 <div class="member">
-                    <span><b>${m.name}</b> ${badge}</span>
-                    <i class="material-icons" onclick="removeMember(${m.id})">delete</i>
-                </div>
-            `;
+                    <div><strong>${m.name}</strong>${t}</div>
+                    <i class="material-icons" onclick="removeMember(${m.id})" style="color:#e53935; cursor:pointer;">delete</i>
+                </div>`;
         });
     }
 
-    function go(page, btn) {
+    // --- NAVIGAZIONE ---
+    function go(pid, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(page).classList.add('active');
+        document.getElementById(pid).classList.add('active');
         document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
         btn.classList.add('active');
     }
 
     init();
 </script>
+
 </body>
 </html>
