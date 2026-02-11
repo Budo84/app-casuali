@@ -1,5 +1,344 @@
 {
     "data_aggiornamento": "11/02/2026",
-    "offerte": [],
-    "ricette": []
+    "offerte": [
+        {
+            "name": "Pasta Barilla Spaghetti n.5",
+            "price": 0.85
+        },
+        {
+            "name": "Olio Extra Vergine d'Oliva Farchioni 1L",
+            "price": 5.99
+        },
+        {
+            "name": "Passata di Pomodoro Mutti 700g",
+            "price": 0.99
+        },
+        {
+            "name": "Caffè Lavazza Qualità Rossa 250g",
+            "price": 2.49
+        },
+        {
+            "name": "Parmigiano Reggiano DOP 200g",
+            "price": 4.75
+        },
+        {
+            "name": "Prosciutto Crudo di Parma DOP 100g affettato",
+            "price": 3.8
+        },
+        {
+            "name": "Aceto Balsamico di Modena IGP Ponti 500ml",
+            "price": 2.2
+        },
+        {
+            "name": "Riso Carnaroli Scotti 1kg",
+            "price": 2.1
+        },
+        {
+            "name": "Mozzarella Santa Lucia Galbani 125g x2",
+            "price": 2.19
+        },
+        {
+            "name": "Biscotti Pavesini Pavesi 200g",
+            "price": 1.25
+        },
+        {
+            "name": "Tonno Rio Mare all'Olio d'Oliva 3x80g",
+            "price": 3.49
+        },
+        {
+            "name": "Salsa Pronta al Pomodoro Ciliegino Cirio 330g",
+            "price": 1.49
+        },
+        {
+            "name": "Gorgonzola DOP Dolce Igor 150g",
+            "price": 2.99
+        },
+        {
+            "name": "Salame Milano Negroni 100g affettato",
+            "price": 2.65
+        },
+        {
+            "name": "Taralli Classici Terre di Puglia 250g",
+            "price": 1.8
+        }
+    ],
+    "ricette": [
+        {
+            "name": "Spaghetti al Pomodoro Semplice",
+            "type": "pranzo",
+            "contains": [
+                "glutine",
+                "lattosio"
+            ],
+            "ingredients": [
+                "Pasta Barilla Spaghetti n.5",
+                "Passata di Pomodoro Mutti 700g",
+                "Olio Extra Vergine d'Oliva Farchioni 1L",
+                "Parmigiano Reggiano DOP 200g"
+            ],
+            "desc": "Un classico intramontabile: spaghetti conditi con una salsa di pomodoro Mutti e un generoso tocco di Parmigiano Reggiano DOP."
+        },
+        {
+            "name": "Spaghetti Tonno e Pomodorini",
+            "type": "cena",
+            "contains": [
+                "glutine",
+                "pesce"
+            ],
+            "ingredients": [
+                "Pasta Barilla Spaghetti n.5",
+                "Tonno Rio Mare all'Olio d'Oliva 3x80g",
+                "Salsa Pronta al Pomodoro Ciliegino Cirio 330g",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Spaghetti veloci e saporiti, con tonno Rio Mare e la freschezza della salsa di pomodoro ciliegino Cirio."
+        },
+        {
+            "name": "Insalata Caprese Semplice",
+            "type": "antipasto",
+            "contains": [
+                "lattosio"
+            ],
+            "ingredients": [
+                "Mozzarella Santa Lucia Galbani 125g x2",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Mozzarella Santa Lucia fresca, tagliata e condita con un filo d'olio extra vergine d'oliva, per un antipasto leggero e gustoso."
+        },
+        {
+            "name": "Risotto Cremoso al Parmigiano",
+            "type": "pranzo",
+            "contains": [
+                "lattosio"
+            ],
+            "ingredients": [
+                "Riso Carnaroli Scotti 1kg",
+                "Parmigiano Reggiano DOP 200g",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Un risotto avvolgente, preparato con riso Carnaroli e mantecato con abbondante Parmigiano Reggiano DOP."
+        },
+        {
+            "name": "Tagliere di Salumi e Formaggi con Taralli",
+            "type": "antipasto",
+            "contains": [
+                "glutine",
+                "lattosio"
+            ],
+            "ingredients": [
+                "Prosciutto Crudo di Parma DOP 100g affettato",
+                "Salame Milano Negroni 100g affettato",
+                "Gorgonzola DOP Dolce Igor 150g",
+                "Taralli Classici Terre di Puglia 250g",
+                "Aceto Balsamico di Modena IGP Ponti 500ml",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Un ricco tagliere con Prosciutto Crudo, Salame Milano, Gorgonzola DOP e Taralli, accompagnato da un dressing di olio e Aceto Balsamico."
+        },
+        {
+            "name": "Caffè Lavazza Tradizionale",
+            "type": "colazione",
+            "contains": [],
+            "ingredients": [
+                "Caffè Lavazza Qualità Rossa 250g"
+            ],
+            "desc": "Un'ottima tazza di caffè Lavazza Qualità Rossa, preparata secondo la tradizione italiana, perfetta per iniziare la giornata."
+        },
+        {
+            "name": "Coppa Pavesini al Caffè",
+            "type": "dessert",
+            "contains": [
+                "glutine",
+                "uova"
+            ],
+            "ingredients": [
+                "Biscotti Pavesini Pavesi 200g",
+                "Caffè Lavazza Qualità Rossa 250g"
+            ],
+            "desc": "Un dessert semplice e veloce: biscotti Pavesini inzuppati nel caffè Lavazza, un classico per la merenda o dopo pasto."
+        },
+        {
+            "name": "Taralli con Prosciutto e Mozzarella",
+            "type": "merenda",
+            "contains": [
+                "glutine",
+                "lattosio"
+            ],
+            "ingredients": [
+                "Taralli Classici Terre di Puglia 250g",
+                "Prosciutto Crudo di Parma DOP 100g affettato",
+                "Mozzarella Santa Lucia Galbani 125g x2"
+            ],
+            "desc": "Un abbinamento sfizioso per una merenda salata: taralli croccanti con fette di prosciutto crudo e mozzarella fresca."
+        },
+        {
+            "name": "Spaghetti al Gorgonzola",
+            "type": "cena",
+            "contains": [
+                "glutine",
+                "lattosio"
+            ],
+            "ingredients": [
+                "Pasta Barilla Spaghetti n.5",
+                "Gorgonzola DOP Dolce Igor 150g",
+                "Olio Extra Vergine d'Oliva Farchioni 1L",
+                "Parmigiano Reggiano DOP 200g"
+            ],
+            "desc": "Spaghetti conditi con una cremosa salsa al Gorgonzola DOP, arricchiti da un filo d'olio e Parmigiano grattugiato."
+        },
+        {
+            "name": "Insalata di Riso Tonno e Mozzarella",
+            "type": "pranzo",
+            "contains": [
+                "lattosio",
+                "pesce"
+            ],
+            "ingredients": [
+                "Riso Carnaroli Scotti 1kg",
+                "Tonno Rio Mare all'Olio d'Oliva 3x80g",
+                "Mozzarella Santa Lucia Galbani 125g x2",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Un'insalata di riso fresca e completa, perfetta per l'estate, con tonno, mozzarella e condita con olio extra vergine."
+        },
+        {
+            "name": "Spaghetti Aglio e Olio (versione base)",
+            "type": "cena",
+            "contains": [
+                "glutine"
+            ],
+            "ingredients": [
+                "Pasta Barilla Spaghetti n.5",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Un piatto semplice ma iconico: spaghetti conditi con un abbondante giro di olio extra vergine d'oliva."
+        },
+        {
+            "name": "Mozzarella Semplice all'Olio EVO",
+            "type": "merenda",
+            "contains": [
+                "lattosio"
+            ],
+            "ingredients": [
+                "Mozzarella Santa Lucia Galbani 125g x2",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Una fresca mozzarella Santa Lucia, esaltata da un semplice filo di Olio Extra Vergine d'Oliva Farchioni, ideale per uno spuntino."
+        },
+        {
+            "name": "Salsa al Pomodoro Mutti Semplice",
+            "type": "pranzo",
+            "contains": [],
+            "ingredients": [
+                "Passata di Pomodoro Mutti 700g",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Una salsa di pomodoro Mutti classica, arricchita da un filo d'olio extra vergine, pronta per essere gustata come zuppa leggera o condimento."
+        },
+        {
+            "name": "Risotto al Pomodoro e Parmigiano",
+            "type": "pranzo",
+            "contains": [
+                "lattosio"
+            ],
+            "ingredients": [
+                "Riso Carnaroli Scotti 1kg",
+                "Passata di Pomodoro Mutti 700g",
+                "Olio Extra Vergine d'Oliva Farchioni 1L",
+                "Parmigiano Reggiano DOP 200g"
+            ],
+            "desc": "Risotto saporito con passata di pomodoro Mutti, mantecato con Parmigiano Reggiano DOP e un filo d'olio extra vergine."
+        },
+        {
+            "name": "Piatto di Prosciutto Crudo con Taralli",
+            "type": "antipasto",
+            "contains": [
+                "glutine"
+            ],
+            "ingredients": [
+                "Prosciutto Crudo di Parma DOP 100g affettato",
+                "Taralli Classici Terre di Puglia 250g"
+            ],
+            "desc": "Un classico antipasto italiano: fette di Prosciutto Crudo di Parma DOP accompagnate da croccanti Taralli Classici."
+        },
+        {
+            "name": "Piatto di Salame Milano con Taralli",
+            "type": "merenda",
+            "contains": [
+                "glutine"
+            ],
+            "ingredients": [
+                "Salame Milano Negroni 100g affettato",
+                "Taralli Classici Terre di Puglia 250g"
+            ],
+            "desc": "Salame Milano Negroni affettato finemente, perfetto da gustare con i Taralli Classici Terre di Puglia per uno spuntino."
+        },
+        {
+            "name": "Taralli con Gorgonzola Dolce",
+            "type": "merenda",
+            "contains": [
+                "glutine",
+                "lattosio"
+            ],
+            "ingredients": [
+                "Taralli Classici Terre di Puglia 250g",
+                "Gorgonzola DOP Dolce Igor 150g"
+            ],
+            "desc": "Un abbinamento goloso per la merenda o l'aperitivo: taralli croccanti serviti con un morbido e saporito Gorgonzola DOP Dolce."
+        },
+        {
+            "name": "Spaghetti con Salsa Ciliegino",
+            "type": "pranzo",
+            "contains": [
+                "glutine"
+            ],
+            "ingredients": [
+                "Pasta Barilla Spaghetti n.5",
+                "Salsa Pronta al Pomodoro Ciliegino Cirio 330g",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Spaghetti conditi con la deliziosa e pronta salsa di pomodoro ciliegino Cirio, un piatto veloce e gustoso per ogni occasione."
+        },
+        {
+            "name": "Antipasto Italiano Misto",
+            "type": "antipasto",
+            "contains": [
+                "lattosio"
+            ],
+            "ingredients": [
+                "Prosciutto Crudo di Parma DOP 100g affettato",
+                "Salame Milano Negroni 100g affettato",
+                "Mozzarella Santa Lucia Galbani 125g x2",
+                "Olio Extra Vergine d'Oliva Farchioni 1L",
+                "Aceto Balsamico di Modena IGP Ponti 500ml"
+            ],
+            "desc": "Un antipasto ricco con Prosciutto Crudo, Salame Milano, Mozzarella Santa Lucia e un condimento di olio e aceto balsamico."
+        },
+        {
+            "name": "Risotto con Tonno all'Olio EVO",
+            "type": "cena",
+            "contains": [
+                "pesce"
+            ],
+            "ingredients": [
+                "Riso Carnaroli Scotti 1kg",
+                "Tonno Rio Mare all'Olio d'Oliva 3x80g",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Un risotto saporito e nutriente, preparato con riso Carnaroli e tonno Rio Mare, condito con olio extra vergine d'oliva."
+        },
+        {
+            "name": "Insalata di Mozzarella e Salame",
+            "type": "pranzo",
+            "contains": [
+                "lattosio"
+            ],
+            "ingredients": [
+                "Mozzarella Santa Lucia Galbani 125g x2",
+                "Salame Milano Negroni 100g affettato",
+                "Olio Extra Vergine d'Oliva Farchioni 1L"
+            ],
+            "desc": "Un'insalata semplice e saporita, con bocconcini di mozzarella Santa Lucia e fette di Salame Milano, condita con olio extra vergine d'oliva."
+        }
+    ]
 }
