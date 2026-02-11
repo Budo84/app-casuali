@@ -2,15 +2,14 @@ name: Aggiorna Menu Settimanale
 
 on:
   schedule:
-    # Esegue ogni Lunedì alle 6:00 del mattino
     - cron: '0 6 * * 1'
-  workflow_dispatch: # Ti permette di avviarlo a mano col pulsante "Run workflow"
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Permesso fondamentale per salvare il file
+      contents: write
       
     steps:
       - name: Checkout del codice
@@ -21,21 +20,24 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Installa libreria AI
-        run: |
-          pip install google-generativeai
+      - name: Installa librerie
+        run: pip install google-generativeai
 
+      # ESEGUE LO SCRIPT DENTRO LA CARTELLA SPESA
       - name: Esegui il Generatore IA
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
-        # NOTA: Qui diciamo al robot di entrare nella cartella 'menu' per trovare lo script
         run: python spesa/automazione.py
 
-      - name: Salva i risultati (Commit)
+      # DEBUG: CONTROLLA SE IL FILE È STATO CREATO
+      - name: Controlla file
+        run: ls -l spesa/
+
+      # SALVA IL FILE DALLA CARTELLA SPESA
+      - name: Salva i risultati
         run: |
           git config --global user.name 'Robot Menu'
           git config --global user.email 'robot@menu.app'
-          # Aggiungiamo il file generato dentro la cartella menu
-          git add menu/dati_settimanali.json
-          git commit -m "Aggiornamento Menu Automatico" || echo "Nessuna modifica da salvare"
+          git add spesa/dati_settimanali.json
+          git commit -m "Aggiornamento Menu Automatico" || echo "Nessuna modifica"
           git push
