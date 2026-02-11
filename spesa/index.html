@@ -22,7 +22,7 @@
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Cards */
+        /* Cards Menu */
         .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
         .day-title { font-weight: 800; color: var(--primary); margin-bottom: 10px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
         .meal-row { display: flex; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
@@ -36,8 +36,16 @@
         .delete-member { position: absolute; top: 10px; right: 10px; color: #f44336; cursor: pointer; }
         .tags-container { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
         .tag { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; color: white; font-weight: bold; }
-        .tag-int { background: #e57373; } /* Red for intolerances */
-        .tag-dis { background: #90a4ae; } /* Grey for dislikes */
+        .tag-int { background: #e57373; }
+        .tag-dis { background: #90a4ae; }
+
+        /* OFFERTE STYLES (NUOVO) */
+        .offers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 20px; }
+        .offer-card { background: white; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px; text-align: center; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.1s; }
+        .offer-card:active { transform: scale(0.98); }
+        .offer-badge { position: absolute; top: -8px; right: -8px; background: #4CAF50; color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .offer-name { font-weight: 600; color: #333; font-size: 0.95rem; text-transform: capitalize; }
+        .offer-empty { grid-column: 1 / -1; text-align: center; color: #999; font-style: italic; padding: 20px; background: #fafafa; border-radius: 10px; border: 1px dashed #ccc; }
 
         /* Form Controls */
         input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; }
@@ -49,8 +57,6 @@
         .checkbox-item { display: flex; align-items: center; background: #eee; padding: 5px 10px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; }
         .checkbox-item input { margin-right: 5px; }
         .checkbox-item.checked { background: #ffcc80; }
-
-        .warning-box { background: #ffebee; color: #c62828; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; border: 1px solid #ef9a9a; display:none;}
     </style>
 </head>
 <body>
@@ -60,7 +66,6 @@
 </header>
 
 <div id="p-menu" class="page active">
-    <div id="familyWarning" class="warning-box"></div>
     <div id="weeklyPlan">
         <div style="text-align:center; padding:50px 20px; color:#888;">
             <span class="material-icons" style="font-size:60px; color:#ddd;">soup_kitchen</span><br><br>
@@ -75,18 +80,27 @@
 </div>
 
 <div id="p-offerte" class="page">
-    <h2>⚡ Generatore Menu</h2>
-    <p style="font-size:0.9rem; color:#666;">Il menu verrà creato rispettando le intolleranze di <b>tutti</b> i membri della famiglia.</p>
-
-    <div style="background: white; padding:15px; border-radius:10px; margin-bottom:20px;">
-        <label>Link Google Sheet (CSV) per Offerte</label>
-        <input type="text" id="sheetUrl" placeholder="Incolla link CSV qui...">
-        <button class="btn btn-green" onclick="saveSheetUrl()">Salva Link Cloud</button>
-        <div id="offersStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></div>
+    <h2>⚡ Offerte & Menu</h2>
+    
+    <div style="background: white; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #eee;">
+        <label style="font-size:0.8rem; font-weight:bold; color:#666;">COLLEGAMENTO VOLANTINO (CSV)</label>
+        <div style="display:flex; gap:5px;">
+            <input type="text" id="sheetUrl" placeholder="Incolla link CSV Google Sheet..." style="margin:0;">
+            <button class="btn btn-green" onclick="saveSheetUrl()" style="margin:0; width:auto; padding:0 15px;"><span class="material-icons">save</span></button>
+        </div>
+        <button class="btn" onclick="fetchOffersAndGenerate()">🔄 SCARICA OFFERTE</button>
     </div>
 
-    <button class="btn" onclick="fetchOffersAndGenerate()">🔄 Scarica Offerte & Crea Menu</button>
-    <button class="btn" style="background:#607d8b; box-shadow:0 4px 0 #455a64;" onclick="generateMenu([])">🎲 Crea Menu Senza Offerte</button>
+    <hr style="border:0; border-top:1px dashed #ccc;">
+
+    <h3 style="margin-bottom:5px;">📋 Prodotti in Offerta</h3>
+    <p style="font-size:0.8rem; color:#666; margin-top:0;">Questi prodotti verranno usati per creare il menu.</p>
+    
+    <div id="offersDisplay" class="offers-grid">
+        <div class="offer-empty">Nessuna offerta caricata.<br>Premi "Scarica Offerte" in alto.</div>
+    </div>
+
+    <button class="btn" style="background:#607d8b; box-shadow:0 4px 0 #455a64; margin-top:30px;" onclick="generateMenu([])">🎲 Rigenera Menu (Senza Offerte)</button>
 </div>
 
 <div id="p-famiglia" class="page">
@@ -130,8 +144,7 @@
 </nav>
 
 <script>
-    // --- DATABASE RICETTE (Espanso con tag e ingredienti) ---
-    // IMPORTANTE: I tag 'allergeni' indicano cosa CONTIENE la ricetta.
+    // --- DATABASE RICETTE ---
     const recipesDB = [
         { name: 'Pasta al Pomodoro', type: 'pranzo', contains: ['glutine'], ingredients: ['pasta', 'pomodoro', 'basilico'] },
         { name: 'Riso e Pollo', type: 'pranzo', contains: [], ingredients: ['riso', 'pollo', 'olio'] },
@@ -146,11 +159,14 @@
         { name: 'Yogurt e Muesli', type: 'colazione', contains: ['lattosio', 'glutine'], ingredients: ['yogurt', 'muesli'] },
         { name: 'Fette e Marmellata', type: 'colazione', contains: ['glutine'], ingredients: ['fette biscottate', 'marmellata'] },
         { name: 'Latte e Cereali', type: 'colazione', contains: ['lattosio', 'glutine'], ingredients: ['latte', 'cereali'] },
-        { name: 'Frutta Fresca e Tè', type: 'colazione', contains: [], ingredients: ['mela', 'tè'] }
+        { name: 'Frutta Fresca e Tè', type: 'colazione', contains: [], ingredients: ['mela', 'tè'] },
+        { name: 'Polpette al sugo', type: 'cena', contains: ['uova', 'glutine'], ingredients: ['macinato', 'uova', 'pangrattato', 'pomodoro'] },
+        { name: 'Spinaci al burro', type: 'cena', contains: ['lattosio'], ingredients: ['spinaci', 'burro'] }
     ];
 
     let familyMembers = [];
     let currentMenu = [];
+    let currentOffers = [];
     
     // --- INIZIALIZZAZIONE ---
     function init() {
@@ -179,10 +195,15 @@
         const savedUrl = localStorage.getItem('sheet_url');
         if(savedUrl) document.getElementById('sheetUrl').value = savedUrl;
 
+        const savedOffers = localStorage.getItem('current_offers');
+        if(savedOffers) {
+            currentOffers = JSON.parse(savedOffers);
+            renderOffersUI();
+        }
+
         renderMembersList();
     }
 
-    // --- NAVIGAZIONE ---
     function nav(pageId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
@@ -207,15 +228,13 @@
         localStorage.setItem('family_members', JSON.stringify(familyMembers));
         
         renderMembersList();
-        
-        // Reset Form
         document.getElementById('newMemberName').value = '';
         document.getElementById('newMemberDislikes').value = '';
         document.querySelectorAll('#intoleranceOptions input').forEach(box => {
             box.checked = false;
             box.parentElement.classList.remove('checked');
         });
-        alert(`${name} aggiunto! Il prossimo menu terrà conto delle sue esigenze.`);
+        alert(`${name} aggiunto!`);
     }
 
     function removeMember(id) {
@@ -246,38 +265,28 @@
         });
     }
 
-    // --- LOGICA DI SICUREZZA ALIMENTARE (IL CUORE DELL'APP) ---
+    // --- LOGICA MENU ---
     function isRecipeSafe(recipe) {
-        // Controllo Intolleranze (Bloccante)
         for (let member of familyMembers) {
             for (let intolerance of member.intolerances) {
-                if (recipe.contains.includes(intolerance)) {
-                    return false; // Ricetta VIETATA
-                }
+                if (recipe.contains.includes(intolerance)) return false;
             }
         }
-        return true; // Ricetta sicura per tutti
+        return true;
     }
 
     function getRecipeScore(recipe, offers) {
         let score = 0;
-        
-        // Punti per offerte
         const hasOffer = recipe.ingredients.some(ing => offers.some(off => ing.includes(off)));
         if (hasOffer) score += 10;
-
-        // Penalità per "Non mi piace" (Non bloccante, ma riduce probabilità)
         for (let member of familyMembers) {
             for (let dislike of member.dislikes) {
-                if (recipe.ingredients.some(ing => ing.includes(dislike))) {
-                    score -= 5;
-                }
+                if (recipe.ingredients.some(ing => ing.includes(dislike))) score -= 5;
             }
         }
         return score;
     }
 
-    // --- INTEGRAZIONE GOOGLE SHEETS & GENERAZIONE ---
     function saveSheetUrl() {
         const url = document.getElementById('sheetUrl').value;
         localStorage.setItem('sheet_url', url);
@@ -294,13 +303,38 @@
                 const text = await response.text();
                 const rows = text.split('\n').slice(1);
                 offers = rows.map(r => r.split(',')[0] ? r.split(',')[0].trim().toLowerCase() : null).filter(i=>i);
-                document.getElementById('offersStatus').innerText = `Trovate ${offers.length} offerte: ${offers.slice(0,3).join(', ')}...`;
+                
+                // SALVATAGGIO OFFERTE
+                currentOffers = offers;
+                localStorage.setItem('current_offers', JSON.stringify(currentOffers));
+                renderOffersUI(); // Mostra visivamente le offerte
+
             } catch(e) {
                 console.error(e);
                 alert("Impossibile scaricare le offerte. Genero menu base.");
             }
         }
         generateMenu(offers);
+    }
+
+    function renderOffersUI() {
+        const container = document.getElementById('offersDisplay');
+        container.innerHTML = '';
+
+        if (!currentOffers || currentOffers.length === 0) {
+            container.innerHTML = '<div class="offer-empty">Nessuna offerta caricata.<br>Premi "Scarica Offerte".</div>';
+            return;
+        }
+
+        currentOffers.forEach(offer => {
+            const div = document.createElement('div');
+            div.className = 'offer-card';
+            div.innerHTML = `
+                <div class="offer-badge">%</div>
+                <div class="offer-name">${offer}</div>
+            `;
+            container.appendChild(div);
+        });
     }
 
     function generateMenu(offers) {
@@ -311,18 +345,16 @@
         const safeRecipes = recipesDB.filter(r => isRecipeSafe(r));
 
         if(safeRecipes.length === 0) {
-            return alert("ATTENZIONE: Con le attuali intolleranze, non ci sono ricette sicure nel database! Aggiungi ricette compatibili.");
+            return alert("ATTENZIONE: Nessuna ricetta sicura trovata per queste intolleranze.");
         }
 
         days.forEach(day => {
             const getBestMeal = (type) => {
                 let candidates = safeRecipes.filter(r => r.type === type);
-                if(candidates.length === 0) candidates = safeRecipes.filter(r => r.type === type); // Fallback se filtro troppo stretto
+                if(candidates.length === 0) candidates = safeRecipes.filter(r => r.type === type);
                 
-                // Ordina per punteggio (Offerte - Dislikes) e aggiungi casualità
                 candidates.sort((a, b) => getRecipeScore(b, offers) - getRecipeScore(a, offers) + (Math.random() - 0.5));
-                
-                return candidates.length > 0 ? candidates[0] : { name: "Pasto Libero (Nessuna ricetta adatta)", ingredients: [] };
+                return candidates.length > 0 ? candidates[0] : { name: "Pasto Libero", ingredients: [] };
             };
 
             newMenu.push({
@@ -338,11 +370,9 @@
         renderMenuUI();
         renderShoppingList();
         
-        // Vai al menu
-        document.querySelector('.nav-item').click();
+        document.querySelector('.nav-item').click(); // Torna alla home
     }
 
-    // --- RENDER MENU & SPESA ---
     function renderMenuUI() {
         const container = document.getElementById('weeklyPlan');
         container.innerHTML = '';
@@ -353,9 +383,7 @@
                     <div class="day-title">${d.day}</div>
                     <div class="meal-row">
                         <span class="meal-icon">☕</span>
-                        <div class="meal-info">
-                            <div class="meal-name">${d.colazione.name}</div>
-                        </div>
+                        <div class="meal-info"><div class="meal-name">${d.colazione.name}</div></div>
                     </div>
                     <div class="meal-row">
                         <span class="meal-icon">☀️</span>
@@ -391,8 +419,7 @@
             });
         });
 
-        const sortedIngs = Object.keys(list).sort();
-        sortedIngs.forEach(ing => {
+        Object.keys(list).sort().forEach(ing => {
             container.innerHTML += `
                 <div style="padding:12px; border-bottom:1px solid #eee; display:flex; align-items:center;">
                     <input type="checkbox" style="width:20px; margin:0 10px 0 0;">
