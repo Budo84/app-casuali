@@ -1,60 +1,238 @@
 {
-    "data_aggiornamento": "11/02/2026 22:04",
+    "data_aggiornamento": "11/02/2026 22:10",
     "offerte_per_supermercato": {
         "Conad": [
             {
-                "name": "Pasta Integrale Barilla 500g",
-                "price": 0.95
+                "name": "Pasta Barilla formati vari",
+                "price": 0.79
             },
             {
-                "name": "Passata Mutti",
-                "price": 0.89
+                "name": "Passata di pomodoro Mutti",
+                "price": 0.99
             },
             {
-                "name": "Mele Melinda",
-                "price": 1.5
+                "name": "Olio Extra Vergine di Oliva Farchioni",
+                "price": 5.89
+            },
+            {
+                "name": "Caffè Lavazza Qualità Rossa 2x250g",
+                "price": 3.49
+            },
+            {
+                "name": "Yogurt Activia Danone gusti assortiti",
+                "price": 1.99
+            },
+            {
+                "name": "Latte UHT Parmalat Parzialmente Scremato 1L",
+                "price": 1.09
             }
         ],
         "Coop": [
             {
-                "name": "Riso Gallo",
-                "price": 1.99
+                "name": "Riso Arborio Scotti 1kg",
+                "price": 2.49
             },
             {
-                "name": "Latte Granarolo",
-                "price": 1.15
+                "name": "Tonno Rio Mare all'olio d'oliva 3x80g",
+                "price": 2.99
             },
             {
-                "name": "Pollo Amadori",
-                "price": 4.5
+                "name": "Biscotti Mulino Bianco Galletti",
+                "price": 1.79
+            },
+            {
+                "name": "Acqua Minerale Naturale San Benedetto 6x1.5L",
+                "price": 1.69
+            },
+            {
+                "name": "Mozzarella Galbani Santa Lucia 125g",
+                "price": 1.49
+            },
+            {
+                "name": "Detersivo Lavatrice Dixan Power Caps",
+                "price": 5.99
             }
         ],
         "Esselunga": [
             {
-                "name": "Uova Bio",
-                "price": 2.1
+                "name": "Pomodorini Cirio in scatola",
+                "price": 1.29
             },
             {
-                "name": "Parmigiano Reggiano",
-                "price": 4.5
+                "name": "Prosciutto Cotto Alta Qualità Rovagnati 100g",
+                "price": 2.89
             },
             {
-                "name": "Zucchine",
-                "price": 1.2
+                "name": "Vino Ferrari Maximum Brut",
+                "price": 9.99
+            },
+            {
+                "name": "Mele Melinda Golden Delicious al kg",
+                "price": 1.89
+            },
+            {
+                "name": "Pesto Genovese Saclà 180g",
+                "price": 2.19
+            },
+            {
+                "name": "Detersivo Dash Pods All-in-1",
+                "price": 6.49
             }
         ],
         "Lidl": [
             {
-                "name": "Yogurt Greco",
+                "name": "Uova Fresche da Allevamento a Terra 6 pz",
+                "price": 1.99
+            },
+            {
+                "name": "Formaggio Spalmabile Philadelphia Original 175g",
+                "price": 1.69
+            },
+            {
+                "name": "Wurstel Wudy Aia Classico",
+                "price": 1.29
+            },
+            {
+                "name": "Patatine Lay's Classiche 150g",
+                "price": 1.49
+            },
+            {
+                "name": "Bevanda Vegetale Alpro Mandorla 1L",
+                "price": 1.99
+            },
+            {
+                "name": "Gelato Coppa Oro Algida",
+                "price": 2.29
+            }
+        ],
+        "Eurospin": [
+            {
+                "name": "Pasta Tre Mulini formati base 500g",
+                "price": 0.59
+            },
+            {
+                "name": "Sugo Pronto al Pomodoro Ponti 400g",
+                "price": 1.19
+            },
+            {
+                "name": "Olio di Semi di Girasole 1L",
+                "price": 1.79
+            },
+            {
+                "name": "Biscotti Misura Fibrextra",
+                "price": 2.19
+            },
+            {
+                "name": "Detersivo Piatti Svelto Limone 1L",
+                "price": 1.29
+            },
+            {
+                "name": "Yogurt Naturale MIlbona 500g",
+                "price": 0.89
+            }
+        ],
+        "Pewex": [
+            {
+                "name": "Polpa fine di pomodoro Valfrutta 400g",
+                "price": 0.85
+            },
+            {
+                "name": "Biscotti Oro Saiwa",
+                "price": 1.19
+            },
+            {
+                "name": "Fette Biscottate Gentilini Osvego",
+                "price": 1.89
+            },
+            {
+                "name": "Acqua Tonica Schweppes",
                 "price": 0.99
             },
             {
-                "name": "Biscotti Cereali",
-                "price": 1.5
+                "name": "Cereali Kellogg's Special K",
+                "price": 2.99
             },
             {
-                "name": "Salmone",
+                "name": "Salmone Affumicato Riunione 100g",
+                "price": 3.49
+            }
+        ],
+        "MA Supermercati": [
+            {
+                "name": "Passata Pomi extra fine 700g",
+                "price": 0.89
+            },
+            {
+                "name": "Olio di Oliva Sasso 1L",
+                "price": 4.99
+            },
+            {
+                "name": "Zucchero Eridania Semolato 1kg",
+                "price": 1.19
+            },
+            {
+                "name": "Succhi di Frutta Yoga gusti vari 1L",
+                "price": 1.49
+            },
+            {
+                "name": "Cioccolato Kinder Bueno multipack 3x43g",
+                "price": 2.69
+            },
+            {
+                "name": "Cotolette di Pollo Aia",
+                "price": 3.19
+            }
+        ],
+        "Ipercarni": [
+            {
+                "name": "Coscia di Pollo AIA con osso al kg",
+                "price": 4.99
+            },
+            {
+                "name": "Bistecche di Suino sceltissime al kg",
+                "price": 6.99
+            },
+            {
+                "name": "Salsicce Fresche Miste di Suino al kg",
+                "price": 5.49
+            },
+            {
+                "name": "Prosciutto Crudo stagionato Parmacotto 100g",
+                "price": 3.29
+            },
+            {
+                "name": "Grana Padano DOP Ferrari a spicchio 300g circa",
                 "price": 3.99
+            },
+            {
+                "name": "Hamburger di Bovino 200g",
+                "price": 2.49
+            }
+        ],
+        "Todis": [
+            {
+                "name": "Pasta De Cecco formati lunghi 500g",
+                "price": 0.95
+            },
+            {
+                "name": "Pancarrè Roberto 400g",
+                "price": 0.79
+            },
+            {
+                "name": "Yogurt Greco Fage Total 0% 170g",
+                "price": 1.99
+            },
+            {
+                "name": "Birra Peroni 33cl",
+                "price": 0.89
+            },
+            {
+                "name": "Detersivo Lavatrice Chanteclair Sgrassatore",
+                "price": 3.79
+            },
+            {
+                "name": "Patate Selenella al kg",
+                "price": 0.99
             }
         ]
     },
@@ -63,8 +241,8 @@
             "title": "Latte e Biscotti",
             "type": "colazione",
             "ingredients": [
-                "Latte Parzialmente Scremato",
-                "Biscotti Integrali"
+                "Latte",
+                "Biscotti"
             ],
             "contains": [
                 "lattosio",
@@ -72,35 +250,22 @@
             ]
         },
         {
-            "title": "Yogurt e Frutta",
+            "title": "Yogurt e Miele",
             "type": "colazione",
             "ingredients": [
-                "Yogurt Bianco",
-                "Frutta Fresca"
+                "Yogurt",
+                "Miele"
             ],
             "contains": [
                 "lattosio"
             ]
         },
         {
-            "title": "Fette Biscottate e Marmellata",
-            "type": "colazione",
-            "ingredients": [
-                "Fette biscottate",
-                "Marmellata di ciliegie"
-            ],
-            "contains": [
-                "glutine"
-            ]
-        },
-        {
-            "title": "Pasta al Pomodoro e Basilico",
+            "title": "Pasta al Pomodoro",
             "type": "pranzo",
             "ingredients": [
                 "Pasta",
-                "Passata di pomodoro",
-                "Basilico",
-                "Olio EVO"
+                "Passata di pomodoro"
             ],
             "contains": [
                 "glutine"
@@ -112,50 +277,26 @@
             "ingredients": [
                 "Riso",
                 "Zafferano",
-                "Brodo vegetale"
-            ],
-            "contains": []
-        },
-        {
-            "title": "Pasta e Ceci",
-            "type": "pranzo",
-            "ingredients": [
-                "Pasta",
-                "Ceci",
-                "Rosmarino"
-            ],
-            "contains": [
-                "glutine"
-            ]
-        },
-        {
-            "title": "Mela e Noci",
-            "type": "merenda",
-            "ingredients": [
-                "Mela",
-                "Noci"
-            ],
-            "contains": [
-                "frutta_guscio"
-            ]
-        },
-        {
-            "title": "Yogurt",
-            "type": "merenda",
-            "ingredients": [
-                "Yogurt"
+                "Burro"
             ],
             "contains": [
                 "lattosio"
             ]
         },
         {
+            "title": "Mela",
+            "type": "merenda",
+            "ingredients": [
+                "Mela"
+            ],
+            "contains": []
+        },
+        {
             "title": "Petto di Pollo e Insalata",
             "type": "cena",
             "ingredients": [
                 "Petto di pollo",
-                "Insalata mista",
-                "Olio EVO"
+                "Insalata"
             ],
             "contains": []
         },
@@ -164,24 +305,10 @@
             "type": "cena",
             "ingredients": [
                 "Uova",
-                "Zucchine",
-                "Parmigiano"
+                "Zucchine"
             ],
             "contains": [
-                "uova",
-                "lattosio"
-            ]
-        },
-        {
-            "title": "Pesce al Forno e Patate",
-            "type": "cena",
-            "ingredients": [
-                "Orata",
-                "Patate",
-                "Rosmarino"
-            ],
-            "contains": [
-                "pesce"
+                "uova"
             ]
         }
     ]
