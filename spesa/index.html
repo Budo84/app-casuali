@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasti & Spesa Smart</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="theme-color" content="#4CAF50">
+    <style>
+        :root { --primary: #4CAF50; --bg: #f5f5f5; --text: #333; --card: #fff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
+        
+        /* Header */
+        header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; }
+        h1 { margin: 0; font-size: 1.2rem; }
+
+        /* Navigazione Bottom */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; text-decoration: none; font-size: 0.8rem; cursor: pointer; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item .material-icons { font-size: 24px; margin-bottom: 2px; }
+
+        /* Contenitori Pagine */
+        .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Cards */
+        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .day-header { font-weight: bold; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .meal-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .meal-type { font-weight: 500; color: #888; font-size: 0.8rem; width: 70px; }
+        .meal-name { flex-grow: 1; }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 500; }
+        select, input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; background: #fff; }
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3); }
+        
+        /* Checkbox Diete */
+        .diet-options { display: flex; gap: 10px; flex-wrap: wrap; }
+        .diet-chip { background: #eee; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; user-select: none; }
+        .diet-chip.selected { background: var(--primary); color: white; }
+
+        /* Lista Spesa */
+        .shopping-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .shopping-item input { margin-right: 15px; transform: scale(1.3); }
+        .shopping-item.checked span { text-decoration: line-through; color: #aaa; }
+
+        /* Offerte */
+        .offer-box { background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 id="pageTitle">Menu Settimanale</h1>
+    <span style="font-size:0.8rem" id="dietLabel">Omnivoro</span>
+</header>
+
+<div id="p-menu" class="page active">
+    <div class="offer-box" id="activeOfferBox" style="display:none">
+        🎯 Menu ottimizzato per offerte: <b id="offerIngredientsDisplay"></b>
+    </div>
+    <div id="weeklyPlan">
+        <div style="text-align:center; padding: 40px; color:#999;">
+            <span class="material-icons" style="font-size:50px;">restaurant_menu</span><br>
+            Nessun menu generato.<br>Vai su "Profilo" o "Offerte" per iniziare.
+        </div>
+    </div>
+</div>
+
+<div id="p-spesa" class="page">
+    <h2>🛒 Lista della Spesa</h2>
+    <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Generata automaticamente dal menu attuale.</p>
+    <div id="shoppingListContainer"></div>
+</div>
+
+<div id="p-offerte" class="page">
+    <h2>💸 Risparmia sulla Spesa</h2>
+    <p>Inserisci gli ingredienti che hai trovato in offerta sul volantino (es. Pollo, Zucchine, Uova). Creerò un menu basato su questi.</p>
+    
+    <div class="form-group">
+        <label>Ingredienti in Offerta (separati da virgola)</label>
+        <input type="text" id="offerInput" placeholder="Es: macinato, spinaci, mele">
+    </div>
+
+    <button class="btn" onclick="generateMenuWithOffers()">Genera Menu Conveniente ✨</button>
+    <br><br>
+    <div style="text-align:center; font-size:0.9rem;">
+        <a href="https://www.volantinofacile.it/" target="_blank" style="color:var(--primary);">Consulta Volantini Online ↗</a>
+    </div>
+</div>
+
+<div id="p-profilo" class="page">
+    <h2>👤 Le tue Preferenze</h2>
+    
+    <div class="form-group">
+        <label>Regime Alimentare</label>
+        <select id="dietType" onchange="saveProfile()">
+            <option value="standard">Standard (Tutto)</option>
+            <option value="vegetarian">Vegetariano</option>
+            <option value="vegan">Vegano</option>
+            <option value="glutenfree">Senza Glutine</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Intolleranze / Esclusioni</label>
+        <div class="diet-options">
+            <div class="diet-chip" onclick="toggleIntolerance(this, 'lattosio')">No Lattosio</div>
+            <div class="diet-chip" onclick="toggleIntolerance(this, 'uova')">No Uova</div>
+            <div class="diet-chip" onclick="toggleIntolerance(this, 'pesce')">No Pesce</div>
+            <div class="diet-chip" onclick="toggleIntolerance(this, 'frutta_guscio')">No Noci</div>
+        </div>
+    </div>
+
+    <button class="btn" onclick="generateRandomMenu()" style="background:#2196F3; margin-top:20px;">Genera Menu Casuale 🎲</button>
+    <button class="btn" onclick="resetApp()" style="background:#f44336; margin-top:10px;">Reset Dati 🗑️</button>
+</div>
+
+<nav class="nav-bar">
+    <a class="nav-item active" onclick="nav('p-menu', this)">
+        <span class="material-icons">calendar_today</span>
+        Menu
+    </a>
+    <a class="nav-item" onclick="nav('p-spesa', this)">
+        <span class="material-icons">shopping_cart</span>
+        Spesa
+    </a>
+    <a class="nav-item" onclick="nav('p-offerte', this)">
+        <span class="material-icons">savings</span>
+        Offerte
+    </a>
+    <a class="nav-item" onclick="nav('p-profilo', this)">
+        <span class="material-icons">person</span>
+        Profilo
+    </a>
+</nav>
+
+<script>
+    // --- DATABASE RICETTE (Esempio ridotto, puoi aggiungerne centinaia) ---
+    const recipesDB = [
+        // COLAZIONE
+        { id: 1, type: 'colazione', name: 'Yogurt greco e miele', tags: ['vegetarian', 'glutenfree'], ingredients: ['yogurt greco', 'miele'] },
+        { id: 2, type: 'colazione', name: 'Pancakes avena e banana', tags: ['vegetarian', 'vegan'], ingredients: ['fiocchi avena', 'banana', 'latte vegetale'] },
+        { id: 3, type: 'colazione', name: 'Fette biscottate e marmellata', tags: ['vegetarian', 'vegan', 'standard'], ingredients: ['fette biscottate', 'marmellata'] },
+        
+        // PRANZO
+        { id: 10, type: 'pranzo', name: 'Pasta al pomodoro e basilico', tags: ['vegetarian', 'vegan', 'standard'], ingredients: ['pasta', 'passata pomodoro', 'basilico'] },
+        { id: 11, type: 'pranzo', name: 'Riso con pollo e zucchine', tags: ['standard', 'glutenfree'], ingredients: ['riso', 'petto di pollo', 'zucchine'] },
+        { id: 12, type: 'pranzo', name: 'Insalata di ceci e pomodorini', tags: ['vegetarian', 'vegan', 'glutenfree'], ingredients: ['ceci in scatola', 'pomodorini', 'cipolla'] },
+        { id: 13, type: 'pranzo', name: 'Carbonara (o finta carbonara)', tags: ['standard'], ingredients: ['spaghetti', 'uova', 'guanciale', 'pecorino'] },
+
+        // MERENDA
+        { id: 20, type: 'merenda', name: 'Frutto di stagione', tags: ['vegetarian', 'vegan', 'glutenfree'], ingredients: ['mela'] },
+        { id: 21, type: 'merenda', name: 'Barretta ai cereali', tags: ['vegetarian'], ingredients: ['barretta cereali'] },
+        { id: 22, type: 'merenda', name: 'Yogurt alla frutta', tags: ['vegetarian', 'glutenfree'], ingredients: ['yogurt'] },
+
+        // CENA
+        { id: 30, type: 'cena', name: 'Frittata di spinaci', tags: ['vegetarian', 'glutenfree'], ingredients: ['uova', 'spinaci', 'parmigiano'] },
+        { id: 31, type: 'cena', name: 'Salmone al forno con patate', tags: ['standard', 'glutenfree'], ingredients: ['salmone', 'patate', 'rosmarino'] },
+        { id: 32, type: 'cena', name: 'Burger di lenticchie', tags: ['vegetarian', 'vegan'], ingredients: ['lenticchie', 'pangrattato', 'carote'] },
+        { id: 33, type: 'cena', name: 'Petto di pollo alla piastra', tags: ['standard', 'glutenfree'], ingredients: ['petto di pollo', 'insalata'] },
+        { id: 34, type: 'cena', name: 'Vellutata di zucca', tags: ['vegetarian', 'vegan', 'glutenfree'], ingredients: ['zucca', 'patate', 'cipolla'] }
+    ];
+
+    // --- STATO DELL'APP ---
+    let userProfile = {
+        diet: 'standard',
+        intolerances: []
+    };
+    let currentMenu = []; // Il menu generato
+
+    // --- INIZIALIZZAZIONE ---
+    function init() {
+        const savedProfile = localStorage.getItem('menuApp_profile');
+        if (savedProfile) {
+            userProfile = JSON.parse(savedProfile);
+            updateProfileUI();
+        }
+        
+        const savedMenu = localStorage.getItem('menuApp_menu');
+        if (savedMenu) {
+            currentMenu = JSON.parse(savedMenu);
+            renderMenu();
+            renderShoppingList();
+        }
+    }
+
+    // --- NAVIGAZIONE ---
+    function nav(pageId, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('pageTitle').innerText = btn.innerText.trim();
+    }
+
+    // --- LOGICA PROFILO ---
+    function toggleIntolerance(chip, type) {
+        chip.classList.toggle('selected');
+        const idx = userProfile.intolerances.indexOf(type);
+        if (idx === -1) userProfile.intolerances.push(type);
+        else userProfile.intolerances.splice(idx, 1);
+        saveProfile();
+    }
+
+    function saveProfile() {
+        userProfile.diet = document.getElementById('dietType').value;
+        localStorage.setItem('menuApp_profile', JSON.stringify(userProfile));
+        document.getElementById('dietLabel').innerText = userProfile.diet.toUpperCase();
+    }
+
+    function updateProfileUI() {
+        document.getElementById('dietType').value = userProfile.diet;
+        document.getElementById('dietLabel').innerText = userProfile.diet.toUpperCase();
+        // Aggiorna chips intolleranze (logica semplificata per demo)
+    }
+
+    // --- MOTORE DI RICERCA RICETTE ---
+    function getSuitableRecipes(mealType, offerIngredients = []) {
+        return recipesDB.filter(r => {
+            // 1. Filtro Tipo Pasto
+            if (r.type !== mealType) return false;
+
+            // 2. Filtro Dieta Base
+            if (userProfile.diet === 'vegetarian' && !r.tags.includes('vegetarian')) return false;
+            if (userProfile.diet === 'vegan' && !r.tags.includes('vegan')) return false;
+            if (userProfile.diet === 'glutenfree' && !r.tags.includes('glutenfree')) return false;
+
+            // 3. Filtro Intolleranze (controllo ingredienti - molto base)
+            if (userProfile.intolerances.includes('lattosio') && 
+               (r.ingredients.includes('yogurt') || r.ingredients.includes('parmigiano') || r.ingredients.includes('mozzarella'))) return false;
+            if (userProfile.intolerances.includes('uova') && r.ingredients.includes('uova')) return false;
+
+            // 4. Filtro OFFERTE (Se presenti)
+            if (offerIngredients.length > 0) {
+                // La ricetta deve contenere ALMENO UNO degli ingredienti in offerta
+                const hasOffer = offerIngredients.some(offer => 
+                    r.ingredients.some(ing => ing.includes(offer))
+                );
+                return hasOffer;
+            }
+
+            return true;
+        });
+    }
+
+    // --- GENERAZIONE MENU ---
+    function generateMenuLogic(offerIngredients = []) {
+        const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+        const newMenu = [];
+
+        days.forEach(day => {
+            // Cerchiamo ricette adatte. Se ci sono offerte, proviamo a usarle, altrimenti prendiamo a caso
+            let b = getSuitableRecipes('colazione');
+            let l = getSuitableRecipes('pranzo', offerIngredients);
+            let s = getSuitableRecipes('merenda');
+            let d = getSuitableRecipes('cena', offerIngredients);
+
+            // Fallback: se non trovo ricette con offerte, prendo quelle normali adatte alla dieta
+            if (l.length === 0) l = getSuitableRecipes('pranzo');
+            if (d.length === 0) d = getSuitableRecipes('cena');
+
+            newMenu.push({
+                day: day,
+                meals: {
+                    colazione: b[Math.floor(Math.random() * b.length)] || {name: 'A scelta'},
+                    pranzo: l[Math.floor(Math.random() * l.length)] || {name: 'A scelta'},
+                    merenda: s[Math.floor(Math.random() * s.length)] || {name: 'A scelta'},
+                    cena: d[Math.floor(Math.random() * d.length)] || {name: 'A scelta'}
+                }
+            });
+        });
+
+        currentMenu = newMenu;
+        localStorage.setItem('menuApp_menu', JSON.stringify(currentMenu));
+        renderMenu();
+        renderShoppingList();
+        
+        // Naviga alla home
+        document.querySelector('.nav-item').click();
+    }
+
+    function generateRandomMenu() {
+        document.getElementById('activeOfferBox').style.display = 'none';
+        generateMenuLogic([]);
+    }
+
+    function generateMenuWithOffers() {
+        const input = document.getElementById('offerInput').value;
+        if (!input) return alert("Inserisci almeno un ingrediente!");
+        
+        const ingredients = input.split(',').map(s => s.trim().toLowerCase()).filter(s => s);
+        
+        document.getElementById('activeOfferBox').style.display = 'block';
+        document.getElementById('offerIngredientsDisplay').innerText = ingredients.join(', ');
+        
+        generateMenuLogic(ingredients);
+    }
+
+    // --- RENDERIZZAZIONE ---
+    function renderMenu() {
+        const container = document.getElementById('weeklyPlan');
+        container.innerHTML = '';
+
+        currentMenu.forEach(dayPlan => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="day-header">${dayPlan.day}</div>
+                <div class="meal-row"><span class="meal-type">COLAZ:</span> <span class="meal-name">${dayPlan.meals.colazione.name}</span></div>
+                <div class="meal-row"><span class="meal-type">PRANZO:</span> <span class="meal-name">${dayPlan.meals.pranzo.name}</span></div>
+                <div class="meal-row"><span class="meal-type">SNACK:</span> <span class="meal-name">${dayPlan.meals.merenda.name}</span></div>
+                <div class="meal-row"><span class="meal-type">CENA:</span> <span class="meal-name">${dayPlan.meals.cena.name}</span></div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function renderShoppingList() {
+        const listContainer = document.getElementById('shoppingListContainer');
+        listContainer.innerHTML = '';
+        const allIngredients = {};
+
+        // Aggrega ingredienti
+        currentMenu.forEach(day => {
+            Object.values(day.meals).forEach(meal => {
+                if(meal.ingredients) {
+                    meal.ingredients.forEach(ing => {
+                        allIngredients[ing] = (allIngredients[ing] || 0) + 1;
+                    });
+                }
+            });
+        });
+
+        // Crea lista UI
+        Object.keys(allIngredients).sort().forEach(ing => {
+            const div = document.createElement('div');
+            div.className = 'shopping-item';
+            div.onclick = function() { 
+                this.classList.toggle('checked'); 
+                const box = this.querySelector('input');
+                box.checked = !box.checked;
+            };
+            div.innerHTML = `
+                <input type="checkbox">
+                <span>${ing} (${allIngredients[ing]} pasti)</span>
+            `;
+            listContainer.appendChild(div);
+        });
+    }
+
+    function resetApp() {
+        if(confirm("Cancellare tutto?")) {
+            localStorage.removeItem('menuApp_menu');
+            localStorage.removeItem('menuApp_profile');
+            location.reload();
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
