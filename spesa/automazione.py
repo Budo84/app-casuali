@@ -3,71 +3,64 @@ import json
 import google.generativeai as genai
 from datetime import datetime
 
-# Configurazione API
+# 1. SETUP API KEY
 if "GEMINI_KEY" in os.environ:
     API_KEY = os.environ["GEMINI_KEY"]
 else:
-    print("⚠️ Chiave GEMINI_KEY non trovata.")
+    print("❌ ERRORE GRAVE: Chiave GEMINI_KEY non trovata nei Secrets!")
     exit(1)
 
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 def genera_tutto():
-    print("🤖 IL ROBOT È SVEGLIO...")
+    print("🤖 START: Inizio generazione...")
     
-    # 1. OFFERTE
-    mese = datetime.now().strftime("%B")
-    prompt_offerte = f"""
-    Genera JSON puro di 15 prodotti alimentari in offerta a {mese} nei supermercati italiani.
-    Format: [{{"name": "prodotto", "price": 1.99}}]
-    """
+    # 2. CALCOLO PERCORSO ASSOLUTO (Così non sbaglia mai cartella)
+    # Trova la cartella dove si trova QUESTO file python (cioè 'spesa')
+    cartella_script = os.path.dirname(os.path.abspath(__file__))
+    file_output = os.path.join(cartella_script, "dati_settimanali.json")
+    
+    print(f"📂 Il file verrà salvato qui: {file_output}")
+
+    # 3. OFFERTE
     try:
-        resp = model.generate_content(prompt_offerte)
-        text_off = resp.text.replace("```json", "").replace("```", "").strip()
-        offerte = json.loads(text_off)
+        print("🔍 Cerco offerte...")
+        mese = datetime.now().strftime("%B")
+        prompt = f"""Genera JSON puro di 15 prodotti alimentari in offerta a {mese}. Format: [{{"name": "pasta", "price": 0.99}}]"""
+        resp = model.generate_content(prompt)
+        offerte = json.loads(resp.text.replace("```json", "").replace("```", "").strip())
         nomi = [o['name'] for o in offerte]
-        print(f"✅ Offerte trovate: {len(offerte)}")
     except Exception as e:
-        print(f"❌ Errore Offerte: {e}")
-        return
+        print(f"❌ ERRORE IA (Offerte): {e}")
+        # Creiamo dati finti per non rompere l'app se l'IA fallisce
+        offerte = [{"name": "Errore Generazione", "price": 0.00}]
+        nomi = ["Pane"]
 
-    # 2. RICETTE
-    prompt_ricette = f"""
-    Usa questi ingredienti: {', '.join(nomi)}.
-    Crea 21 ricette (colazione, pranzo, cena).
-    Format JSON:
-    [{{ "name": "Nome", "type": "pranzo", "contains": ["glutine"], "ingredients": ["pasta"], "desc": "..." }}]
-    """
+    # 4. RICETTE
     try:
-        resp = model.generate_content(prompt_ricette)
-        text_ric = resp.text.replace("```json", "").replace("```", "").strip()
-        ricette = json.loads(text_ric)
-        print(f"✅ Ricette create: {len(ricette)}")
+        print("👨‍🍳 Creo ricette...")
+        prompt = f"""Crea 21 ricette con: {', '.join(nomi)}. Format JSON: [{{ "name": "Nome", "type": "pranzo", "contains": [], "ingredients": [], "desc": "" }}]"""
+        resp = model.generate_content(prompt)
+        ricette = json.loads(resp.text.replace("```json", "").replace("```", "").strip())
     except Exception as e:
-        print(f"❌ Errore Ricette: {e}")
-        return
+        print(f"❌ ERRORE IA (Ricette): {e}")
+        ricette = []
 
-    # 3. SALVATAGGIO (PERCORSO CORRETTO: SPESA)
+    # 5. SALVATAGGIO
     database = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y"),
         "offerte": offerte,
         "ricette": ricette
     }
-    
-    # Percorso relativo alla radice del repository
-    cartella_target = "spesa"
-    path_file = "spesa/dati_settimanali.json"
-    
-    # Crea la cartella se non esiste (sicurezza)
-    if not os.path.exists(cartella_target):
-        os.makedirs(cartella_target)
-        print(f"📁 Cartella '{cartella_target}' creata.")
 
-    with open(path_file, "w", encoding="utf-8") as f:
-        json.dump(database, f, indent=4, ensure_ascii=False)
-        
-    print(f"💾 FILE SALVATO IN: {path_file}")
+    try:
+        with open(file_output, "w", encoding="utf-8") as f:
+            json.dump(database, f, indent=4, ensure_ascii=False)
+        print("✅ SALVATAGGIO RIUSCITO!")
+    except Exception as e:
+        print(f"❌ ERRORE SCRITTURA FILE: {e}")
+        exit(1)
 
 if __name__ == "__main__":
     genera_tutto()
