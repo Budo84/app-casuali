@@ -1,373 +1,434 @@
 {
     "data_aggiornamento": "11/02/2026",
     "offerte_per_supermercato": {
-        "Genarico": [
+        "Conad": [
             {
-                "name": "Pasta",
-                "price": 1.0
+                "name": "Pasta di semola 500g",
+                "price": 0.89
+            },
+            {
+                "name": "Latte UHT Parzialmente Scremato 1L",
+                "price": 1.15
+            },
+            {
+                "name": "Uova medie 6 pz",
+                "price": 1.79
+            },
+            {
+                "name": "Yogurt bianco 2x125g",
+                "price": 0.99
+            },
+            {
+                "name": "Olio Extra Vergine d'Oliva 1L",
+                "price": 5.49
+            },
+            {
+                "name": "Pane casereccio 500g",
+                "price": 2.2
+            },
+            {
+                "name": "Petto di pollo a fette 500g",
+                "price": 4.99
+            },
+            {
+                "name": "Mele Golden 1kg",
+                "price": 1.89
+            }
+        ],
+        "Coop": [
+            {
+                "name": "Pasta 500g",
+                "price": 0.85
+            },
+            {
+                "name": "Latte fresco intero 1L",
+                "price": 1.4
+            },
+            {
+                "name": "Uova biologiche 6 pz",
+                "price": 2.5
+            },
+            {
+                "name": "Riso Arborio 1kg",
+                "price": 2.8
+            },
+            {
+                "name": "Caffè macinato 250g",
+                "price": 2.7
+            },
+            {
+                "name": "Pomodori pelati 400g",
+                "price": 0.75
+            },
+            {
+                "name": "Biscotti secchi 700g",
+                "price": 1.8
+            },
+            {
+                "name": "Arance 1kg",
+                "price": 1.7
+            }
+        ],
+        "Esselunga": [
+            {
+                "name": "Pasta di Gragnano 500g",
+                "price": 1.49
+            },
+            {
+                "name": "Latte Alta Qualità fresco 1L",
+                "price": 1.6
+            },
+            {
+                "name": "Prosciutto Cotto Alta Qualità 100g",
+                "price": 2.4
+            },
+            {
+                "name": "Parmigiano Reggiano DOP 200g",
+                "price": 4.8
+            },
+            {
+                "name": "Passata di pomodoro 700g",
+                "price": 1.3
+            },
+            {
+                "name": "Salmone affumicato 100g",
+                "price": 3.99
+            },
+            {
+                "name": "Pane integrale 400g",
+                "price": 2.1
+            },
+            {
+                "name": "Banane 1kg",
+                "price": 1.99
+            }
+        ],
+        "Lidl": [
+            {
+                "name": "Pasta 500g",
+                "price": 0.69
+            },
+            {
+                "name": "Latte UHT 1L",
+                "price": 0.99
+            },
+            {
+                "name": "Uova 10 pz",
+                "price": 1.99
+            },
+            {
+                "name": "Prosciutto Cotto 200g",
+                "price": 2.19
+            },
+            {
+                "name": "Birra Lager 6x33cl",
+                "price": 3.49
+            },
+            {
+                "name": "Patatine fritte surgelate 500g",
+                "price": 1.59
+            },
+            {
+                "name": "Marmellata di frutta 400g",
+                "price": 1.29
+            },
+            {
+                "name": "Zucchine 1kg",
+                "price": 1.49
+            }
+        ],
+        "Eurospin": [
+            {
+                "name": "Pasta 500g",
+                "price": 0.65
+            },
+            {
+                "name": "Latte UHT 1L",
+                "price": 0.95
+            },
+            {
+                "name": "Merendine 10 pz",
+                "price": 1.8
+            },
+            {
+                "name": "Salsa Pronta 400g",
+                "price": 0.69
+            },
+            {
+                "name": "Pancetta a cubetti 200g",
+                "price": 1.79
+            },
+            {
+                "name": "Biscotti assortiti 700g",
+                "price": 1.65
+            },
+            {
+                "name": "Yogurt alla frutta 4x125g",
+                "price": 1.39
+            },
+            {
+                "name": "Petti di pollo congelati 1kg",
+                "price": 4.5
             }
         ]
     },
     "ricette": [
         {
-            "name": "Spaghetti al Pomodoro Fresco e Basilico",
-            "type": "pranzo",
+            "name": "Pasta al Parmigiano e Olio EVO",
+            "description": "Un piatto semplice e gustoso di Pasta di Gragnano condita con abbondante Parmigiano Reggiano grattugiato e un filo d'olio extra vergine d'oliva.",
+            "ingredients": [
+                "Pasta di Gragnano",
+                "Parmigiano Reggiano DOP",
+                "Olio Extra Vergine d'Oliva"
+            ],
+            "contains": [
+                "glutine",
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Petto di Pollo alla Piastra con Olio EVO",
+            "description": "Fette di petto di pollo cotte alla piastra fino a doratura, servite con un filo d'olio extra vergine d'oliva per esaltarne il sapore.",
+            "ingredients": [
+                "Petto di pollo a fette",
+                "Olio Extra Vergine d'Oliva"
+            ],
+            "contains": []
+        },
+        {
+            "name": "Frittata di Uova e Parmigiano",
+            "description": "Una soffice frittata preparata con uova sbattute e Parmigiano Reggiano, cotta lentamente in padella con olio extra vergine d'oliva.",
+            "ingredients": [
+                "Uova biologiche",
+                "Parmigiano Reggiano DOP",
+                "Olio Extra Vergine d'Oliva"
+            ],
+            "contains": [
+                "uova",
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Risotto al Parmigiano con Latte",
+            "description": "Un cremoso risotto Arborio mantecato con Parmigiano Reggiano e un tocco di latte UHT per una consistenza vellutata, condito con olio EVO.",
+            "ingredients": [
+                "Riso Arborio",
+                "Parmigiano Reggiano DOP",
+                "Latte UHT Parzialmente Scremato",
+                "Olio Extra Vergine d'Oliva"
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Coppa di Yogurt, Banana e Biscotti Secchi",
+            "description": "Strati alternati di yogurt bianco cremoso, fette di banana fresca e biscotti secchi sbriciolati, un dessert o colazione rinfrescante.",
+            "ingredients": [
+                "Yogurt bianco",
+                "Banane",
+                "Biscotti secchi"
+            ],
+            "contains": [
+                "glutine",
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Caffè Latte Cremoso",
+            "description": "Una bevanda calda e confortante, preparata con caffè macinato e latte UHT schiumato, perfetta per la colazione o una pausa.",
+            "ingredients": [
+                "Caffè macinato",
+                "Latte UHT Parzialmente Scremato"
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Pasta con Prosciutto Cotto e Olio EVO",
+            "description": "Pasta di Gragnano condita con striscioline di Prosciutto Cotto Alta Qualità e un generoso filo d'olio extra vergine d'oliva.",
+            "ingredients": [
+                "Pasta di Gragnano",
+                "Prosciutto Cotto Alta Qualità",
+                "Olio Extra Vergine d'Oliva"
+            ],
             "contains": [
                 "glutine"
-            ],
-            "ingredients": [
-                "pasta",
-                "pomodoro",
-                "basilico",
-                "aglio",
-                "olio extra vergine d'oliva"
-            ],
-            "desc": "Un classico intramontabile, spaghetti conditi con una salsa semplice e profumata di pomodoro fresco, aglio, basilico e olio d'oliva."
+            ]
         },
         {
-            "name": "Penne all'Arrabbiata",
-            "type": "pranzo",
+            "name": "Petti di Pollo al Parmigiano in Padella",
+            "description": "Fette di petti di pollo rosolate in padella e cosparse di Parmigiano Reggiano, che si scioglie creando una crosticina saporita.",
+            "ingredients": [
+                "Petti di pollo congelati",
+                "Parmigiano Reggiano DOP",
+                "Olio Extra Vergine d'Oliva"
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Omelette con Prosciutto e Parmigiano",
+            "description": "Una ricca omelette ripiena di Prosciutto Cotto Alta Qualità a dadini e Parmigiano Reggiano grattugiato, cotta alla perfezione.",
+            "ingredients": [
+                "Uova",
+                "Prosciutto Cotto Alta Qualità",
+                "Parmigiano Reggiano DOP",
+                "Olio Extra Vergine d'Oliva"
+            ],
+            "contains": [
+                "uova",
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Risotto con Pollo e Parmigiano",
+            "description": "Un gustoso risotto preparato con Riso Arborio, bocconcini di petto di pollo, Parmigiano Reggiano e un tocco di latte UHT per la cremosità.",
+            "ingredients": [
+                "Riso Arborio",
+                "Petto di pollo a fette",
+                "Parmigiano Reggiano DOP",
+                "Olio Extra Vergine d'Oliva",
+                "Latte UHT Parzialmente Scremato"
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Biscotti Secchi e Latte Fresco",
+            "description": "Un classico della colazione italiana: biscotti secchi inzuppati nel latte UHT freddo o caldo.",
+            "ingredients": [
+                "Biscotti secchi",
+                "Latte UHT Parzialmente Scremato"
+            ],
+            "contains": [
+                "glutine",
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Smoothie Energetico Banana e Latte",
+            "description": "Uno smoothie cremoso e nutriente preparato frullando banane mature, latte UHT e yogurt bianco.",
+            "ingredients": [
+                "Banane",
+                "Latte UHT Parzialmente Scremato",
+                "Yogurt bianco"
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Pasta Fredda con Pollo e Olio EVO",
+            "description": "Un'insalata di pasta fredda con bocconcini di petto di pollo cotti, condita semplicemente con olio extra vergine d'oliva, ideale per l'estate.",
+            "ingredients": [
+                "Pasta di Gragnano",
+                "Petto di pollo a fette",
+                "Olio Extra Vergine d'Oliva"
+            ],
             "contains": [
                 "glutine"
-            ],
-            "ingredients": [
-                "pasta",
-                "pomodoro",
-                "peperoncino",
-                "aglio",
-                "prezzemolo"
-            ],
-            "desc": "Un piatto piccante e saporito, con penne condite da una salsa di pomodoro, aglio e abbondante peperoncino."
+            ]
         },
         {
-            "name": "Spaghetti alla Carbonara",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "uova",
-                "lattosio"
-            ],
+            "name": "Uova Strapazzate con Olio EVO",
+            "description": "Uova strapazzate morbide e cremose, cotte con un filo d'olio extra vergine d'oliva.",
             "ingredients": [
-                "pasta",
-                "uova",
-                "guanciale",
-                "pecorino romano",
-                "pepe nero"
+                "Uova",
+                "Olio Extra Vergine d'Oliva"
             ],
-            "desc": "L'iconico piatto romano, spaghetti avvolti in una cremosa salsa di tuorli d'uovo, guanciale croccante, pecorino romano e pepe nero."
-        },
-        {
-            "name": "Uova in Purgatorio",
-            "type": "pranzo",
             "contains": [
                 "uova"
-            ],
-            "ingredients": [
-                "uova",
-                "pomodoro",
-                "aglio",
-                "peperoncino",
-                "prezzemolo",
-                "pane"
-            ],
-            "desc": "Uova cotte delicatamente in una salsa di pomodoro speziata con aglio e peperoncino, perfette da intingere con il pane."
+            ]
         },
         {
-            "name": "Pasta con Tonno, Pomodorini e Capperi",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "pesce"
-            ],
+            "name": "Merendine Inzuppate nel Caffè",
+            "description": "Un modo semplice per gustare le merendine, inzuppandole nel caffè caldo, per una colazione o merenda veloce.",
             "ingredients": [
-                "pasta",
-                "pomodoro",
-                "tonno sott'olio",
-                "capperi",
-                "olive nere",
-                "prezzemolo"
+                "Merendine",
+                "Caffè macinato"
             ],
-            "desc": "Un primo piatto veloce e saporito, con pasta condita da tonno, pomodorini freschi, capperi e olive."
-        },
-        {
-            "name": "Frittata di Pasta al Pomodoro",
-            "type": "pranzo",
             "contains": [
                 "glutine",
-                "uova",
-                "lattosio"
-            ],
-            "ingredients": [
-                "pasta",
-                "uova",
-                "pomodoro",
-                "parmigiano reggiano",
-                "basilico"
-            ],
-            "desc": "Ricetta anti-spreco campana, pasta avanzata mescolata con uova, salsa di pomodoro e formaggio, poi cotta in padella o al forno."
-        },
-        {
-            "name": "Bucatini all'Amatriciana",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "lattosio"
-            ],
-            "ingredients": [
-                "pasta",
-                "pomodoro",
-                "guanciale",
-                "pecorino romano",
-                "peperoncino"
-            ],
-            "desc": "Un classico romano, bucatini con sugo a base di pomodoro, guanciale croccante e pecorino romano."
-        },
-        {
-            "name": "Spaghetti alla Puttanesca",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "pesce"
-            ],
-            "ingredients": [
-                "pasta",
-                "pomodoro",
-                "acciughe",
-                "capperi",
-                "olive nere",
-                "aglio",
-                "peperoncino"
-            ],
-            "desc": "Un piatto dal sapore deciso con pomodoro, acciughe, capperi, olive nere, aglio e peperoncino."
-        },
-        {
-            "name": "Pasta al Forno con Uova Sode e Ragù",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "uova",
-                "lattosio"
-            ],
-            "ingredients": [
-                "pasta",
-                "pomodoro",
-                "uova sode",
-                "carne macinata",
-                "mozzarella",
-                "parmigiano reggiano"
-            ],
-            "desc": "Un ricco piatto unico, pasta al forno con ragù di carne, fette di uova sode, mozzarella filante e parmigiano."
-        },
-        {
-            "name": "Orecchiette con Pesto di Pomodoro Secco e Mandorle",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "frutta_guscio",
-                "lattosio"
-            ],
-            "ingredients": [
-                "pasta",
-                "pomodoro secco",
-                "mandorle",
-                "basilico",
-                "aglio",
-                "pecorino romano"
-            ],
-            "desc": "Orecchiette condite con un pesto saporito a base di pomodori secchi, mandorle tostate, basilico e pecorino."
-        },
-        {
-            "name": "Pasta e Fagioli con Uovo Poché",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
+                "lattosio",
                 "uova"
-            ],
-            "ingredients": [
-                "pasta",
-                "fagioli borlotti",
-                "pomodoro",
-                "uova",
-                "sedano",
-                "carota",
-                "cipolla"
-            ],
-            "desc": "Una rivisitazione della classica pasta e fagioli arricchita da un uovo poché, per un tocco cremoso e proteico."
+            ]
         },
         {
-            "name": "Tagliatelle al Ragù di Salsiccia e Uova Strappate",
-            "type": "pranzo",
+            "name": "Risotto al Pollo Semplice",
+            "description": "Un risotto essenziale preparato con Riso Arborio e bocconcini di petto di pollo scongelati, condito con olio extra vergine d'oliva.",
+            "ingredients": [
+                "Riso Arborio",
+                "Petti di pollo congelati",
+                "Olio Extra Vergine d'Oliva"
+            ],
+            "contains": []
+        },
+        {
+            "name": "Mousse Leggera di Yogurt e Banana",
+            "description": "Una mousse fresca e leggera ottenuta frullando yogurt bianco e banane mature fino a ottenere una consistenza omogenea.",
+            "ingredients": [
+                "Yogurt bianco",
+                "Banane"
+            ],
+            "contains": [
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Torta Fredda di Biscotti al Caffè e Yogurt",
+            "description": "Una torta fredda semplice e veloce con strati di biscotti secchi inzuppati nel caffè e una crema leggera a base di yogurt e un goccio di latte UHT.",
+            "ingredients": [
+                "Biscotti secchi",
+                "Caffè macinato",
+                "Yogurt bianco",
+                "Latte UHT Parzialmente Scremato"
+            ],
             "contains": [
                 "glutine",
+                "lattosio"
+            ]
+        },
+        {
+            "name": "Merendine con Prosciutto Cotto",
+            "description": "Un insolito abbinamento per una merenda veloce o un piccolo spuntino, merendine servite con fette di Prosciutto Cotto Alta Qualità.",
+            "ingredients": [
+                "Merendine",
+                "Prosciutto Cotto Alta Qualità"
+            ],
+            "contains": [
+                "glutine",
+                "lattosio",
                 "uova"
-            ],
-            "ingredients": [
-                "pasta",
-                "salsiccia",
-                "pomodoro",
-                "uova",
-                "cipolla",
-                "vino bianco"
-            ],
-            "desc": "Tagliatelle con un ricco ragù di salsiccia e uova strapazzate grossolanamente incorporate, per un sapore rustico e avvolgente."
+            ]
         },
         {
-            "name": "Pasta alla Checca con Mozzarella e Uova di Quaglia",
-            "type": "pranzo",
+            "name": "Pollo Bollito con Riso e Olio EVO",
+            "description": "Petto di pollo bollito e servito con riso bianco e un filo d'olio extra vergine d'oliva, un piatto leggero e nutriente.",
+            "ingredients": [
+                "Petti di pollo congelati",
+                "Riso Arborio",
+                "Olio Extra Vergine d'Oliva"
+            ],
+            "contains": []
+        },
+        {
+            "name": "Pasta all'Uovo e Parmigiano 'Bianca'",
+            "description": "Una pasta cremosa condita con uova sbattute e Parmigiano Reggiano, emulsionato con un po' di acqua di cottura della pasta e olio EVO.",
+            "ingredients": [
+                "Pasta di Gragnano",
+                "Uova",
+                "Parmigiano Reggiano DOP",
+                "Olio Extra Vergine d'Oliva"
+            ],
             "contains": [
                 "glutine",
                 "uova",
                 "lattosio"
-            ],
-            "ingredients": [
-                "pasta",
-                "pomodoro ciliegino",
-                "mozzarella",
-                "uova di quaglia",
-                "basilico"
-            ],
-            "desc": "Un piatto estivo e fresco, pasta condita con pomodorini crudi, mozzarella, basilico e uova di quaglia sode."
-        },
-        {
-            "name": "Spaghetti alla Gricia con Tuorlo d'Uovo Fritto",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "uova",
-                "lattosio"
-            ],
-            "ingredients": [
-                "pasta",
-                "guanciale",
-                "pecorino romano",
-                "pepe nero",
-                "uova (tuorlo fritto)"
-            ],
-            "desc": "La gricia classica arricchita da un tuorlo d'uovo fritto croccante, che aggiunge una nota di ricchezza e un sapore unico."
-        },
-        {
-            "name": "Ziti al Forno con Melanzane, Pomodoro e Uova Sode",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "uova",
-                "lattosio"
-            ],
-            "ingredients": [
-                "pasta",
-                "melanzane",
-                "pomodoro",
-                "uova sode",
-                "mozzarella",
-                "basilico",
-                "ricotta salata"
-            ],
-            "desc": "Un sostanzioso primo piatto al forno, strati di ziti, melanzane fritte, sugo di pomodoro, uova sode, mozzarella e ricotta salata."
-        },
-        {
-            "name": "Pasta Nidi di Rondine con Prosciutto Cotto, Pomodoro e Uova",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "uova",
-                "lattosio"
-            ],
-            "ingredients": [
-                "pasta (lasagne)",
-                "prosciutto cotto",
-                "mozzarella",
-                "uova (sode o strapazzate)",
-                "pomodoro (besciamella al)"
-            ],
-            "desc": "Rotolini di pasta all'uovo ripieni di prosciutto, mozzarella e uova (sode o strapazzate), gratinati in un sugo leggero di pomodoro."
-        },
-        {
-            "name": "Farfalle al Salmone Affumicato e Crema di Pomodorini con Uova di Pesce",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "pesce"
-            ],
-            "ingredients": [
-                "pasta",
-                "salmone affumicato",
-                "pomodoro ciliegino",
-                "uova di lompo (o bottarga)",
-                "erba cipollina"
-            ],
-            "desc": "Farfalle delicate con salmone affumicato, una crema leggera di pomodorini e un tocco di uova di pesce per un sapore marino."
-        },
-        {
-            "name": "Cannelloni Ricotta, Spinaci, Pomodoro e Uova",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "uova",
-                "lattosio"
-            ],
-            "ingredients": [
-                "pasta (cannelloni)",
-                "ricotta",
-                "spinaci",
-                "uova (nel ripieno)",
-                "pomodoro (salsa)",
-                "parmigiano reggiano"
-            ],
-            "desc": "Cannelloni ripieni di ricotta, spinaci e uova, gratinati in forno con salsa di pomodoro e parmigiano."
-        },
-        {
-            "name": "Pasta con Sugo Rustico di Pomodoro, Olive, Noci e Tuorlo Fritto",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "uova",
-                "frutta_guscio"
-            ],
-            "ingredients": [
-                "pasta",
-                "pomodoro",
-                "olive taggiasche",
-                "noci",
-                "aglio",
-                "peperoncino",
-                "uova (tuorlo fritto)"
-            ],
-            "desc": "Un sugo robusto con pomodoro, olive, noci tritate e un tuorlo d'uovo fritto croccante per una consistenza e un sapore unici."
-        },
-        {
-            "name": "Lasagne al Forno alla Bolognese con Uova Sode",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "uova",
-                "lattosio"
-            ],
-            "ingredients": [
-                "pasta (lasagne)",
-                "ragù alla bolognese",
-                "besciamella",
-                "uova sode",
-                "parmigiano reggiano"
-            ],
-            "desc": "Una ricca lasagna al forno con strati di pasta, ragù alla bolognese, besciamella e fette di uova sode."
-        },
-        {
-            "name": "Spaghetti Bottarga, Pomodorini e Tuorlo d'Uovo Marinato",
-            "type": "pranzo",
-            "contains": [
-                "glutine",
-                "uova",
-                "pesce"
-            ],
-            "ingredients": [
-                "pasta",
-                "bottarga",
-                "pomodoro ciliegino",
-                "uova (tuorlo marinato)",
-                "aglio",
-                "prezzemolo"
-            ],
-            "desc": "Un primo piatto raffinato con la sapidità della bottarga, la dolcezza dei pomodorini e la cremosità di un tuorlo d'uovo marinato."
+            ]
         }
     ]
 }
