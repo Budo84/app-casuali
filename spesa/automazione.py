@@ -5,8 +5,6 @@ from datetime import datetime
 import sys
 
 # --- CONFIGURAZIONE ---
-print("--- INIZIO AUTOMAZIONE INTELLIGENTE ---")
-
 if "GEMINI_KEY" in os.environ:
     API_KEY = os.environ["GEMINI_KEY"]
 else:
@@ -15,89 +13,72 @@ else:
 
 genai.configure(api_key=API_KEY)
 
-# --- FUNZIONE MAGICA: TROVA IL MODELLO GIUSTO ---
-def trova_modello_funzionante():
-    print("🔍 Cerco un modello AI disponibile per la tua chiave...")
+# Trova modello (Auto-Configurante)
+def trova_modello():
     try:
-        # Chiede a Google la lista dei modelli
-        modelli_disponibili = []
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                modelli_disponibili.append(m.name)
-        
-        print(f"   Modelli trovati: {modelli_disponibili}")
-        
-        # Cerca il migliore (priorità: Flash > Pro > Altri)
-        modello_scelto = None
-        
-        # 1. Cerca qualcosa con "flash" (più veloce)
-        for m in modelli_disponibili:
-            if "flash" in m and "legacy" not in m:
-                modello_scelto = m
-                break
-        
-        # 2. Se non c'è, cerca "pro"
-        if not modello_scelto:
-            for m in modelli_disponibili:
-                if "pro" in m and "legacy" not in m:
-                    modello_scelto = m
-                    break
-                    
-        # 3. Altrimenti prendi il primo della lista
-        if not modello_scelto and modelli_disponibili:
-            modello_scelto = modelli_disponibili[0]
-            
-        if modello_scelto:
-            print(f"✅ MODELLO SELEZIONATO: {modello_scelto}")
-            return genai.GenerativeModel(modello_scelto)
-        else:
-            print("❌ NESSUN MODELLO COMPATIBILE TROVATO.")
-            sys.exit(1)
-            
-    except Exception as e:
-        print(f"❌ Errore durante la ricerca modelli: {e}")
-        # TENTATIVO DISPERATO CON QUELLO STANDARD
-        print("⚠️ Provo forzatamente 'gemini-1.5-flash'...")
+        mods = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+        # Cerca Flash > Pro > Altro
+        best = next((m for m in mods if "flash" in m), next((m for m in mods if "pro" in m), mods[0]))
+        return genai.GenerativeModel(best)
+    except:
         return genai.GenerativeModel('gemini-1.5-flash')
 
-# INIZIALIZZA IL MODELLO TROVATO
-model = trova_modello_funzionante()
+model = trova_modello()
 
 def pulisci_json(testo):
     testo = testo.replace("```json", "").replace("```", "").strip()
-    start = testo.find('[')
-    end = testo.rfind(']') + 1
-    if start != -1 and end != -1:
-        return testo[start:end]
+    start, end = testo.find('['), testo.rfind(']') + 1
+    if start == -1: start, end = testo.find('{'), testo.rfind('}') + 1
+    if start != -1 and end != -1: return testo[start:end]
     return testo
 
 def genera_tutto():
-    cartella_script = os.path.dirname(os.path.abspath(__file__))
-    file_output = os.path.join(cartella_script, "dati_settimanali.json")
+    cartella = os.path.dirname(os.path.abspath(__file__))
+    file_out = os.path.join(cartella, "dati_settimanali.json")
 
-    # 1. OFFERTE
-    print("\n1. Genero OFFERTE...")
-    try:
-        prompt = """
-        Rispondi SOLO JSON. Lista di 15 prodotti alimentari italiani in offerta.
-        Format: [{"name": "Pasta", "price": 0.89}]
-        """
-        resp = model.generate_content(prompt)
-        offerte = json.loads(pulisci_json(resp.text))
-        nomi = [o['name'] for o in offerte]
-        print(f"✅ {len(offerte)} offerte generate.")
-    except Exception as e:
-        print(f"⚠️ Errore Offerte: {e}. Uso dati backup.")
-        offerte = [{"name": "Pasta", "price": 1.00}, {"name": "Pollo", "price": 5.00}]
-        nomi = ["Pasta", "Pollo"]
+    # 1. OFFERTE PER SUPERMERCATO
+    print("1. Genero OFFERTE MULTI-STORE...")
+    supermercati = ["Conad", "Coop", "Esselunga", "Lidl", "Eurospin"]
+    offerte_db = {}
+    tutti_prodotti = set()
 
-    # 2. RICETTE
-    print("\n2. Genero RICETTE...")
     try:
         prompt = f"""
-        Rispondi SOLO JSON. Crea 21 ricette con: {', '.join(nomi)}.
-        Usa ESATTAMENTE questi tag per 'contains': "glutine", "lattosio", "uova", "pesce", "frutta_guscio".
-        Format: [{{"name": "Nome", "type": "pranzo", "contains": ["glutine"], "ingredients": ["pasta"], "desc": "..."}}]
+        Agisci come un database di prezzi italiano.
+        Genera offerte realistiche per questi supermercati: {', '.join(supermercati)}.
+        Per OGNI supermercato, elenca 8 prodotti in offerta (pasta, carne, verdura, scatolame).
+        
+        Rispondi SOLO con questo JSON esatto:
+        {{
+            "Conad": [{{"name": "Pasta Barilla", "price": 0.79}}, {{"name": "Passata", "price": 0.89}}],
+            "Lidl": [{{"name": "Pasta Combino", "price": 0.65}}, {{"name": "Pollo", "price": 3.99}}],
+            ... (fai così per tutti)
+        }}
+        """
+        resp = model.generate_content(prompt)
+        offerte_db = json.loads(pulisci_json(resp.text))
+        
+        # Raccogliamo tutti i nomi dei prodotti per creare le ricette
+        for store in offerte_db:
+            for item in offerte_db[store]:
+                tutti_prodotti.add(item['name'])
+        
+        print(f"✅ Offerte generate per: {list(offerte_db.keys())}")
+        
+    except Exception as e:
+        print(f"❌ Errore Offerte: {e}")
+        offerte_db = {"Genarico": [{"name": "Pasta", "price": 1.00}]}
+        tutti_prodotti = ["Pasta", "Pomodoro", "Uova"]
+
+    # 2. RICETTE
+    print("2. Genero RICETTE...")
+    lista_ing = list(tutti_prodotti)[:20] # Prendiamo i primi 20 per non confondere l'AI
+    try:
+        prompt = f"""
+        Crea 21 ricette italiane usando: {', '.join(lista_ing)}.
+        Usa ESATTAMENTE questi tag 'contains': "glutine", "lattosio", "uova", "pesce", "frutta_guscio".
+        Format JSON:
+        [{{ "name": "Nome", "type": "pranzo", "contains": ["glutine"], "ingredients": ["pasta", "pomodoro"], "desc": "..." }}]
         """
         resp = model.generate_content(prompt)
         ricette = json.loads(pulisci_json(resp.text))
@@ -106,19 +87,17 @@ def genera_tutto():
         print(f"❌ Errore Ricette: {e}")
         ricette = []
 
-    # 3. SALVA
+    # 3. SALVATAGGIO
     database = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y"),
-        "offerte": offerte,
+        "offerte_per_supermercato": offerte_db, # Nuova struttura
         "ricette": ricette
     }
 
-    if not os.path.exists(os.path.dirname(file_output)):
-        os.makedirs(os.path.dirname(file_output))
-
-    with open(file_output, "w", encoding="utf-8") as f:
+    if not os.path.exists(os.path.dirname(file_out)): os.makedirs(os.path.dirname(file_out))
+    with open(file_out, "w", encoding="utf-8") as f:
         json.dump(database, f, indent=4, ensure_ascii=False)
-    print(f"\n💾 SALVATO: {file_output}")
+    print("💾 Salvato.")
 
 if __name__ == "__main__":
     genera_tutto()
