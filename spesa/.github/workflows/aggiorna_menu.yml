@@ -1,0 +1,39 @@
+name: Aggiorna Menu Settimanale
+
+on:
+  schedule:
+    # Esegue ogni Lunedì alle 6:00 AM UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch: # Ti permette di avviarlo a mano quando vuoi
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permesso per salvare il file nel repo
+      
+    steps:
+      - name: Checkout del codice
+        uses: actions/checkout@v4
+
+      - name: Imposta Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Installa librerie
+        run: |
+          pip install google-generativeai
+
+      - name: Esegui il Generatore IA
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+        run: python automazione.py
+
+      - name: Salva i risultati (Commit)
+        run: |
+          git config --global user.name 'Robot Menu'
+          git config --global user.email 'robot@menu.app'
+          git add menu/dati_settimanali.json
+          git commit -m "Aggiornamento Menu Automatico" || echo "Nessuna modifica"
+          git push
