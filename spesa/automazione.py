@@ -35,60 +35,55 @@ def genera_tutto():
     cartella = os.path.dirname(os.path.abspath(__file__))
     file_out = os.path.join(cartella, "dati_settimanali.json")
 
-    # 1. OFFERTE PER SUPERMERCATO (LISTA AGGIORNATA)
+    # 1. OFFERTE
     print(f"🤖 Uso modello: {model.model_name}")
-    
-    # AGGIUNTI I NUOVI SUPERMERCATI QUI SOTTO
     supermercati = [
         "Conad", "Coop", "Esselunga", "Lidl", "Eurospin", 
         "Pewex", "MA Supermercati", "Ipercarni", "Todis"
     ]
     
     prompt_offerte = f"""
-    Genera un database JSON di offerte alimentari realistiche per questi supermercati: {', '.join(supermercati)}.
-    Per ogni supermercato includi 6 prodotti diversi (pasta, carne, verdura, scatolame) con prezzi realistici.
+    Genera un database JSON di offerte alimentari realistiche per: {', '.join(supermercati)}.
+    Per ogni supermercato includi 6 prodotti (pasta, carne, verdura, frutta, snack).
     
-    RISPONDI ESATTAMENTE IN QUESTO FORMATO JSON:
+    RISPONDI SOLO JSON:
     {{
-      "Conad": [{{"name": "Pasta", "price": 0.85}}, {{"name": "Tonno", "price": 2.50}}],
-      "Pewex": [{{"name": "Bistecca", "price": 4.50}}],
-      "Todis": [{{"name": "Latte", "price": 0.79}}],
-      ... (fai così per tutti i {len(supermercati)} supermercati)
+      "Conad": [{{"name": "Pasta", "price": 0.85}}, {{"name": "Mele", "price": 1.50}}],
+      ...
     }}
     """
     
     try:
         resp = model.generate_content(prompt_offerte)
         offerte_db = json.loads(pulisci_json(resp.text))
-        print("✅ Offerte generate con successo.")
+        print("✅ Offerte generate.")
     except Exception as e:
-        print(f"⚠️ Errore Offerte: {e}. Uso fallback.")
+        print(f"⚠️ Errore Offerte: {e}")
         offerte_db = {s: [{"name": "Pasta", "price": 0.90}] for s in supermercati}
 
-    # 2. RICETTE
-    # Raccogliamo ingredienti da tutti i negozi per avere varietà
+    # 2. RICETTE (Include MERENDA)
     ingredienti_base = []
     for s in offerte_db:
         for p in offerte_db[s]:
             ingredienti_base.append(p['name'])
             
     prompt_ricette = f"""
-    Crea 21 ricette per una famiglia italiana usando questi ingredienti in offerta: {', '.join(list(set(ingredienti_base))[:20])}.
+    Crea 28 ricette italiane per una famiglia (colazione, pranzo, merenda, cena) usando: {', '.join(list(set(ingredienti_base))[:25])}.
     
-    Regole JSON:
-    1. Usa "title" per il nome della ricetta.
-    2. "type" deve essere solo: "colazione", "pranzo", "cena".
-    3. "ingredients" deve essere una LISTA DI OGGETTI con "item" e "quantity".
-    4. "contains" deve segnalare SOLO se presenti: "glutine", "lattosio", "uova", "pesce", "frutta_guscio".
+    REGOLE JSON:
+    1. Usa "title" per il nome.
+    2. "type" deve essere SOLO: "colazione", "pranzo", "merenda", "cena".
+    3. "ingredients": lista di oggetti {{"item": "Nome", "quantity": "..."}}.
+    4. "contains": lista allergeni ("glutine", "lattosio", "uova", "pesce", "frutta_guscio").
     
-    FORMATO RISPOSTA:
+    FORMATO:
     [
       {{
-        "title": "Pasta al Sugo",
-        "type": "pranzo",
-        "ingredients": [ {{"item": "Pasta", "quantity": "100g"}}, {{"item": "Pomodoro", "quantity": "50g"}} ],
-        "contains": ["glutine"],
-        "description": "Piatto semplice..."
+        "title": "Yogurt e Frutta",
+        "type": "merenda",
+        "ingredients": [ {{"item": "Yogurt", "quantity": "1 vasetto"}} ],
+        "contains": ["lattosio"],
+        "description": "Snack sano..."
       }}
     ]
     """
