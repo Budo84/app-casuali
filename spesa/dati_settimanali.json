@@ -1,344 +1,373 @@
 {
     "data_aggiornamento": "11/02/2026",
-    "offerte": [
-        {
-            "name": "Pasta Barilla Spaghetti n.5",
-            "price": 0.85
-        },
-        {
-            "name": "Olio Extra Vergine d'Oliva Farchioni 1L",
-            "price": 5.99
-        },
-        {
-            "name": "Passata di Pomodoro Mutti 700g",
-            "price": 0.99
-        },
-        {
-            "name": "Caffè Lavazza Qualità Rossa 250g",
-            "price": 2.49
-        },
-        {
-            "name": "Parmigiano Reggiano DOP 200g",
-            "price": 4.75
-        },
-        {
-            "name": "Prosciutto Crudo di Parma DOP 100g affettato",
-            "price": 3.8
-        },
-        {
-            "name": "Aceto Balsamico di Modena IGP Ponti 500ml",
-            "price": 2.2
-        },
-        {
-            "name": "Riso Carnaroli Scotti 1kg",
-            "price": 2.1
-        },
-        {
-            "name": "Mozzarella Santa Lucia Galbani 125g x2",
-            "price": 2.19
-        },
-        {
-            "name": "Biscotti Pavesini Pavesi 200g",
-            "price": 1.25
-        },
-        {
-            "name": "Tonno Rio Mare all'Olio d'Oliva 3x80g",
-            "price": 3.49
-        },
-        {
-            "name": "Salsa Pronta al Pomodoro Ciliegino Cirio 330g",
-            "price": 1.49
-        },
-        {
-            "name": "Gorgonzola DOP Dolce Igor 150g",
-            "price": 2.99
-        },
-        {
-            "name": "Salame Milano Negroni 100g affettato",
-            "price": 2.65
-        },
-        {
-            "name": "Taralli Classici Terre di Puglia 250g",
-            "price": 1.8
-        }
-    ],
+    "offerte_per_supermercato": {
+        "Genarico": [
+            {
+                "name": "Pasta",
+                "price": 1.0
+            }
+        ]
+    },
     "ricette": [
         {
-            "name": "Spaghetti al Pomodoro Semplice",
+            "name": "Spaghetti al Pomodoro Fresco e Basilico",
+            "type": "pranzo",
+            "contains": [
+                "glutine"
+            ],
+            "ingredients": [
+                "pasta",
+                "pomodoro",
+                "basilico",
+                "aglio",
+                "olio extra vergine d'oliva"
+            ],
+            "desc": "Un classico intramontabile, spaghetti conditi con una salsa semplice e profumata di pomodoro fresco, aglio, basilico e olio d'oliva."
+        },
+        {
+            "name": "Penne all'Arrabbiata",
+            "type": "pranzo",
+            "contains": [
+                "glutine"
+            ],
+            "ingredients": [
+                "pasta",
+                "pomodoro",
+                "peperoncino",
+                "aglio",
+                "prezzemolo"
+            ],
+            "desc": "Un piatto piccante e saporito, con penne condite da una salsa di pomodoro, aglio e abbondante peperoncino."
+        },
+        {
+            "name": "Spaghetti alla Carbonara",
             "type": "pranzo",
             "contains": [
                 "glutine",
+                "uova",
                 "lattosio"
             ],
             "ingredients": [
-                "Pasta Barilla Spaghetti n.5",
-                "Passata di Pomodoro Mutti 700g",
-                "Olio Extra Vergine d'Oliva Farchioni 1L",
-                "Parmigiano Reggiano DOP 200g"
+                "pasta",
+                "uova",
+                "guanciale",
+                "pecorino romano",
+                "pepe nero"
             ],
-            "desc": "Un classico intramontabile: spaghetti conditi con una salsa di pomodoro Mutti e un generoso tocco di Parmigiano Reggiano DOP."
+            "desc": "L'iconico piatto romano, spaghetti avvolti in una cremosa salsa di tuorli d'uovo, guanciale croccante, pecorino romano e pepe nero."
         },
         {
-            "name": "Spaghetti Tonno e Pomodorini",
-            "type": "cena",
+            "name": "Uova in Purgatorio",
+            "type": "pranzo",
+            "contains": [
+                "uova"
+            ],
+            "ingredients": [
+                "uova",
+                "pomodoro",
+                "aglio",
+                "peperoncino",
+                "prezzemolo",
+                "pane"
+            ],
+            "desc": "Uova cotte delicatamente in una salsa di pomodoro speziata con aglio e peperoncino, perfette da intingere con il pane."
+        },
+        {
+            "name": "Pasta con Tonno, Pomodorini e Capperi",
+            "type": "pranzo",
             "contains": [
                 "glutine",
                 "pesce"
             ],
             "ingredients": [
-                "Pasta Barilla Spaghetti n.5",
-                "Tonno Rio Mare all'Olio d'Oliva 3x80g",
-                "Salsa Pronta al Pomodoro Ciliegino Cirio 330g",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
+                "pasta",
+                "pomodoro",
+                "tonno sott'olio",
+                "capperi",
+                "olive nere",
+                "prezzemolo"
             ],
-            "desc": "Spaghetti veloci e saporiti, con tonno Rio Mare e la freschezza della salsa di pomodoro ciliegino Cirio."
+            "desc": "Un primo piatto veloce e saporito, con pasta condita da tonno, pomodorini freschi, capperi e olive."
         },
         {
-            "name": "Insalata Caprese Semplice",
-            "type": "antipasto",
-            "contains": [
-                "lattosio"
-            ],
-            "ingredients": [
-                "Mozzarella Santa Lucia Galbani 125g x2",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
-            ],
-            "desc": "Mozzarella Santa Lucia fresca, tagliata e condita con un filo d'olio extra vergine d'oliva, per un antipasto leggero e gustoso."
-        },
-        {
-            "name": "Risotto Cremoso al Parmigiano",
+            "name": "Frittata di Pasta al Pomodoro",
             "type": "pranzo",
             "contains": [
+                "glutine",
+                "uova",
                 "lattosio"
             ],
             "ingredients": [
-                "Riso Carnaroli Scotti 1kg",
-                "Parmigiano Reggiano DOP 200g",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
+                "pasta",
+                "uova",
+                "pomodoro",
+                "parmigiano reggiano",
+                "basilico"
             ],
-            "desc": "Un risotto avvolgente, preparato con riso Carnaroli e mantecato con abbondante Parmigiano Reggiano DOP."
+            "desc": "Ricetta anti-spreco campana, pasta avanzata mescolata con uova, salsa di pomodoro e formaggio, poi cotta in padella o al forno."
         },
         {
-            "name": "Tagliere di Salumi e Formaggi con Taralli",
-            "type": "antipasto",
+            "name": "Bucatini all'Amatriciana",
+            "type": "pranzo",
             "contains": [
                 "glutine",
                 "lattosio"
             ],
             "ingredients": [
-                "Prosciutto Crudo di Parma DOP 100g affettato",
-                "Salame Milano Negroni 100g affettato",
-                "Gorgonzola DOP Dolce Igor 150g",
-                "Taralli Classici Terre di Puglia 250g",
-                "Aceto Balsamico di Modena IGP Ponti 500ml",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
+                "pasta",
+                "pomodoro",
+                "guanciale",
+                "pecorino romano",
+                "peperoncino"
             ],
-            "desc": "Un ricco tagliere con Prosciutto Crudo, Salame Milano, Gorgonzola DOP e Taralli, accompagnato da un dressing di olio e Aceto Balsamico."
+            "desc": "Un classico romano, bucatini con sugo a base di pomodoro, guanciale croccante e pecorino romano."
         },
         {
-            "name": "Caffè Lavazza Tradizionale",
-            "type": "colazione",
-            "contains": [],
+            "name": "Spaghetti alla Puttanesca",
+            "type": "pranzo",
+            "contains": [
+                "glutine",
+                "pesce"
+            ],
             "ingredients": [
-                "Caffè Lavazza Qualità Rossa 250g"
+                "pasta",
+                "pomodoro",
+                "acciughe",
+                "capperi",
+                "olive nere",
+                "aglio",
+                "peperoncino"
             ],
-            "desc": "Un'ottima tazza di caffè Lavazza Qualità Rossa, preparata secondo la tradizione italiana, perfetta per iniziare la giornata."
+            "desc": "Un piatto dal sapore deciso con pomodoro, acciughe, capperi, olive nere, aglio e peperoncino."
         },
         {
-            "name": "Coppa Pavesini al Caffè",
-            "type": "dessert",
+            "name": "Pasta al Forno con Uova Sode e Ragù",
+            "type": "pranzo",
+            "contains": [
+                "glutine",
+                "uova",
+                "lattosio"
+            ],
+            "ingredients": [
+                "pasta",
+                "pomodoro",
+                "uova sode",
+                "carne macinata",
+                "mozzarella",
+                "parmigiano reggiano"
+            ],
+            "desc": "Un ricco piatto unico, pasta al forno con ragù di carne, fette di uova sode, mozzarella filante e parmigiano."
+        },
+        {
+            "name": "Orecchiette con Pesto di Pomodoro Secco e Mandorle",
+            "type": "pranzo",
+            "contains": [
+                "glutine",
+                "frutta_guscio",
+                "lattosio"
+            ],
+            "ingredients": [
+                "pasta",
+                "pomodoro secco",
+                "mandorle",
+                "basilico",
+                "aglio",
+                "pecorino romano"
+            ],
+            "desc": "Orecchiette condite con un pesto saporito a base di pomodori secchi, mandorle tostate, basilico e pecorino."
+        },
+        {
+            "name": "Pasta e Fagioli con Uovo Poché",
+            "type": "pranzo",
             "contains": [
                 "glutine",
                 "uova"
             ],
             "ingredients": [
-                "Biscotti Pavesini Pavesi 200g",
-                "Caffè Lavazza Qualità Rossa 250g"
+                "pasta",
+                "fagioli borlotti",
+                "pomodoro",
+                "uova",
+                "sedano",
+                "carota",
+                "cipolla"
             ],
-            "desc": "Un dessert semplice e veloce: biscotti Pavesini inzuppati nel caffè Lavazza, un classico per la merenda o dopo pasto."
+            "desc": "Una rivisitazione della classica pasta e fagioli arricchita da un uovo poché, per un tocco cremoso e proteico."
         },
         {
-            "name": "Taralli con Prosciutto e Mozzarella",
-            "type": "merenda",
-            "contains": [
-                "glutine",
-                "lattosio"
-            ],
-            "ingredients": [
-                "Taralli Classici Terre di Puglia 250g",
-                "Prosciutto Crudo di Parma DOP 100g affettato",
-                "Mozzarella Santa Lucia Galbani 125g x2"
-            ],
-            "desc": "Un abbinamento sfizioso per una merenda salata: taralli croccanti con fette di prosciutto crudo e mozzarella fresca."
-        },
-        {
-            "name": "Spaghetti al Gorgonzola",
-            "type": "cena",
-            "contains": [
-                "glutine",
-                "lattosio"
-            ],
-            "ingredients": [
-                "Pasta Barilla Spaghetti n.5",
-                "Gorgonzola DOP Dolce Igor 150g",
-                "Olio Extra Vergine d'Oliva Farchioni 1L",
-                "Parmigiano Reggiano DOP 200g"
-            ],
-            "desc": "Spaghetti conditi con una cremosa salsa al Gorgonzola DOP, arricchiti da un filo d'olio e Parmigiano grattugiato."
-        },
-        {
-            "name": "Insalata di Riso Tonno e Mozzarella",
+            "name": "Tagliatelle al Ragù di Salsiccia e Uova Strappate",
             "type": "pranzo",
             "contains": [
-                "lattosio",
+                "glutine",
+                "uova"
+            ],
+            "ingredients": [
+                "pasta",
+                "salsiccia",
+                "pomodoro",
+                "uova",
+                "cipolla",
+                "vino bianco"
+            ],
+            "desc": "Tagliatelle con un ricco ragù di salsiccia e uova strapazzate grossolanamente incorporate, per un sapore rustico e avvolgente."
+        },
+        {
+            "name": "Pasta alla Checca con Mozzarella e Uova di Quaglia",
+            "type": "pranzo",
+            "contains": [
+                "glutine",
+                "uova",
+                "lattosio"
+            ],
+            "ingredients": [
+                "pasta",
+                "pomodoro ciliegino",
+                "mozzarella",
+                "uova di quaglia",
+                "basilico"
+            ],
+            "desc": "Un piatto estivo e fresco, pasta condita con pomodorini crudi, mozzarella, basilico e uova di quaglia sode."
+        },
+        {
+            "name": "Spaghetti alla Gricia con Tuorlo d'Uovo Fritto",
+            "type": "pranzo",
+            "contains": [
+                "glutine",
+                "uova",
+                "lattosio"
+            ],
+            "ingredients": [
+                "pasta",
+                "guanciale",
+                "pecorino romano",
+                "pepe nero",
+                "uova (tuorlo fritto)"
+            ],
+            "desc": "La gricia classica arricchita da un tuorlo d'uovo fritto croccante, che aggiunge una nota di ricchezza e un sapore unico."
+        },
+        {
+            "name": "Ziti al Forno con Melanzane, Pomodoro e Uova Sode",
+            "type": "pranzo",
+            "contains": [
+                "glutine",
+                "uova",
+                "lattosio"
+            ],
+            "ingredients": [
+                "pasta",
+                "melanzane",
+                "pomodoro",
+                "uova sode",
+                "mozzarella",
+                "basilico",
+                "ricotta salata"
+            ],
+            "desc": "Un sostanzioso primo piatto al forno, strati di ziti, melanzane fritte, sugo di pomodoro, uova sode, mozzarella e ricotta salata."
+        },
+        {
+            "name": "Pasta Nidi di Rondine con Prosciutto Cotto, Pomodoro e Uova",
+            "type": "pranzo",
+            "contains": [
+                "glutine",
+                "uova",
+                "lattosio"
+            ],
+            "ingredients": [
+                "pasta (lasagne)",
+                "prosciutto cotto",
+                "mozzarella",
+                "uova (sode o strapazzate)",
+                "pomodoro (besciamella al)"
+            ],
+            "desc": "Rotolini di pasta all'uovo ripieni di prosciutto, mozzarella e uova (sode o strapazzate), gratinati in un sugo leggero di pomodoro."
+        },
+        {
+            "name": "Farfalle al Salmone Affumicato e Crema di Pomodorini con Uova di Pesce",
+            "type": "pranzo",
+            "contains": [
+                "glutine",
                 "pesce"
             ],
             "ingredients": [
-                "Riso Carnaroli Scotti 1kg",
-                "Tonno Rio Mare all'Olio d'Oliva 3x80g",
-                "Mozzarella Santa Lucia Galbani 125g x2",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
+                "pasta",
+                "salmone affumicato",
+                "pomodoro ciliegino",
+                "uova di lompo (o bottarga)",
+                "erba cipollina"
             ],
-            "desc": "Un'insalata di riso fresca e completa, perfetta per l'estate, con tonno, mozzarella e condita con olio extra vergine."
+            "desc": "Farfalle delicate con salmone affumicato, una crema leggera di pomodorini e un tocco di uova di pesce per un sapore marino."
         },
         {
-            "name": "Spaghetti Aglio e Olio (versione base)",
-            "type": "cena",
-            "contains": [
-                "glutine"
-            ],
-            "ingredients": [
-                "Pasta Barilla Spaghetti n.5",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
-            ],
-            "desc": "Un piatto semplice ma iconico: spaghetti conditi con un abbondante giro di olio extra vergine d'oliva."
-        },
-        {
-            "name": "Mozzarella Semplice all'Olio EVO",
-            "type": "merenda",
-            "contains": [
-                "lattosio"
-            ],
-            "ingredients": [
-                "Mozzarella Santa Lucia Galbani 125g x2",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
-            ],
-            "desc": "Una fresca mozzarella Santa Lucia, esaltata da un semplice filo di Olio Extra Vergine d'Oliva Farchioni, ideale per uno spuntino."
-        },
-        {
-            "name": "Salsa al Pomodoro Mutti Semplice",
+            "name": "Cannelloni Ricotta, Spinaci, Pomodoro e Uova",
             "type": "pranzo",
-            "contains": [],
-            "ingredients": [
-                "Passata di Pomodoro Mutti 700g",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
-            ],
-            "desc": "Una salsa di pomodoro Mutti classica, arricchita da un filo d'olio extra vergine, pronta per essere gustata come zuppa leggera o condimento."
-        },
-        {
-            "name": "Risotto al Pomodoro e Parmigiano",
-            "type": "pranzo",
-            "contains": [
-                "lattosio"
-            ],
-            "ingredients": [
-                "Riso Carnaroli Scotti 1kg",
-                "Passata di Pomodoro Mutti 700g",
-                "Olio Extra Vergine d'Oliva Farchioni 1L",
-                "Parmigiano Reggiano DOP 200g"
-            ],
-            "desc": "Risotto saporito con passata di pomodoro Mutti, mantecato con Parmigiano Reggiano DOP e un filo d'olio extra vergine."
-        },
-        {
-            "name": "Piatto di Prosciutto Crudo con Taralli",
-            "type": "antipasto",
-            "contains": [
-                "glutine"
-            ],
-            "ingredients": [
-                "Prosciutto Crudo di Parma DOP 100g affettato",
-                "Taralli Classici Terre di Puglia 250g"
-            ],
-            "desc": "Un classico antipasto italiano: fette di Prosciutto Crudo di Parma DOP accompagnate da croccanti Taralli Classici."
-        },
-        {
-            "name": "Piatto di Salame Milano con Taralli",
-            "type": "merenda",
-            "contains": [
-                "glutine"
-            ],
-            "ingredients": [
-                "Salame Milano Negroni 100g affettato",
-                "Taralli Classici Terre di Puglia 250g"
-            ],
-            "desc": "Salame Milano Negroni affettato finemente, perfetto da gustare con i Taralli Classici Terre di Puglia per uno spuntino."
-        },
-        {
-            "name": "Taralli con Gorgonzola Dolce",
-            "type": "merenda",
             "contains": [
                 "glutine",
+                "uova",
                 "lattosio"
             ],
             "ingredients": [
-                "Taralli Classici Terre di Puglia 250g",
-                "Gorgonzola DOP Dolce Igor 150g"
+                "pasta (cannelloni)",
+                "ricotta",
+                "spinaci",
+                "uova (nel ripieno)",
+                "pomodoro (salsa)",
+                "parmigiano reggiano"
             ],
-            "desc": "Un abbinamento goloso per la merenda o l'aperitivo: taralli croccanti serviti con un morbido e saporito Gorgonzola DOP Dolce."
+            "desc": "Cannelloni ripieni di ricotta, spinaci e uova, gratinati in forno con salsa di pomodoro e parmigiano."
         },
         {
-            "name": "Spaghetti con Salsa Ciliegino",
+            "name": "Pasta con Sugo Rustico di Pomodoro, Olive, Noci e Tuorlo Fritto",
             "type": "pranzo",
             "contains": [
-                "glutine"
+                "glutine",
+                "uova",
+                "frutta_guscio"
             ],
             "ingredients": [
-                "Pasta Barilla Spaghetti n.5",
-                "Salsa Pronta al Pomodoro Ciliegino Cirio 330g",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
+                "pasta",
+                "pomodoro",
+                "olive taggiasche",
+                "noci",
+                "aglio",
+                "peperoncino",
+                "uova (tuorlo fritto)"
             ],
-            "desc": "Spaghetti conditi con la deliziosa e pronta salsa di pomodoro ciliegino Cirio, un piatto veloce e gustoso per ogni occasione."
+            "desc": "Un sugo robusto con pomodoro, olive, noci tritate e un tuorlo d'uovo fritto croccante per una consistenza e un sapore unici."
         },
         {
-            "name": "Antipasto Italiano Misto",
-            "type": "antipasto",
+            "name": "Lasagne al Forno alla Bolognese con Uova Sode",
+            "type": "pranzo",
             "contains": [
+                "glutine",
+                "uova",
                 "lattosio"
             ],
             "ingredients": [
-                "Prosciutto Crudo di Parma DOP 100g affettato",
-                "Salame Milano Negroni 100g affettato",
-                "Mozzarella Santa Lucia Galbani 125g x2",
-                "Olio Extra Vergine d'Oliva Farchioni 1L",
-                "Aceto Balsamico di Modena IGP Ponti 500ml"
+                "pasta (lasagne)",
+                "ragù alla bolognese",
+                "besciamella",
+                "uova sode",
+                "parmigiano reggiano"
             ],
-            "desc": "Un antipasto ricco con Prosciutto Crudo, Salame Milano, Mozzarella Santa Lucia e un condimento di olio e aceto balsamico."
+            "desc": "Una ricca lasagna al forno con strati di pasta, ragù alla bolognese, besciamella e fette di uova sode."
         },
         {
-            "name": "Risotto con Tonno all'Olio EVO",
-            "type": "cena",
+            "name": "Spaghetti Bottarga, Pomodorini e Tuorlo d'Uovo Marinato",
+            "type": "pranzo",
             "contains": [
+                "glutine",
+                "uova",
                 "pesce"
             ],
             "ingredients": [
-                "Riso Carnaroli Scotti 1kg",
-                "Tonno Rio Mare all'Olio d'Oliva 3x80g",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
+                "pasta",
+                "bottarga",
+                "pomodoro ciliegino",
+                "uova (tuorlo marinato)",
+                "aglio",
+                "prezzemolo"
             ],
-            "desc": "Un risotto saporito e nutriente, preparato con riso Carnaroli e tonno Rio Mare, condito con olio extra vergine d'oliva."
-        },
-        {
-            "name": "Insalata di Mozzarella e Salame",
-            "type": "pranzo",
-            "contains": [
-                "lattosio"
-            ],
-            "ingredients": [
-                "Mozzarella Santa Lucia Galbani 125g x2",
-                "Salame Milano Negroni 100g affettato",
-                "Olio Extra Vergine d'Oliva Farchioni 1L"
-            ],
-            "desc": "Un'insalata semplice e saporita, con bocconcini di mozzarella Santa Lucia e fette di Salame Milano, condita con olio extra vergine d'oliva."
+            "desc": "Un primo piatto raffinato con la sapidità della bottarga, la dolcezza dei pomodorini e la cremosità di un tuorlo d'uovo marinato."
         }
     ]
 }
