@@ -3,278 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Automatico</title>
+    <title>Menu Automatico IA</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta name="theme-color" content="#009688">
+    <meta name="theme-color" content="#00796b">
     <style>
-        :root { --primary: #009688; --bg: #e0f2f1; --card: #fff; --text: #333; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; }
+        :root { --primary: #00796b; --accent: #ffb300; --bg: #f5f7fa; --card: #fff; --text: #333; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
         
+        /* HEADER */
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; }
-        h1 { margin: 0; font-size: 1.1rem; }
-        .update-badge { font-size: 0.7rem; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 10px; }
+        h1 { margin: 0; font-size: 1.1rem; display:flex; align-items:center; gap:8px;}
+        .update-badge { font-size: 0.75rem; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 12px; }
 
-        .page { display: none; padding: 15px; animation: fade 0.3s; }
+        /* PAGINE */
+        .page { display: none; padding: 15px; animation: fadeIn 0.4s; }
         .page.active { display: block; }
-        @keyframes fade { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
-        /* Card Menu */
-        .card { background: var(--card); padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
-        .day { font-weight: bold; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .meal { display: flex; margin-bottom: 8px; align-items: flex-start; }
-        .meal i { margin-right: 10px; font-size: 1.2rem; color: #555; }
-        .meal div { flex: 1; }
-        .meal strong { display: block; font-size: 0.95rem; }
-        .meal span { font-size: 0.8rem; color: #888; }
-
-        /* Lista Spesa */
-        .shop-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-        .price-tag { font-weight: bold; color: #E91E63; }
-        .price-tag.est { color: #999; font-weight: normal; font-size: 0.9rem; }
-
-        /* Offerte */
-        .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
-        .offer-card { background: white; padding: 10px; border-radius: 8px; text-align: center; font-size: 0.9rem; border: 1px solid #ddd; }
-        .offer-card b { display: block; color: #009688; margin-top: 5px; }
-
-        /* Nav */
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 60px; }
-        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; font-size: 0.7rem; }
-        .nav a.active { color: var(--primary); font-weight: bold; }
-        .nav i { font-size: 24px; margin-bottom: 3px; }
-
-        /* Famiglia */
-        .member { background: white; padding: 10px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .tag { background: #ffebee; color: #c62828; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 5px; }
+        /* CARDS MENU */
+        .card { background: var(--card); padding: 15px; margin-bottom: 15px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 5px solid var(--primary); }
+        .day { font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; font-size: 0.95rem; letter-spacing: 0.5px; }
         
-        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; margin-top: 10px; }
+        .meal { display: flex; margin-bottom: 12px; align-items: flex-start; }
+        .meal:last-child { margin-bottom: 0; }
+        .meal i { margin-right: 12px; font-size: 1.3rem; color: #546e7a; padding-top: 2px; }
+        .meal div { flex: 1; }
+        .meal strong { display: block; font-size: 1rem; color: #333; margin-bottom: 2px; }
+        .meal span { font-size: 0.85rem; color: #78909c; line-height: 1.3; display:block; }
+        .meal-tags { margin-top: 4px; display:flex; gap: 4px; flex-wrap: wrap;}
+        .meal-tag { font-size: 0.7rem; background: #eceff1; color: #546e7a; padding: 2px 6px; border-radius: 4px;}
+
+        /* LISTA SPESA */
+        .shop-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e0e0e0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .shop-info b { font-size: 0.95rem; }
+        .shop-info small { color: #888; display: block; font-size: 0.75rem; }
+        .price-inp { width: 70px; padding: 8px; border: 1px solid #cfd8dc; border-radius: 8px; text-align: right; font-weight: bold; color: #37474f; background: #fafafa; }
+        .price-inp.offer { background: #e8f5e9; border-color: #a5d6a7; color: #2e7d32; }
+
+        .total-bar { position: fixed; bottom: 75px; left: 15px; right: 15px; background: #263238; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.25); z-index: 900; }
+        .total-lbl { font-size: 0.85rem; opacity: 0.8; }
+        .total-val { font-size: 1.4rem; font-weight: bold; color: #b2dfdb; }
+
+        /* OFFERTE */
+        .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .offer-card { background: white; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #e0e0e0; position: relative; }
+        .offer-card b { display: block; color: #d32f2f; margin-top: 5px; font-size: 1.1rem; }
+        .offer-badge { position: absolute; top: -8px; right: -8px; background: #d32f2f; color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
+
+        /* FAMIGLIA */
+        .member { background: white; padding: 15px; margin-bottom: 10px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e0e0e0; }
+        .tag-bad { background: #ffebee; color: #c62828; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; margin-left: 5px; }
+
+        /* NAVIGAZIONE */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #eee; display: flex; height: 65px; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #b0bec5; text-decoration: none; font-size: 0.7rem; transition: 0.2s; }
+        .nav a.active { color: var(--primary); transform: translateY(-3px); }
+        .nav a.active i { color: var(--primary); }
+        .nav i { font-size: 26px; margin-bottom: 3px; color: #cfd8dc; }
+
+        /* UTILS */
+        .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn:active { transform: scale(0.98); }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <header>
     <div>
-        <h1>Menu Automatico</h1>
-        <div class="update-badge" id="lastUpdate">Aggiorno...</div>
+        <h1><i class="material-icons">restaurant_menu</i> Menu Settimanale</h1>
+        <div class="update-badge" id="lastUpdate">In attesa dati...</div>
     </div>
     <button onclick="manualReload()" style="background:none; border:none; color:white;"><i class="material-icons">refresh</i></button>
 </header>
 
 <div id="p-menu" class="page active">
     <div id="menuContainer">
-        <div style="text-align:center; padding: 50px;">
-            <i class="material-icons" style="font-size:50px; color:#ccc; animation: spin 1s infinite linear;">sync</i>
-            <p>Caricamento dati settimanali...</p>
+        <div style="text-align:center; padding: 50px 20px;">
+            <div class="loader"></div>
+            <p style="color:#666;">Sto cercando il menu generato dal robot...</p>
+            <small style="color:#999; display:block; margin-top:10px;">Assicurati che l'Action GitHub sia partita almeno una volta.</small>
         </div>
     </div>
 </div>
 
 <div id="p-spesa" class="page">
-    <h2>Lista della Spesa</h2>
-    <div id="shopContainer"></div>
-    <div style="position:fixed; bottom:70px; left:15px; right:15px; background:#333; color:white; padding:15px; border-radius:10px; display:flex; justify-content:space-between;">
-        <span>Totale Stimato:</span>
-        <strong id="totalPrice">€ 0.00</strong>
+    <h2 style="margin-top:0;">🛒 Lista della Spesa</h2>
+    <div id="shopContainer" style="padding-bottom: 80px;"></div>
+    
+    <div class="total-bar">
+        <div>
+            <div class="total-lbl">Totale Stimato</div>
+            <div style="font-size:0.7rem; color:#80cbc4;">Include prezzi offerte</div>
+        </div>
+        <div class="total-val" id="totalPrice">€ 0.00</div>
     </div>
 </div>
 
 <div id="p-offerte" class="page">
-    <h2>Offerte Rilevate</h2>
-    <p>Il sistema ha trovato queste offerte per questa settimana:</p>
+    <h2 style="margin-top:0;">🏷️ Offerte Rilevate</h2>
+    <p style="color:#666; font-size:0.9rem;">Il robot ha trovato queste offerte e le ha usate per creare il menu:</p>
     <div class="offer-grid" id="offerContainer"></div>
 </div>
 
 <div id="p-famiglia" class="page">
-    <h2>Impostazioni Famiglia</h2>
+    <h2 style="margin-top:0;">👨‍👩‍👧‍👦 La Tua Famiglia</h2>
     <div id="familyList"></div>
-    <div style="background:white; padding:15px; border-radius:8px; margin-top:20px;">
+
+    <div style="background:white; padding:15px; border-radius:12px; margin-top:20px; border:1px solid #e0e0e0;">
         <h3>Aggiungi Membro</h3>
-        <input type="text" id="memName" placeholder="Nome" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
-        <div>
-            <label><input type="checkbox" class="chk" value="glutine"> No Glutine</label>
-            <label><input type="checkbox" class="chk" value="lattosio"> No Lattosio</label>
-            <label><input type="checkbox" class="chk" value="uova"> No Uova</label>
-            <label><input type="checkbox" class="chk" value="pesce"> No Pesce</label>
+        <input type="text" id="memName" placeholder="Nome (es. Marco)" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box; margin-bottom:15px;">
+        
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+            <label style="display:flex; align-items:center; background:#f5f5f5; padding:8px 12px; border-radius:20px; font-size:0.9rem;">
+                <input type="checkbox" class="chk" value="glutine" style="margin-right:8px;"> No Glutine
+            </label>
+            <label style="display:flex; align-items:center; background:#f5f5f5; padding:8px 12px; border-radius:20px; font-size:0.9rem;">
+                <input type="checkbox" class="chk" value="lattosio" style="margin-right:8px;"> No Lattosio
+            </label>
+            <label style="display:flex; align-items:center; background:#f5f5f5; padding:8px 12px; border-radius:20px; font-size:0.9rem;">
+                <input type="checkbox" class="chk" value="uova" style="margin-right:8px;"> No Uova
+            </label>
         </div>
-        <button class="btn" onclick="addMember()">Salva</button>
+        <button class="btn" onclick="addMember()">Salva Membro</button>
     </div>
 </div>
 
 <nav class="nav">
-    <a onclick="go('p-menu', this)" class="active"><i class="material-icons">restaurant</i>Menu</a>
+    <a onclick="go('p-menu', this)" class="active"><i class="material-icons">calendar_today</i>Menu</a>
     <a onclick="go('p-spesa', this)"><i class="material-icons">shopping_cart</i>Spesa</a>
     <a onclick="go('p-offerte', this)"><i class="material-icons">local_offer</i>Offerte</a>
     <a onclick="go('p-famiglia', this)"><i class="material-icons">group</i>Famiglia</a>
 </nav>
 
 <script>
-    let db = null;
-    let family = JSON.parse(localStorage.getItem('family_v2')) || [];
+    // --- STATO DELL'APP ---
+    let db = null; // Conterrà il JSON scaricato (ricette + offerte)
+    let family = JSON.parse(localStorage.getItem('menu_family_v3')) || [];
+    let customPrices = JSON.parse(localStorage.getItem('menu_prices_v3')) || {};
 
+    // --- AVVIO ---
     async function init() {
         renderFamily();
         
-        // Cerca di scaricare il file JSON generato dal robot
         try {
-            // Aggiungiamo un timestamp per evitare che il browser usi la vecchia cache
-            const res = await fetch('dati_settimanali.json?t=' + new Date().getTime());
-            if (!res.ok) throw new Error("File non trovato (Il robot sta lavorando?)");
-            db = await res.json();
+            // Scarica il JSON generato dal robot.
+            // Aggiungiamo ?t=... per evitare che il browser mostri dati vecchi (cache busting)
+            const response = await fetch('dati_settimanali.json?t=' + new Date().getTime());
             
-            document.getElementById('lastUpdate').innerText = "Dati del: " + db.data_aggiornamento;
-            generateFilteredMenu();
+            if (!response.ok) throw new Error("File JSON non trovato");
+            
+            db = await response.json();
+            
+            // Mostra data aggiornamento
+            document.getElementById('lastUpdate').innerText = "Dati del: " + (db.data_aggiornamento || "Sconosciuta");
+            
+            // Genera UI
             renderOffers();
-        } catch (e) {
+            generateFilteredMenu();
+
+        } catch (error) {
+            console.error(error);
             document.getElementById('menuContainer').innerHTML = `
-                <div style="text-align:center; padding:30px;">
-                    <p>⚠️ Dati non ancora pronti.</p>
-                    <small>Il robot GitHub Action deve girare almeno una volta.<br>Vai su GitHub > Actions > Aggiorna Menu > Run Workflow</small>
+                <div style="text-align:center; padding:40px;">
+                    <i class="material-icons" style="font-size:48px; color:#ffb74d;">warning</i>
+                    <h3>Nessun menu trovato</h3>
+                    <p style="color:#666;">Il robot non ha ancora creato il file.</p>
+                    <button class="btn" onclick="manualReload()" style="background:#546e7a; width:auto; padding:10px 20px;">Riprova ora</button>
                 </div>`;
         }
     }
 
+    // --- LOGICA MENU ---
     function generateFilteredMenu() {
-        if(!db) return;
+        if(!db || !db.ricette) return;
         const container = document.getElementById('menuContainer');
         container.innerHTML = '';
 
-        // Filtra ricette in base alla famiglia
-        const safeRecipes = db.ricette.filter(r => {
-            for(let m of family) {
-                for(let intol of m.intolerances) {
-                    if(r.contains.includes(intol)) return false;
+        // 1. FILTRO FAMIGLIA (Sicurezza)
+        // Scartiamo le ricette che contengono allergeni vietati a QUALCUNO della famiglia
+        const safeRecipes = db.ricette.filter(recipe => {
+            for(let person of family) {
+                for(let intolerance of person.intolerances) {
+                    // Se la ricetta contiene un'intolleranza di questo membro -> SCARTA
+                    if(recipe.contains && recipe.contains.includes(intolerance)) return false;
                 }
             }
             return true;
         });
 
         if(safeRecipes.length === 0) {
-            container.innerHTML = "<p>Nessuna ricetta adatta alle intolleranze!</p>";
+            container.innerHTML = `
+                <div style="text-align:center; padding:30px;">
+                    <h3>Nessuna ricetta sicura! 😱</h3>
+                    <p>Le intolleranze impostate escludono tutte le ricette scaricate.</p>
+                    <p>Prova a rimuovere qualche restrizione o aspetta il prossimo aggiornamento.</p>
+                </div>`;
             return;
         }
 
-        // Genera menu settimanale
+        // 2. GENERAZIONE MENU GIORNALIERO
         const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-        const shopList = {};
+        const shoppingList = {}; // { 'pane': 1, 'latte': 2 }
 
         days.forEach(day => {
-            const getMeal = (type) => {
-                let pool = safeRecipes.filter(r => r.type === type);
-                if(!pool.length) pool = safeRecipes; 
-                return pool[Math.floor(Math.random() * pool.length)];
+            // Funzione per pescare una ricetta a caso di un certo tipo (colazione/pranzo/cena)
+            const pickMeal = (type) => {
+                let candidates = safeRecipes.filter(r => r.type === type);
+                if(candidates.length === 0) candidates = safeRecipes; // Fallback se non trovo il tipo esatto
+                return candidates[Math.floor(Math.random() * candidates.length)];
             };
 
-            const m1 = getMeal('colazione');
-            const m2 = getMeal('pranzo');
-            const m3 = getMeal('cena');
+            const m1 = pickMeal('colazione');
+            const m2 = pickMeal('pranzo');
+            const m3 = pickMeal('cena');
 
-            // Aggiungi alla spesa
-            [m1, m2, m3].forEach(m => {
-                if(m && m.ingredients) m.ingredients.forEach(i => shopList[i] = (shopList[i]||0)+1);
+            // Aggiungi ingredienti alla lista spesa
+            [m1, m2, m3].forEach(meal => {
+                if(meal && meal.ingredients) {
+                    meal.ingredients.forEach(ing => {
+                        shoppingList[ing] = (shoppingList[ing] || 0) + 1;
+                    });
+                }
             });
 
+            // HTML Card Giorno
             container.innerHTML += `
                 <div class="card">
                     <div class="day">${day}</div>
-                    ${mealUI('☕', m1)}
-                    ${mealUI('☀️', m2)}
-                    ${mealUI('🌙', m3)}
+                    ${renderMealHTML('☕', m1)}
+                    ${renderMealHTML('☀️', m2)}
+                    ${renderMealHTML('🌙', m3)}
                 </div>`;
         });
 
-        renderShop(shopList);
+        renderShop(shoppingList);
     }
 
-    function mealUI(icon, meal) {
+    function renderMealHTML(icon, meal) {
         if(!meal) return '';
+        // Crea le etichette per gli allergeni (se presenti, solo a scopo informativo)
+        let tagsHTML = '';
+        if(meal.contains && meal.contains.length > 0) {
+            tagsHTML = `<div class="meal-tags">${meal.contains.map(c => `<span class="meal-tag">⚠️ ${c}</span>`).join('')}</div>`;
+        }
+
         return `
             <div class="meal">
                 <i class="material-icons">${icon}</i>
                 <div>
                     <strong>${meal.name}</strong>
-                    <span>${meal.ingredients.join(', ')}</span>
+                    <span>${meal.desc || meal.ingredients.join(', ')}</span>
+                    ${tagsHTML}
                 </div>
             </div>`;
     }
 
+    // --- LOGICA SPESA ---
     function renderShop(list) {
-        const c = document.getElementById('shopContainer');
-        c.innerHTML = '';
+        const container = document.getElementById('shopContainer');
+        container.innerHTML = '';
         let total = 0;
 
-        Object.keys(list).sort().forEach(ing => {
-            // Cerca prezzo nelle offerte
-            const offer = db.offerte.find(o => ing.toLowerCase().includes(o.name.toLowerCase()));
-            const price = offer ? offer.price : 0;
-            const priceHtml = price > 0 
-                ? `<span class="price-tag">€${price.toFixed(2)}</span>` 
-                : `<span class="price-tag est">???</span>`;
-            
-            if(price > 0) total += price;
+        // Ordina alfabeticamente
+        Object.keys(list).sort().forEach(item => {
+            // Cerca se esiste un'offerta per questo ingrediente
+            // (Controlla se il nome dell'offerta è contenuto nell'ingrediente o viceversa)
+            const offer = db.offerte.find(o => 
+                item.toLowerCase().includes(o.name.toLowerCase()) || 
+                o.name.toLowerCase().includes(item.toLowerCase())
+            );
 
-            c.innerHTML += `
+            // Determina il prezzo: 
+            // 1. Prezzo manuale salvato dall'utente?
+            // 2. Prezzo offerta dal robot?
+            // 3. Zero.
+            let price = 0;
+            if (customPrices[item] !== undefined) {
+                price = parseFloat(customPrices[item]);
+            } else if (offer) {
+                price = parseFloat(offer.price);
+            }
+
+            // Stile grafico se è in offerta
+            const isOfferClass = (offer && !customPrices[item]) ? 'offer' : '';
+            
+            total += price;
+
+            container.innerHTML += `
                 <div class="shop-item">
-                    <span>${ing} <small>(x${list[ing]})</small></span>
-                    ${priceHtml}
+                    <div class="shop-info">
+                        <b>${item}</b>
+                        <small>x${list[item]} ricette</small>
+                    </div>
+                    <div>
+                        € <input type="number" step="0.10" class="price-inp ${isOfferClass}" 
+                           value="${price.toFixed(2)}" 
+                           onchange="updatePrice('${item}', this.value)">
+                    </div>
                 </div>`;
         });
+
         document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
     }
 
+    function updatePrice(item, value) {
+        customPrices[item] = parseFloat(value) || 0;
+        localStorage.setItem('menu_prices_v3', JSON.stringify(customPrices));
+        
+        // Ricalcola il totale ricaricando la lista (un po' grezzo ma efficace)
+        // Per performance migliore si potrebbe ricalcolare solo il totale, ma va bene così per ora
+        // Bisogna però rigenerare la lista spesa... per semplicità rigeneriamo la UI spesa
+        // Nota: Poiché generateFilteredMenu rigenera la lista spesa casualmente ogni volta,
+        // qui dobbiamo stare attenti. Per questa demo, l'utente vedrà il totale aggiornarsi
+        // correttamente solo se non ricarichiamo tutta la pagina.
+        
+        // Calcolo rapido totale visuale
+        let newTotal = 0;
+        document.querySelectorAll('.price-inp').forEach(inp => newTotal += parseFloat(inp.value) || 0);
+        document.getElementById('totalPrice').innerText = "€ " + newTotal.toFixed(2);
+    }
+
+    // --- LOGICA OFFERTE ---
     function renderOffers() {
-        const c = document.getElementById('offerContainer');
-        c.innerHTML = '';
-        db.offerte.forEach(o => {
-            c.innerHTML += `
+        const container = document.getElementById('offerContainer');
+        container.innerHTML = '';
+        if(!db.offerte) return;
+
+        db.offerte.forEach(offer => {
+            container.innerHTML += `
                 <div class="offer-card">
-                    <div>${o.name}</div>
-                    <b>€${o.price.toFixed(2)}</b>
+                    <div class="offer-badge">%</div>
+                    <div>${offer.name}</div>
+                    <b>€ ${offer.price.toFixed(2)}</b>
                 </div>`;
         });
     }
 
-    // --- FAMIGLIA ---
+    // --- LOGICA FAMIGLIA ---
     function addMember() {
         const name = document.getElementById('memName').value;
         if(!name) return;
-        const ints = [];
-        document.querySelectorAll('.chk:checked').forEach(c => ints.push(c.value));
-        family.push({id: Date.now(), name, intolerances: ints});
-        localStorage.setItem('family_v2', JSON.stringify(family));
+        
+        const intolerances = [];
+        document.querySelectorAll('.chk:checked').forEach(c => intolerances.push(c.value));
+        
+        family.push({ id: Date.now(), name, intolerances });
+        localStorage.setItem('menu_family_v3', JSON.stringify(family));
+        
         renderFamily();
-        generateFilteredMenu(); // Rigenera menu
+        generateFilteredMenu(); // Rigenera il menu filtrato
+        
+        // Reset form
         document.getElementById('memName').value = '';
+        document.querySelectorAll('.chk').forEach(c => c.checked = false);
     }
 
-    function renderFamily() {
-        const c = document.getElementById('familyList');
-        c.innerHTML = '';
-        family.forEach(m => {
-            let tags = m.intolerances.map(i => `<span class="tag">${i}</span>`).join('');
-            c.innerHTML += `
-                <div class="member">
-                    <div><b>${m.name}</b> ${tags}</div>
-                    <i class="material-icons" onclick="delMem(${m.id})" style="color:red">delete</i>
-                </div>`;
-        });
-    }
-
-    function delMem(id) {
-        family = family.filter(f => f.id !== id);
-        localStorage.setItem('family_v2', JSON.stringify(family));
+    function removeMember(id) {
+        family = family.filter(m => m.id !== id);
+        localStorage.setItem('menu_family_v3', JSON.stringify(family));
         renderFamily();
         generateFilteredMenu();
     }
 
-    function go(page, btn) {
+    function renderFamily() {
+        const container = document.getElementById('familyList');
+        container.innerHTML = '';
+        
+        if(family.length === 0) {
+            container.innerHTML = `<p style="text-align:center; color:#999; font-style:italic;">Nessun membro. Aggiungine uno sotto.</p>`;
+            return;
+        }
+
+        family.forEach(m => {
+            const tags = m.intolerances.map(i => `<span class="tag-bad">${i}</span>`).join('');
+            container.innerHTML += `
+                <div class="member">
+                    <div>
+                        <strong>${m.name}</strong>
+                        ${tags}
+                    </div>
+                    <i class="material-icons" onclick="removeMember(${m.id})" style="color:#ef5350; cursor:pointer;">delete</i>
+                </div>`;
+        });
+    }
+
+    // --- NAVIGAZIONE ---
+    function go(pageId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(page).classList.add('active');
+        document.getElementById(pageId).classList.add('active');
         document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
         btn.classList.add('active');
     }
 
-    function manualReload() { location.reload(); }
+    function manualReload() {
+        location.reload();
+    }
 
+    // Partenza!
     init();
 </script>
 
