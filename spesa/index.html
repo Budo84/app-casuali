@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Menu Planner</title>
+    <title>Menu Mediterraneo & Offerte</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta name="theme-color" content="#FF9800">
+    <meta name="theme-color" content="#4CAF50">
     <style>
-        :root { --primary: #FF9800; --accent: #8BC34A; --bg: #f5f5f5; --text: #333; --card: #fff; --danger: #e53935; --offer: #2E7D32; }
+        :root { --primary: #4CAF50; --accent: #FF9800; --bg: #f7f9f8; --text: #333; --card: #fff; --offer: #d32f2f; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
         
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; }
-        h1 { margin: 0; font-size: 1.3rem; display:flex; align-items:center; gap:10px;}
+        h1 { margin: 0; font-size: 1.2rem; display:flex; align-items:center; gap:8px;}
         .status-badge { font-size: 0.7rem; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 12px; }
 
         .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
@@ -23,40 +23,39 @@
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* CARDS */
-        .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
-        .day-title { font-weight: 800; color: var(--primary); margin-bottom: 10px; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px;}
-        .meal-row { display: flex; align-items: flex-start; margin-bottom: 12px; }
-        .meal-icon { font-size: 1.2rem; margin-right: 12px; margin-top: 2px; }
-        .meal-info { flex: 1; }
-        .meal-name { font-weight: 600; font-size: 1rem; color: #444; }
-        .meal-desc { font-size: 0.8rem; color: #888; line-height: 1.2; }
-        .tag-warn { font-size: 0.65rem; background: #ffebee; color: var(--danger); padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-top: 3px; display: inline-block; }
+        /* CARDS MENU */
+        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
+        .day-title { font-weight: 800; color: var(--primary); margin-bottom: 10px; font-size: 1rem; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; display:flex; justify-content:space-between;}
+        
+        .meal-row { display: flex; align-items: flex-start; margin-bottom: 12px; position: relative; }
+        .meal-icon { font-size: 1.2rem; margin-right: 10px; margin-top: 2px; width: 25px; text-align: center; }
+        .meal-info { flex: 1; padding-right: 30px; }
+        .meal-name { font-weight: 600; font-size: 0.95rem; color: #333; }
+        .meal-ingr { font-size: 0.8rem; color: #777; }
+        .meal-actions { position: absolute; right: 0; top: 0; }
+        .btn-edit { background: none; border: none; color: #bbb; cursor: pointer; padding: 0; }
+        .btn-edit:hover { color: var(--accent); }
 
         /* SPESA */
         .shop-item { padding: 12px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; background: white; margin-bottom: 2px; border-radius: 8px; }
         .shop-check { display:flex; align-items:center; }
-        .shop-check input { margin-right: 15px; width: 20px; height: 20px; }
-        .price-inp { width: 70px; padding: 8px; border: 1px solid #ddd; border-radius: 8px; text-align: right; font-weight: bold; background: #fafafa; }
-        .price-inp.offer { background: #e8f5e9; border-color: var(--offer); color: #2e7d32; }
-        .brand-name { color: var(--offer); font-weight: bold; font-size: 0.95rem; }
-        .generic-name { font-size: 0.8rem; color: #888; }
+        .shop-check input { margin-right: 12px; width: 18px; height: 18px; }
+        .brand-match { color: var(--offer); font-weight: bold; font-size: 0.9rem; }
+        .price-inp { width: 60px; padding: 6px; border: 1px solid #ddd; border-radius: 6px; text-align: right; font-weight: bold; background: #fafafa; }
+        .price-inp.offer { background: #ffebee; border-color: var(--offer); color: #c62828; }
 
-        /* OFFERTE */
-        .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-        .offer-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e0e0e0; position: relative; }
-        .offer-badge { position: absolute; top: -8px; right: -8px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
-        .store-box { background: #fff3e0; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ffcc80; }
-        select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
+        .total-bar { position: fixed; bottom: 70px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
+
+        /* OFFERTE & STORE */
+        .store-selector { width: 100%; padding: 12px; border: 2px solid var(--primary); border-radius: 10px; font-size: 1rem; font-weight: bold; background: white; margin-bottom: 15px; }
+        .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+        .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #eee; position: relative; }
+        .offer-badge { position: absolute; top: -5px; right: -5px; background: var(--offer); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.65rem; font-weight: bold; }
 
         /* FAMIGLIA */
-        .member-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .checkbox-item { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 8px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
-        .checkbox-item input { margin-right: 8px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #E65100; margin-top:10px; }
-        .btn-green { background: var(--accent); box-shadow: 0 4px 0 #689F38; }
-        
+        .member-card { background: white; padding: 10px; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
+        .tag { font-size: 0.7rem; background: #ffebee; color: #c62828; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -64,249 +63,217 @@
 <body>
 
 <header>
-    <h1><span class="material-icons">diversity_3</span> Family Menu</h1>
-    <div class="status-badge" id="updateInfo">Connessione...</div>
+    <h1><i class="material-icons">restaurant</i> Menu & Spesa</h1>
+    <div class="status-badge" id="dataInfo">Wait...</div>
 </header>
 
 <div id="p-menu" class="page active">
-    <div id="weeklyPlan">
-        <div style="text-align:center; padding:50px 20px; color:#888;">
+    <div id="menuContainer">
+        <div style="text-align:center; padding:50px;">
             <div class="loader"></div>
-            Sto preparando il menu...
+            <p style="color:#888">Caricamento menu...</p>
         </div>
     </div>
 </div>
 
 <div id="p-spesa" class="page">
-    <h2>🛒 Lista Spesa</h2>
-    <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">Prezzi da: <b id="storeLabelSpesa">...</b></div>
-    <div id="shoppingListContainer" style="padding-bottom:80px;"></div>
-    <div class="total-bar" style="position:fixed; bottom:70px; left:15px; right:15px; background:#333; color:white; padding:15px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-        <div><div style="font-size:0.8rem; opacity:0.8;">Totale Stimato</div></div>
-        <div class="total-val" id="totalPrice" style="font-size:1.4rem; font-weight:bold; color:#b2dfdb;">€ 0.00</div>
+    <h2>🛒 Lista Spesa <span id="storeLabel" style="font-size:0.8rem; color:#666; font-weight:normal"></span></h2>
+    <div id="shopContainer" style="padding-bottom:80px;"></div>
+    <div class="total-bar">
+        <span>Totale Stimato</span>
+        <span id="totalPrice" style="font-size:1.2rem; font-weight:bold;">€ 0.00</span>
     </div>
 </div>
 
 <div id="p-offerte" class="page">
-    <h2>⚡ Generatore</h2>
-    <div class="store-box">
-        <label>Seleziona Supermercato:</label>
-        <select id="storeSelect" onchange="changeStore()">
-            <option value="">Caricamento...</option>
-        </select>
-    </div>
-    <button class="btn btn-green" onclick="generateMenu()">🔄 Rigenera Menu</button>
-    <h3>Offerte Attuali</h3>
+    <h2>🏷️ Offerte & Store</h2>
+    <p>Scegli dove fare la spesa. La lista e i prezzi si aggiorneranno.</p>
+    <select id="storeSelect" class="store-selector" onchange="changeStore()">
+        <option>Caricamento...</option>
+    </select>
     <div class="offer-grid" id="offerContainer"></div>
 </div>
 
 <div id="p-famiglia" class="page">
     <h2>👨‍👩‍👧‍👦 Famiglia</h2>
-    <div id="membersList"></div>
-    <div style="background: white; padding:15px; border-radius:15px; margin-top:20px; border: 1px solid #ddd;">
-        <h3>Aggiungi Membro</h3>
-        <input type="text" id="newMemberName" placeholder="Nome">
-        <div class="checkbox-group">
-            <label class="checkbox-item"><input type="checkbox" class="intol" value="glutine"> Glutine</label>
-            <label class="checkbox-item"><input type="checkbox" class="intol" value="lattosio"> Lattosio</label>
-            <label class="checkbox-item"><input type="checkbox" class="intol" value="uova"> Uova</label>
-            <label class="checkbox-item"><input type="checkbox" class="intol" value="pesce"> Pesce</label>
-            <label class="checkbox-item"><input type="checkbox" class="intol" value="frutta_guscio"> Noci</label>
+    <div id="familyList"></div>
+    <div style="background:white; padding:15px; border-radius:10px; margin-top:15px; border:1px solid #ddd;">
+        <input type="text" id="memName" placeholder="Nome" style="width:100%; padding:10px; box-sizing:border-box; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+            <label><input type="checkbox" class="chk" value="glutine"> No Glutine</label>
+            <label><input type="checkbox" class="chk" value="lattosio"> No Lattosio</label>
+            <label><input type="checkbox" class="chk" value="uova"> No Uova</label>
+            <label><input type="checkbox" class="chk" value="pesce"> No Pesce</label>
         </div>
-        <button class="btn" onclick="addMember()">➕ Aggiungi</button>
+        <button class="btn" onclick="addMember()">Aggiungi Membro</button>
     </div>
+    <button class="btn" style="background:#FF9800; margin-top:20px;" onclick="resetMenu()">⚠️ Rigenera Menu Casuale</button>
 </div>
 
 <nav class="nav-bar">
-    <a class="nav-item active" onclick="nav('p-menu', this)"><span class="material-icons">restaurant_menu</span>Menu</a>
-    <a class="nav-item" onclick="nav('p-spesa', this)"><span class="material-icons">shopping_cart</span>Spesa</a>
-    <a class="nav-item" onclick="nav('p-offerte', this)"><span class="material-icons">local_offer</span>Store</a>
-    <a class="nav-item" onclick="nav('p-famiglia', this)"><span class="material-icons">group</span>Famiglia</a>
+    <a class="nav-item active" onclick="nav('p-menu', this)"><i class="material-icons">calendar_today</i>Menu</a>
+    <a class="nav-item" onclick="nav('p-spesa', this)"><i class="material-icons">shopping_cart</i>Spesa</a>
+    <a class="nav-item" onclick="nav('p-offerte', this)"><i class="material-icons">store</i>Offerte</a>
+    <a class="nav-item" onclick="nav('p-famiglia', this)"><i class="material-icons">group</i>Famiglia</a>
 </nav>
 
 <script>
     let db = null;
-    let familyMembers = JSON.parse(localStorage.getItem('fam_v10')) || [];
-    let customPrices = JSON.parse(localStorage.getItem('price_v10')) || {};
-    let selectedStore = localStorage.getItem('store_pref_v10') || "";
+    let family = JSON.parse(localStorage.getItem('my_family')) || [];
+    let customPrices = JSON.parse(localStorage.getItem('my_prices')) || {};
+    let currentStore = localStorage.getItem('my_store') || "";
+    let weeklyMenu = JSON.parse(localStorage.getItem('my_menu')) || [];
 
     async function init() {
-        renderMembersList();
+        renderFamily();
         try {
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
-            if(!res.ok) throw new Error("File Mancante");
+            if(!res.ok) throw new Error("File missing");
             db = await res.json();
-            
-            document.getElementById('updateInfo').innerText = "Dati: " + (db.data_aggiornamento || "N/D");
-            
-            // Popola Store
-            const storeSelect = document.getElementById('storeSelect');
-            storeSelect.innerHTML = "";
+            document.getElementById('dataInfo').innerText = db.data_aggiornamento;
+
+            // Setup Store
+            const sel = document.getElementById('storeSelect');
+            sel.innerHTML = "";
             const stores = Object.keys(db.offerte_per_supermercato || {});
+            stores.forEach(s => {
+                let opt = document.createElement('option');
+                opt.value = s; opt.innerText = s;
+                sel.appendChild(opt);
+            });
             
-            if(stores.length === 0) {
-                storeSelect.innerHTML = "<option>Nessuna offerta</option>";
-            } else {
-                stores.forEach(s => {
-                    let opt = document.createElement('option');
-                    opt.value = s; opt.innerText = s;
-                    storeSelect.appendChild(opt);
-                });
-                
-                if(selectedStore && stores.includes(selectedStore)) storeSelect.value = selectedStore;
-                else { selectedStore = stores[0]; storeSelect.value = selectedStore; }
-            }
+            if(currentStore && stores.includes(currentStore)) sel.value = currentStore;
+            else { currentStore = stores[0]; sel.value = currentStore; }
+
+            // Generazione Menu se vuoto
+            if(weeklyMenu.length === 0) generateMenu();
+            else renderMenu();
 
             renderOffers();
-
-            const savedMenu = JSON.parse(localStorage.getItem('family_menu_v10'));
-            if(!savedMenu || savedMenu.length === 0) generateMenu();
-            else renderMenuUI();
+            renderShop();
 
         } catch(e) {
-            console.error(e);
-            document.getElementById('weeklyPlan').innerHTML = "<div style='text-align:center; padding:50px;'><h3>⚠️ Nessun Dato</h3><p>Fai girare l'Action su GitHub.</p></div>";
+            document.getElementById('menuContainer').innerHTML = "<div style='text-align:center; padding:40px;'><h3>Attesa Dati...</h3><p>Fai girare l'Action su GitHub.</p></div>";
         }
     }
 
-    function nav(pageId, btn) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    function addMember() {
-        const name = document.getElementById('newMemberName').value;
-        if(!name) return;
-        const intolerances = [];
-        document.querySelectorAll('.intol:checked').forEach(i => intolerances.push(i.value));
-        familyMembers.push({ id: Date.now(), name, intolerances });
-        localStorage.setItem('fam_v10', JSON.stringify(familyMembers));
-        renderMembersList(); generateMenu();
-        document.getElementById('newMemberName').value = '';
-        document.querySelectorAll('.intol').forEach(i => i.checked = false);
-    }
-
-    function removeMember(id) {
-        familyMembers = familyMembers.filter(m => m.id !== id);
-        localStorage.setItem('fam_v10', JSON.stringify(familyMembers));
-        renderMembersList(); generateMenu();
-    }
-
-    function renderMembersList() {
-        const container = document.getElementById('membersList');
-        container.innerHTML = familyMembers.length ? '' : '<p>Nessuno inserito.</p>';
-        familyMembers.forEach(m => {
-            container.innerHTML += `<div class="member-card"><div><strong>${m.name}</strong> <span>${m.intolerances.join(', ')}</span></div><span class="material-icons" style="color:red; cursor:pointer;" onclick="removeMember(${m.id})">delete</span></div>`;
-        });
-    }
-
+    // --- LOGICA MENU ---
     function generateMenu() {
-        if(!db || !db.ricette || !Array.isArray(db.ricette)) {
-            document.getElementById('weeklyPlan').innerHTML = "<div style='padding:20px; text-align:center'>Attesa dati dal robot...</div>";
-            return;
-        }
+        if(!db || !db.ricette) return;
+        const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
         
-        const safeRecipes = db.ricette.filter(r => {
-            for(let m of familyMembers) {
-                for(let i of m.intolerances) {
-                    if(r.contains && r.contains.map(c=>c.toLowerCase()).includes(i.toLowerCase())) return false;
-                }
-            }
+        // Filtra ricette sicure
+        const safe = db.ricette.filter(r => {
+            for(let m of family) for(let i of m.intolerances) if(r.contains.includes(i)) return false;
             return true;
         });
 
-        if(safeRecipes.length === 0) {
-            alert("Nessuna ricetta sicura!");
-            return;
-        }
-
-        const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-        const newMenu = days.map(day => ({
+        weeklyMenu = days.map(day => ({
             day,
             pasti: {
-                colazione: pickMeal(safeRecipes, 'colazione'),
-                pranzo: pickMeal(safeRecipes, 'pranzo'),
-                merenda: pickMeal(safeRecipes, 'merenda'),
-                cena: pickMeal(safeRecipes, 'cena')
+                colazione: pick(safe, 'colazione'),
+                pranzo: pick(safe, 'pranzo'),
+                merenda: pick(safe, 'merenda'),
+                cena: pick(safe, 'cena')
             }
         }));
-
-        localStorage.setItem('family_menu_v10', JSON.stringify(newMenu));
-        renderMenuUI();
+        
+        saveMenu();
+        renderMenu();
+        renderShop();
     }
 
-    function pickMeal(pool, type) {
-        let candidates = pool.filter(r => r.type && r.type.toLowerCase() === type);
-        if(!candidates.length) candidates = pool; 
-        return candidates[Math.floor(Math.random() * candidates.length)];
+    function pick(pool, type) {
+        let cand = pool.filter(r => r.type === type);
+        if(!cand.length) cand = pool; // Fallback
+        return cand[Math.floor(Math.random() * cand.length)] || {title: "A scelta", ingredients: []};
     }
 
-    function renderMenuUI() {
-        const menu = JSON.parse(localStorage.getItem('family_menu_v10'));
-        if(!menu) return;
-        const container = document.getElementById('weeklyPlan');
-        container.innerHTML = "";
-        const shop = {};
-
-        menu.forEach(d => {
-            container.innerHTML += `
+    function renderMenu() {
+        const c = document.getElementById('menuContainer');
+        c.innerHTML = "";
+        weeklyMenu.forEach((d, dayIdx) => {
+            c.innerHTML += `
                 <div class="card">
                     <div class="day-title">${d.day}</div>
-                    ${mealRow('☕', d.pasti.colazione)}
-                    ${mealRow('☀️', d.pasti.pranzo)}
-                    ${mealRow('🍎', d.pasti.merenda)}
-                    ${mealRow('🌙', d.pasti.cena)}
+                    ${mealHtml('☕', d.pasti.colazione, dayIdx, 'colazione')}
+                    ${mealHtml('☀️', d.pasti.pranzo, dayIdx, 'pranzo')}
+                    ${mealHtml('🍎', d.pasti.merenda, dayIdx, 'merenda')}
+                    ${mealHtml('🌙', d.pasti.cena, dayIdx, 'cena')}
                 </div>`;
-            
-            [d.pasti.colazione, d.pasti.pranzo, d.pasti.merenda, d.pasti.cena].forEach(m => {
-                if(m && m.ingredients) {
-                    m.ingredients.forEach(ing => {
-                        let name = (typeof ing === 'string') ? ing : ing.item || ing; // Gestisce stringhe o oggetti
-                        shop[name] = (shop[name]||0)+1;
-                    });
-                }
-            });
         });
-        renderShop(shop);
     }
 
-    function mealRow(icon, m) {
-        if(!m) return "";
-        let title = m.title || m.name || "Ricetta";
-        let desc = "";
-        if(m.ingredients) desc = m.ingredients.map(i => (typeof i === 'string') ? i : i.item || i).join(', ');
-        return `<div class="meal-row"><span class="meal-icon">${icon}</span><div class="meal-info"><div class="meal-name">${title}</div><div class="meal-desc">${desc}</div></div></div>`;
+    function mealHtml(icon, meal, dayIdx, type) {
+        return `
+            <div class="meal-row">
+                <div class="meal-icon">${icon}</div>
+                <div class="meal-info">
+                    <div class="meal-name">${meal.title}</div>
+                    <div class="meal-ingr">${meal.ingredients.join(', ')}</div>
+                </div>
+                <button class="btn-edit" onclick="editMeal(${dayIdx}, '${type}')"><i class="material-icons">edit</i></button>
+            </div>`;
     }
 
-    function renderShop(list) {
+    // --- FUNZIONE CAMBIO PIATTO (MODIFICA) ---
+    function editMeal(dayIdx, type) {
+        // Filtra ricette alternative
+        const safe = db.ricette.filter(r => {
+            if(r.type !== type) return false;
+            for(let m of family) for(let i of m.intolerances) if(r.contains.includes(i)) return false;
+            return true;
+        });
+
+        // Trova una diversa da quella attuale
+        let currentTitle = weeklyMenu[dayIdx].pasti[type].title;
+        let nextMeal = safe.find(r => r.title !== currentTitle) || safe[0];
+        
+        // Se non trova alternative o l'utente vuole scrivere a mano
+        let newTitle = prompt(`Cambia ${type} di ${weeklyMenu[dayIdx].day}.\nLascia vuoto per usare: ${nextMeal.title}\nOppure scrivi il tuo piatto:`);
+        
+        if(newTitle) {
+            weeklyMenu[dayIdx].pasti[type] = { title: newTitle, ingredients: [newTitle], contains: [] };
+        } else {
+            weeklyMenu[dayIdx].pasti[type] = nextMeal;
+        }
+        
+        saveMenu();
+        renderMenu();
+        renderShop(); // Aggiorna spesa
+    }
+
+    // --- LOGICA SPESA ---
+    function renderShop() {
         const c = document.getElementById('shoppingListContainer');
         c.innerHTML = "";
-        let total = 0;
-        document.getElementById('storeLabelSpesa').innerText = selectedStore;
+        const list = {};
         
-        const storeOffers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
+        // Aggrega ingredienti dal menu attuale
+        weeklyMenu.forEach(d => {
+            Object.values(d.pasti).forEach(meal => {
+                if(meal.ingredients) meal.ingredients.forEach(i => list[i] = (list[i]||0)+1);
+            });
+        });
+
+        const storeOffers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[currentStore] || []) : [];
+        let total = 0;
+        document.getElementById('storeLabel').innerText = `(${currentStore})`;
 
         Object.keys(list).sort().forEach(item => {
-            // MATCHING INTELLIGENTE: Cerca l'ingrediente nell'offerta
+            // Cerca offerta (brand match)
             const offer = storeOffers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
             
-            let displayName = item;
-            let subText = "";
+            let display = item;
             let price = 0;
             let isOffer = false;
 
             if(offer) {
-                displayName = offer.name; // Usa il nome di marca (es. Pasta Barilla)
-                subText = `(Base: ${item})`; 
+                display = offer.name; // Usa nome marca
+                price = offer.price;
                 isOffer = true;
-                if(!customPrices[item]) price = parseFloat(offer.price);
-            } else {
-                subText = "(Nessuna offerta)";
             }
-
-            if(customPrices[item]) price = parseFloat(customPrices[item]);
+            if(customPrices[item]) price = customPrices[item]; // Prezzo manuale vince
 
             total += price;
 
@@ -315,39 +282,83 @@
                     <div class="shop-check">
                         <input type="checkbox">
                         <div>
-                            <div class="${isOffer ? 'brand-name' : ''}" style="font-weight:600;">${displayName}</div>
-                            <small style="color:#888;">${subText}</small>
+                            <div class="${isOffer?'brand-match':''}">${display}</div>
+                            <small style="color:#999">Base: ${item}</small>
                         </div>
                     </div>
                     <div>
                         € <input type="number" step="0.1" class="price-inp ${isOffer?'offer':''}" 
-                                 value="${price.toFixed(2)}" onchange="updPrice('${item}', this.value)">
+                           value="${price.toFixed(2)}" onchange="savePrice('${item}', this.value)">
                     </div>
                 </div>`;
         });
         document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
     }
 
-    function updPrice(item, val) {
-        customPrices[item] = parseFloat(val) || 0;
-        localStorage.setItem('price_v10', JSON.stringify(customPrices));
-        let t = 0; document.querySelectorAll('.price-inp').forEach(i=>t+=parseFloat(i.value)||0);
-        document.getElementById('totalPrice').innerText = "€ "+t.toFixed(2);
+    // --- UTILS ---
+    function changeStore() {
+        currentStore = document.getElementById('storeSelect').value;
+        localStorage.setItem('my_store', currentStore);
+        renderOffers();
+        renderShop();
+    }
+
+    function savePrice(item, val) {
+        customPrices[item] = parseFloat(val);
+        localStorage.setItem('my_prices', JSON.stringify(customPrices));
+        renderShop(); // Ricalcola totale
+    }
+
+    function saveMenu() {
+        localStorage.setItem('my_menu', JSON.stringify(weeklyMenu));
+    }
+
+    function resetMenu() {
+        if(confirm("Cancellare il menu attuale e rigenerarne uno nuovo?")) {
+            generateMenu();
+        }
+    }
+
+    function addMember() {
+        const name = document.getElementById('memName').value;
+        if(!name) return;
+        const ints = [];
+        document.querySelectorAll('.chk:checked').forEach(c => ints.push(c.value));
+        family.push({id: Date.now(), name, intolerances: ints});
+        localStorage.setItem('my_family', JSON.stringify(family));
+        renderFamily(); generateMenu(); // Rigenera per sicurezza
+        document.getElementById('memName').value = '';
+        document.querySelectorAll('.chk').forEach(c => c.checked = false);
+    }
+
+    function removeMember(id) {
+        family = family.filter(m => m.id !== id);
+        localStorage.setItem('my_family', JSON.stringify(family));
+        renderFamily(); generateMenu();
+    }
+
+    function renderFamily() {
+        const c = document.getElementById('familyList');
+        c.innerHTML = "";
+        family.forEach(m => {
+            c.innerHTML += `<div class="member-card"><div><strong>${m.name}</strong> ${m.intolerances.join(', ')}</div><i class="material-icons" style="color:red; cursor:pointer" onclick="removeMember(${m.id})">delete</i></div>`;
+        });
     }
 
     function renderOffers() {
         const c = document.getElementById('offerContainer');
-        c.innerHTML = '';
-        const offers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[selectedStore] || []) : [];
+        c.innerHTML = "";
+        const offers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[currentStore] || []) : [];
         offers.forEach(o => {
-            c.innerHTML += `<div class="offer-card"><div class="offer-badge">%</div><div style="font-size:0.9rem;">${o.name}</div><b style="color:var(--accent);">€${o.price.toFixed(2)}</b></div>`;
+            c.innerHTML += `<div class="offer-card"><div class="offer-badge">%</div><div>${o.name}</div><b style="color:#d32f2f">€${o.price.toFixed(2)}</b></div>`;
         });
     }
 
-    function changeStore() {
-        selectedStore = document.getElementById('storeSelect').value;
-        localStorage.setItem('store_pref_v10', selectedStore);
-        renderOffers(); renderShop({}); renderMenuUI();
+    function nav(page, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(page).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
     }
 
     init();
