@@ -3,644 +3,763 @@
     "offerte_per_supermercato": {
         "Conad": [
             {
-                "name": "Pasta di semola (500g)",
-                "price": 0.89
+                "name": "Pasta di Gragnano IGP",
+                "price": 1.29
             },
             {
-                "name": "Latte UHT (1L)",
-                "price": 0.98
+                "name": "Petto di Pollo Fresco",
+                "price": 3.99
             },
             {
-                "name": "Uova fresche (6 pz)",
-                "price": 1.79
+                "name": "Pomodorini Ciliegino",
+                "price": 1.49
             },
             {
-                "name": "Passata di pomodoro (700g)",
-                "price": 0.75
+                "name": "Tonno in olio d'oliva (3x80g)",
+                "price": 2.89
             },
             {
-                "name": "Yogurt (2x125g)",
-                "price": 1.1
+                "name": "Olio Extra Vergine d'Oliva (1L)",
+                "price": 4.99
             },
             {
-                "name": "Pane a fette (400g)",
-                "price": 1.25
-            },
-            {
-                "name": "Mele Golden (al kg)",
+                "name": "Mozzarella Santa Lucia (2x125g)",
                 "price": 1.99
-            },
-            {
-                "name": "Olio extra vergine d'oliva (1L)",
-                "price": 6.49
             }
         ],
         "Coop": [
             {
-                "name": "Pasta di semola (500g)",
-                "price": 0.8
+                "name": "Spaghetti Coop Fior Fiore",
+                "price": 1.19
             },
             {
-                "name": "Latte UHT (1L)",
-                "price": 0.95
+                "name": "Macinato di Bovino Scelto",
+                "price": 3.49
             },
             {
-                "name": "Uova fresche (6 pz)",
-                "price": 1.85
+                "name": "Zucchine Fresche (1kg)",
+                "price": 1.89
             },
             {
-                "name": "Passata di pomodoro (700g)",
-                "price": 0.69
+                "name": "Legumi misti in scatola (3x400g)",
+                "price": 1.99
             },
             {
-                "name": "Mozzarella (2x125g)",
-                "price": 2.1
+                "name": "Succo di Frutta Santàl (1L)",
+                "price": 0.99
             },
             {
-                "name": "Riso Arborio (1kg)",
-                "price": 2.3
-            },
-            {
-                "name": "Banane (al kg)",
-                "price": 1.6
-            },
-            {
-                "name": "Caffè macinato (250g)",
-                "price": 2.99
+                "name": "Yogurt Müllermilch (4x125g)",
+                "price": 1.79
             }
         ],
         "Esselunga": [
             {
-                "name": "Pasta di semola (500g)",
-                "price": 0.95
+                "name": "Penne Rigate Esselunga",
+                "price": 0.79
             },
             {
-                "name": "Latte fresco alta qualità (1L)",
-                "price": 1.45
-            },
-            {
-                "name": "Uova bio (6 pz)",
-                "price": 2.75
-            },
-            {
-                "name": "Prosciutto cotto (100g)",
-                "price": 2.15
-            },
-            {
-                "name": "Parmigiano Reggiano (200g)",
-                "price": 5.4
-            },
-            {
-                "name": "Salmone affumicato (100g)",
-                "price": 3.99
-            },
-            {
-                "name": "Arance (al kg)",
-                "price": 1.7
-            },
-            {
-                "name": "Vino Chianti (750ml)",
+                "name": "Fettine di Vitello (300g)",
                 "price": 4.99
+            },
+            {
+                "name": "Insalata mista in busta (125g)",
+                "price": 1.29
+            },
+            {
+                "name": "Pelati Mutti (2x400g)",
+                "price": 1.59
+            },
+            {
+                "name": "Caffè macinato Lavazza Qualità Rossa (250g)",
+                "price": 2.49
+            },
+            {
+                "name": "Biscotti Mulino Bianco Galletti (800g)",
+                "price": 1.99
             }
         ],
         "Lidl": [
             {
-                "name": "Pasta di semola (500g)",
-                "price": 0.75
+                "name": "Spaghetti Combino",
+                "price": 0.49
             },
             {
-                "name": "Latte UHT (1L)",
-                "price": 0.89
+                "name": "Cosce di Pollo (1kg)",
+                "price": 2.59
             },
             {
-                "name": "Uova fresche (6 pz)",
-                "price": 1.69
+                "name": "Patate (2kg)",
+                "price": 1.99
             },
             {
-                "name": "Passata di pomodoro (700g)",
-                "price": 0.65
-            },
-            {
-                "name": "Yogurt greco (150g)",
+                "name": "Ceci in scatola Nostromo (2x300g)",
                 "price": 0.99
             },
             {
-                "name": "Formaggio spalmabile (200g)",
-                "price": 1.19
+                "name": "Latte Parzialmente Scremato (1L)",
+                "price": 0.75
             },
             {
-                "name": "Patate (1.5kg)",
-                "price": 1.59
-            },
-            {
-                "name": "Birra chiara (0.5L)",
-                "price": 0.79
+                "name": "Birra Perlenbacher (6x33cl)",
+                "price": 2.99
             }
         ],
         "Eurospin": [
             {
-                "name": "Pasta di semola (500g)",
-                "price": 0.69
+                "name": "Fusilli Tre Mulini",
+                "price": 0.55
             },
             {
-                "name": "Latte UHT (1L)",
-                "price": 0.85
+                "name": "Salsicce di Suino (500g)",
+                "price": 2.69
             },
             {
-                "name": "Uova fresche (6 pz)",
-                "price": 1.59
+                "name": "Carote (1kg)",
+                "price": 0.99
             },
             {
-                "name": "Passata di pomodoro (700g)",
-                "price": 0.59
-            },
-            {
-                "name": "Affettato misto (150g)",
-                "price": 1.79
-            },
-            {
-                "name": "Biscotti secchi (700g)",
-                "price": 1.39
-            },
-            {
-                "name": "Mele (1kg)",
+                "name": "Mais in scatola (3x150g)",
                 "price": 1.49
             },
             {
-                "name": "Acqua minerale naturale (6x2L)",
-                "price": 1.55
+                "name": "Uova Fresche (6 pezzi)",
+                "price": 1.29
+            },
+            {
+                "name": "Acqua Minerale Naturale Fonte Ilaria (6x2L)",
+                "price": 1.5
+            }
+        ],
+        "Pewex": [
+            {
+                "name": "Rigatoni De Cecco",
+                "price": 0.89
+            },
+            {
+                "name": "Fesa di Tacchino a fette (400g)",
+                "price": 3.79
+            },
+            {
+                "name": "Spinaci Freschi (500g)",
+                "price": 1.69
+            },
+            {
+                "name": "Pomodori Pelati Cirio (3x400g)",
+                "price": 2.49
+            },
+            {
+                "name": "Pane Casereccio (500g)",
+                "price": 1.5
+            },
+            {
+                "name": "Formaggio Grattugiato Parmareggio (100g)",
+                "price": 1.89
+            }
+        ],
+        "MA Supermercati": [
+            {
+                "name": "Orecchiette fresche (500g)",
+                "price": 2.29
+            },
+            {
+                "name": "Bistecche di Suino (400g)",
+                "price": 3.19
+            },
+            {
+                "name": "Melanzane (1kg)",
+                "price": 1.79
+            },
+            {
+                "name": "Fagioli Borlotti in scatola (2x400g)",
+                "price": 1.29
+            },
+            {
+                "name": "Prosciutto Cotto Alta Qualità (150g)",
+                "price": 2.99
+            },
+            {
+                "name": "Olive Nere Denocciolate Saclà (200g)",
+                "price": 1.69
+            }
+        ],
+        "Ipercarni": [
+            {
+                "name": "Costate di Manzo (400g)",
+                "price": 6.99
+            },
+            {
+                "name": "Pollo Intero Fresco (1.2kg)",
+                "price": 4.5
+            },
+            {
+                "name": "Hamburger di Scottona (2x180g)",
+                "price": 3.99
+            },
+            {
+                "name": "Pasta fresca all'uovo Tagliatelle (250g)",
+                "price": 1.99
+            },
+            {
+                "name": "Peperoni Rossi (500g)",
+                "price": 1.29
+            },
+            {
+                "name": "Salse Barbecue Heinz (400ml)",
+                "price": 2.49
+            }
+        ],
+        "Todis": [
+            {
+                "name": "Gnocchi di Patate (500g)",
+                "price": 0.95
+            },
+            {
+                "name": "Cotolette di Pollo Panate (300g)",
+                "price": 2.29
+            },
+            {
+                "name": "Cipolle Dorate (500g)",
+                "price": 0.69
+            },
+            {
+                "name": "Tonno Mareblu (3x80g)",
+                "price": 2.99
+            },
+            {
+                "name": "Merendine Buondì Motta (6 pezzi)",
+                "price": 1.89
+            },
+            {
+                "name": "Burro (250g)",
+                "price": 1.79
             }
         ]
     },
     "ricette": [
         {
-            "title": "Tramezzini Semplici Prosciutto e Formaggio",
-            "description": "Un classico spuntino italiano, semplice e veloce da preparare con ingredienti freschi. Perfetto per una pausa pranzo o una merenda.",
+            "title": "Colazione all'Italiana con Biscotti e Latte",
+            "type": "colazione",
             "ingredients": [
                 {
-                    "item": "Pane a fette",
-                    "quantity": "150g"
+                    "item": "Biscotti Mulino Bianco Galletti",
+                    "quantity": "100g"
                 },
                 {
-                    "item": "Prosciutto cotto",
-                    "quantity": "30g"
+                    "item": "Latte Parzialmente Scremato",
+                    "quantity": "250ml"
+                }
+            ],
+            "contains": [
+                "glutine",
+                "lattosio"
+            ],
+            "description": "Una colazione classica e semplice per iniziare la giornata, con biscotti da inzuppare nel latte."
+        },
+        {
+            "title": "Yogurt Müllermilch con Biscotti Sbriciolati",
+            "type": "colazione",
+            "ingredients": [
+                {
+                    "item": "Yogurt Müllermilch",
+                    "quantity": "500g"
                 },
                 {
-                    "item": "Formaggio spalmabile",
+                    "item": "Biscotti Mulino Bianco Galletti",
                     "quantity": "50g"
                 }
             ],
             "contains": [
                 "glutine",
                 "lattosio"
-            ]
+            ],
+            "description": "Una colazione fresca e leggera, arricchita dalla croccantezza dei biscotti sbriciolati."
         },
         {
-            "title": "Frittata di Patate e Prosciutto Cotto",
-            "description": "Una gustosa frittata rustica con patate lesse e pezzetti di prosciutto cotto, ideale come secondo piatto o per un brunch.",
+            "title": "Uova Strapazzate con Spinaci e Cipolla",
+            "type": "colazione",
             "ingredients": [
                 {
-                    "item": "Patate",
-                    "quantity": "300g"
+                    "item": "Uova Fresche",
+                    "quantity": "1 pezzo"
                 },
                 {
-                    "item": "Uova bio",
-                    "quantity": "2 pz"
+                    "item": "Spinaci Freschi",
+                    "quantity": "50g"
                 },
                 {
-                    "item": "Prosciutto cotto",
+                    "item": "Latte Parzialmente Scremato",
+                    "quantity": "50ml"
+                },
+                {
+                    "item": "Cipolle Dorate",
                     "quantity": "30g"
-                },
-                {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "20ml"
-                },
-                {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "q.b."
                 }
             ],
             "contains": [
+                "lattosio",
                 "uova"
-            ]
+            ],
+            "description": "Una colazione salata e nutriente, perfetta per un brunch o una giornata intensa."
         },
         {
-            "title": "Risotto Semplice al Pomodoro",
-            "description": "Un risotto cremoso e saporito con passata di pomodoro, un comfort food italiano per eccellenza.",
+            "title": "Rigatoni al Ragù di Manzo Classico",
+            "type": "pranzo",
             "ingredients": [
                 {
-                    "item": "Riso Arborio",
-                    "quantity": "150g"
+                    "item": "Rigatoni De Cecco",
+                    "quantity": "320g"
                 },
                 {
-                    "item": "Passata di pomodoro",
-                    "quantity": "150g"
+                    "item": "Macinato di Bovino Scelto",
+                    "quantity": "300g"
                 },
                 {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "20ml"
+                    "item": "Cipolle Dorate",
+                    "quantity": "50g"
                 },
                 {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "400ml"
+                    "item": "Carote",
+                    "quantity": "100g"
                 }
             ],
             "contains": [
                 "glutine"
-            ]
+            ],
+            "description": "Un classico intramontabile della cucina italiana, i rigatoni conditi con un ricco ragù di manzo preparato lentamente."
         },
         {
-            "title": "Patate Lesse Condite con Olio e Prosciutto",
-            "description": "Un contorno semplice e nutriente di patate lesse, arricchite con un filo d'olio EVO e striscioline di prosciutto cotto.",
+            "title": "Penne con Tonno e Mais Fresco",
+            "type": "pranzo",
             "ingredients": [
                 {
-                    "item": "Patate",
+                    "item": "Penne Rigate Esselunga",
+                    "quantity": "320g"
+                },
+                {
+                    "item": "Tonno in olio d'oliva",
+                    "quantity": "160g"
+                },
+                {
+                    "item": "Mais in scatola",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
+                }
+            ],
+            "contains": [
+                "glutine",
+                "pesce"
+            ],
+            "description": "Un primo piatto leggero e saporito, ideale per un pranzo veloce e gustoso."
+        },
+        {
+            "title": "Orecchiette con Spinaci e Fesa di Tacchino",
+            "type": "pranzo",
+            "ingredients": [
+                {
+                    "item": "Orecchiette fresche",
                     "quantity": "250g"
                 },
                 {
-                    "item": "Prosciutto cotto",
-                    "quantity": "20g"
-                },
-                {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "15ml"
-                },
-                {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "q.b."
-                }
-            ],
-            "contains": []
-        },
-        {
-            "title": "Crema di Banana e Biscotti al Latte",
-            "description": "Un dessert facile e goloso, una crema vellutata di banana frullata con biscotti e latte, perfetta per i più piccoli.",
-            "ingredients": [
-                {
-                    "item": "Banane",
-                    "quantity": "200g"
-                },
-                {
-                    "item": "Biscotti secchi",
+                    "item": "Spinaci Freschi",
                     "quantity": "150g"
                 },
                 {
-                    "item": "Latte UHT",
-                    "quantity": "150ml"
-                }
-            ],
-            "contains": [
-                "glutine",
-                "lattosio"
-            ]
-        },
-        {
-            "title": "Risotto Bianco al Latte e Mela",
-            "description": "Un'insolita ma deliziosa combinazione, un risotto dolce-salato con riso, latte e pezzetti di mela.",
-            "ingredients": [
-                {
-                    "item": "Riso Arborio",
-                    "quantity": "100g"
-                },
-                {
-                    "item": "Latte UHT",
-                    "quantity": "200ml"
-                },
-                {
-                    "item": "Mele",
+                    "item": "Fesa di Tacchino a fette",
                     "quantity": "150g"
                 },
                 {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "10ml"
-                },
-                {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "100ml"
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
                 }
             ],
             "contains": [
-                "glutine",
-                "lattosio"
-            ]
+                "glutine"
+            ],
+            "description": "Un primo piatto fresco e nutriente, perfetto per un pranzo leggero ma completo."
         },
         {
-            "title": "Pane Tostato con Mela e Formaggio Spalmabile",
-            "description": "Una colazione o merenda leggera e saporita, pane tostato con formaggio spalmabile e fettine di mela fresca.",
+            "title": "Pasta e Fagioli alla Contadina",
+            "type": "pranzo",
             "ingredients": [
                 {
-                    "item": "Pane a fette",
-                    "quantity": "80g"
+                    "item": "Rigatoni De Cecco",
+                    "quantity": "160g"
                 },
                 {
-                    "item": "Mele Golden",
-                    "quantity": "100g"
+                    "item": "Fagioli Borlotti in scatola",
+                    "quantity": "400g"
                 },
                 {
-                    "item": "Formaggio spalmabile",
-                    "quantity": "40g"
+                    "item": "Carote",
+                    "quantity": "50g"
+                },
+                {
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
                 }
             ],
             "contains": [
-                "glutine",
-                "lattosio"
-            ]
+                "glutine"
+            ],
+            "description": "Un classico robusto della cucina italiana, confortante e ricco di sapore, ideale per le giornate più fresche."
         },
         {
-            "title": "Uova Strapazzate con Prosciutto Cotto",
-            "description": "Una colazione o un brunch classico, uova strapazzate morbide e cremose con l'aggiunta di prosciutto cotto a cubetti.",
+            "title": "Pollo Arrosto Profumato con Carote e Cipolle",
+            "type": "cena",
             "ingredients": [
                 {
-                    "item": "Uova bio",
-                    "quantity": "2 pz"
+                    "item": "Pollo Intero Fresco",
+                    "quantity": "800g"
                 },
                 {
-                    "item": "Prosciutto cotto",
-                    "quantity": "20g"
+                    "item": "Carote",
+                    "quantity": "300g"
                 },
                 {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "10ml"
+                    "item": "Cipolle Dorate",
+                    "quantity": "50g"
+                }
+            ],
+            "contains": [],
+            "description": "Un secondo piatto domenicale per eccellenza, il pollo arrosto croccante e saporito, accompagnato da carote e cipolle."
+        },
+        {
+            "title": "Polpette di Manzo e Legumi Misti",
+            "type": "cena",
+            "ingredients": [
+                {
+                    "item": "Macinato di Bovino Scelto",
+                    "quantity": "150g"
+                },
+                {
+                    "item": "Legumi misti in scatola",
+                    "quantity": "400g"
+                },
+                {
+                    "item": "Uova Fresche",
+                    "quantity": "1 pezzo"
+                },
+                {
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
+                },
+                {
+                    "item": "Carote",
+                    "quantity": "50g"
                 }
             ],
             "contains": [
                 "uova"
-            ]
-        },
-        {
-            "title": "Zuppa Rustica di Riso e Passata di Pomodoro",
-            "description": "Una zuppa calda e confortante, con riso e passata di pomodoro, ideale per le giornate fredde.",
-            "ingredients": [
-                {
-                    "item": "Riso Arborio",
-                    "quantity": "100g"
-                },
-                {
-                    "item": "Passata di pomodoro",
-                    "quantity": "100g"
-                },
-                {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "500ml"
-                },
-                {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "15ml"
-                }
             ],
-            "contains": [
-                "glutine"
-            ]
+            "description": "Polpette saporite e nutrienti, arricchite con legumi misti per un pasto completo."
         },
         {
-            "title": "Toast Semplice al Formaggio Spalmabile",
-            "description": "Un toast croccante e goloso, arricchito da una generosa spalmatura di formaggio fresco.",
+            "title": "Costata di Manzo alla Griglia con Spinaci Saltati",
+            "type": "cena",
             "ingredients": [
                 {
-                    "item": "Pane a fette",
-                    "quantity": "80g"
+                    "item": "Costate di Manzo",
+                    "quantity": "400g"
                 },
                 {
-                    "item": "Formaggio spalmabile",
-                    "quantity": "40g"
-                },
-                {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "5ml"
-                }
-            ],
-            "contains": [
-                "glutine",
-                "lattosio"
-            ]
-        },
-        {
-            "title": "Risotto alla Birra Chiara",
-            "description": "Un risotto dal sapore unico, sfumato con birra chiara per un tocco inaspettato e aromatico.",
-            "ingredients": [
-                {
-                    "item": "Riso Arborio",
+                    "item": "Spinaci Freschi",
                     "quantity": "150g"
                 },
                 {
-                    "item": "Birra chiara",
-                    "quantity": "200ml"
-                },
-                {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "20ml"
-                },
-                {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "300ml"
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
                 }
             ],
-            "contains": [
-                "glutine"
-            ]
+            "contains": [],
+            "description": "Un secondo piatto raffinato e gustoso, con la carne grigliata alla perfezione e spinaci freschi saltati."
         },
         {
-            "title": "Patate al Forno (o in Padella) con Olio EVO",
-            "description": "Un contorno classico e versatile, patate cotte al forno o in padella fino a doratura, condite con olio extra vergine d'oliva.",
+            "title": "Involtini di Tacchino e Spinaci al Latte",
+            "type": "cena",
             "ingredients": [
                 {
-                    "item": "Patate",
-                    "quantity": "300g"
+                    "item": "Fesa di Tacchino a fette",
+                    "quantity": "150g"
                 },
                 {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "25ml"
-                },
-                {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "q.b."
-                }
-            ],
-            "contains": []
-        },
-        {
-            "title": "Macedonia di Mele e Banane",
-            "description": "Una macedonia di frutta fresca e naturale, perfetta per una merenda salutare o un fine pasto leggero.",
-            "ingredients": [
-                {
-                    "item": "Mele",
+                    "item": "Spinaci Freschi",
                     "quantity": "100g"
                 },
                 {
-                    "item": "Mele Golden",
+                    "item": "Uova Fresche",
+                    "quantity": "1 pezzo"
+                },
+                {
+                    "item": "Latte Parzialmente Scremato",
+                    "quantity": "50ml"
+                }
+            ],
+            "contains": [
+                "lattosio",
+                "uova"
+            ],
+            "description": "Involtini teneri di tacchino ripieni di spinaci, un secondo piatto leggero e saporito, cotti in padella o al forno."
+        },
+        {
+            "title": "Melanzane Ripiene al Tonno, Mais e Uovo",
+            "type": "cena",
+            "ingredients": [
+                {
+                    "item": "Melanzane",
+                    "quantity": "500g"
+                },
+                {
+                    "item": "Tonno Mareblu",
+                    "quantity": "160g"
+                },
+                {
+                    "item": "Mais in scatola",
                     "quantity": "100g"
                 },
                 {
-                    "item": "Banane",
-                    "quantity": "200g"
-                }
-            ],
-            "contains": []
-        },
-        {
-            "title": "Smoothie di Banana e Latte",
-            "description": "Una bevanda rinfrescante e nutriente, un frullato cremoso di banana e latte, ideale per colazione o come spuntino.",
-            "ingredients": [
-                {
-                    "item": "Banane",
-                    "quantity": "200g"
+                    "item": "Uova Fresche",
+                    "quantity": "1 pezzo"
                 },
                 {
-                    "item": "Latte UHT",
-                    "quantity": "200ml"
-                }
-            ],
-            "contains": [
-                "lattosio"
-            ]
-        },
-        {
-            "title": "Purè di Patate Cremoso al Latte",
-            "description": "Un purè di patate classico e vellutato, preparato con latte e un filo d'olio, ideale come contorno.",
-            "ingredients": [
-                {
-                    "item": "Patate",
-                    "quantity": "300g"
-                },
-                {
-                    "item": "Latte UHT",
-                    "quantity": "150ml"
-                },
-                {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "15ml"
-                },
-                {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "q.b."
-                }
-            ],
-            "contains": [
-                "lattosio"
-            ]
-        },
-        {
-            "title": "Biscotti Inzuppati nel Latte",
-            "description": "Una colazione o merenda semplice ma intramontabile, biscotti secchi immersi nel latte.",
-            "ingredients": [
-                {
-                    "item": "Biscotti secchi",
-                    "quantity": "100g"
-                },
-                {
-                    "item": "Latte UHT",
-                    "quantity": "100ml"
-                }
-            ],
-            "contains": [
-                "glutine",
-                "lattosio"
-            ]
-        },
-        {
-            "title": "Omelette con Formaggio Spalmabile",
-            "description": "Un'omelette morbida e saporita, farcita con formaggio spalmabile cremoso.",
-            "ingredients": [
-                {
-                    "item": "Uova bio",
-                    "quantity": "2 pz"
-                },
-                {
-                    "item": "Formaggio spalmabile",
-                    "quantity": "40g"
-                },
-                {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "10ml"
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
                 }
             ],
             "contains": [
                 "uova",
-                "lattosio"
-            ]
+                "pesce"
+            ],
+            "description": "Un piatto unico gustoso e mediterraneo, melanzane farcite con un ripieno saporito di tonno e mais."
         },
         {
-            "title": "Mele Cotte Semplici",
-            "description": "Mele cotte al forno, un dessert leggero e naturale, senza zuccheri aggiunti.",
+            "title": "Frittata Ricca con Spinaci e Carote",
+            "type": "cena",
             "ingredients": [
                 {
-                    "item": "Mele Golden",
-                    "quantity": "300g"
+                    "item": "Uova Fresche",
+                    "quantity": "1 pezzo"
                 },
                 {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "50ml"
-                }
-            ],
-            "contains": []
-        },
-        {
-            "title": "Pappa di Riso al Latte e Banana",
-            "description": "Un piatto semplice e digeribile, ideale per i più piccoli o per una cena leggera, con riso cotto nel latte e banana schiacciata.",
-            "ingredients": [
-                {
-                    "item": "Riso Arborio",
+                    "item": "Spinaci Freschi",
                     "quantity": "50g"
                 },
                 {
-                    "item": "Latte UHT",
-                    "quantity": "150ml"
+                    "item": "Carote",
+                    "quantity": "50g"
                 },
                 {
-                    "item": "Banane",
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
+                }
+            ],
+            "contains": [
+                "uova"
+            ],
+            "description": "Una frittata versatile e saporita, perfetta come secondo piatto o piatto unico leggero, arricchita con verdure."
+        },
+        {
+            "title": "Insalata Fredda di Legumi Misti, Tonno e Mais",
+            "type": "pranzo",
+            "ingredients": [
+                {
+                    "item": "Legumi misti in scatola",
+                    "quantity": "400g"
+                },
+                {
+                    "item": "Tonno in olio d'oliva",
+                    "quantity": "80g"
+                },
+                {
+                    "item": "Mais in scatola",
                     "quantity": "100g"
                 },
                 {
-                    "item": "Acqua minerale naturale",
+                    "item": "Carote",
+                    "quantity": "50g"
+                },
+                {
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
+                }
+            ],
+            "contains": [
+                "pesce"
+            ],
+            "description": "Un'insalata rinfrescante e proteica, ideale per un pranzo estivo o una cena leggera e nutriente."
+        },
+        {
+            "title": "Zuppa Rustica di Fagioli Borlotti e Carote",
+            "type": "cena",
+            "ingredients": [
+                {
+                    "item": "Fagioli Borlotti in scatola",
+                    "quantity": "400g"
+                },
+                {
+                    "item": "Carote",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Cipolle Dorate",
+                    "quantity": "50g"
+                }
+            ],
+            "contains": [],
+            "description": "Una zuppa calda e confortante, perfetta per le serate più fresche, ricca di sapore e nutrienti."
+        },
+        {
+            "title": "Melanzane a Funghetto Saporite",
+            "type": "cena",
+            "ingredients": [
+                {
+                    "item": "Melanzane",
+                    "quantity": "300g"
+                },
+                {
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
+                }
+            ],
+            "contains": [],
+            "description": "Un contorno classico della cucina mediterranea, saporito e versatile, ideale per accompagnare secondi piatti."
+        },
+        {
+            "title": "Spezzatino di Pollo con Legumi e Carote",
+            "type": "cena",
+            "ingredients": [
+                {
+                    "item": "Pollo Intero Fresco",
+                    "quantity": "400g"
+                },
+                {
+                    "item": "Legumi misti in scatola",
+                    "quantity": "400g"
+                },
+                {
+                    "item": "Carote",
+                    "quantity": "150g"
+                },
+                {
+                    "item": "Cipolle Dorate",
+                    "quantity": "50g"
+                }
+            ],
+            "contains": [],
+            "description": "Un secondo piatto ricco e saporito, ideale per un pranzo in famiglia, con carne tenera e verdure."
+        },
+        {
+            "title": "Frittata al Forno con Spinaci e Tonno",
+            "type": "cena",
+            "ingredients": [
+                {
+                    "item": "Uova Fresche",
+                    "quantity": "1 pezzo"
+                },
+                {
+                    "item": "Spinaci Freschi",
+                    "quantity": "50g"
+                },
+                {
+                    "item": "Tonno Mareblu",
+                    "quantity": "80g"
+                },
+                {
+                    "item": "Latte Parzialmente Scremato",
+                    "quantity": "100ml"
+                },
+                {
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
+                }
+            ],
+            "contains": [
+                "lattosio",
+                "uova",
+                "pesce"
+            ],
+            "description": "Una frittata al forno ricca e saporita, perfetta come secondo piatto o piatto unico leggero e completo."
+        },
+        {
+            "title": "Macinato al Sugo con Mais e Verdure",
+            "type": "cena",
+            "ingredients": [
+                {
+                    "item": "Macinato di Bovino Scelto",
+                    "quantity": "50g"
+                },
+                {
+                    "item": "Mais in scatola",
+                    "quantity": "50g"
+                },
+                {
+                    "item": "Cipolle Dorate",
+                    "quantity": "30g"
+                },
+                {
+                    "item": "Carote",
+                    "quantity": "50g"
+                }
+            ],
+            "contains": [],
+            "description": "Un secondo piatto semplice e gustoso, il macinato al sugo arricchito dal mais dolce e verdure."
+        },
+        {
+            "title": "Insalata Fredda di Orecchiette con Tacchino e Mais",
+            "type": "pranzo",
+            "ingredients": [
+                {
+                    "item": "Orecchiette fresche",
+                    "quantity": "250g"
+                },
+                {
+                    "item": "Fesa di Tacchino a fette",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Mais in scatola",
+                    "quantity": "100g"
+                },
+                {
+                    "item": "Carote",
+                    "quantity": "50g"
+                }
+            ],
+            "contains": [
+                "glutine"
+            ],
+            "description": "Un'insalata di pasta fresca e colorata, ideale per un pranzo estivo o da portare via per un pasto veloce."
+        },
+        {
+            "title": "Melanzane Impanate (Finta Cotoletta) con Biscotti",
+            "type": "cena",
+            "ingredients": [
+                {
+                    "item": "Melanzane",
+                    "quantity": "200g"
+                },
+                {
+                    "item": "Uova Fresche",
+                    "quantity": "1 pezzo"
+                },
+                {
+                    "item": "Latte Parzialmente Scremato",
                     "quantity": "50ml"
+                },
+                {
+                    "item": "Biscotti Mulino Bianco Galletti",
+                    "quantity": "50g"
                 }
             ],
             "contains": [
                 "glutine",
-                "lattosio"
-            ]
-        },
-        {
-            "title": "Pane Tostato con Passata di Pomodoro",
-            "description": "Uno spuntino semplice e tradizionale, pane tostato condito con passata di pomodoro e un filo d'olio EVO.",
-            "ingredients": [
-                {
-                    "item": "Pane a fette",
-                    "quantity": "80g"
-                },
-                {
-                    "item": "Passata di pomodoro",
-                    "quantity": "50g"
-                },
-                {
-                    "item": "Olio extra vergine d'oliva",
-                    "quantity": "10ml"
-                }
+                "lattosio",
+                "uova"
             ],
-            "contains": [
-                "glutine"
-            ]
-        },
-        {
-            "title": "Zuppa Dolce di Mele Cotte e Biscotti",
-            "description": "Una zuppa dolce e comforting, con mele cotte e pezzetti di biscotti, per una merenda o un dessert leggero.",
-            "ingredients": [
-                {
-                    "item": "Mele",
-                    "quantity": "200g"
-                },
-                {
-                    "item": "Biscotti secchi",
-                    "quantity": "150g"
-                },
-                {
-                    "item": "Acqua minerale naturale",
-                    "quantity": "100ml"
-                }
-            ],
-            "contains": [
-                "glutine"
-            ]
+            "description": "Fette di melanzana impanate con biscotti sbriciolati e cotte al forno o in padella, una gustosa alternativa vegetariana."
         }
     ]
 }
