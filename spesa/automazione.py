@@ -18,7 +18,7 @@ else:
 # 2. MODELLO
 model = genai.GenerativeModel("gemini-1.5-flash")
 
-# Funzione per pulire il JSON sporco che a volte Gemini genera
+# Funzione pulizia JSON
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
     s = text.find("{")
@@ -30,10 +30,15 @@ def analizza_volantini():
     offerte_db = {}
     
     # --- PERCORSO ASSOLUTO ---
-    # Trova la cartella dove sta questo file 'automazione.py' (cioè la cartella 'spesa')
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    # Cerca dentro 'spesa/volantini'
-    path_volantini = os.path.join(base_dir, "volantini", "*.pdf")
+    volantini_dir = os.path.join(base_dir, "volantini")
+    
+    # Crea cartella se non esiste
+    if not os.path.exists(volantini_dir):
+        os.makedirs(volantini_dir)
+        print(f"📂 Creata cartella: {volantini_dir}")
+
+    path_volantini = os.path.join(volantini_dir, "*.pdf")
     
     print(f"📂 Cerco PDF in: {path_volantini}")
     files = glob.glob(path_volantini)
@@ -46,9 +51,8 @@ def analizza_volantini():
 
     for file_path in files:
         try:
-            # Nome file = Nome Supermercato (es. conad.pdf -> Conad)
             nome_file = os.path.basename(file_path)
-            nome_store = os.path.splitext(nome_file)[0].title() # Conad
+            nome_store = os.path.splitext(nome_file)[0].title()
             
             print(f"📄 Analizzo: {nome_file} -> {nome_store}")
 
@@ -83,7 +87,6 @@ def analizza_volantini():
     return offerte_db
 
 def genera_tutto():
-    # Percorso output assoluto
     base_dir = os.path.dirname(os.path.abspath(__file__))
     file_out = os.path.join(base_dir, "dati_settimanali.json")
     
@@ -94,7 +97,6 @@ def genera_tutto():
     print("🍳 Generazione Menu...")
     ricette = []
     
-    # Se abbiamo offerte, usiamo quegli ingredienti
     context = "Usa ingredienti generici."
     if offerte:
         ingred = []
