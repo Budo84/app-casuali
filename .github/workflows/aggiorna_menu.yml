@@ -10,7 +10,6 @@ on:
     paths:
       - 'spesa/volantini/**'
 
-# Evita che due processi partano insieme
 concurrency:
   group: menu_update
   cancel-in-progress: true
@@ -25,7 +24,7 @@ jobs:
       - name: Checkout del codice
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Scarica tutta la storia
+          fetch-depth: 0
 
       - name: Imposta Python
         uses: actions/setup-python@v4
@@ -35,33 +34,30 @@ jobs:
       - name: Installa librerie
         run: pip install -U google-generativeai
 
-      # DEBUG: Stampa file per capire se il PDF è lì
-      - name: 📂 Controllo File
+      # CREAZIONE CARTELLA VOLANTINI (Se non esiste)
+      - name: Prepara Cartelle
         run: |
-          echo "Cartella corrente:"
-          pwd
-          echo "Contenuto spesa/volantini:"
-          ls -R spesa/volantini/ || echo "Nessun volantino trovato"
+          mkdir -p spesa/volantini
+          echo "Cartella spesa/volantini pronta."
+          ls -R spesa/
 
       - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      # SALVATAGGIO BLINDATO
+      # SALVATAGGIO ROBUSTO
       - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
           
-          # 1. Aggiorna la repo locale per essere sicuro
-          git pull origin main || git pull origin master
+          # Aggiorna repo locale
+          git pull origin main || git pull origin master || echo "Niente da pullare"
           
-          # 2. Aggiunge il file JSON appena generato
+          # Aggiungi file JSON
           git add spesa/dati_settimanali.json
           
-          # 3. Committa solo se c'è qualcosa di nuovo
-          git commit -m "🤖 Dati Aggiornati dal Robot" || echo "Nessuna modifica"
-          
-          # 4. Spinge su GitHub
+          # Commit e Push
+          git commit -m "🤖 Menu Aggiornato dal Robot" || echo "Nessuna modifica da salvare"
           git push
