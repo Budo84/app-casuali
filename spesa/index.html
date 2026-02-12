@@ -9,44 +9,30 @@
     <style>
         :root { --primary: #2E7D32; --bg: #f4f4f4; --card: #fff; --text: #333; --accent: #ff9800; --offer: #d32f2f; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
-        
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .page { display: none; padding: 15px; }
         .page.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* CARDS */
         .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 5px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .day-header { font-weight: bold; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 1px; }
-        
         .meal-row { display: flex; margin-bottom: 10px; align-items: flex-start; position: relative; }
         .meal-icon { width: 30px; font-size: 1.2rem; margin-top: 2px; }
         .meal-info { flex: 1; padding-right: 35px; }
         .meal-title { font-weight: 600; font-size: 0.95rem; }
         .meal-desc { font-size: 0.8rem; color: #666; }
         .btn-edit { position: absolute; right: 0; top: 0; cursor: pointer; color: #ccc; }
-        .btn-edit:hover { color: var(--accent); }
-
-        /* SPESA */
         .shop-item { background: white; padding: 12px; margin-bottom: 6px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
         .shop-item.locked { border-left: 4px solid var(--accent); background: #fff8e1; }
-        
-        /* OFFERTE */
         .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; cursor: pointer; position: relative; }
         .offer-badge { position: absolute; top: -5px; right: -5px; background: var(--offer); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.6rem; font-weight: bold; }
-
-        /* UPLOAD */
         .upload-box { background: white; padding: 15px; border-radius: 10px; border: 2px dashed #ccc; text-align: center; margin-bottom: 20px; }
         input[type="text"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
         .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 8px; margin-top: 5px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        
-        /* NAV */
         .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 65px; z-index: 1000; }
         .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; }
         .nav a.active { color: var(--primary); font-weight: bold; }
         .nav i { font-size: 24px; margin-bottom: 2px; }
-        
         .total-float { position: fixed; bottom: 80px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
     </style>
 </head>
@@ -54,7 +40,7 @@
 
 <header>
     <h3>Menu Reale</h3>
-    <small id="lastUpdate" style="font-size:0.7rem; opacity:0.8;">...</small>
+    <small id="lastUpdate" style="font-size:0.7rem; opacity:0.8;">Sync...</small>
 </header>
 
 <div id="p-menu" class="page active">
@@ -80,22 +66,17 @@
 <div id="p-famiglia" class="page">
     <h3>📤 Carica Volantino</h3>
     <p style="font-size:0.8rem; color:#555">Carica qui i PDF. Il robot leggerà i prezzi veri.</p>
-    
     <div class="upload-box">
         <input type="text" id="ghRepo" placeholder="Utente/Repo (es. Budo84/app-casuali)">
         <input type="password" id="ghToken" placeholder="Token GitHub (ghp_...)">
         <button class="btn" onclick="saveCreds()" style="background:#555; font-size:0.8rem; padding:8px;">Salva Dati</button>
-        
         <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-        
         <label style="display:block; text-align:left; font-size:0.9rem; margin-bottom:5px; font-weight:bold;">Nome Supermercato:</label>
         <input type="text" id="pdfName" placeholder="es. conad">
         <input type="file" id="pdfFile" accept="application/pdf" style="margin-top:10px;">
-        
         <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica e Analizza</button>
         <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:10px; min-height:20px;"></p>
     </div>
-
     <h3>Gestione</h3>
     <button class="btn" style="background:#d32f2f" onclick="hardReset()">⚠️ Reset Totale App</button>
 </div>
@@ -113,23 +94,17 @@
     let mainStore = localStorage.getItem('v16_store') || "";
     let locked = JSON.parse(localStorage.getItem('v16_locked')) || {};
 
-    // --- INIZIALIZZAZIONE ---
     async function init() {
         if(localStorage.getItem('gh_repo')) document.getElementById('ghRepo').value = localStorage.getItem('gh_repo');
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
-
         try {
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
             if(!res.ok) throw new Error("File JSON non trovato");
-            
             db = await res.json();
             document.getElementById('lastUpdate').innerText = "Aggiornato: " + db.data_aggiornamento;
-
-            // Popola Select Store
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
             const stores = Object.keys(db.offerte_per_supermercato || {});
-            
             if (stores.length === 0) {
                 sel.innerHTML = "<option>Nessun PDF</option>";
             } else {
@@ -141,16 +116,13 @@
                 if(!mainStore || !stores.includes(mainStore)) mainStore = stores[0];
                 sel.value = mainStore;
             }
-
             if(!menu.length) generateMenu();
             renderAll();
-
         } catch(e) {
             document.getElementById('menuList').innerHTML = "<div style='text-align:center; padding:30px; color:#666'><h3>Benvenuto!</h3><p>Nessun dato presente.<br>Vai su <b>Opz</b> e carica il tuo primo volantino PDF.</p></div>";
         }
     }
 
-    // --- UPLOAD PDF SU GITHUB ---
     async function uploadPDF() {
         let repo = document.getElementById('ghRepo').value.trim(); 
         const token = document.getElementById('ghToken').value.trim();
@@ -159,14 +131,9 @@
         const status = document.getElementById('upStatus');
 
         if(!repo || !token || !name || !fileInp.files[0]) return alert("Per favore compila tutti i campi!");
-
-        // Correzione automatica per repo nidificata
-        if (repo.split('/').length > 2) {
-             repo = repo.split('/').slice(0, 2).join('/');
-             document.getElementById('ghRepo').value = repo; 
-        }
-
-        // COSTRUZIONE URL CORRETTA: Cartella spesa/volantini
+        if (repo.split('/').length > 2) repo = repo.split('/').slice(0, 2).join('/');
+        
+        // Costruiamo l'URL corretto per la sottocartella 'spesa/volantini'
         const urlFile = `https://api.github.com/repos/${repo}/contents/spesa/volantini/${name}.pdf`;
         
         if(!confirm(`Carico ${name}.pdf su:\n${repo}\n\nConfermi?`)) return;
@@ -178,16 +145,13 @@
         reader.onload = async function() {
             const contentBase64 = reader.result.split(',')[1];
             status.innerText = "🚀 Invio a GitHub...";
-            
             try {
-                // 1. Controllo se file esiste (per prendere SHA)
                 let sha = null;
                 try {
                     const check = await fetch(urlFile, { headers: {Authorization: `token ${token}`} });
                     if(check.ok) sha = (await check.json()).sha;
                 } catch(e) {}
 
-                // 2. PUT File
                 const body = {
                     message: `Upload ${name} da App`,
                     content: contentBase64
@@ -205,18 +169,13 @@
                     throw new Error(`Errore GitHub (${resUp.status}): ${err.message}`);
                 }
 
-                status.innerText = "🤖 Avvio Robot...";
+                // --- MODIFICA FONDAMENTALE ---
+                // Abbiamo tolto la chiamata "fetch(dispatches...)"
+                // Ora ci fidiamo del fatto che l'upload (PUT) sveglierà da solo il robot
+                // grazie alla regola "on: push: paths: spesa/volantini/**" nel file YAML.
                 
-                // 3. Trigger Action
-                const urlAction = `https://api.github.com/repos/${repo}/actions/workflows/aggiorna_menu.yml/dispatches`;
-                await fetch(urlAction, {
-                    method: 'POST',
-                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ref: 'main' }) 
-                });
-
-                status.innerText = "✅ Successo! Attendi 1 min.";
-                alert("File caricato! Il robot sta leggendo i prezzi. Riapri l'app tra un minuto.");
+                status.innerText = "✅ Caricato! Il robot partirà automaticamente.";
+                alert("File caricato! Il robot vedrà la modifica e partirà da solo.\nAttendi circa 60-90 secondi e riapri l'app.");
 
             } catch(e) {
                 status.innerText = "❌ Errore: " + e.message;
@@ -232,7 +191,6 @@
         alert("Dati salvati!");
     }
 
-    // --- LOGICA MENU ---
     function generateMenu() {
         if(!db || !db.ricette) return;
         const days = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
@@ -255,7 +213,6 @@
         return p.length ? p[Math.floor(Math.random()*p.length)] : {title:"Pasto Libero", ingredients:[]};
     }
 
-    // --- RENDER ---
     function renderAll() { renderMenu(); renderShop(); renderOffers(); }
 
     function renderMenu() {
@@ -301,7 +258,6 @@
         }));
 
         let tot = 0;
-        // Se non ci sono offerte per questo store, la lista è vuota (come richiesto)
         const offers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[mainStore]||[]) : [];
         document.getElementById('storeName').innerText = mainStore ? `(${mainStore})` : "";
 
@@ -311,7 +267,6 @@
             let isLock = false;
             let found = false;
             
-            // Check Lock
             let lKey = Object.keys(locked).find(k => item.toLowerCase().includes(k.toLowerCase()));
             if(lKey) {
                 let l = locked[lKey];
@@ -320,7 +275,6 @@
                 isLock = true;
                 found = true;
             } else {
-                // Check Auto Offer
                 let off = offers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
                 if(off) { dName = off.name; price = off.price; found = true; }
             }
