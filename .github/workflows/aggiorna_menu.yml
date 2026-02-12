@@ -2,13 +2,18 @@ name: Aggiorna Menu Spesa
 
 on:
   schedule:
-    - cron: '0 6 * * 1' # Ogni lunedì alle 6:00
-  workflow_dispatch:      # Avvio manuale
-  repository_dispatch:    # Avvio da App (Upload)
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+  repository_dispatch:
     types: [webhook]
-  push:                   # Avvio se carichi file a mano
+  push:
     paths:
       - 'spesa/volantini/**'
+
+# Evita che due processi partano insieme
+concurrency:
+  group: menu_update
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -20,7 +25,7 @@ jobs:
       - name: Checkout del codice
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Scarica tutta la storia per evitare errori di merge
+          fetch-depth: 0 # Scarica tutta la storia
 
       - name: Imposta Python
         uses: actions/setup-python@v4
@@ -30,28 +35,33 @@ jobs:
       - name: Installa librerie
         run: pip install -U google-generativeai
 
-      - name: 📂 Controllo File System
+      # DEBUG: Stampa file per capire se il PDF è lì
+      - name: 📂 Controllo File
         run: |
-          echo "Contenuto cartella spesa/volantini:"
-          ls -R spesa/volantini/ || echo "Cartella vuota o inesistente"
+          echo "Cartella corrente:"
+          pwd
+          echo "Contenuto spesa/volantini:"
+          ls -R spesa/volantini/ || echo "Nessun volantino trovato"
 
       - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      # QUESTA È LA PARTE CORRETTA CHE RISOLVE L'ERRORE
+      # SALVATAGGIO BLINDATO
       - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
           
-          # 1. Prima mettiamo al sicuro il file generato (Add + Commit)
+          # 1. Aggiorna la repo locale per essere sicuro
+          git pull origin main || git pull origin master
+          
+          # 2. Aggiunge il file JSON appena generato
           git add spesa/dati_settimanali.json
-          git commit -m "🤖 Menu Aggiornato dal Robot" || echo "Nessuna modifica rilevata"
           
-          # 2. Poi scarichiamo le novità dal server e applichiamo le nostre sopra (Rebase)
-          git pull --rebase origin main || git pull --rebase origin master
+          # 3. Committa solo se c'è qualcosa di nuovo
+          git commit -m "🤖 Dati Aggiornati dal Robot" || echo "Nessuna modifica"
           
-          # 3. Infine spediamo tutto
+          # 4. Spinge su GitHub
           git push
