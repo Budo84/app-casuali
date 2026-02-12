@@ -6,174 +6,140 @@ import sys
 import glob
 import time
 
-print("--- AVVIO ROBOT ANALISI UNIVERSALE ---")
+print("--- 🚀 AVVIO ROBOT SPESA ---")
 
 # 1. SETUP CHIAVE
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
 else:
-    print("❌ ERRORE: Manca GEMINI_KEY")
+    print("❌ ERRORE: Chiave Mancante. Lo script si ferma.")
     sys.exit(1)
 
-# 2. SETUP MODELLO (Flash è il migliore per i documenti)
+# 2. MODELLO
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+# Funzione per pulire il JSON sporco che a volte Gemini genera
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
     s = text.find("{")
     e = text.rfind("}") + 1
-    return text[s:e] if s != -1 and e != -1 else text
+    if s != -1 and e != -1: return text[s:e]
+    return text
 
 def analizza_volantini():
     offerte_db = {}
     
-    # PERCORSO ASSOLUTO (Indistruttibile)
-    # Trova la cartella dove si trova questo script (spesa)
+    # --- PERCORSO ASSOLUTO ---
+    # Trova la cartella dove sta questo file 'automazione.py' (cioè la cartella 'spesa')
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    # Cerca nella sottocartella 'volantini'
+    # Cerca dentro 'spesa/volantini'
     path_volantini = os.path.join(base_dir, "volantini", "*.pdf")
     
-    print(f"🔍 Cerco PDF in: {path_volantini}")
+    print(f"📂 Cerco PDF in: {path_volantini}")
     files = glob.glob(path_volantini)
     
     if not files:
-        print("⚠️ NESSUN PDF TROVATO. Carica i file tramite l'app.")
-        # Debug: stampiamo cosa c'è nella cartella per capire
-        try:
-            print(f"Contenuto cartella: {os.listdir(os.path.join(base_dir, 'volantini'))}")
-        except:
-            print("Cartella volantini vuota o inesistente.")
+        print("⚠️ Nessun PDF trovato. Genererò solo un menu base.")
         return {}
 
-    print(f"✅ Trovati {len(files)} file da analizzare.")
+    print(f"✅ Trovati {len(files)} volantini.")
 
     for file_path in files:
         try:
-            # USIAMO IL NOME DEL FILE COME NOME SUPERMERCATO
-            # es. "spesa/volantini/conad.pdf" -> "Conad"
+            # Nome file = Nome Supermercato (es. conad.pdf -> Conad)
             nome_file = os.path.basename(file_path)
-            nome_store = os.path.splitext(nome_file)[0]
+            nome_store = os.path.splitext(nome_file)[0].title() # Conad
             
-            # Formattazione bella (prima lettera maiuscola)
-            nome_store = nome_store.replace("_", " ").title()
-            
-            # Eccezione estetica per "MA" se vuoi (opzionale)
-            if nome_store.lower() == "ma": nome_store = "MA Supermercati"
+            print(f"📄 Analizzo: {nome_file} -> {nome_store}")
 
-            print(f"📄 Analisi: {nome_file} -> Supermercato: {nome_store}")
-
-            # Upload su Google
+            # 1. Upload
             pdf = genai.upload_file(file_path, display_name=nome_store)
-            
-            # Attesa attiva
             while pdf.state.name == "PROCESSING":
-                print(".", end="", flush=True)
                 time.sleep(1)
                 pdf = genai.get_file(pdf.name)
-            print(" Fatto.")
-
+            
             if pdf.state.name == "FAILED":
-                print(f"❌ Errore Google: Impossibile leggere {nome_file}")
+                print("   ❌ Errore Google: File illeggibile.")
                 continue
 
-            # Prompt
+            # 2. Estrazione
             prompt = f"""
-            Sei un esperto di spesa. Analizza questo volantino di "{nome_store}".
-            Estrai TUTTI i prodotti alimentari (Cibo, Bevande) e i prezzi.
-            Ignora detersivi e vestiti se possibile.
-            
-            RISPONDI SOLO JSON in questo formato esatto:
-            {{
-                "{nome_store}": [
-                    {{"name": "Nome Prodotto preciso", "price": 1.99}},
-                    {{"name": "Altro prodotto", "price": 0.50}}
-                ]
-            }}
+            Analizza il volantino di "{nome_store}".
+            Estrai TUTTI i prodotti alimentari e i prezzi.
+            RISPONDI SOLO JSON: {{ "{nome_store}": [ {{"name": "...", "price": 1.00}} ] }}
             """
-            
             res = model.generate_content([pdf, prompt])
+            data = json.loads(pulisci_json(res.text))
             
-            try:
-                data = json.loads(pulisci_json(res.text))
-                if nome_store in data:
-                    prodotti = data[nome_store]
-                    offerte_db[nome_store] = prodotti
-                    print(f"   ✅ Estratti {len(prodotti)} prodotti!")
-                else:
-                    print(f"   ⚠️ Il JSON non conteneva la chiave '{nome_store}'")
-            except Exception as e_json:
-                print(f"   ❌ Errore lettura JSON per {nome_store}: {res.text[:100]}...")
-
-            # Pulizia
+            if nome_store in data:
+                offerte_db[nome_store] = data[nome_store]
+                print(f"   ✅ Estratti {len(data[nome_store])} prodotti.")
+            
             genai.delete_file(pdf.name)
 
         except Exception as e:
-            print(f"   ❌ Errore critico su {file_path}: {e}")
+            print(f"   ❌ Errore file {nome_file}: {e}")
 
     return offerte_db
 
 def genera_tutto():
-    cartella = os.path.dirname(os.path.abspath(__file__))
-    file_out = os.path.join(cartella, "dati_settimanali.json")
+    # Percorso output assoluto
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_out = os.path.join(base_dir, "dati_settimanali.json")
     
-    # 1. ANALISI
-    offerte_finali = analizza_volantini()
+    # 1. Analisi
+    offerte = analizza_volantini()
     
-    # 2. MENU
-    print("\n🍳 Generazione Menu...")
+    # 2. Generazione Menu
+    print("🍳 Generazione Menu...")
+    ricette = []
     
-    # Raccogliamo ingredienti per ispirare il menu
-    ingredienti_input = []
-    if offerte_finali:
-        for store in offerte_finali:
-            for p in offerte_finali[store]:
-                ingredienti_input.append(p['name'])
-        context = "Usa questi ingredienti in offerta: " + ", ".join(ingredienti_input[:50])
-    else:
-        print("⚠️ Nessuna offerta trovata. Genero menu con ingredienti base.")
-        context = "Usa ingredienti economici e di stagione (Pasta, Riso, Uova, Pollo, Verdure)."
+    # Se abbiamo offerte, usiamo quegli ingredienti
+    context = "Usa ingredienti generici."
+    if offerte:
+        ingred = []
+        for s in offerte:
+            for p in offerte[s]: ingred.append(p['name'])
+        context = "Usa questi ingredienti in offerta: " + ", ".join(ingred[:50])
 
-    ricette_finali = []
     try:
         prompt_menu = f"""
-        Crea un menu settimanale DIETA MEDITERRANEA (4 pasti al giorno).
+        Crea un menu settimanale DIETA MEDITERRANEA.
         {context}
-        Usa nomi GENERICI per gli ingredienti (es. "Pasta", non "Pasta Barilla").
+        Usa nomi generici (es. "Pasta", non "Pasta Barilla").
         
-        RISPONDI SOLO JSON:
+        JSON:
         {{
           "colazione": [ {{"title": "...", "ingredients": ["..."], "contains": []}} ],
           "pranzo": [...], "merenda": [...], "cena": [...]
         }}
         """
         res = model.generate_content(prompt_menu)
-        menu_raw = json.loads(pulisci_json(res.text))
+        raw = json.loads(pulisci_json(res.text))
         
         for k in ["colazione", "pranzo", "merenda", "cena"]:
-            for r in menu_raw.get(k, []):
+            for r in raw.get(k, []):
                 r['type'] = k
-                ricette_finali.append(r)
-        
-        print(f"✅ Menu generato: {len(ricette_finali)} ricette.")
+                ricette.append(r)
+        print(f"✅ Menu generato: {len(ricette)} ricette.")
 
     except Exception as e:
-        print(f"❌ Errore generazione menu: {e}")
-        # Fallback minimo per non rompere l'app
-        ricette_finali = [
-            {"title": "Pasta al Pomodoro", "type": "pranzo", "ingredients": ["Pasta", "Pomodoro"], "contains": []},
-            {"title": "Cena Leggera", "type": "cena", "ingredients": ["Verdure", "Pane"], "contains": []}
+        print(f"❌ Errore Menu: {e}. Uso menu di emergenza.")
+        ricette = [
+            {"title": "Pasta Pomodoro", "type": "pranzo", "ingredients": ["Pasta", "Pomodoro"], "contains": []},
+            {"title": "Pollo e Insalata", "type": "cena", "ingredients": ["Pollo", "Insalata"], "contains": []}
         ]
 
-    # 3. SALVATAGGIO
-    database = {
+    # 3. Salvataggio
+    db = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
-        "offerte_per_supermercato": offerte_finali,
-        "ricette": ricette_finali
+        "offerte_per_supermercato": offerte,
+        "ricette": ricette
     }
 
     with open(file_out, "w", encoding="utf-8") as f:
-        json.dump(database, f, indent=4, ensure_ascii=False)
-    print("💾 FILE SALVATO CORRETTAMENTE.")
+        json.dump(db, f, indent=4)
+    print(f"💾 FILE SALVATO: {file_out}")
 
 if __name__ == "__main__":
     genera_tutto()
