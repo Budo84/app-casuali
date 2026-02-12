@@ -3,10 +3,11 @@ import json
 import google.generativeai as genai
 from datetime import datetime
 import sys
-import random
+import glob
+import time
 
 # --- CONFIGURAZIONE ---
-print("--- START: AUTOMAZIONE IBRIDA ---")
+print("--- START: SOLO VOLANTINI REALI ---")
 
 if "GEMINI_KEY" in os.environ:
     API_KEY = os.environ["GEMINI_KEY"]
@@ -16,118 +17,132 @@ else:
 
 genai.configure(api_key=API_KEY)
 
-# --- DATI DI BACKUP (SALVAVITA) ---
-# Se l'IA fallisce, usiamo questi dati per non lasciare l'app vuota
-BACKUP_OFFERTE = {
-    "Conad": [{"name": "Pasta Barilla 500g", "price": 0.79}, {"name": "Passata Mutti", "price": 0.99}],
-    "Lidl": [{"name": "Pasta Combino", "price": 0.65}, {"name": "Yogurt Greco Milbona", "price": 0.89}],
-    "Pewex": [{"name": "Bistecca Manzo", "price": 12.90}, {"name": "Pane Casareccio", "price": 1.90}],
-    "Todis": [{"name": "Latte UHT", "price": 0.79}, {"name": "Biscotti", "price": 1.50}],
-    "Coop": [{"name": "Riso Gallo", "price": 2.10}],
-    "Esselunga": [{"name": "Uova Bio", "price": 2.20}],
-    "Eurospin": [{"name": "Olio EVO", "price": 5.50}],
-    "MA Supermercati": [{"name": "Mozzarella", "price": 1.00}],
-    "Ipercarni": [{"name": "Petto di Pollo", "price": 6.90}]
-}
+# --- CONFIGURAZIONE MODELLO ---
+def get_model():
+    # Per i PDF serve il modello Flash o Pro
+    candidates = ["gemini-1.5-flash", "gemini-1.5-pro"]
+    for m in candidates:
+        try:
+            model = genai.GenerativeModel(m)
+            return model
+        except: continue
+    return genai.GenerativeModel("gemini-1.5-flash") # Fallback
 
-BACKUP_RICETTE = [
-    {"title": "Latte e Biscotti", "type": "colazione", "ingredients": ["Latte", "Biscotti"], "contains": ["lattosio", "glutine"]},
-    {"title": "Pasta al Pomodoro", "type": "pranzo", "ingredients": ["Pasta", "Passata di pomodoro", "Olio EVO"], "contains": ["glutine"]},
-    {"title": "Mela", "type": "merenda", "ingredients": ["Mela"], "contains": []},
-    {"title": "Petto di Pollo e Insalata", "type": "cena", "ingredients": ["Petto di pollo", "Insalata"], "contains": []}
-]
+model = get_model()
 
-# --- 1. SELEZIONE MODELLO (LA TUA FUNZIONE) ---
-def trova_modello_funzionante():
-    print("🔍 Cerco modello AI...")
-    try:
-        modelli = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        
-        # Priorità: Flash > Pro > Altri
-        scelto = next((m for m in modelli if "flash" in m), next((m for m in modelli if "pro" in m), modelli[0]))
-        
-        print(f"✅ Modello trovato: {scelto}")
-        return genai.GenerativeModel(scelto)
-    except Exception as e:
-        print(f"⚠️ Errore ricerca: {e}. Uso fallback 'gemini-pro'")
-        return genai.GenerativeModel('gemini-pro')
-
-model = trova_modello_funzionante()
-
-# --- 2. PULIZIA OUTPUT ---
 def pulisci_json(testo):
     testo = testo.replace("```json", "").replace("```", "").strip()
-    if testo.startswith("{"):
-        start, end = testo.find('{'), testo.rfind('}') + 1
-    else:
-        start, end = testo.find('['), testo.rfind(']') + 1
+    if testo.startswith("{"): start, end = testo.find('{'), testo.rfind('}') + 1
+    else: start, end = testo.find('['), testo.rfind(']') + 1
     return testo[start:end] if start != -1 and end != -1 else testo
+
+def analizza_volantini():
+    offerte_db = {} # Si parte VUOTI. Niente invenzioni.
+    
+    # Percorso cartella volantini
+    path_volantini = os.path.join(os.path.dirname(__file__), "..", "volantini", "*.pdf")
+    files = glob.glob(path_volantini)
+    
+    if not files:
+        print("📂 Nessun PDF trovato. Nessuna offerta verrà generata.")
+        return {}
+
+    print(f"📂 Trovati {len(files)} volantini reali.")
+
+    for file_path in files:
+        try:
+            # Nome file = Nome Store (es. "lidl.pdf" -> "Lidl")
+            nome_file = os.path.basename(file_path)
+            nome_store = os.path.splitext(nome_file)[0].capitalize()
+            if nome_store.lower() == "ma": nome_store = "MA Supermercati"
+            
+            print(f"   📄 Analizzo {nome_file}...")
+            
+            # Upload su Gemini
+            sample_file = genai.upload_file(path=file_path, display_name=nome_store)
+            
+            # Attesa elaborazione
+            while sample_file.state.name == "PROCESSING":
+                time.sleep(2)
+                sample_file = genai.get_file(sample_file.name)
+
+            if sample_file.state.name == "FAILED":
+                print("      ❌ Fallito.")
+                continue
+
+            # Prompt Estrazione
+            prompt = f"""
+            Estrai TUTTI i prodotti alimentari e prezzi da questo volantino di {nome_store}.
+            Ignora non-food.
+            RISPONDI SOLO JSON:
+            {{
+                "{nome_store}": [
+                    {{"name": "Nome Marca", "price": 1.99}},
+                    ...
+                ]
+            }}
+            """
+            resp = model.generate_content([sample_file, prompt])
+            dati = json.loads(pulisci_json(resp.text))
+            
+            if nome_store in dati:
+                offerte_db[nome_store] = dati[nome_store]
+                print(f"      ✅ Estratti {len(dati[nome_store])} prodotti.")
+            
+            # Cleanup privacy
+            genai.delete_file(sample_file.name)
+            
+        except Exception as e:
+            print(f"      ❌ Errore su {nome_file}: {e}")
+
+    return offerte_db
 
 def genera_tutto():
     cartella = os.path.dirname(os.path.abspath(__file__))
     file_out = os.path.join(cartella, "dati_settimanali.json")
     
-    # Inizializziamo con i backup (così se fallisce, salva questi)
-    offerte_finali = BACKUP_OFFERTE
-    ricette_finali = BACKUP_RICETTE
+    # 1. ANALISI REALE
+    offerte_finali = analizza_volantini()
+
+    # 2. MENU (Basato su quello che c'è)
+    print("2. Genero Menu...")
+    
+    # Raccogliamo ingredienti disponibili
+    ingredienti_disponibili = []
+    for s in offerte_finali:
+        for p in offerte_finali[s]:
+            ingredienti_disponibili.append(p['name'])
+    
+    context_str = "Ingredienti in offerta: " + ", ".join(ingredienti_disponibili[:50])
+    if not ingredienti_disponibili:
+        context_str = "Nessuna offerta disponibile. Usa ingredienti base economici (Pasta, Uova, Verdure stagione)."
 
     try:
-        # --- FASE A: OFFERTE (MARCHE REALI) ---
-        print("1. Genero Offerte...")
-        supermercati = ["Conad", "Coop", "Esselunga", "Lidl", "Eurospin", "Pewex", "MA Supermercati", "Ipercarni", "Todis"]
+        prompt_ric = f"""
+        Crea menu settimanale DIETA MEDITERRANEA.
+        {context_str}
+        Usa ingredienti GENERICI.
         
-        prompt_off = f"""
-        Genera JSON offerte per: {', '.join(supermercati)}.
-        Usa MARCHE REALI (es. Pasta Barilla, Latte Granarolo).
-        6 prodotti per negozio.
-        RISPONDI SOLO JSON: {{ "Conad": [{{"name": "Pasta Barilla", "price": 0.89}}] }}
-        """
-        resp = model.generate_content(prompt_off)
-        offerte_finali = json.loads(pulisci_json(resp.text))
-        print("✅ Offerte OK.")
-
-        # --- FASE B: RICETTE (GENERICHE & MEDITERRANEE) ---
-        print("2. Genero Menu...")
-        prompt_ric = """
-        Crea un menu settimanale DIETA MEDITERRANEA.
-        Usa ingredienti GENERICI (es. "Pasta", NON "Pasta Barilla").
-        
-        Devi restituire un JSON con 4 liste:
-        1. "colazione": 7 ricette dolci.
-        2. "pranzo": 7 ricette primi piatti.
-        3. "merenda": 7 ricette leggere.
-        4. "cena": 7 ricette secondi + contorno.
-
-        RISPONDI SOLO JSON:
-        {
-          "colazione": [ {"title": "Caffè", "ingredients": ["Caffè"], "contains": []} ],
+        Format JSON:
+        {{
+          "colazione": [ {{"title": "...", "ingredients": ["..."], "contains": []}} ],
           "pranzo": [...], "merenda": [...], "cena": [...]
-        }
+        }}
         """
         resp_ric = model.generate_content(prompt_ric)
         ricette_raw = json.loads(pulisci_json(resp_ric.text))
         
-        # Appiattiamo il dizionario in una lista unica per l'app
-        temp_list = []
-        for tipo in ["colazione", "pranzo", "merenda", "cena"]:
-            for piatto in ricette_raw.get(tipo, []):
-                piatto['type'] = tipo
-                temp_list.append(piatto)
-        
-        if len(temp_list) > 5:
-            ricette_finali = temp_list
-            print("✅ Menu OK.")
-
+        ricette_finali = []
+        for t in ["colazione", "pranzo", "merenda", "cena"]:
+            for p in ricette_raw.get(t, []):
+                p['type'] = t
+                ricette_finali.append(p)
+                
     except Exception as e:
-        print(f"❌ ERRORE IA: {e}")
-        print("⚠️ Uso dati di Backup.")
+        print(f"❌ Errore Menu: {e}")
+        ricette_finali = []
 
-    # --- SALVATAGGIO ---
-    # Verifica che tutti i supermercati esistano nel JSON finale
-    for s in ["Pewex", "Todis", "Ipercarni", "MA Supermercati"]:
-        if s not in offerte_finali:
-            offerte_finali[s] = BACKUP_OFFERTE.get(s, [])
-
+    # 3. SALVATAGGIO
     database = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "offerte_per_supermercato": offerte_finali,
@@ -136,7 +151,7 @@ def genera_tutto():
 
     with open(file_out, "w", encoding="utf-8") as f:
         json.dump(database, f, indent=4, ensure_ascii=False)
-    print("💾 Salvato.")
+    print("💾 Dati salvati.")
 
 if __name__ == "__main__":
     genera_tutto()
