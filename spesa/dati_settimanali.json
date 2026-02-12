@@ -1,5 +1,24 @@
 {
-    "data_aggiornamento": "12/02/2026 11:15",
+    "data_aggiornamento": "12/02/2026 11:41",
     "offerte_per_supermercato": {},
-    "ricette": []
+    "ricette": [
+        {
+            "title": "Pasta al Pomodoro",
+            "type": "pranzo",
+            "ingredients": [
+                "Pasta",
+                "Pomodoro"
+            ],
+            "contains": []
+        },
+        {
+            "title": "Cena Leggera",
+            "type": "cena",
+            "ingredients": [
+                "Verdure",
+                "Pane"
+            ],
+            "contains": []
+        }
+    ]
 }
