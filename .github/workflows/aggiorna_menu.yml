@@ -2,13 +2,10 @@ name: Aggiorna Menu Spesa
 
 on:
   schedule:
-    - cron: '0 6 * * 1' # Ogni lunedì alle 6:00
-  workflow_dispatch:    # Permette l'avvio manuale e dall'App
-    inputs:
-      ref:
-        description: 'Branch'
-        required: false
-        default: 'main'
+    - cron: '0 6 * * 1'
+  workflow_dispatch:      # Fondamentale per il tasto "Carica"
+  repository_dispatch:    # Fondamentale per l'API trigger
+    types: [webhook]
 
 jobs:
   build:
@@ -28,13 +25,10 @@ jobs:
       - name: Installa librerie
         run: pip install -U google-generativeai
 
-      # DEBUG: Mostra i file per capire se il PDF è lì
-      - name: 📂 Debug File System
+      - name: 📂 Debug Cartelle
         run: |
-          echo "Cartella corrente:"
-          pwd
-          echo "Contenuto cartella spesa:"
-          ls -R spesa/
+          echo "Controllo cartella spesa/volantini..."
+          ls -R spesa/volantini/ || echo "Cartella vuota o non trovata"
 
       - name: Esegui Script Python
         env:
@@ -43,8 +37,8 @@ jobs:
 
       - name: Salva su GitHub
         run: |
-          git config --global user.name 'Robot Spesa'
-          git config --global user.email 'robot@spesa.app'
+          git config --global user.name 'Robot Menu'
+          git config --global user.email 'robot@menu.app'
           git add spesa/dati_settimanali.json
-          git commit -m "Aggiornamento Menu con Volantini" || echo "Nessuna modifica da salvare"
+          git commit -m "Menu Aggiornato" || echo "Nessuna modifica"
           git push
