@@ -12,7 +12,7 @@ on:
 
 concurrency:
   group: menu_update
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -39,25 +39,25 @@ jobs:
         run: |
           mkdir -p spesa/volantini
           echo "Cartella spesa/volantini pronta."
-          ls -R spesa/
 
       - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      # SALVATAGGIO ROBUSTO
+      # SALVATAGGIO (ORDINE CORRETTO)
       - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
           
-          # Aggiorna repo locale
-          git pull origin main || git pull origin master || echo "Niente da pullare"
-          
-          # Aggiungi file JSON
+          # 1. PRIMA salviamo le modifiche locali (il JSON generato)
           git add spesa/dati_settimanali.json
-          
-          # Commit e Push
           git commit -m "🤖 Menu Aggiornato dal Robot" || echo "Nessuna modifica da salvare"
+          
+          # 2. POI scarichiamo le novità dal server e applichiamo le nostre sopra (Rebase)
+          # Questo evita l'errore "local changes would be overwritten"
+          git pull --rebase origin main || git pull --rebase origin master
+          
+          # 3. INFINE spediamo tutto
           git push
