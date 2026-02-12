@@ -6,14 +6,9 @@ on:
   workflow_dispatch:      # Avvio manuale
   repository_dispatch:    # Avvio da App (Upload)
     types: [webhook]
-  push:                   # Avvio se carichi file a mano da PC
+  push:                   # Avvio se carichi file a mano
     paths:
       - 'spesa/volantini/**'
-
-# QUESTO È IL SEMAFORO CHE MANCAVA
-concurrency:
-  group: "menu-update"
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -24,6 +19,8 @@ jobs:
     steps:
       - name: Checkout del codice
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Scarica tutta la storia per evitare errori di merge
 
       - name: Imposta Python
         uses: actions/setup-python@v4
@@ -33,22 +30,28 @@ jobs:
       - name: Installa librerie
         run: pip install -U google-generativeai
 
-      # Debug: Vediamo se il file PDF è arrivato
-      - name: 📂 Controllo Cartella Volantini
+      - name: 📂 Controllo File System
         run: |
           echo "Contenuto cartella spesa/volantini:"
           ls -R spesa/volantini/ || echo "Cartella vuota o inesistente"
 
-      - name: Esegui Robot (Python)
+      - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      - name: Salva Dati su GitHub
+      # QUESTA È LA PARTE CORRETTA CHE RISOLVE L'ERRORE
+      - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
-          git pull # Si aggiorna prima di salvare per evitare conflitti
+          
+          # 1. Prima mettiamo al sicuro il file generato (Add + Commit)
           git add spesa/dati_settimanali.json
-          git commit -m "Menu Aggiornato dai Volantini" || echo "Nessuna modifica trovata"
+          git commit -m "🤖 Menu Aggiornato dal Robot" || echo "Nessuna modifica rilevata"
+          
+          # 2. Poi scarichiamo le novità dal server e applichiamo le nostre sopra (Rebase)
+          git pull --rebase origin main || git pull --rebase origin master
+          
+          # 3. Infine spediamo tutto
           git push
