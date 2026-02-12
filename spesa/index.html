@@ -3,350 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Famiglia Pro</title>
+    <title>Spesa Reale</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta name="theme-color" content="#FF9800">
+    <meta name="theme-color" content="#2E7D32">
     <style>
-        :root { --primary: #FF9800; --accent: #8BC34A; --bg: #f5f5f5; --card: #fff; --text: #333; --offer: #d32f2f; }
+        :root { --primary: #2E7D32; --bg: #f4f4f4; --card: #fff; --text: #333; --accent: #ff9800; --offer: #d32f2f; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
         
-        header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .status-badge { font-size: 0.7rem; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 12px; }
+        header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; }
         .page { display: none; padding: 15px; }
         .page.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* CARDS */
-        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 5px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .day-header { font-weight: bold; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid #eee; text-transform: uppercase; }
-        
-        .meal-row { display: flex; margin-bottom: 10px; align-items: flex-start; position: relative; }
-        .meal-icon { width: 30px; font-size: 1.2rem; margin-top:2px; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .day-header { font-weight: bold; color: var(--primary); margin-bottom: 8px; border-bottom: 1px solid #eee; }
+        .meal-row { display: flex; margin-bottom: 8px; align-items: flex-start; position: relative; }
+        .meal-icon { width: 30px; font-size: 1.2rem; }
         .meal-info { flex: 1; padding-right: 30px; }
-        .meal-title { font-weight: 600; font-size: 0.95rem; }
-        .meal-desc { font-size: 0.8rem; color: #777; }
+        .meal-title { font-weight: bold; font-size: 0.95rem; }
+        .meal-desc { font-size: 0.8rem; color: #666; }
         .btn-edit { position: absolute; right: 0; top: 0; cursor: pointer; color: #ccc; }
-        .btn-edit:hover { color: var(--accent); }
 
-        /* SPESA */
-        .shop-item { background: white; padding: 12px; margin-bottom: 6px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
+        .shop-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
         .shop-item.locked { border-left: 4px solid var(--accent); background: #fff8e1; }
-        .brand-text { color: var(--offer); font-weight: bold; }
-        .price-inp { width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 5px; text-align: right; background: #fafafa; }
-        .price-inp.offer { background: #ffebee; border-color: var(--offer); color: var(--offer); font-weight: bold; }
         
-        /* STORE & OFFERTE */
-        .store-sel { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; background: white; font-size: 1rem; }
         .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; cursor: pointer; position: relative; }
         .offer-badge { position: absolute; top: -5px; right: -5px; background: var(--offer); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.6rem; font-weight: bold; }
 
-        /* NAV */
+        .upload-box { background: white; padding: 15px; border-radius: 10px; border: 2px dashed #ccc; text-align: center; margin-bottom: 20px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 5px; margin-top: 5px; font-weight: bold; cursor: pointer; }
+        
         .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 65px; z-index: 1000; }
-        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; font-size: 0.7rem; }
+        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; }
         .nav a.active { color: var(--primary); font-weight: bold; }
         .nav i { font-size: 24px; margin-bottom: 2px; }
-        
-        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        .total-float { position: fixed; bottom: 80px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1><i class="material-icons">diversity_3</i> Menu Family</h1>
-    <div class="status-badge" id="dataInfo">Sync...</div>
+    <h3>Menu Reale</h3>
+    <small id="lastUpdate" style="font-size:0.7rem;">Sync...</small>
 </header>
 
 <div id="p-menu" class="page active">
-    <div id="menuList" style="padding-bottom: 20px;"></div>
+    <div id="menuList"></div>
 </div>
 
 <div id="p-spesa" class="page">
-    <h3>🛒 Lista Spesa</h3>
-    <p style="font-size:0.8rem; color:#666; margin-bottom:10px;">Store Principale: <b id="mainStoreLabel"></b></p>
-    <div id="shopList" style="padding-bottom: 80px;"></div>
-    <div class="total-float">
-        <span style="font-size:0.9rem; opacity:0.8;">Totale Stimato</span>
-        <span id="totalPrice" style="font-size:1.4rem; font-weight:bold; color:#b2dfdb;">€ 0.00</span>
-    </div>
+    <h3>Lista Spesa <small id="storeName"></small></h3>
+    <div id="shopList"></div>
+    <div style="margin-top:10px; font-weight:bold; text-align:right; font-size:1.2rem;">Totale: € <span id="totalPrice">0.00</span></div>
 </div>
 
 <div id="p-offerte" class="page">
-    <h3>⚡ Spesa Ibrida</h3>
-    <p style="font-size:0.85rem; color:#555;">Scegli offerte da altri negozi per bloccarle nella lista.</p>
-    <select id="storeSelect" class="store-sel" onchange="renderOffers()"></select>
-    
-    <h3>Volantino: <span id="flyerStoreName" style="color:var(--primary)"></span></h3>
+    <h3>Offerte da Volantini</h3>
+    <p style="font-size:0.8rem; color:#666">Solo prodotti reali dai PDF caricati.</p>
+    <select id="storeSelect" onchange="renderOffers()"></select>
     <div id="offerList" class="offer-grid"></div>
-    
-    <button class="btn" style="background:#ff9800; margin-top:30px;" onclick="generateMenu()">🎲 Rigenera Menu Casuale</button>
 </div>
 
 <div id="p-famiglia" class="page">
-    <h3>Gestione</h3>
-    <div id="famList"></div>
-    <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd; margin-top:15px;">
-        <input type="text" id="memName" placeholder="Nome" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; margin-bottom:10px; box-sizing:border-box;">
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
-            <label><input type="checkbox" class="chk" value="glutine"> No Glutine</label>
-            <label><input type="checkbox" class="chk" value="lattosio"> No Lattosio</label>
-            <label><input type="checkbox" class="chk" value="uova"> No Uova</label>
-        </div>
-        <button class="btn" onclick="addMember()">Aggiungi</button>
+    <h3>📤 Carica Volantino</h3>
+    <div class="upload-box">
+        <input type="text" id="ghRepo" placeholder="Utente/Repo (es. mario/spesa)">
+        <input type="password" id="ghToken" placeholder="GitHub Token (inizia con ghp_...)">
+        <button class="btn" onclick="saveCreds()" style="background:#555; margin-bottom:15px;">Salva Credenziali</button>
+        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+        
+        <label style="display:block; text-align:left; font-size:0.9rem; margin-bottom:5px;">Nome Supermercato (es. conad):</label>
+        <input type="text" id="pdfName" placeholder="conad">
+        <input type="file" id="pdfFile" accept="application/pdf">
+        <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica PDF e Analizza</button>
+        <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
     </div>
-    <button class="btn" style="background:#d32f2f; margin-top:20px;" onclick="hardReset()">⚠️ Reset Completo</button>
+
+    <h3>Gestione</h3>
+    <button class="btn" style="background:#d32f2f" onclick="hardReset()">Reset App</button>
 </div>
 
 <nav class="nav">
     <a onclick="go('p-menu', this)" class="active"><i class="material-icons">restaurant</i>Menu</a>
     <a onclick="go('p-spesa', this)"><i class="material-icons">shopping_cart</i>Spesa</a>
     <a onclick="go('p-offerte', this)"><i class="material-icons">local_offer</i>Offerte</a>
-    <a onclick="go('p-famiglia', this)"><i class="material-icons">group</i>Famiglia</a>
+    <a onclick="go('p-famiglia', this)"><i class="material-icons">cloud_upload</i>Opz</a>
 </nav>
 
 <script>
     let db = null;
-    let menu = JSON.parse(localStorage.getItem('v14_menu')) || [];
-    let family = JSON.parse(localStorage.getItem('v14_fam')) || [];
-    let mainStore = localStorage.getItem('v14_store') || "";
-    let lockedItems = JSON.parse(localStorage.getItem('v14_locked')) || {};
+    let menu = JSON.parse(localStorage.getItem('v15_menu')) || [];
+    let mainStore = localStorage.getItem('v15_store') || "";
+    let locked = JSON.parse(localStorage.getItem('v15_locked')) || {};
 
+    // Inizializzazione
     async function init() {
-        renderFam();
+        // Carica credenziali salvate
+        if(localStorage.getItem('gh_repo')) document.getElementById('ghRepo').value = localStorage.getItem('gh_repo');
+        if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
+
         try {
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
-            if(!res.ok) throw new Error();
             db = await res.json();
-            document.getElementById('dataInfo').innerText = db.data_aggiornamento;
+            document.getElementById('lastUpdate').innerText = db.data_aggiornamento;
 
+            // Popola Stores
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
             const stores = Object.keys(db.offerte_per_supermercato || {});
-            stores.forEach(s => {
-                let opt = document.createElement('option');
-                opt.value = s; opt.innerText = s;
-                sel.appendChild(opt);
-            });
-
-            if(!mainStore && stores.length > 0) mainStore = stores[0];
-            sel.value = mainStore;
+            
+            if (stores.length === 0) {
+                sel.innerHTML = "<option>Nessun PDF caricato</option>";
+                document.getElementById('offerList').innerHTML = "<p style='text-align:center; grid-column:span 2;'>Carica un PDF per vedere le offerte!</p>";
+            } else {
+                stores.forEach(s => {
+                    let opt = document.createElement('option');
+                    opt.value = s; opt.innerText = s;
+                    sel.appendChild(opt);
+                });
+                if(!mainStore || !stores.includes(mainStore)) mainStore = stores[0];
+                sel.value = mainStore;
+            }
 
             if(!menu.length) generateMenu();
-            else renderAll();
+            renderAll();
 
         } catch(e) {
-            document.getElementById('menuList').innerHTML = "<div style='text-align:center; padding:40px; color:#777;'><h3>Caricamento...</h3><p>Controlla GitHub Actions.</p></div>";
+            document.getElementById('menuList').innerHTML = "<p style='text-align:center; padding:30px'>Nessun dato. Carica un PDF.</p>";
         }
     }
 
+    // --- UPLOAD FUNZIONE ---
+    async function uploadPDF() {
+        const repo = document.getElementById('ghRepo').value;
+        const token = document.getElementById('ghToken').value;
+        const name = document.getElementById('pdfName').value.toLowerCase().replace(/\s/g, '');
+        const fileInp = document.getElementById('pdfFile');
+        const status = document.getElementById('upStatus');
+
+        if(!repo || !token || !name || !fileInp.files[0]) return alert("Compila tutto!");
+
+        status.innerText = "⏳ Conversione file...";
+        const file = fileInp.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = async function() {
+            const contentBase64 = reader.result.split(',')[1];
+            status.innerText = "🚀 Caricamento su GitHub...";
+            
+            try {
+                // 1. Upload File
+                const urlFile = `https://api.github.com/repos/${repo}/contents/volantini/${name}.pdf`;
+                
+                // Check if file exists to get SHA (for update)
+                let sha = null;
+                try {
+                    const check = await fetch(urlFile, { headers: {Authorization: `token ${token}`} });
+                    if(check.ok) sha = (await check.json()).sha;
+                } catch(e) {}
+
+                const body = {
+                    message: `Upload volantino ${name}`,
+                    content: contentBase64
+                };
+                if(sha) body.sha = sha;
+
+                const resUp = await fetch(urlFile, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if(!resUp.ok) throw new Error("Upload fallito: " + resUp.status);
+
+                status.innerText = "🤖 Avvio Analisi AI...";
+                
+                // 2. Trigger Action
+                const urlAction = `https://api.github.com/repos/${repo}/actions/workflows/aggiorna_menu.yml/dispatches`;
+                await fetch(urlAction, {
+                    method: 'POST',
+                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ref: 'main' }) // O 'master'
+                });
+
+                status.innerText = "✅ Fatto! Attendi 1 min e riapri l'app.";
+                alert("Volantino caricato! Il robot lo sta analizzando.");
+
+            } catch(e) {
+                status.innerText = "❌ Errore: " + e.message;
+                console.error(e);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function saveCreds() {
+        localStorage.setItem('gh_repo', document.getElementById('ghRepo').value);
+        localStorage.setItem('gh_token', document.getElementById('ghToken').value);
+        alert("Salvati!");
+    }
+
+    // --- MENU LOGIC ---
     function generateMenu() {
         if(!db || !db.ricette) return;
-        const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-        
-        // Filtro Famiglia
-        const safe = db.ricette.filter(r => {
-            for(let m of family) for(let i of m.intolerances) if(r.contains && r.contains.includes(i)) return false;
-            return true;
-        });
-
+        const days = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
         menu = days.map(d => ({
             day: d,
             meals: {
-                colazione: pick(safe, 'colazione'),
-                pranzo: pick(safe, 'pranzo'),
-                merenda: pick(safe, 'merenda'),
-                cena: pick(safe, 'cena')
+                colazione: pick('colazione'),
+                pranzo: pick('pranzo'),
+                merenda: pick('merenda'),
+                cena: pick('cena')
             }
         }));
-        
-        localStorage.setItem('v14_menu', JSON.stringify(menu));
+        localStorage.setItem('v15_menu', JSON.stringify(menu));
         renderAll();
     }
 
-    function pick(pool, type) {
-        let cand = pool.filter(r => r.type === type);
-        if(!cand.length) return {title: "A scelta", ingredients: []};
-        return cand[Math.floor(Math.random() * cand.length)];
+    function pick(type) {
+        if(!db.ricette) return {title:"...", ingredients:[]};
+        const p = db.ricette.filter(r=>r.type===type);
+        return p.length ? p[Math.floor(Math.random()*p.length)] : {title:"Libero", ingredients:[]};
     }
 
-    function renderAll() {
-        renderMenu();
-        renderShop();
-        renderOffers();
-    }
+    function renderAll() { renderMenu(); renderShop(); renderOffers(); }
 
     function renderMenu() {
         const c = document.getElementById('menuList');
         c.innerHTML = "";
         menu.forEach((d, i) => {
             c.innerHTML += `
-                <div class="card">
-                    <div class="day-header">${d.day}</div>
-                    ${row('☕', d.meals.colazione, i, 'colazione')}
-                    ${row('🍝', d.meals.pranzo, i, 'pranzo')}
-                    ${row('🍎', d.meals.merenda, i, 'merenda')}
-                    ${row('🌙', d.meals.cena, i, 'cena')}
-                </div>`;
+            <div class="card">
+                <div class="day-header">${d.day}</div>
+                ${row('☕', d.meals.colazione, i, 'colazione')}
+                ${row('🍝', d.meals.pranzo, i, 'pranzo')}
+                ${row('🍎', d.meals.merenda, i, 'merenda')}
+                ${row('🌙', d.meals.cena, i, 'cena')}
+            </div>`;
         });
     }
 
-    function row(ico, m, dIdx, type) {
+    function row(ico, m, idx, type) {
         let ing = m.ingredients ? m.ingredients.join(', ') : '';
-        return `
-            <div class="meal-row">
-                <div class="meal-icon">${ico}</div>
-                <div class="meal-info">
-                    <div class="meal-title">${m.title}</div>
-                    <div class="meal-desc">${ing}</div>
-                </div>
-                <i class="material-icons btn-edit" onclick="changeMeal(${dIdx}, '${type}')">edit</i>
-            </div>`;
+        return `<div class="meal-row"><div class="meal-icon">${ico}</div><div class="meal-info"><div class="meal-title">${m.title}</div><div class="meal-desc">${ing}</div></div><i class="material-icons btn-edit" onclick="changeMeal(${idx}, '${type}')">edit</i></div>`;
     }
 
-    function changeMeal(dIdx, type) {
-        const pool = db.ricette.filter(r => r.type === type);
-        let next = pool[Math.floor(Math.random() * pool.length)] || {title:"...", ingredients:[]};
-        
-        let manual = prompt(`Cambia ${type} (${menu[dIdx].day}).\nVuoto = Casuale (${next.title}).\nScrivi = Manuale.`);
-        
-        if(manual === null) return;
-        if(manual.trim() === "") menu[dIdx].meals[type] = next;
-        else menu[dIdx].meals[type] = {title: manual, ingredients:[manual], contains:[], type:type};
-        
-        localStorage.setItem('v14_menu', JSON.stringify(menu));
-        renderAll();
+    function changeMeal(i, t) {
+        let m = prompt("Nuovo piatto?");
+        if(m) {
+            menu[i].meals[t] = {title:m, ingredients:[m], contains:[], type:t};
+            localStorage.setItem('v15_menu', JSON.stringify(menu));
+            renderAll();
+        }
     }
 
+    // --- SPESA ---
     function renderShop() {
         const c = document.getElementById('shopList');
         c.innerHTML = "";
-        document.getElementById('mainStoreLabel').innerText = mainStore;
-        
-        const needed = {};
-        menu.forEach(d => {
-            Object.values(d.meals).forEach(m => {
-                if(m.ingredients) m.ingredients.forEach(i => needed[i] = (needed[i]||0)+1);
-            });
-        });
+        const need = {};
+        menu.forEach(d => Object.values(d.meals).forEach(m => {
+            if(m.ingredients) m.ingredients.forEach(i => need[i]=(need[i]||0)+1);
+        }));
 
-        let total = 0;
-        const baseOffers = db.offerte_per_supermercato[mainStore] || [];
+        let tot = 0;
+        const offers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[mainStore]||[]) : [];
+        document.getElementById('storeName').innerText = mainStore ? `(${mainStore})` : "";
 
-        Object.keys(needed).sort().forEach(item => {
+        Object.keys(need).sort().forEach(item => {
             let price = 0;
-            let dStore = mainStore;
             let dName = item;
-            let isLocked = false;
-            let isOffer = false;
-
-            // Logica Blocco Manuale
-            let lockKey = Object.keys(lockedItems).find(k => item.toLowerCase().includes(k.toLowerCase()));
+            let isLock = false;
             
-            if (lockKey) {
-                const lock = lockedItems[lockKey];
-                dStore = lock.store;
-                dName = lock.name;
-                price = lock.price;
-                isLocked = true;
+            // Lock
+            let lKey = Object.keys(locked).find(k => item.toLowerCase().includes(k.toLowerCase()));
+            if(lKey) {
+                let l = locked[lKey];
+                dName = `${l.name} (${l.store})`;
+                price = l.price;
+                isLock = true;
             } else {
-                // Logica Offerta Store Base
-                const off = baseOffers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
-                if(off) {
-                    dName = off.name;
-                    price = off.price;
-                    isOffer = true;
-                }
+                // Auto
+                let off = offers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
+                if(off) { dName = off.name; price = off.price; }
             }
-
-            total += price;
-
+            tot += price;
+            
             c.innerHTML += `
-                <div class="shop-item ${isLocked ? 'locked' : ''}">
-                    <div style="flex:1">
-                        <div class="${isOffer || isLocked ? 'brand-text' : ''}">${dName}</div>
-                        <div style="font-size:0.75rem; color:#666;">
-                            <span style="background:#333; color:white; padding:1px 4px; border-radius:3px;">${dStore}</span>
-                            x${needed[item]}
-                            ${isLocked ? `<i class="material-icons" style="font-size:12px; color:red; margin-left:5px;" onclick="unlock('${lockKey}')">close</i>` : ''}
-                        </div>
-                    </div>
-                    <div style="font-weight:bold;">€ ${price.toFixed(2)}</div>
-                </div>`;
+            <div class="shop-item ${isLock?'locked':''}">
+                <div><b>${dName}</b> <small>x${need[item]}</small> ${isLock?`<i class="material-icons" style="font-size:10px; color:red" onclick="unlock('${lKey}')">close</i>`:''}</div>
+                <b>€${price.toFixed(2)}</b>
+            </div>`;
         });
-        document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
+        document.getElementById('totalPrice').innerText = tot.toFixed(2);
     }
 
-    function lockItem(name, price, store) {
-        lockedItems[name] = { store, price, name };
-        localStorage.setItem('v14_locked', JSON.stringify(lockedItems));
-        renderShop(); alert("Aggiunto!");
+    function lockItem(n, p, s) {
+        locked[n] = {name:n, price:p, store:s};
+        localStorage.setItem('v15_locked', JSON.stringify(locked));
+        renderShop(); alert("Bloccato!");
     }
-
-    function unlock(key) {
-        delete lockedItems[key];
-        localStorage.setItem('v14_locked', JSON.stringify(lockedItems));
+    
+    function unlock(k) {
+        delete locked[k];
+        localStorage.setItem('v15_locked', JSON.stringify(locked));
         renderShop();
     }
 
     function renderOffers() {
         const c = document.getElementById('offerList');
         c.innerHTML = "";
-        const curStore = document.getElementById('storeSelect').value;
-        document.getElementById('flyerStoreName').innerText = curStore;
+        const s = document.getElementById('storeSelect').value;
+        if(!s) return;
+        mainStore = s; localStorage.setItem('v15_store', s);
         
-        // Se si cambia il selettore nella pagina offerte, cambiamo anche il mainStore se l'utente vuole?
-        // Qui facciamo che il selettore serve solo per vedere/bloccare offerte.
-        // Se vuoi cambiare lo store principale della spesa, facciamo un confirm? No, semplifichiamo.
-        // Il selettore "Scegli Supermercato" CAMBIA LO STORE PRINCIPALE SE NESSUN LOCK.
-        
-        mainStore = curStore; 
-        localStorage.setItem('v14_store', mainStore);
-        
-        const offers = db.offerte_per_supermercato[curStore] || [];
-        offers.forEach(o => {
-            c.innerHTML += `
-                <div class="offer-card" onclick="lockItem('${o.name}', ${o.price}, '${curStore}')">
-                    <div class="offer-badge">+</div>
-                    <div style="font-size:0.9rem;">${o.name}</div>
-                    <b style="color:var(--offer)">€${o.price}</b>
-                </div>`;
+        (db.offerte_per_supermercato[s]||[]).forEach(o => {
+            c.innerHTML += `<div class="offer-card" onclick="lockItem('${o.name}', ${o.price}, '${s}')"><div class="offer-badge">+</div><div>${o.name}</div><b>€${o.price}</b></div>`;
         });
-        renderShop(); // Aggiorna spesa col nuovo store base
+        renderShop();
     }
 
-    function addMember() {
-        const name = document.getElementById('memName').value;
-        if(!name) return;
-        const ints = [];
-        document.querySelectorAll('.chk:checked').forEach(c => ints.push(c.value));
-        family.push({id:Date.now(), name, intolerances:ints});
-        localStorage.setItem('v14_fam', JSON.stringify(family));
-        renderFam(); generateMenu();
-        document.getElementById('memName').value="";
-    }
-
-    function removeMember(id) {
-        family = family.filter(x=>x.id!==id);
-        localStorage.setItem('v14_fam', JSON.stringify(family));
-        renderFam(); generateMenu();
-    }
-
-    function renderFam() {
-        const c = document.getElementById('famList');
-        c.innerHTML = "";
-        family.forEach(f => c.innerHTML += `<div style="background:white; padding:10px; margin-bottom:5px; border-radius:5px; display:flex; justify-content:space-between"><b>${f.name}</b> <i class="material-icons" style="color:red" onclick="removeMember(${f.id})">delete</i></div>`);
-    }
-
-    function hardReset() {
-        if(confirm("Reset Totale?")) { localStorage.clear(); location.reload(); }
-    }
-
-    function go(pid, btn) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pid).classList.add('active');
-        document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
-        btn.classList.add('active');
+    function hardReset() { localStorage.clear(); location.reload(); }
+    function go(p, b) {
+        document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+        document.getElementById(p).classList.add('active');
+        document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
     }
 
     init();
