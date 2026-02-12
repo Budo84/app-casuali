@@ -2,10 +2,18 @@ name: Aggiorna Menu Spesa
 
 on:
   schedule:
-    - cron: '0 6 * * 1'
-  workflow_dispatch:      # Fondamentale per il tasto "Carica"
-  repository_dispatch:    # Fondamentale per l'API trigger
+    - cron: '0 6 * * 1' # Ogni lunedì alle 6:00
+  workflow_dispatch:      # Avvio manuale
+  repository_dispatch:    # Avvio da App (Upload)
     types: [webhook]
+  push:                   # Avvio se carichi file a mano da PC
+    paths:
+      - 'spesa/volantini/**'
+
+# QUESTO È IL SEMAFORO CHE MANCAVA
+concurrency:
+  group: "menu-update"
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -25,20 +33,22 @@ jobs:
       - name: Installa librerie
         run: pip install -U google-generativeai
 
-      - name: 📂 Debug Cartelle
+      # Debug: Vediamo se il file PDF è arrivato
+      - name: 📂 Controllo Cartella Volantini
         run: |
-          echo "Controllo cartella spesa/volantini..."
-          ls -R spesa/volantini/ || echo "Cartella vuota o non trovata"
+          echo "Contenuto cartella spesa/volantini:"
+          ls -R spesa/volantini/ || echo "Cartella vuota o inesistente"
 
-      - name: Esegui Script Python
+      - name: Esegui Robot (Python)
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      - name: Salva su GitHub
+      - name: Salva Dati su GitHub
         run: |
-          git config --global user.name 'Robot Menu'
-          git config --global user.email 'robot@menu.app'
+          git config --global user.name 'Robot Spesa'
+          git config --global user.email 'robot@spesa.app'
+          git pull # Si aggiorna prima di salvare per evitare conflitti
           git add spesa/dati_settimanali.json
-          git commit -m "Menu Aggiornato" || echo "Nessuna modifica"
+          git commit -m "Menu Aggiornato dai Volantini" || echo "Nessuna modifica trovata"
           git push
