@@ -28,13 +28,10 @@ jobs:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      - name: Mostra file generati (Debug)
-        run: ls -l spesa/
-
       - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Menu'
           git config --global user.email 'robot@menu.app'
           git add .
-          git commit -m "Auto-Update Menu" || echo "Nessuna modifica rilevata"
+          git commit -m "Auto-Update Menu" || echo "Nessuna modifica"
           git push
