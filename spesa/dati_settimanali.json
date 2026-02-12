@@ -1,9 +1,9 @@
 {
-    "data_aggiornamento": "12/02/2026 13:34",
+    "data_aggiornamento": "12/02/2026 13:46",
     "offerte_per_supermercato": {},
     "ricette": [
         {
-            "title": "Pasta al Pomodoro",
+            "title": "Pasta Pomodoro",
             "type": "pranzo",
             "ingredients": [
                 "Pasta",
@@ -12,11 +12,11 @@
             "contains": []
         },
         {
-            "title": "Cena Leggera",
+            "title": "Pollo e Insalata",
             "type": "cena",
             "ingredients": [
-                "Verdure",
-                "Pane"
+                "Pollo",
+                "Insalata"
             ],
             "contains": []
         }
