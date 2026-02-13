@@ -1,12 +1,269 @@
 {
-    "data_aggiornamento": "13/02/2026 11:05",
+    "data_aggiornamento": "13/02/2026 11:11",
     "offerte_per_supermercato": {},
     "ricette": [
         {
-            "title": "Backup Pasta",
-            "type": "pranzo",
+            "type": "colazione",
+            "title": "Latte e Fette Biscottate",
             "ingredients": [
-                "Pasta"
+                "Latte",
+                "Fette biscottate",
+                "Marmellata"
+            ],
+            "contains": []
+        },
+        {
+            "type": "colazione",
+            "title": "Yogurt e Cereali",
+            "ingredients": [
+                "Yogurt",
+                "Cereali integrali",
+                "Frutta"
+            ],
+            "contains": []
+        },
+        {
+            "type": "colazione",
+            "title": "Caffè e Biscotti",
+            "ingredients": [
+                "Caffè",
+                "Biscotti secchi"
+            ],
+            "contains": []
+        },
+        {
+            "type": "colazione",
+            "title": "Tè e Pane Tostato",
+            "ingredients": [
+                "Tè",
+                "Pane",
+                "Miele"
+            ],
+            "contains": []
+        },
+        {
+            "type": "colazione",
+            "title": "Latte Macchiato e Frutta",
+            "ingredients": [
+                "Latte",
+                "Caffè",
+                "Mela"
+            ],
+            "contains": []
+        },
+        {
+            "type": "colazione",
+            "title": "Spremuta e Toast",
+            "ingredients": [
+                "Arance",
+                "Pane",
+                "Prosciutto"
+            ],
+            "contains": []
+        },
+        {
+            "type": "colazione",
+            "title": "Cappuccino e Cornetto",
+            "ingredients": [
+                "Latte",
+                "Caffè",
+                "Cornetto"
+            ],
+            "contains": []
+        },
+        {
+            "type": "pranzo",
+            "title": "Pasta al Pomodoro",
+            "ingredients": [
+                "Pasta",
+                "Passata di pomodoro",
+                "Parmigiano"
+            ],
+            "contains": []
+        },
+        {
+            "type": "pranzo",
+            "title": "Riso e Piselli",
+            "ingredients": [
+                "Riso",
+                "Piselli",
+                "Cipolla"
+            ],
+            "contains": []
+        },
+        {
+            "type": "pranzo",
+            "title": "Pasta e Lenticchie",
+            "ingredients": [
+                "Pasta",
+                "Lenticchie",
+                "Carote"
+            ],
+            "contains": []
+        },
+        {
+            "type": "pranzo",
+            "title": "Insalata di Riso",
+            "ingredients": [
+                "Riso",
+                "Tonno",
+                "Olive",
+                "Pomodorini"
+            ],
+            "contains": []
+        },
+        {
+            "type": "pranzo",
+            "title": "Farro con Verdure",
+            "ingredients": [
+                "Farro",
+                "Zucchine",
+                "Melanzane"
+            ],
+            "contains": []
+        },
+        {
+            "type": "pranzo",
+            "title": "Gnocchi al Pesto",
+            "ingredients": [
+                "Gnocchi",
+                "Pesto alla genovese"
+            ],
+            "contains": []
+        },
+        {
+            "type": "pranzo",
+            "title": "Pasta Tonno e Olive",
+            "ingredients": [
+                "Pasta",
+                "Tonno",
+                "Olive nere"
+            ],
+            "contains": []
+        },
+        {
+            "type": "merenda",
+            "title": "Mela",
+            "ingredients": [
+                "Mela"
+            ],
+            "contains": []
+        },
+        {
+            "type": "merenda",
+            "title": "Yogurt",
+            "ingredients": [
+                "Yogurt bianco"
+            ],
+            "contains": []
+        },
+        {
+            "type": "merenda",
+            "title": "Banana",
+            "ingredients": [
+                "Banana"
+            ],
+            "contains": []
+        },
+        {
+            "type": "merenda",
+            "title": "Tè e Biscotto",
+            "ingredients": [
+                "Tè",
+                "Biscotto"
+            ],
+            "contains": []
+        },
+        {
+            "type": "merenda",
+            "title": "Frutta Secca",
+            "ingredients": [
+                "Noci",
+                "Mandorle"
+            ],
+            "contains": []
+        },
+        {
+            "type": "merenda",
+            "title": "Pane e Olio",
+            "ingredients": [
+                "Pane",
+                "Olio EVO"
+            ],
+            "contains": []
+        },
+        {
+            "type": "merenda",
+            "title": "Cioccolato Fondente",
+            "ingredients": [
+                "Cioccolato"
+            ],
+            "contains": []
+        },
+        {
+            "type": "cena",
+            "title": "Petto di Pollo e Insalata",
+            "ingredients": [
+                "Petto di pollo",
+                "Insalata mista"
+            ],
+            "contains": []
+        },
+        {
+            "type": "cena",
+            "title": "Frittata di Zucchine",
+            "ingredients": [
+                "Uova",
+                "Zucchine",
+                "Parmigiano"
+            ],
+            "contains": []
+        },
+        {
+            "type": "cena",
+            "title": "Pesce al Forno",
+            "ingredients": [
+                "Merluzzo",
+                "Patate",
+                "Pomodorini"
+            ],
+            "contains": []
+        },
+        {
+            "type": "cena",
+            "title": "Mozzarella e Pomodori",
+            "ingredients": [
+                "Mozzarella",
+                "Pomodori",
+                "Basilico"
+            ],
+            "contains": []
+        },
+        {
+            "type": "cena",
+            "title": "Burger Vegetale",
+            "ingredients": [
+                "Burger soia",
+                "Spinaci"
+            ],
+            "contains": []
+        },
+        {
+            "type": "cena",
+            "title": "Scaloppine al Limone",
+            "ingredients": [
+                "Arista",
+                "Farina",
+                "Limone"
+            ],
+            "contains": []
+        },
+        {
+            "type": "cena",
+            "title": "Uova Sode e Fagiolini",
+            "ingredients": [
+                "Uova",
+                "Fagiolini"
             ],
             "contains": []
         }
