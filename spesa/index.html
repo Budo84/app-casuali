@@ -2,372 +2,457 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spesa Smart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Spesa Smart & Family</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        :root { --primary: #2E7D32; --bg: #f4f4f4; --card: #fff; --text: #333; --accent: #ff9800; --offer: #d32f2f; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
-        header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .page { display: none; padding: 15px; }
-        .page.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 5px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .day-header { font-weight: bold; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 1px; }
-        .meal-row { display: flex; margin-bottom: 10px; align-items: flex-start; position: relative; }
-        .meal-icon { width: 30px; font-size: 1.2rem; margin-top: 2px; }
-        .meal-info { flex: 1; padding-right: 35px; }
-        .meal-title { font-weight: 600; font-size: 0.95rem; }
-        .meal-desc { font-size: 0.8rem; color: #666; }
-        .btn-edit { position: absolute; right: 0; top: 0; cursor: pointer; color: #ccc; }
-        .shop-item { background: white; padding: 12px; margin-bottom: 6px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
-        .shop-item.locked { border-left: 4px solid var(--accent); background: #fff8e1; }
-        .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; cursor: pointer; position: relative; }
-        .offer-badge { position: absolute; top: -5px; right: -5px; background: var(--offer); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.6rem; font-weight: bold; }
-        .upload-box { background: white; padding: 15px; border-radius: 10px; border: 2px dashed #ccc; text-align: center; margin-bottom: 20px; }
-        input[type="text"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
-        .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 8px; margin-top: 5px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 65px; z-index: 1000; }
-        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; }
+        :root { --primary: #2E7D32; --bg: #f5f5f5; --card: #fff; --text: #333; --accent: #ff9800; --danger: #d32f2f; --lock: #C2185B; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
+        
+        /* HEADER AVANZATO */
+        header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .status-badge { display: flex; align-items: center; font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 6px; }
+        .dot.online { background: #00E676; box-shadow: 0 0 5px #00E676; }
+        .dot.loading { background: #FFEB3B; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* PAGINE */
+        .page { display: none; padding: 15px; animation: slideIn 0.3s ease-out; }
+        .page.active { display: block; }
+        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* CARD PASTO */
+        .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; }
+        .day-header { background: #e8f5e9; color: var(--primary); padding: 10px 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #c8e6c9; }
+        
+        .meal-row { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; position: relative; transition: background 0.2s; }
+        .meal-row:last-child { border-bottom: none; }
+        .meal-icon { width: 35px; font-size: 1.4rem; }
+        .meal-content { flex: 1; padding-right: 50px; }
+        .meal-title { font-weight: 600; font-size: 1rem; color: #444; }
+        .meal-ing { font-size: 0.85rem; color: #777; margin-top: 2px; }
+        
+        /* AZIONI (Lucchetto, Cuore, Edit) */
+        .meal-actions { position: absolute; right: 10px; top: 12px; display: flex; gap: 8px; }
+        .action-btn { cursor: pointer; color: #ddd; font-size: 1.2rem; transition: transform 0.2s; }
+        .action-btn:active { transform: scale(1.3); }
+        .action-btn.active-lock { color: var(--lock); }
+        .action-btn.active-fav { color: var(--danger); }
+        .action-btn.edit { color: #aaa; }
+        
+        /* WARNING ALLERGENI */
+        .allergen-warning { color: var(--accent); font-size: 0.75rem; display: flex; align-items: center; margin-top: 4px; font-weight: bold; }
+        .allergen-warning i { font-size: 14px; margin-right: 4px; }
+
+        /* LISTA SPESA */
+        .shop-item { background: white; padding: 12px; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
+        .shop-item.checked { opacity: 0.5; text-decoration: line-through; background: #f9f9f9; }
+        .price-tag { font-weight: bold; background: #e0f2f1; color: #00695c; padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; }
+
+        /* FAMIGLIA & SETTINGS */
+        .family-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+        .family-chip { background: white; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; display: flex; align-items: center; font-size: 0.9rem; }
+        .family-chip i { margin-left: 8px; color: #999; cursor: pointer; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .input-group input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+
+        /* BOTTONI */
+        .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--danger); }
+
+        /* NAVIGAZIONE */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 65px; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; font-size: 0.75rem; }
         .nav a.active { color: var(--primary); font-weight: bold; }
-        .nav i { font-size: 24px; margin-bottom: 2px; }
-        .total-float { position: fixed; bottom: 80px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
+        .nav i { font-size: 24px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
 <header>
-    <h3>Menu Reale</h3>
-    <small id="lastUpdate" style="font-size:0.7rem; opacity:0.8;">Sync...</small>
+    <div style="display:flex; flex-direction:column;">
+        <span style="font-weight:bold; font-size:1.1rem;">Spesa Smart</span>
+        <small style="font-size:0.7rem; opacity:0.9">Dieta Mediterranea</small>
+    </div>
+    <div class="status-badge" onclick="refreshData()">
+        <div id="statusDot" class="dot"></div>
+        <span id="statusText">Sync</span>
+    </div>
 </header>
 
 <div id="p-menu" class="page active">
-    <div id="statusMsg" style="padding:10px; text-align:center; color:#666; font-size:0.8rem; display:none;"></div>
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <button class="btn btn-outline" style="flex:1; padding:10px; font-size:0.9rem;" onclick="generateMenu(true)">
+            <i class="material-icons">autorenew</i> Rigenera Menu
+        </button>
+    </div>
+    
     <div id="menuList" style="padding-bottom: 20px;"></div>
 </div>
 
 <div id="p-spesa" class="page">
-    <h3>🛒 Lista Spesa <small id="storeName" style="color:var(--primary)"></small></h3>
+    <h3>🛒 Lista della Spesa</h3>
     <div id="shopList" style="padding-bottom: 80px;"></div>
-    <div class="total-float">
-        <span style="font-size:0.9rem; opacity:0.8;">Totale</span>
-        <span id="totalPrice" style="font-size:1.4rem; font-weight:bold; color:#b2dfdb;">€ 0.00</span>
-    </div>
-</div>
-
-<div id="p-offerte" class="page">
-    <h3>Offerte Caricate</h3>
-    <select id="storeSelect" onchange="renderOffers()"></select>
-    <div id="offerList" class="offer-grid"></div>
 </div>
 
 <div id="p-famiglia" class="page">
-    <h3>📤 Carica Volantino</h3>
-    <div class="upload-box">
-        <input type="text" id="ghRepo" placeholder="Utente/Repo (es. Budo84/app-casuali)">
-        <input type="password" id="ghToken" placeholder="Token GitHub">
-        <button class="btn" onclick="saveCreds()" style="background:#555; font-size:0.8rem; padding:8px;">Salva Dati</button>
-        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-        <label>Nome Supermercato:</label>
-        <input type="text" id="pdfName" placeholder="es. conad">
-        <input type="file" id="pdfFile" accept="application/pdf" style="margin-top:10px;">
-        <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica e Analizza</button>
+    <h3>👨‍👩‍👧‍👦 La tua Famiglia</h3>
+    <p style="font-size:0.9rem; color:#666">Aggiungi i membri per controllare gli allergeni nel menu.</p>
+    
+    <div class="input-group">
+        <input type="text" id="memberName" placeholder="Nome (es. Marco)">
+        <select id="memberAllergy" style="padding:10px; border-radius:8px; border:1px solid #ddd;">
+            <option value="">Nessuna allergia</option>
+            <option value="Glutine">Glutine</option>
+            <option value="Lattosio">Lattosio</option>
+            <option value="Nichel">Nichel</option>
+            <option value="Uova">Uova</option>
+            <option value="Pesce">Pesce</option>
+        </select>
+    </div>
+    <button class="btn" onclick="addFamilyMember()" style="margin-bottom:20px;">Aggiungi Membro</button>
+
+    <div id="familyContainer" class="family-list"></div>
+
+    <hr style="margin: 20px 0; border:0; border-top:1px solid #eee;">
+
+    <h3>⚙️ Gestione Volantini</h3>
+    <div style="background:white; padding:15px; border-radius:10px; border:2px dashed #ccc; text-align:center;">
+        <input type="text" id="ghRepo" placeholder="Repo (es. Budo84/app-casuali)" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
+        <input type="password" id="ghToken" placeholder="Token GitHub" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
+        <button onclick="saveCreds()" style="padding:5px 10px; border-radius:4px; border:1px solid #ccc;">Salva Credenziali</button>
+        
+        <div style="margin-top:15px; text-align:left;">
+            <label style="font-weight:bold; font-size:0.9rem;">Carica PDF:</label>
+            <input type="text" id="pdfName" placeholder="Nome Supermercato" style="width:100%; margin-top:5px; padding:8px; border:1px solid #ddd; border-radius:5px;">
+            <input type="file" id="pdfFile" accept="application/pdf" style="margin-top:10px;">
+        </div>
+        <button class="btn" onclick="uploadPDF()" id="btnUp" style="margin-top:15px;">⬆️ Carica Volantino</button>
         <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:10px;"></p>
     </div>
-    <button class="btn" style="background:#d32f2f" onclick="hardReset()">⚠️ Reset Totale App</button>
+    
+    <button class="btn btn-danger" onclick="hardReset()">⚠️ Reset App</button>
 </div>
 
 <nav class="nav">
-    <a onclick="go('p-menu', this)" class="active"><i class="material-icons">restaurant</i>Menu</a>
+    <a onclick="go('p-menu', this)" class="active"><i class="material-icons">restaurant_menu</i>Menu</a>
     <a onclick="go('p-spesa', this)"><i class="material-icons">shopping_cart</i>Spesa</a>
-    <a onclick="go('p-offerte', this)"><i class="material-icons">local_offer</i>Offerte</a>
-    <a onclick="go('p-famiglia', this)"><i class="material-icons">settings</i>Opz</a>
+    <a onclick="go('p-famiglia', this)"><i class="material-icons">people</i>Famiglia</a>
 </nav>
 
 <script>
+    // --- STATO DELL'APP ---
     let db = null;
-    let menu = JSON.parse(localStorage.getItem('v16_menu')) || [];
-    let mainStore = localStorage.getItem('v16_store') || "";
-    let locked = JSON.parse(localStorage.getItem('v16_locked')) || {};
+    let menu = JSON.parse(localStorage.getItem('smart_menu')) || [];
+    let family = JSON.parse(localStorage.getItem('smart_family')) || [];
+    let locked = JSON.parse(localStorage.getItem('smart_locked')) || {}; // Ricette bloccate (Pin)
+    let favorites = JSON.parse(localStorage.getItem('smart_fav')) || []; // Ricette preferite (Cuore)
+    let bought = JSON.parse(localStorage.getItem('smart_bought')) || {}; // Spesa spuntata
 
-    const LOCAL_BACKUP = [
-        {"type":"colazione","title":"Caffè e Biscotti","ingredients":["Caffè","Biscotti"]},
-        {"type":"pranzo","title":"Pasta al Pomodoro","ingredients":["Pasta","Pomodoro"]},
-        {"type":"merenda","title":"Frutto","ingredients":["Mela"]},
-        {"type":"cena","title":"Frittata","ingredients":["Uova","Verdure"]}
-    ];
-
+    // --- INIZIALIZZAZIONE ---
     async function init() {
+        renderFamily();
+        
+        // Caricamento credenziali
         if(localStorage.getItem('gh_repo')) document.getElementById('ghRepo').value = localStorage.getItem('gh_repo');
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
-        
-        const msg = document.getElementById('statusMsg');
-        msg.style.display = 'block';
-        msg.innerText = "Caricamento dati...";
+
+        updateStatus('loading');
 
         try {
-            // Aggiungiamo timestamp per evitare cache vecchia
+            // Carica dati dal server (GitHub Pages)
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
-            if(!res.ok) throw new Error("File JSON non trovato (404)");
+            if(!res.ok) throw new Error("JSON non trovato");
             
             db = await res.json();
-            document.getElementById('lastUpdate').innerText = db.data_aggiornamento;
-            msg.innerText = "Dati caricati. Generazione menu...";
+            updateStatus('online');
 
-            // Gestione Store Select
-            const sel = document.getElementById('storeSelect');
-            sel.innerHTML = "";
-            const stores = Object.keys(db.offerte_per_supermercato || {});
-            if (stores.length === 0) sel.innerHTML = "<option>Nessun PDF</option>";
-            else {
-                stores.forEach(s => {
-                    let opt = document.createElement('option');
-                    opt.value = s; opt.innerText = s;
-                    sel.appendChild(opt);
-                });
-                if(!mainStore || !stores.includes(mainStore)) mainStore = stores[0];
-                sel.value = mainStore;
-            }
-
-            // CONTROLLO DI SICUREZZA: Se il db.ricette è vuoto, usiamo il backup locale
-            if (!db.ricette || db.ricette.length === 0) {
-                console.warn("DB Ricette vuoto! Uso backup locale.");
-                db.ricette = LOCAL_BACKUP; 
-                msg.innerText = "Uso menu backup (errore dati server).";
-            } else {
-                msg.style.display = 'none';
-            }
-
-            if(!menu.length) generateMenu();
+            // Se il menu locale è vuoto, generalo
+            if(!menu.length) generateMenu(false);
+            
             renderAll();
 
         } catch(e) {
             console.error(e);
-            msg.innerHTML = "⚠️ Impossibile caricare i dati aggiornati.<br>Carica un PDF per avviare il robot.";
-            // Anche in caso di errore fatale, proviamo a mostrare un menu se esiste in memoria
-            if(menu.length) renderAll();
+            updateStatus('offline');
+            if(menu.length) renderAll(); // Mostra almeno quello che abbiamo in cache
         }
     }
 
-    async function uploadPDF() {
-        let repo = document.getElementById('ghRepo').value.trim(); 
-        const token = document.getElementById('ghToken').value.trim();
-        const name = document.getElementById('pdfName').value.toLowerCase().replace(/\s/g, '');
-        const fileInp = document.getElementById('pdfFile');
-        const status = document.getElementById('upStatus');
-
-        if(!repo || !token || !name || !fileInp.files[0]) return alert("Compila tutto!");
-        if (repo.split('/').length > 2) repo = repo.split('/').slice(0, 2).join('/');
-        
-        const urlFile = `https://api.github.com/repos/${repo}/contents/spesa/volantini/${name}.pdf`;
-        
-        if(!confirm(`Carico ${name}.pdf su:\n${repo}\n\nConfermi?`)) return;
-
-        status.innerText = "⏳ Preparazione...";
-        const file = fileInp.files[0];
-        const reader = new FileReader();
-        
-        reader.onload = async function() {
-            const contentBase64 = reader.result.split(',')[1];
-            status.innerText = "🚀 Invio a GitHub...";
-            try {
-                let sha = null;
-                try {
-                    const check = await fetch(urlFile, { headers: {Authorization: `token ${token}`} });
-                    if(check.ok) sha = (await check.json()).sha;
-                } catch(e) {}
-
-                const body = {
-                    message: `Upload ${name} da App`,
-                    content: contentBase64
-                };
-                if(sha) body.sha = sha;
-
-                const resUp = await fetch(urlFile, {
-                    method: 'PUT',
-                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-
-                if(!resUp.ok) {
-                    const err = await resUp.json();
-                    throw new Error(`Errore GitHub: ${err.message}`);
-                }
-
-                status.innerText = "✅ Caricato! Attendi 60s...";
-                alert("File caricato! Il robot sta lavorando. Attendi 1 minuto e poi premi 'Reset Totale App'.");
-
-            } catch(e) {
-                status.innerText = "❌ Errore: " + e.message;
-            }
-        };
-        reader.readAsDataURL(file);
+    function updateStatus(state) {
+        const dot = document.getElementById('statusDot');
+        const txt = document.getElementById('statusText');
+        dot.className = 'dot ' + state;
+        if(state === 'online') txt.innerText = "Aggiornato";
+        if(state === 'loading') txt.innerText = "Controllo...";
+        if(state === 'offline') txt.innerText = "Offline";
     }
 
-    function saveCreds() {
-        localStorage.setItem('gh_repo', document.getElementById('ghRepo').value);
-        localStorage.setItem('gh_token', document.getElementById('ghToken').value);
-        alert("Salvati!");
-    }
-
-    function generateMenu() {
+    // --- LOGICA MENU & PIN ---
+    function generateMenu(forceRegen) {
         if(!db || !db.ricette) return;
         
-        // Separiamo per tipo
+        const days = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+        
+        // Filtra ricette per tipo
         const r_col = db.ricette.filter(r => r.type === 'colazione');
         const r_pra = db.ricette.filter(r => r.type === 'pranzo');
         const r_mer = db.ricette.filter(r => r.type === 'merenda');
         const r_cen = db.ricette.filter(r => r.type === 'cena');
 
-        const days = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
-        
-        menu = days.map((d, i) => ({
-            day: d,
-            meals: {
-                colazione: r_col[i % r_col.length] || {title:"...", ingredients:[]},
-                pranzo: r_pra[i % r_pra.length] || {title:"...", ingredients:[]},
-                merenda: r_mer[i % r_mer.length] || {title:"...", ingredients:[]},
-                cena: r_cen[i % r_cen.length] || {title:"...", ingredients:[]}
-            }
-        }));
-        localStorage.setItem('v16_menu', JSON.stringify(menu));
-        renderAll();
+        // Se non stiamo forzando, usa quello che c'è già, altrimenti crea nuovo array
+        let newMenu = forceRegen ? [] : menu;
+
+        // Genera giorno per giorno
+        for(let i=0; i<7; i++) {
+            // Se esiste già un giorno e non stiamo rigenerando, saltalo
+            if(!forceRegen && newMenu[i]) continue;
+
+            let dayObj = { day: days[i], meals: {} };
+            
+            // Per ogni pasto, controlla se è BLOCCATO (Pin)
+            ['colazione', 'pranzo', 'merenda', 'cena'].forEach(tipo => {
+                let lockKey = `${i}_${tipo}`; // Chiave unica es. "0_pranzo" (Lunedì Pranzo)
+                
+                if (locked[lockKey] && forceRegen) {
+                    // Se è bloccato, MANTIENI LA VECCHIA RICETTA (la prendiamo dal vecchio menu o dalla memoria locked)
+                    dayObj.meals[tipo] = locked[lockKey];
+                } else {
+                    // Se non è bloccato, pesca una ricetta nuova
+                    // Usiamo un po' di casualità intelligente (Step 2 migliorerà questo)
+                    let source = (tipo==='colazione'?r_col : tipo==='pranzo'?r_pra : tipo==='merenda'?r_mer : r_cen);
+                    // Scegli a caso o sequenziale
+                    let pick = source.length > 0 ? source[Math.floor(Math.random() * source.length)] : {title:"Libero", ingredients:[]};
+                    dayObj.meals[tipo] = pick;
+                }
+            });
+            
+            if(forceRegen) newMenu.push(dayObj);
+            else newMenu[i] = dayObj;
+        }
+
+        menu = newMenu;
+        localStorage.setItem('smart_menu', JSON.stringify(menu));
+        renderMenu();
+        renderShop();
     }
 
-    function renderAll() { renderMenu(); renderShop(); renderOffers(); }
-
+    // --- RENDER MENU ---
     function renderMenu() {
         const c = document.getElementById('menuList');
         c.innerHTML = "";
-        menu.forEach((d, i) => {
-            c.innerHTML += `
-            <div class="card">
-                <div class="day-header">${d.day}</div>
-                ${row('☕', d.meals.colazione, i, 'colazione')}
-                ${row('🍝', d.meals.pranzo, i, 'pranzo')}
-                ${row('🍎', d.meals.merenda, i, 'merenda')}
-                ${row('🌙', d.meals.cena, i, 'cena')}
+        
+        menu.forEach((d, dayIdx) => {
+            let html = `<div class="card"><div class="day-header">${d.day}</div>`;
+            
+            ['colazione', 'pranzo', 'merenda', 'cena'].forEach(tipo => {
+                let m = d.meals[tipo];
+                let lockKey = `${dayIdx}_${tipo}`;
+                let isLocked = !!locked[lockKey];
+                let isFav = favorites.includes(m.title);
+                
+                // Icona Pasto
+                let ico = tipo==='colazione'?'☕': tipo==='pranzo'?'🍝': tipo==='merenda'?'🍎':'🌙';
+                
+                // Controllo Allergeni
+                let warning = checkAllergens(m.ingredients);
+
+                html += `
+                <div class="meal-row">
+                    <div class="meal-icon">${ico}</div>
+                    <div class="meal-content">
+                        <div class="meal-title">${m.title}</div>
+                        <div class="meal-ing">${m.ingredients ? m.ingredients.join(', ') : ''}</div>
+                        ${warning ? `<div class="allergen-warning"><i class="material-icons">warning</i> Attenzione: ${warning}</div>` : ''}
+                    </div>
+                    <div class="meal-actions">
+                        <i class="material-icons action-btn ${isFav?'active-fav':''}" onclick="toggleFav('${m.title}')">${isFav?'favorite':'favorite_border'}</i>
+                        <i class="material-icons action-btn ${isLocked?'active-lock':''}" onclick="toggleLock(${dayIdx}, '${tipo}')">${isLocked?'lock':'lock_open'}</i>
+                        <i class="material-icons action-btn edit" onclick="editMeal(${dayIdx}, '${tipo}')">edit</i>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            c.innerHTML += html;
+        });
+    }
+
+    // --- GESTIONE INTERAZIONI ---
+    function toggleLock(dayIdx, type) {
+        let key = `${dayIdx}_${type}`;
+        if (locked[key]) {
+            delete locked[key]; // Sblocca
+        } else {
+            // Blocca la ricetta corrente
+            locked[key] = menu[dayIdx].meals[type]; 
+        }
+        localStorage.setItem('smart_locked', JSON.stringify(locked));
+        renderMenu();
+    }
+
+    function toggleFav(title) {
+        if(favorites.includes(title)) favorites = favorites.filter(t => t !== title);
+        else favorites.push(title);
+        localStorage.setItem('smart_fav', JSON.stringify(favorites));
+        renderMenu();
+    }
+
+    function editMeal(dayIdx, type) {
+        let m = prompt("Modifica piatto:", menu[dayIdx].meals[type].title);
+        if(m) {
+            menu[dayIdx].meals[type].title = m;
+            menu[dayIdx].meals[type].ingredients = [m]; // Reset ingredienti su edit manuale
+            localStorage.setItem('smart_menu', JSON.stringify(menu));
+            renderMenu();
+            renderShop();
+        }
+    }
+
+    // --- GESTIONE FAMIGLIA ---
+    function addFamilyMember() {
+        const name = document.getElementById('memberName').value;
+        const allergy = document.getElementById('memberAllergy').value;
+        if(!name) return;
+        
+        family.push({name, allergy});
+        localStorage.setItem('smart_family', JSON.stringify(family));
+        document.getElementById('memberName').value = "";
+        renderFamily();
+        renderMenu(); // Ricarica per mostrare warning
+    }
+
+    function removeMember(idx) {
+        family.splice(idx, 1);
+        localStorage.setItem('smart_family', JSON.stringify(family));
+        renderFamily();
+        renderMenu();
+    }
+
+    function renderFamily() {
+        const c = document.getElementById('familyContainer');
+        c.innerHTML = "";
+        family.forEach((f, i) => {
+            c.innerHTML += `<div class="family-chip">
+                ${f.name} ${f.allergy ? `(🚫 ${f.allergy})` : ''}
+                <i class="material-icons" onclick="removeMember(${i})">close</i>
             </div>`;
         });
     }
 
-    function row(ico, m, idx, type) {
-        let ing = m.ingredients ? m.ingredients.join(', ') : '';
-        return `
-        <div class="meal-row">
-            <div class="meal-icon">${ico}</div>
-            <div class="meal-info"><div class="meal-title">${m.title}</div><div class="meal-desc">${ing}</div></div>
-            <i class="material-icons btn-edit" onclick="changeMeal(${idx}, '${type}')">edit</i>
-        </div>`;
+    function checkAllergens(ingredients) {
+        if(!ingredients) return null;
+        let warnings = [];
+        family.forEach(f => {
+            if(f.allergy) {
+                // Controllo molto semplice (migliorabile in Step 2)
+                ingredients.forEach(ing => {
+                    if(ing.toLowerCase().includes(f.allergy.toLowerCase())) {
+                        warnings.push(`${f.name} (${f.allergy})`);
+                    }
+                });
+            }
+        });
+        return warnings.length ? warnings.join(', ') : null;
     }
 
-    function changeMeal(i, t) {
-        let m = prompt("Cosa vuoi mangiare invece?");
-        if(m) {
-            menu[i].meals[t] = {title:m, ingredients:[m], contains:[], type:t};
-            localStorage.setItem('v16_menu', JSON.stringify(menu));
-            renderAll();
-        }
-    }
-
+    // --- LISTA SPESA ---
     function renderShop() {
         const c = document.getElementById('shopList');
         c.innerHTML = "";
         const need = {};
         
+        // Aggrega ingredienti
         menu.forEach(d => Object.values(d.meals).forEach(m => {
             if(m.ingredients) m.ingredients.forEach(i => need[i]=(need[i]||0)+1);
         }));
 
-        let tot = 0;
-        const offers = db.offerte_per_supermercato ? (db.offerte_per_supermercato[mainStore]||[]) : [];
-        document.getElementById('storeName').innerText = mainStore ? `(${mainStore})` : "";
-
         Object.keys(need).sort().forEach(item => {
-            let price = 0;
-            let dName = item;
-            let isLock = false;
-            let found = false;
-            
-            let lKey = Object.keys(locked).find(k => item.toLowerCase().includes(k.toLowerCase()));
-            if(lKey) {
-                let l = locked[lKey];
-                dName = `${l.name} (${l.store})`;
-                price = l.price;
-                isLock = true;
-                found = true;
-            } else {
-                let off = offers.find(o => o.name.toLowerCase().includes(item.toLowerCase()));
-                if(off) { dName = off.name; price = off.price; found = true; }
-            }
-            tot += price;
-            
+            let isChecked = bought[item];
             c.innerHTML += `
-            <div class="shop-item ${isLock?'locked':''}">
-                <div style="flex:1">
-                    <div style="font-weight:bold; ${found?'color:#2E7D32':''}">${dName}</div>
-                    <div style="font-size:0.75rem; color:#666">
-                        ${found ? '' : '⚠️ No offerta'} 
-                        <span style="float:right">x${need[item]}</span>
-                        ${isLock?`<i class="material-icons" style="font-size:12px; color:red; margin-left:5px; cursor:pointer;" onclick="unlock('${lKey}')">close</i>`:''}
-                    </div>
+            <div class="shop-item ${isChecked?'checked':''}" onclick="toggleShop('${item}')">
+                <div>
+                    <div style="font-weight:bold;">${item}</div>
+                    <div style="font-size:0.75rem; color:#666">Quantità: ${need[item]} ricette</div>
                 </div>
-                <div style="font-weight:bold; font-size:1.1rem; margin-left:10px;">€${price.toFixed(2)}</div>
+                <i class="material-icons" style="color:${isChecked?'green':'#ccc'}">check_circle</i>
             </div>`;
         });
-        document.getElementById('totalPrice').innerText = tot.toFixed(2);
     }
 
-    function lockItem(n, p, s) {
-        locked[n] = {name:n, price:p, store:s};
-        localStorage.setItem('v16_locked', JSON.stringify(locked));
-        renderShop(); alert("Offerta bloccata!");
-    }
-    
-    function unlock(k) {
-        delete locked[k];
-        localStorage.setItem('v16_locked', JSON.stringify(locked));
+    function toggleShop(item) {
+        if(bought[item]) delete bought[item];
+        else bought[item] = true;
+        localStorage.setItem('smart_bought', JSON.stringify(bought));
         renderShop();
     }
 
-    function renderOffers() {
-        const c = document.getElementById('offerList');
-        c.innerHTML = "";
-        const s = document.getElementById('storeSelect').value;
-        if(!s) return;
-        mainStore = s; localStorage.setItem('v16_store', s);
+    // --- UPLOAD & CREDENZIALI ---
+    function saveCreds() {
+        localStorage.setItem('gh_repo', document.getElementById('ghRepo').value);
+        localStorage.setItem('gh_token', document.getElementById('ghToken').value);
+        alert("Credenziali Salvate!");
+    }
+
+    async function uploadPDF() {
+        // Logica upload identica a prima, ottimizzata per il nuovo UI
+        let repo = document.getElementById('ghRepo').value.trim(); 
+        const token = document.getElementById('ghToken').value.trim();
+        const name = document.getElementById('pdfName').value.trim().toLowerCase().replace(/\s/g, '');
+        const fileInp = document.getElementById('pdfFile');
+        const status = document.getElementById('upStatus');
+
+        if(!repo || !token || !name || !fileInp.files[0]) return alert("Compila i campi!");
         
-        const list = (db.offerte_per_supermercato[s]||[]);
-        if(list.length === 0) {
-            c.innerHTML = "<p>Nessuna offerta caricata.</p>";
-            return;
-        }
+        status.innerText = "⏳ Upload in corso...";
+        const reader = new FileReader();
+        reader.onload = async function() {
+            try {
+                const content = reader.result.split(',')[1];
+                const url = `https://api.github.com/repos/${repo}/contents/spesa/volantini/${name}.pdf`;
+                
+                // Get SHA
+                let sha = null;
+                try {
+                    const check = await fetch(url, { headers: {Authorization: `token ${token}`} });
+                    if(check.ok) sha = (await check.json()).sha;
+                } catch(e) {}
 
-        list.forEach(o => {
-            c.innerHTML += `
-            <div class="offer-card" onclick="lockItem('${o.name}', ${o.price}, '${s}')">
-                <div class="offer-badge">+</div>
-                <div style="font-size:0.9rem; margin-bottom:5px;">${o.name}</div>
-                <b style="color:var(--offer)">€${o.price.toFixed(2)}</b>
-            </div>`;
-        });
-        renderShop();
+                // Put
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Upload Volantino", content: content, sha: sha })
+                });
+
+                if(!res.ok) throw new Error("Errore GitHub");
+                
+                status.innerText = "✅ Volantino caricato! Il robot analizzerà i prezzi.";
+                alert("Upload riuscito. Attendi 1-2 minuti per l'analisi dei prezzi.");
+            } catch(e) {
+                status.innerText = "❌ Errore Upload";
+                alert(e.message);
+            }
+        };
+        reader.readAsDataURL(fileInp.files[0]);
     }
-
-    function hardReset() { 
-        if(confirm("Cancellare tutto e ricaricare?")) {
-            localStorage.clear(); location.reload(); 
+    
+    function hardReset() {
+        if(confirm("Vuoi davvero resettare TUTTO (Famiglia, Menu, Preferiti)?")) {
+            localStorage.clear();
+            location.reload();
         }
     }
     
-    function go(p, b) {
+    function go(p, btn) {
         document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
         document.getElementById(p).classList.add('active');
         document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active'));
-        b.classList.add('active');
+        btn.classList.add('active');
     }
 
+    function renderAll() { renderMenu(); renderShop(); }
+    
     init();
 </script>
 </body>
