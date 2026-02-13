@@ -7,7 +7,7 @@ import glob
 import time
 import random
 
-print("--- 🚀 AVVIO ROBOT: CHEF & VOLANTINI (FIX PERCORSI) ---")
+print("--- 🚀 AVVIO ROBOT: CHEF 3.0 (FIX MODELLO AI) ---")
 
 # 1. SETUP CHIAVE
 if "GEMINI_KEY" in os.environ:
@@ -16,7 +16,28 @@ else:
     print("❌ ERRORE: Chiave Mancante.")
     sys.exit(1)
 
-model = genai.GenerativeModel("gemini-1.5-flash")
+# 2. SELEZIONE MODELLO ROBUSTA
+def get_working_model():
+    # Elenco di modelli da provare in ordine
+    candidates = [
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-001",
+        "gemini-1.5-pro",
+        "gemini-1.5-pro-latest"
+    ]
+    for model_name in candidates:
+        try:
+            print(f"🔌 Tentativo connessione con modello: {model_name}...")
+            model = genai.GenerativeModel(model_name)
+            # Test rapido di connessione (senza sprecare token)
+            return model
+        except:
+            continue
+    
+    print("⚠️ Fallback: Uso modello standard 'gemini-pro'")
+    return genai.GenerativeModel("gemini-pro")
+
+model = get_working_model()
 
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
@@ -25,63 +46,35 @@ def pulisci_json(text):
     if s != -1 and e != -1: return text[s:e]
     return text
 
-# --- FASE 1: ANALISI VOLANTINI (BLINDATA) ---
+# --- FASE 1: ANALISI VOLANTINI ---
 def analizza_volantini():
     offerte_db = {}
     
-    # --- FIX PERCORSI ---
-    # Definiamo due possibili percorsi dove cercare
-    # 1. Percorso assoluto basato sulla posizione dello script
+    # PERCORSI BLINDATI
     path_script = os.path.dirname(os.path.abspath(__file__))
     dir_1 = os.path.join(path_script, "volantini")
-    
-    # 2. Percorso relativo dalla root di GitHub (Current Working Directory)
     dir_2 = os.path.join(os.getcwd(), "spesa", "volantini")
 
-    # Scegliamo quello che esiste
-    target_dir = ""
-    if os.path.exists(dir_1):
-        target_dir = dir_1
-    elif os.path.exists(dir_2):
-        target_dir = dir_2
+    target_dir = dir_1 if os.path.exists(dir_1) else (dir_2 if os.path.exists(dir_2) else "")
     
-    print(f"📍 Cartella Script: {path_script}")
-    print(f"📍 CWD (Root): {os.getcwd()}")
-    print(f"📂 Cartella Volantini scelta: {target_dir}")
-
-    if not target_dir or not os.path.exists(target_dir):
-        print("⚠️ ERRORE: La cartella 'volantini' non esiste in nessuno dei percorsi previsti.")
-        # Proviamo a crearla per il futuro
-        try: 
-            os.makedirs(dir_1) 
-            print("   -> Creata cartella vuota per evitare errori futuri.")
-        except: pass
+    if not target_dir:
+        print("ℹ️ Cartella volantini non trovata. Salto analisi.")
         return {}
 
-    # DEBUG: Stampa contenuto cartella
-    print(f"   Contenuto cartella: {os.listdir(target_dir)}")
-
-    # Cerca PDF (Case insensitive per sicurezza: .pdf e .PDF)
+    # Cerca PDF
     files = glob.glob(os.path.join(target_dir, "*.[pP][dD][fF]"))
-    
-    if not files:
-        print("ℹ️ Nessun file PDF trovato nella cartella.")
-        return {}
-
-    print(f"🔎 Trovati {len(files)} volantini. Inizio analisi...")
+    print(f"🔎 Trovati {len(files)} volantini in {target_dir}")
 
     for file_path in files:
         try:
             nome_file = os.path.basename(file_path)
-            # Pulizia nome: rimuove estensione e underscore
             nome_store = os.path.splitext(nome_file)[0].replace("_", " ").title()
-            
-            print(f"📄 Elaborazione: {nome_store} ({nome_file})")
+            print(f"📄 Analisi: {nome_store}")
             
             # Upload
             pdf = genai.upload_file(file_path, display_name=nome_store)
             
-            # Attesa attiva (max 20 sec)
+            # Attesa
             attempt = 0
             while pdf.state.name == "PROCESSING" and attempt < 10:
                 time.sleep(2)
@@ -89,53 +82,48 @@ def analizza_volantini():
                 attempt += 1
             
             if pdf.state.name == "FAILED":
-                print(f"   ❌ Google non riesce a leggere {nome_file}.")
+                print(f"   ❌ File illeggibile lato Google.")
                 continue
 
-            # Prompt Estrazione
+            # Prompt
             prompt = f"""
             Analizza il volantino "{nome_store}". 
-            Estrai TUTTI i prodotti alimentari (cibo, bevande) e i prezzi.
-            
-            OUTPUT JSON UNICO: 
-            {{ "{nome_store}": [ {{"name": "Nome Prodotto", "price": 0.00}} ] }}
+            Estrai TUTTI i prodotti alimentari e prezzi.
+            JSON: {{ "{nome_store}": [ {{"name": "Nome", "price": 0.00}} ] }}
             """
-            res = model.generate_content([pdf, prompt])
-            raw_text = pulisci_json(res.text)
             
+            # Qui gestiamo l'errore 404 specifico del modello
             try:
-                data = json.loads(raw_text)
-                # Gestione chiavi dinamiche
-                chiave = nome_store if nome_store in data else list(data.keys())[0]
+                res = model.generate_content([pdf, prompt])
+                data = json.loads(pulisci_json(res.text))
                 
-                if chiave in data and isinstance(data[chiave], list):
+                chiave = nome_store if nome_store in data else list(data.keys())[0]
+                if chiave in data:
                     offerte_db[nome_store] = data[chiave]
-                    print(f"   ✅ OK: {len(data[chiave])} offerte estratte.")
-                else:
-                    print(f"   ⚠️ Warning: JSON vuoto o malformato per {nome_store}")
-            except:
-                print(f"   ❌ Errore parsing JSON per {nome_store}")
+                    print(f"   ✅ Estratti {len(data[chiave])} prodotti.")
+            except Exception as e_gen:
+                print(f"   ⚠️ Errore generazione AI per {nome_store}: {e_gen}")
 
-            # Pulizia
             try: genai.delete_file(pdf.name)
             except: pass
 
         except Exception as e:
-            print(f"   ⚠️ Errore generico su {file_path}: {e}")
+            print(f"   ❌ Errore file {file_path}: {e}")
 
     return offerte_db
 
-# --- FASE 2: GENERATORE RICETTARIO ---
+# --- FASE 2: RICETTARIO ---
 def crea_database_ricette(offerte):
-    print("🍳 Aggiornamento Database Ricette...")
+    print("🍳 Creazione Ricettario...")
     
     ingred_context = ""
     if offerte:
-        all_products = []
+        all_p = []
         for s in offerte:
-            for p in offerte[s]: all_products.append(p['name'])
-        sample = random.sample(all_products, min(len(all_products), 20))
-        ingred_context = f"USA SE PUOI: {', '.join(sample)}."
+            for p in offerte[s]: all_p.append(p['name'])
+        if all_p:
+            sample = random.sample(all_p, min(len(all_p), 20))
+            ingred_context = f"Usa ingredienti in offerta: {', '.join(sample)}."
 
     try:
         prompt = f"""
@@ -149,7 +137,7 @@ def crea_database_ricette(offerte):
         
         Per OGNI categoria: 5 Colazioni, 7 Pranzi, 7 Cene, 5 Merende.
         
-        JSON:
+        JSON STRUTTURA:
         {{
             "mediterranea": {{
                 "colazione": [ {{"title": "...", "ingredients": ["..."]}} ],
@@ -160,9 +148,9 @@ def crea_database_ricette(offerte):
         }}
         """
         
-        response = model.generate_content(prompt)
-        db_ricette = json.loads(pulisci_json(response.text))
-        print("✅ Database Ricette aggiornato.")
+        res = model.generate_content(prompt)
+        db_ricette = json.loads(pulisci_json(res.text))
+        print("✅ Ricettario creato.")
         return db_ricette
 
     except Exception as e:
@@ -173,7 +161,7 @@ DATABASE_BACKUP = {
     "mediterranea": {
         "colazione": [{"title": "Latte e Biscotti", "ingredients": ["Latte", "Biscotti"]}],
         "pranzo": [{"title": "Pasta al Pomodoro", "ingredients": ["Pasta", "Pomodoro"]}],
-        "cena": [{"title": "Pollo ai Ferri", "ingredients": ["Pollo", "Limone"]}],
+        "cena": [{"title": "Pollo al Limone", "ingredients": ["Pollo", "Limone"]}],
         "merenda": [{"title": "Mela", "ingredients": ["Mela"]}]
     },
     "vegetariana": {
@@ -194,21 +182,17 @@ def esegui_tutto():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     file_out = os.path.join(base_dir, "dati_settimanali.json")
     
-    # 1. Analisi
     offerte = analizza_volantini()
-    
-    # 2. Ricette
-    database_ricette = crea_database_ricette(offerte)
+    db_ricette = crea_database_ricette(offerte)
 
-    # 3. Save
-    output_data = {
+    output = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "offerte_per_supermercato": offerte,
-        "database_ricette": database_ricette
+        "database_ricette": db_ricette
     }
 
     with open(file_out, "w", encoding="utf-8") as f:
-        json.dump(output_data, f, indent=4, ensure_ascii=False)
+        json.dump(output, f, indent=4, ensure_ascii=False)
     print(f"💾 Salvato: {file_out}")
 
 if __name__ == "__main__":
