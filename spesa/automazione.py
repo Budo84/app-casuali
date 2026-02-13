@@ -7,37 +7,61 @@ import glob
 import time
 import random
 
-print("--- 🚀 AVVIO ROBOT: CHEF 3.0 (FIX MODELLO AI) ---")
+print("--- 🚀 AVVIO ROBOT: CHEF AUTO-CONFIGURANTE ---")
 
 # 1. SETUP CHIAVE
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
 else:
-    print("❌ ERRORE: Chiave Mancante.")
+    print("❌ ERRORE CRITICO: Chiave API Mancante.")
     sys.exit(1)
 
-# 2. SELEZIONE MODELLO ROBUSTA
-def get_working_model():
-    # Elenco di modelli da provare in ordine
-    candidates = [
-        "gemini-1.5-flash",
-        "gemini-1.5-flash-001",
-        "gemini-1.5-pro",
-        "gemini-1.5-pro-latest"
-    ]
-    for model_name in candidates:
-        try:
-            print(f"🔌 Tentativo connessione con modello: {model_name}...")
-            model = genai.GenerativeModel(model_name)
-            # Test rapido di connessione (senza sprecare token)
-            return model
-        except:
-            continue
+# 2. SELEZIONE MODELLO INTELLIGENTE
+def get_best_model():
+    print("📡 Interrogo Google per i modelli disponibili...")
+    try:
+        available_models = []
+        # Chiede a Google la lista dei modelli
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                # Pulisce il nome (toglie 'models/')
+                name = m.name.replace('models/', '')
+                available_models.append(name)
+        
+        print(f"   Modelli trovati: {available_models}")
+
+        # CERCA IL MIGLIORE IN ORDINE DI PRIORITÀ
+        # 1. Prova Flash 1.5 (Veloce ed economico)
+        for m in available_models:
+            if 'flash' in m and '1.5' in m:
+                print(f"✅ Scelto modello RAPIDO: {m}")
+                return genai.GenerativeModel(m)
+        
+        # 2. Prova Pro 1.5 (Potente)
+        for m in available_models:
+            if 'pro' in m and '1.5' in m:
+                print(f"✅ Scelto modello POTENTE: {m}")
+                return genai.GenerativeModel(m)
+
+        # 3. Fallback su Gemini Pro Standard (Compatibilità massima)
+        if 'gemini-pro' in available_models:
+            print("⚠️ Uso modello STANDARD (Gemini Pro)")
+            return genai.GenerativeModel('gemini-pro')
+            
+        # 4. Se proprio non trova nulla, prova il primo della lista
+        if available_models:
+            print(f"⚠️ Uso il primo modello disponibile: {available_models[0]}")
+            return genai.GenerativeModel(available_models[0])
+
+    except Exception as e:
+        print(f"❌ Errore nella ricerca modelli: {e}")
     
-    print("⚠️ Fallback: Uso modello standard 'gemini-pro'")
+    # ULTIMO TENTATIVO ALLA CIECA
+    print("⚠️ Fallback Estremo: provo 'gemini-pro' alla cieca.")
     return genai.GenerativeModel("gemini-pro")
 
-model = get_working_model()
+# Inizializza il modello scelto
+model = get_best_model()
 
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
@@ -50,65 +74,62 @@ def pulisci_json(text):
 def analizza_volantini():
     offerte_db = {}
     
-    # PERCORSI BLINDATI
+    # Percorsi sicuri
     path_script = os.path.dirname(os.path.abspath(__file__))
     dir_1 = os.path.join(path_script, "volantini")
     dir_2 = os.path.join(os.getcwd(), "spesa", "volantini")
-
     target_dir = dir_1 if os.path.exists(dir_1) else (dir_2 if os.path.exists(dir_2) else "")
-    
+
     if not target_dir:
-        print("ℹ️ Cartella volantini non trovata. Salto analisi.")
+        print("ℹ️ Cartella volantini non trovata. Salto.")
         return {}
 
-    # Cerca PDF
     files = glob.glob(os.path.join(target_dir, "*.[pP][dD][fF]"))
-    print(f"🔎 Trovati {len(files)} volantini in {target_dir}")
+    print(f"🔎 Analisi {len(files)} file in: {target_dir}")
 
     for file_path in files:
         try:
             nome_file = os.path.basename(file_path)
             nome_store = os.path.splitext(nome_file)[0].replace("_", " ").title()
-            print(f"📄 Analisi: {nome_store}")
+            print(f"📄 Elaborazione: {nome_store}")
             
             # Upload
             pdf = genai.upload_file(file_path, display_name=nome_store)
             
             # Attesa
-            attempt = 0
-            while pdf.state.name == "PROCESSING" and attempt < 10:
+            attempts = 0
+            while pdf.state.name == "PROCESSING" and attempts < 10:
                 time.sleep(2)
                 pdf = genai.get_file(pdf.name)
-                attempt += 1
+                attempts += 1
             
             if pdf.state.name == "FAILED":
-                print(f"   ❌ File illeggibile lato Google.")
+                print(f"   ❌ File non valido.")
                 continue
 
             # Prompt
             prompt = f"""
-            Analizza il volantino "{nome_store}". 
-            Estrai TUTTI i prodotti alimentari e prezzi.
-            JSON: {{ "{nome_store}": [ {{"name": "Nome", "price": 0.00}} ] }}
+            Analizza "{nome_store}". Estrai TUTTI i cibi e prezzi.
+            JSON: {{ "{nome_store}": [ {{"name": "...", "price": 0.00}} ] }}
             """
             
-            # Qui gestiamo l'errore 404 specifico del modello
             try:
                 res = model.generate_content([pdf, prompt])
                 data = json.loads(pulisci_json(res.text))
                 
+                # Gestione chiavi dinamiche
                 chiave = nome_store if nome_store in data else list(data.keys())[0]
                 if chiave in data:
                     offerte_db[nome_store] = data[chiave]
-                    print(f"   ✅ Estratti {len(data[chiave])} prodotti.")
-            except Exception as e_gen:
-                print(f"   ⚠️ Errore generazione AI per {nome_store}: {e_gen}")
+                    print(f"   ✅ OK: {len(data[chiave])} prodotti.")
+            except Exception as e:
+                print(f"   ⚠️ Errore AI su file: {e}")
 
             try: genai.delete_file(pdf.name)
             except: pass
 
         except Exception as e:
-            print(f"   ❌ Errore file {file_path}: {e}")
+            print(f"   ❌ Errore critico file: {e}")
 
     return offerte_db
 
@@ -116,45 +137,42 @@ def analizza_volantini():
 def crea_database_ricette(offerte):
     print("🍳 Creazione Ricettario...")
     
-    ingred_context = ""
+    context = ""
     if offerte:
-        all_p = []
+        items = []
         for s in offerte:
-            for p in offerte[s]: all_p.append(p['name'])
-        if all_p:
-            sample = random.sample(all_p, min(len(all_p), 20))
-            ingred_context = f"Usa ingredienti in offerta: {', '.join(sample)}."
+            for p in offerte[s]: items.append(p['name'])
+        if items:
+            sample = random.sample(items, min(len(items), 15))
+            context = f"Usa ingredienti: {', '.join(sample)}."
 
     try:
         prompt = f"""
-        Crea un DATABASE RICETTE (Chef Expert).
-        {ingred_context}
+        Crea DATABASE RICETTE (Chef).
+        {context}
         
         3 CATEGORIE:
         1. "mediterranea" (Equilibrata)
-        2. "vegetariana" (No carne/pesce)
+        2. "vegetariana" (No carne)
         3. "mondo" (Internazionale)
         
         Per OGNI categoria: 5 Colazioni, 7 Pranzi, 7 Cene, 5 Merende.
         
-        JSON STRUTTURA:
+        JSON:
         {{
-            "mediterranea": {{
-                "colazione": [ {{"title": "...", "ingredients": ["..."]}} ],
-                "pranzo": [...], "cena": [...], "merenda": [...]
-            }},
+            "mediterranea": {{ "colazione": [...], "pranzo": [...], "cena": [...], "merenda": [...] }},
             "vegetariana": {{ ... }},
             "mondo": {{ ... }}
         }}
         """
         
         res = model.generate_content(prompt)
-        db_ricette = json.loads(pulisci_json(res.text))
-        print("✅ Ricettario creato.")
-        return db_ricette
+        db = json.loads(pulisci_json(res.text))
+        print("✅ Ricettario OK.")
+        return db
 
     except Exception as e:
-        print(f"❌ Errore AI Ricette: {e}. Uso Backup.")
+        print(f"❌ Errore Generazione Ricette: {e}. Uso Backup.")
         return DATABASE_BACKUP
 
 DATABASE_BACKUP = {
@@ -185,14 +203,14 @@ def esegui_tutto():
     offerte = analizza_volantini()
     db_ricette = crea_database_ricette(offerte)
 
-    output = {
+    out = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "offerte_per_supermercato": offerte,
         "database_ricette": db_ricette
     }
 
     with open(file_out, "w", encoding="utf-8") as f:
-        json.dump(output, f, indent=4, ensure_ascii=False)
+        json.dump(out, f, indent=4, ensure_ascii=False)
     print(f"💾 Salvato: {file_out}")
 
 if __name__ == "__main__":
