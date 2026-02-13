@@ -46,7 +46,7 @@
         
         .input-qty { width: 50px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; background: #f0f8ff; }
         .input-price { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; }
-        .input-price.auto-price { background: #e0f2f1; color: #00695c; font-weight: bold; border: 1px solid #b2dfdb; } /* Stile Offerta Volantino */
+        .input-price.auto-price { background: #e0f2f1; color: #00695c; font-weight: bold; border: 1px solid #b2dfdb; }
         
         .check-btn { font-size: 24px; color: #ccc; cursor: pointer; }
         .check-btn.checked { color: var(--primary); }
@@ -96,7 +96,7 @@
     <h3>🛒 Lista della Spesa</h3>
     
     <div class="add-item-box">
-        <input type="text" id="manualItemName" placeholder="Aggiungi prodotto (es. Detersivo)...">
+        <input type="text" id="manualItemName" placeholder="Aggiungi prodotto...">
         <button onclick="addManualItem()">+</button>
     </div>
 
@@ -110,7 +110,6 @@
 
 <div id="p-offerte" class="page">
     <h3>Offerte dal Volantino</h3>
-    <p style="font-size:0.8rem; color:#666">Clicca su un prodotto per aggiungerlo alla lista spesa col prezzo bloccato.</p>
     <select id="storeSelect" onchange="renderOffers()" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;"></select>
     <div id="offerList" class="offer-grid"></div>
 </div>
@@ -125,6 +124,8 @@
             <option value="Lattosio">Lattosio</option>
             <option value="Uova">Uova</option>
             <option value="Pesce">Pesce</option>
+            <option value="Frutta a guscio">Frutta a guscio (Noci, ecc)</option>
+            <option value="Diabete">Diabete (Zuccheri)</option>
         </select>
     </div>
     <button class="btn" onclick="addFamilyMember()">Aggiungi Membro</button>
@@ -162,9 +163,18 @@
     let family = JSON.parse(localStorage.getItem('smart_family')) || [];
     let locked = JSON.parse(localStorage.getItem('smart_locked')) || {};
     let favorites = JSON.parse(localStorage.getItem('smart_fav')) || [];
-    // ShopData contiene: { "Pasta": {qty:1, price:0.79, checked:false, isManual:false, isOffer:true} }
     let shopData = JSON.parse(localStorage.getItem('smart_shop_data')) || {}; 
     let mainStore = localStorage.getItem('smart_store') || "";
+
+    // DIZIONARIO RISCHI (Mappa Allergia -> Parole chiave)
+    const riskMap = {
+        "Glutine": ["pane", "pasta", "farina", "biscotti", "cereali", "orzo", "farro", "pizza", "focaccia"],
+        "Lattosio": ["latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", "ricotta"],
+        "Uova": ["uova", "frittata", "mayonese", "crema"],
+        "Pesce": ["pesce", "tonno", "merluzzo", "salmone", "sogliola", "gamberi"],
+        "Frutta a guscio": ["noci", "mandorle", "nocciole", "pistacchi", "anacardi", "frutta secca", "arachidi"],
+        "Diabete": ["zucchero", "miele", "cioccolato", "torta", "biscotti", "dolce", "marmellata", "succo", "sciroppo", "bevanda", "canditi"]
+    };
 
     async function init() {
         renderFamily();
@@ -178,7 +188,6 @@
             db = await res.json();
             updateStatus('online');
             
-            // Popola Select Store
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
             const stores = Object.keys(db.offerte_per_supermercato || {});
@@ -217,7 +226,8 @@
                 if(locked[k] && force) dayObj.meals[t] = locked[k];
                 else {
                     let pool = db.ricette.filter(r => r.type === t);
-                    let pick = pool.length ? pool[Math.floor(Math.random()*pool.length)] : {title:"Libero", ingredients:[]};
+                    let favPool = pool.filter(r => favorites.includes(r.title));
+                    let pick = (favPool.length > 0 && Math.random() > 0.7) ? favPool[Math.floor(Math.random()*favPool.length)] : (pool.length ? pool[Math.floor(Math.random()*pool.length)] : {title:"Libero", ingredients:[]});
                     dayObj.meals[t] = pick;
                 }
             });
@@ -225,56 +235,32 @@
         }
         menu = newMenu;
         localStorage.setItem('smart_menu', JSON.stringify(menu));
-        
         updateShopDataFromMenu(); 
         renderAll();
     }
 
-    // --- LOGICA LISTA SPESA (CORE) ---
+    // --- LOGICA LISTA SPESA ---
     function updateShopDataFromMenu() {
-        // 1. Calcola fabbisogno dal menu attuale
         let menuNeeds = {};
         menu.forEach(d => Object.values(d.meals).forEach(m => {
             if(m.ingredients) m.ingredients.forEach(i => menuNeeds[i] = (menuNeeds[i]||0)+1);
         }));
 
-        // 2. Unisci con i dati esistenti per non perdere lo stato (checked/manual/prezzo editato)
         let newShopData = {};
-
-        // A. Aggiungi ingredienti del menu
         Object.keys(menuNeeds).forEach(item => {
             let existing = shopData[item];
             if(existing) {
-                // Se esisteva, mantieni prezzo manuale e check, aggiorna solo quantità suggerita
-                newShopData[item] = { 
-                    qty: menuNeeds[item], 
-                    price: existing.price, 
-                    checked: existing.checked,
-                    isManual: false,
-                    isOffer: existing.isOffer
-                };
+                newShopData[item] = { qty: menuNeeds[item], price: existing.price, checked: existing.checked, isManual: false, isOffer: existing.isOffer };
             } else {
-                // Nuovo ingrediente dal menu
                 newShopData[item] = { qty: menuNeeds[item], price: 0, checked: false, isManual: false, isOffer: false };
             }
-            
-            // Auto-Prezzo: Se il prezzo è 0 o nullo, cerca nel volantino
             if(!newShopData[item].price) {
                 let offer = findOfferPrice(item);
-                if(offer > 0) {
-                    newShopData[item].price = offer;
-                    newShopData[item].isOffer = true;
-                }
+                if(offer > 0) { newShopData[item].price = offer; newShopData[item].isOffer = true; }
             }
         });
 
-        // B. Aggiungi elementi MANUALI dell'utente (che non sono nel menu)
-        Object.keys(shopData).forEach(item => {
-            if(shopData[item].isManual) {
-                newShopData[item] = shopData[item];
-            }
-        });
-
+        Object.keys(shopData).forEach(item => { if(shopData[item].isManual) newShopData[item] = shopData[item]; });
         shopData = newShopData;
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
     }
@@ -282,20 +268,12 @@
     function addManualItem() {
         let name = document.getElementById('manualItemName').value.trim();
         if(!name) return;
-        
-        // Prima lettera maiuscola
         name = name.charAt(0).toUpperCase() + name.slice(1);
-
         if(!shopData[name]) {
             shopData[name] = { qty: 1, price: 0, checked: false, isManual: true, isOffer: false };
-            // Cerca comunque se c'è un'offerta per questo prodotto manuale
             let offer = findOfferPrice(name);
             if(offer > 0) { shopData[name].price = offer; shopData[name].isOffer = true; }
-        } else {
-            shopData[name].qty++;
-            shopData[name].isManual = true; // Diventa manuale così non sparisce se rigeneri menu
-        }
-        
+        } else { shopData[name].qty++; shopData[name].isManual = true; }
         document.getElementById('manualItemName').value = "";
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
         renderShop();
@@ -304,7 +282,6 @@
     function findOfferPrice(itemName) {
         if(!db || !db.offerte_per_supermercato) return 0;
         let best = 0;
-        // Cerca in tutti i volantini caricati
         Object.values(db.offerte_per_supermercato).forEach(list => {
             let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase()));
             if(match) best = match.price;
@@ -313,18 +290,12 @@
     }
 
     function renderShop() {
-        const c = document.getElementById('shopList');
-        c.innerHTML = "";
+        const c = document.getElementById('shopList'); c.innerHTML = "";
         let total = 0;
-        
-        // Ordina: Prima non spuntati, poi spuntati
-        let keys = Object.keys(shopData).sort((a,b) => {
-            if(shopData[a].checked === shopData[b].checked) return a.localeCompare(b);
-            return shopData[a].checked ? 1 : -1;
-        });
+        let keys = Object.keys(shopData).sort((a,b) => (shopData[a].checked === shopData[b].checked) ? a.localeCompare(b) : (shopData[a].checked ? 1 : -1));
 
         if(keys.length === 0) {
-            c.innerHTML = "<p style='text-align:center; color:#999; margin-top:20px'>Lista vuota. Aggiungi prodotti o genera un menu.</p>";
+            c.innerHTML = "<p style='text-align:center; color:#999; margin-top:20px'>Lista vuota.</p>";
             document.getElementById('totalPrice').innerText = "€ 0.00";
             return;
         }
@@ -333,7 +304,6 @@
             let item = shopData[name];
             let sub = item.qty * item.price;
             if(!item.checked) total += sub;
-            
             let priceClass = item.isOffer ? 'auto-price' : '';
 
             c.innerHTML += `
@@ -358,7 +328,7 @@
     function updateShopItem(name, field, val) {
         if(!shopData[name]) return;
         shopData[name][field] = parseFloat(val) || 0;
-        if(field === 'price') shopData[name].isOffer = false; // Se tocchi il prezzo, perde lo status di offerta automatica
+        if(field === 'price') shopData[name].isOffer = false;
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
         renderShop();
     }
@@ -370,48 +340,32 @@
     }
 
     function deleteItem(name) {
-        if(confirm(`Rimuovere ${name}?`)) {
-            delete shopData[name];
-            localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
-            renderShop();
-        }
+        if(confirm(`Rimuovere ${name}?`)) { delete shopData[name]; localStorage.setItem('smart_shop_data', JSON.stringify(shopData)); renderShop(); }
     }
 
     // --- OFFERTE ---
     function renderOffers() {
-        const c = document.getElementById('offerList');
-        c.innerHTML = "";
+        const c = document.getElementById('offerList'); c.innerHTML = "";
         const s = document.getElementById('storeSelect').value;
         if(!s || !db.offerte_per_supermercato[s]) return;
         mainStore = s; localStorage.setItem('smart_store', s);
 
         db.offerte_per_supermercato[s].forEach(o => {
-            c.innerHTML += `
-            <div class="offer-card" onclick="addOfferToList('${o.name}', ${o.price})">
-                <div style="font-size:0.9rem; margin-bottom:5px;">${o.name}</div>
-                <div class="offer-price">€${o.price.toFixed(2)}</div>
-                <small style="color:#2E7D32">+ Aggiungi</small>
-            </div>`;
+            c.innerHTML += `<div class="offer-card" onclick="addOfferToList('${o.name}', ${o.price})"><div style="font-size:0.9rem; margin-bottom:5px;">${o.name}</div><div class="offer-price">€${o.price.toFixed(2)}</div><small style="color:#2E7D32">+ Aggiungi</small></div>`;
         });
     }
 
     function addOfferToList(name, price) {
-        // Aggiunge offerta alla lista spesa (o aggiorna prezzo se esiste)
-        if(!shopData[name]) {
-            shopData[name] = { qty: 1, price: price, checked: false, isManual: true, isOffer: true };
-        } else {
-            shopData[name].price = price;
-            shopData[name].isOffer = true;
-        }
+        if(!shopData[name]) shopData[name] = { qty: 1, price: price, checked: false, isManual: true, isOffer: true };
+        else { shopData[name].price = price; shopData[name].isOffer = true; }
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
         alert(`Aggiunto: ${name}`);
-        renderShop(); // Aggiorna UI se siamo nella tab spesa
+        renderShop();
     }
 
-    // --- ALTRE FUNZIONI ---
+    // --- RENDER MENU & CHECK ALLERGENI INTELLIGENTE ---
     function renderMenu() {
-        const c = document.getElementById('menuList');
-        c.innerHTML = "";
+        const c = document.getElementById('menuList'); c.innerHTML = "";
         menu.forEach((d, dayIdx) => {
             let html = `<div class="card"><div class="day-header">${d.day}</div>`;
             ['colazione','pranzo','merenda','cena'].forEach(t => {
@@ -433,9 +387,19 @@
         if(!ings) return null;
         let hits = [];
         family.forEach(f => {
-            if(f.allergy && ings.some(i => i.toLowerCase().includes(f.allergy.toLowerCase()))) hits.push(f.name);
+            if(f.allergy) {
+                // Controllo Intelligente usando riskMap
+                let keywords = riskMap[f.allergy] || [f.allergy.toLowerCase()];
+                
+                // Controlla se uno degli ingredienti contiene una delle keyword
+                let isDangerous = ings.some(ing => {
+                    return keywords.some(key => ing.toLowerCase().includes(key));
+                });
+
+                if(isDangerous) hits.push(f.name + " (" + f.allergy + ")");
+            }
         });
-        return hits.length ? "No: " + hits.join(', ') : null;
+        return hits.length ? "No per: " + hits.join(', ') : null;
     }
 
     function toggleLock(d,t){ let k=`${d}_${t}`; if(locked[k]) delete locked[k]; else locked[k]=menu[d].meals[t]; localStorage.setItem('smart_locked',JSON.stringify(locked)); renderMenu(); }
