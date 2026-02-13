@@ -6,9 +6,8 @@ import sys
 import glob
 import time
 
-print("--- 🚀 AVVIO ROBOT: MENU BLINDATO ---")
+print("--- 🚀 AVVIO ROBOT: RICETTARIO GLOBALE ---")
 
-# 1. SETUP
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
 else:
@@ -16,41 +15,6 @@ else:
     sys.exit(1)
 
 model = genai.GenerativeModel("gemini-1.5-flash")
-
-# --- PARACADUTE: MENU DI RISERVA (Se l'IA fallisce) ---
-MENU_BACKUP = [
-    {"type": "colazione", "title": "Latte e Fette Biscottate", "ingredients": ["Latte", "Fette biscottate", "Marmellata"], "contains": []},
-    {"type": "colazione", "title": "Yogurt e Cereali", "ingredients": ["Yogurt", "Cereali integrali", "Frutta"], "contains": []},
-    {"type": "colazione", "title": "Caffè e Biscotti", "ingredients": ["Caffè", "Biscotti secchi"], "contains": []},
-    {"type": "colazione", "title": "Tè e Pane Tostato", "ingredients": ["Tè", "Pane", "Miele"], "contains": []},
-    {"type": "colazione", "title": "Latte Macchiato e Frutta", "ingredients": ["Latte", "Caffè", "Mela"], "contains": []},
-    {"type": "colazione", "title": "Spremuta e Toast", "ingredients": ["Arance", "Pane", "Prosciutto"], "contains": []},
-    {"type": "colazione", "title": "Cappuccino e Cornetto", "ingredients": ["Latte", "Caffè", "Cornetto"], "contains": []},
-    
-    {"type": "pranzo", "title": "Pasta al Pomodoro", "ingredients": ["Pasta", "Passata di pomodoro", "Parmigiano"], "contains": []},
-    {"type": "pranzo", "title": "Riso e Piselli", "ingredients": ["Riso", "Piselli", "Cipolla"], "contains": []},
-    {"type": "pranzo", "title": "Pasta e Lenticchie", "ingredients": ["Pasta", "Lenticchie", "Carote"], "contains": []},
-    {"type": "pranzo", "title": "Insalata di Riso", "ingredients": ["Riso", "Tonno", "Olive", "Pomodorini"], "contains": []},
-    {"type": "pranzo", "title": "Farro con Verdure", "ingredients": ["Farro", "Zucchine", "Melanzane"], "contains": []},
-    {"type": "pranzo", "title": "Gnocchi al Pesto", "ingredients": ["Gnocchi", "Pesto alla genovese"], "contains": []},
-    {"type": "pranzo", "title": "Pasta Tonno e Olive", "ingredients": ["Pasta", "Tonno", "Olive nere"], "contains": []},
-
-    {"type": "merenda", "title": "Mela", "ingredients": ["Mela"], "contains": []},
-    {"type": "merenda", "title": "Yogurt", "ingredients": ["Yogurt bianco"], "contains": []},
-    {"type": "merenda", "title": "Banana", "ingredients": ["Banana"], "contains": []},
-    {"type": "merenda", "title": "Tè e Biscotto", "ingredients": ["Tè", "Biscotto"], "contains": []},
-    {"type": "merenda", "title": "Frutta Secca", "ingredients": ["Noci", "Mandorle"], "contains": []},
-    {"type": "merenda", "title": "Pane e Olio", "ingredients": ["Pane", "Olio EVO"], "contains": []},
-    {"type": "merenda", "title": "Cioccolato Fondente", "ingredients": ["Cioccolato"], "contains": []},
-
-    {"type": "cena", "title": "Petto di Pollo e Insalata", "ingredients": ["Petto di pollo", "Insalata mista"], "contains": []},
-    {"type": "cena", "title": "Frittata di Zucchine", "ingredients": ["Uova", "Zucchine", "Parmigiano"], "contains": []},
-    {"type": "cena", "title": "Pesce al Forno", "ingredients": ["Merluzzo", "Patate", "Pomodorini"], "contains": []},
-    {"type": "cena", "title": "Mozzarella e Pomodori", "ingredients": ["Mozzarella", "Pomodori", "Basilico"], "contains": []},
-    {"type": "cena", "title": "Burger Vegetale", "ingredients": ["Burger soia", "Spinaci"], "contains": []},
-    {"type": "cena", "title": "Scaloppine al Limone", "ingredients": ["Arista", "Farina", "Limone"], "contains": []},
-    {"type": "cena", "title": "Uova Sode e Fagiolini", "ingredients": ["Uova", "Fagiolini"], "contains": []}
-]
 
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
@@ -81,7 +45,6 @@ def analizza_volantini():
         try:
             nome_file = os.path.basename(file_path)
             nome_store = os.path.splitext(nome_file)[0].title()
-            
             print(f"📄 Leggo: {nome_store}")
             
             pdf = genai.upload_file(file_path, display_name=nome_store)
@@ -102,9 +65,7 @@ def analizza_volantini():
             res = model.generate_content([pdf, prompt])
             data = json.loads(pulisci_json(res.text))
             
-            # Supporto per chiavi dinamiche
             chiave = nome_store if nome_store in data else list(data.keys())[0]
-            
             if chiave in data:
                 offerte_db[nome_store] = data[chiave]
                 print(f"   ✅ Estratti {len(data[chiave])} prodotti.")
@@ -117,65 +78,95 @@ def analizza_volantini():
 
     return offerte_db
 
-# --- FASE 2: MENU GENERATIVO ---
-def crea_menu_ai(offerte):
-    print("🍳 Generazione Menu AI...")
+# --- FASE 2: GENERAZIONE RICETTARIO ---
+def crea_ricettario(offerte):
+    print("🍳 Generazione Database Ricette (Mediterraneo, Veg, Mondo)...")
     
     ingred_extra = ""
     if offerte:
         lista = []
         for s in offerte:
             for p in offerte[s]: lista.append(p['name'])
-        ingred_extra = f"Usa anche: {', '.join(lista[:20])}."
+        ingred_extra = f"Cerca di includere anche questi ingredienti in offerta: {', '.join(lista[:25])}."
 
     try:
+        # CHIEDIAMO UN DATABASE, NON UN MENU SETTIMANALE
         prompt = f"""
-        Crea menu settimanale DIETA MEDITERRANEA.
-        7 Colazioni, 7 Pranzi, 7 Merende, 7 Cene.
-        PIATTI DIVERSI OGNI GIORNO.
+        Agisci come uno Chef esperto. Crea un DATABASE DI RICETTE per un'app di pianificazione pasti.
+        
+        Devi generare 3 CATEGORIE DI CUCINA:
+        1. "mediterranea": Dieta equilibrata classica (pesce, carne bianca, pasta, legumi).
+        2. "vegetariana": Esclusivamente piatti senza carne/pesce.
+        3. "mondo": Piatti internazionali famosi (es. Sushi, Curry, Tacos, Couscous).
+        
+        Per OGNI categoria, genera:
+        - 5 Colazioni
+        - 10 Pranzi
+        - 10 Cene
+        - 5 Merende
+        
         {ingred_extra}
         
-        JSON:
+        RISPONDI SOLO JSON in questo formato:
         {{
-          "colazione": [ {{"title": "...", "ingredients": ["..."], "contains": []}} ],
-          "pranzo": [...], "merenda": [...], "cena": [...]
+            "mediterranea": {{
+                "colazione": [ {{"title": "...", "ingredients": ["..."]}} ],
+                "pranzo": [...], "cena": [...], "merenda": [...]
+            }},
+            "vegetariana": {{ ...stessa struttura... }},
+            "mondo": {{ ...stessa struttura... }}
         }}
         """
         response = model.generate_content(prompt)
-        raw_data = json.loads(pulisci_json(response.text))
+        dataset = json.loads(pulisci_json(response.text))
         
-        lista_finale = []
-        for tipo in ["colazione", "pranzo", "merenda", "cena"]:
-            piatti = raw_data.get(tipo, [])
-            for p in piatti:
-                p['type'] = tipo
-                lista_finale.append(p)
+        # Validazione base
+        count = 0
+        for cat in dataset:
+            for pasto in dataset[cat]:
+                count += len(dataset[cat][pasto])
         
-        # CONTROLLO QUALITÀ
-        if len(lista_finale) < 20:
-            raise Exception("Menu generato troppo corto")
-            
-        print(f"✅ Menu AI Generato: {len(lista_finale)} ricette.")
-        return lista_finale
+        print(f"✅ Ricettario Generato: {count} ricette totali pronte all'uso.")
+        return dataset
 
     except Exception as e:
-        print(f"❌ Errore AI ({e}). USO IL MENU DI BACKUP.")
-        return MENU_BACKUP
+        print(f"❌ Errore AI ({e}). Uso DB backup.")
+        return get_backup_db()
+
+def get_backup_db():
+    # Un piccolo DB locale di sicurezza
+    return {
+        "mediterranea": {
+            "colazione": [{"title": "Latte e Biscotti", "ingredients": ["Latte", "Biscotti"]}],
+            "pranzo": [{"title": "Pasta al Pomodoro", "ingredients": ["Pasta", "Pomodoro"]}],
+            "cena": [{"title": "Pollo al Limone", "ingredients": ["Pollo", "Limone"]}],
+            "merenda": [{"title": "Mela", "ingredients": ["Mela"]}]
+        },
+        "vegetariana": {
+            "colazione": [{"title": "Yogurt e Frutta", "ingredients": ["Yogurt", "Frutta"]}],
+            "pranzo": [{"title": "Pasta al Pesto", "ingredients": ["Pasta", "Basilico"]}],
+            "cena": [{"title": "Frittata di Verdure", "ingredients": ["Uova", "Zucchine"]}],
+            "merenda": [{"title": "Noci", "ingredients": ["Noci"]}]
+        },
+        "mondo": {
+            "colazione": [{"title": "Pancakes", "ingredients": ["Farina", "Latte", "Uova"]}],
+            "pranzo": [{"title": "Riso Cantonese", "ingredients": ["Riso", "Prosciutto", "Uova"]}],
+            "cena": [{"title": "Tacos", "ingredients": ["Tortilla", "Fagioli", "Carne"]}],
+            "merenda": [{"title": "Muffin", "ingredients": ["Farina", "Cioccolato"]}]
+        }
+    }
 
 def esegui_tutto():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     file_out = os.path.join(base_dir, "dati_settimanali.json")
     
-    # 1. Analisi (Non bloccante)
     offerte = analizza_volantini()
-    
-    # 2. Menu (Garantito)
-    ricette = crea_menu_ai(offerte)
+    ricettario = crea_ricettario(offerte)
 
     db = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "offerte_per_supermercato": offerte,
-        "ricette": ricette
+        "database_ricette": ricettario # NOTA: La chiave è cambiata da 'ricette' a 'database_ricette'
     }
 
     with open(file_out, "w", encoding="utf-8") as f:
