@@ -6,7 +6,7 @@ import sys
 import glob
 import time
 
-print("--- 🚀 AVVIO ROBOT: MENU EQUILIBRATO & VOLANTINI ---")
+print("--- 🚀 AVVIO ROBOT: MENU BLINDATO ---")
 
 # 1. SETUP
 if "GEMINI_KEY" in os.environ:
@@ -17,6 +17,41 @@ else:
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+# --- PARACADUTE: MENU DI RISERVA (Se l'IA fallisce) ---
+MENU_BACKUP = [
+    {"type": "colazione", "title": "Latte e Fette Biscottate", "ingredients": ["Latte", "Fette biscottate", "Marmellata"], "contains": []},
+    {"type": "colazione", "title": "Yogurt e Cereali", "ingredients": ["Yogurt", "Cereali integrali", "Frutta"], "contains": []},
+    {"type": "colazione", "title": "Caffè e Biscotti", "ingredients": ["Caffè", "Biscotti secchi"], "contains": []},
+    {"type": "colazione", "title": "Tè e Pane Tostato", "ingredients": ["Tè", "Pane", "Miele"], "contains": []},
+    {"type": "colazione", "title": "Latte Macchiato e Frutta", "ingredients": ["Latte", "Caffè", "Mela"], "contains": []},
+    {"type": "colazione", "title": "Spremuta e Toast", "ingredients": ["Arance", "Pane", "Prosciutto"], "contains": []},
+    {"type": "colazione", "title": "Cappuccino e Cornetto", "ingredients": ["Latte", "Caffè", "Cornetto"], "contains": []},
+    
+    {"type": "pranzo", "title": "Pasta al Pomodoro", "ingredients": ["Pasta", "Passata di pomodoro", "Parmigiano"], "contains": []},
+    {"type": "pranzo", "title": "Riso e Piselli", "ingredients": ["Riso", "Piselli", "Cipolla"], "contains": []},
+    {"type": "pranzo", "title": "Pasta e Lenticchie", "ingredients": ["Pasta", "Lenticchie", "Carote"], "contains": []},
+    {"type": "pranzo", "title": "Insalata di Riso", "ingredients": ["Riso", "Tonno", "Olive", "Pomodorini"], "contains": []},
+    {"type": "pranzo", "title": "Farro con Verdure", "ingredients": ["Farro", "Zucchine", "Melanzane"], "contains": []},
+    {"type": "pranzo", "title": "Gnocchi al Pesto", "ingredients": ["Gnocchi", "Pesto alla genovese"], "contains": []},
+    {"type": "pranzo", "title": "Pasta Tonno e Olive", "ingredients": ["Pasta", "Tonno", "Olive nere"], "contains": []},
+
+    {"type": "merenda", "title": "Mela", "ingredients": ["Mela"], "contains": []},
+    {"type": "merenda", "title": "Yogurt", "ingredients": ["Yogurt bianco"], "contains": []},
+    {"type": "merenda", "title": "Banana", "ingredients": ["Banana"], "contains": []},
+    {"type": "merenda", "title": "Tè e Biscotto", "ingredients": ["Tè", "Biscotto"], "contains": []},
+    {"type": "merenda", "title": "Frutta Secca", "ingredients": ["Noci", "Mandorle"], "contains": []},
+    {"type": "merenda", "title": "Pane e Olio", "ingredients": ["Pane", "Olio EVO"], "contains": []},
+    {"type": "merenda", "title": "Cioccolato Fondente", "ingredients": ["Cioccolato"], "contains": []},
+
+    {"type": "cena", "title": "Petto di Pollo e Insalata", "ingredients": ["Petto di pollo", "Insalata mista"], "contains": []},
+    {"type": "cena", "title": "Frittata di Zucchine", "ingredients": ["Uova", "Zucchine", "Parmigiano"], "contains": []},
+    {"type": "cena", "title": "Pesce al Forno", "ingredients": ["Merluzzo", "Patate", "Pomodorini"], "contains": []},
+    {"type": "cena", "title": "Mozzarella e Pomodori", "ingredients": ["Mozzarella", "Pomodori", "Basilico"], "contains": []},
+    {"type": "cena", "title": "Burger Vegetale", "ingredients": ["Burger soia", "Spinaci"], "contains": []},
+    {"type": "cena", "title": "Scaloppine al Limone", "ingredients": ["Arista", "Farina", "Limone"], "contains": []},
+    {"type": "cena", "title": "Uova Sode e Fagiolini", "ingredients": ["Uova", "Fagiolini"], "contains": []}
+]
+
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
     s = text.find("{")
@@ -24,13 +59,12 @@ def pulisci_json(text):
     if s != -1 and e != -1: return text[s:e]
     return text
 
-# --- FASE 1: ANALISI VOLANTINI (Robustissima) ---
+# --- FASE 1: ANALISI VOLANTINI ---
 def analizza_volantini():
     offerte_db = {}
     base_dir = os.path.dirname(os.path.abspath(__file__))
     volantini_dir = os.path.join(base_dir, "volantini")
     
-    # Crea cartella se manca
     if not os.path.exists(volantini_dir):
         try: os.makedirs(volantini_dir)
         except: pass
@@ -38,10 +72,10 @@ def analizza_volantini():
     files = glob.glob(os.path.join(volantini_dir, "*.pdf"))
     
     if not files:
-        print("ℹ️ Nessun volantino trovato. Procedo solo con il menu.")
+        print("ℹ️ Nessun volantino trovato.")
         return {}
 
-    print(f"🔎 Trovati {len(files)} volantini. Inizio analisi...")
+    print(f"🔎 Analisi {len(files)} volantini...")
 
     for file_path in files:
         try:
@@ -50,17 +84,17 @@ def analizza_volantini():
             
             print(f"📄 Leggo: {nome_store}")
             
-            # Upload
             pdf = genai.upload_file(file_path, display_name=nome_store)
-            while pdf.state.name == "PROCESSING":
-                time.sleep(1)
+            attempt = 0
+            while pdf.state.name == "PROCESSING" and attempt < 10:
+                time.sleep(2)
                 pdf = genai.get_file(pdf.name)
+                attempt += 1
             
             if pdf.state.name == "FAILED":
                 print("   ❌ File illeggibile.")
                 continue
 
-            # Estrazione
             prompt = f"""
             Estrai dal volantino di "{nome_store}" i prodotti alimentari e i prezzi.
             JSON: {{ "{nome_store}": [ {{"name": "Prodotto", "price": 1.00}} ] }}
@@ -68,88 +102,75 @@ def analizza_volantini():
             res = model.generate_content([pdf, prompt])
             data = json.loads(pulisci_json(res.text))
             
-            if nome_store in data:
-                offerte_db[nome_store] = data[nome_store]
-                print(f"   ✅ Estratti {len(data[nome_store])} prodotti.")
+            # Supporto per chiavi dinamiche
+            chiave = nome_store if nome_store in data else list(data.keys())[0]
             
-            genai.delete_file(pdf.name)
+            if chiave in data:
+                offerte_db[nome_store] = data[chiave]
+                print(f"   ✅ Estratti {len(data[chiave])} prodotti.")
+            
+            try: genai.delete_file(pdf.name)
+            except: pass
 
         except Exception as e:
             print(f"   ⚠️ Errore su {nome_store}: {e}")
 
     return offerte_db
 
-# --- FASE 2: MENU MEDITERRANEO (Varietà Garantita) ---
-def crea_menu_vario(offerte):
-    print("🍳 Generazione Menu Settimanale Vario...")
+# --- FASE 2: MENU GENERATIVO ---
+def crea_menu_ai(offerte):
+    print("🍳 Generazione Menu AI...")
     
-    # Creiamo un contesto leggero sugli ingredienti in offerta, ma senza forzare troppo
     ingred_extra = ""
     if offerte:
         lista = []
         for s in offerte:
             for p in offerte[s]: lista.append(p['name'])
-        ingred_extra = f"Se possibile, includi questi ingredienti in offerta: {', '.join(lista[:30])}."
+        ingred_extra = f"Usa anche: {', '.join(lista[:20])}."
 
     try:
         prompt = f"""
-        Agisci come un nutrizionista. Crea un menu settimanale DIETA MEDITERRANEA per 7 giorni.
-        
-        REGOLE FERREE PER LA VARIETÀ:
-        1. Devi generare ESATTAMENTE 7 Colazioni, 7 Pranzi, 7 Merende, 7 Cene.
-        2. I piatti DEVONO ESSERE DIVERSI ogni giorno (es. Lunedì Pesce, Martedì Legumi, Mercoledì Uova...).
-        3. Bilancia carboidrati e proteine. Non mettere pasta sia a pranzo che a cena.
+        Crea menu settimanale DIETA MEDITERRANEA.
+        7 Colazioni, 7 Pranzi, 7 Merende, 7 Cene.
+        PIATTI DIVERSI OGNI GIORNO.
         {ingred_extra}
         
-        RISPONDI SOLO JSON:
+        JSON:
         {{
-          "colazione": [ 
-             {{"title": "Lun: Latte e Caffè", "ingredients": ["Latte", "Caffè"], "contains": []}},
-             {{"title": "Mar: Yogurt e Frutta", "ingredients": ["Yogurt", "Frutta"], "contains": []}},
-             ... (altri 5 diversi) ...
-          ],
-          "pranzo": [ ... 7 ricette diverse ... ],
-          "merenda": [ ... 7 ricette diverse ... ],
-          "cena": [ ... 7 ricette diverse ... ]
+          "colazione": [ {{"title": "...", "ingredients": ["..."], "contains": []}} ],
+          "pranzo": [...], "merenda": [...], "cena": [...]
         }}
         """
         response = model.generate_content(prompt)
         raw_data = json.loads(pulisci_json(response.text))
         
-        # Appiattiamo il JSON in una lista unica per l'app
         lista_finale = []
         for tipo in ["colazione", "pranzo", "merenda", "cena"]:
             piatti = raw_data.get(tipo, [])
-            # Se ne ha generati meno di 7, duplichiamo gli ultimi per arrivare a 7
-            while len(piatti) < 7:
-                piatti.append(piatti[-1] if piatti else {"title": "Pasto Vario", "ingredients": ["Misto"], "contains": []})
-            
             for p in piatti:
                 p['type'] = tipo
                 lista_finale.append(p)
         
-        print(f"✅ Menu Generato: {len(lista_finale)} ricette totali.")
+        # CONTROLLO QUALITÀ
+        if len(lista_finale) < 20:
+            raise Exception("Menu generato troppo corto")
+            
+        print(f"✅ Menu AI Generato: {len(lista_finale)} ricette.")
         return lista_finale
 
     except Exception as e:
-        print(f"❌ Errore Menu: {e}")
-        return []
+        print(f"❌ Errore AI ({e}). USO IL MENU DI BACKUP.")
+        return MENU_BACKUP
 
 def esegui_tutto():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     file_out = os.path.join(base_dir, "dati_settimanali.json")
     
-    # 1. Analisi Volantini (Se fallisce torna vuoto, non blocca)
+    # 1. Analisi (Non bloccante)
     offerte = analizza_volantini()
     
-    # 2. Generazione Menu (Usa le offerte se ci sono)
-    ricette = crea_menu_vario(offerte)
-    
-    # Se il menu è vuoto (errore AI), usiamo un backup statico per non rompere l'app
-    if not ricette:
-        ricette = [
-            {"title": "Backup Pasta", "type": "pranzo", "ingredients": ["Pasta"], "contains": []}
-        ]
+    # 2. Menu (Garantito)
+    ricette = crea_menu_ai(offerte)
 
     db = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
@@ -159,7 +180,7 @@ def esegui_tutto():
 
     with open(file_out, "w", encoding="utf-8") as f:
         json.dump(db, f, indent=4, ensure_ascii=False)
-    print(f"💾 Salvato in: {file_out}")
+    print(f"💾 Dati salvati: {file_out}")
 
 if __name__ == "__main__":
     esegui_tutto()
