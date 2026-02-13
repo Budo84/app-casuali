@@ -102,6 +102,8 @@
             if(!res.ok) throw new Error("File JSON non trovato");
             db = await res.json();
             document.getElementById('lastUpdate').innerText = "Aggiornato: " + db.data_aggiornamento;
+            
+            // Gestione Negozi
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
             const stores = Object.keys(db.offerte_per_supermercato || {});
@@ -116,6 +118,8 @@
                 if(!mainStore || !stores.includes(mainStore)) mainStore = stores[0];
                 sel.value = mainStore;
             }
+
+            // Generazione Menu SE non esiste o se è vecchio
             if(!menu.length) generateMenu();
             renderAll();
         } catch(e) {
@@ -133,7 +137,6 @@
         if(!repo || !token || !name || !fileInp.files[0]) return alert("Per favore compila tutti i campi!");
         if (repo.split('/').length > 2) repo = repo.split('/').slice(0, 2).join('/');
         
-        // Costruiamo l'URL corretto per la sottocartella 'spesa/volantini'
         const urlFile = `https://api.github.com/repos/${repo}/contents/spesa/volantini/${name}.pdf`;
         
         if(!confirm(`Carico ${name}.pdf su:\n${repo}\n\nConfermi?`)) return;
@@ -169,13 +172,8 @@
                     throw new Error(`Errore GitHub (${resUp.status}): ${err.message}`);
                 }
 
-                // --- MODIFICA FONDAMENTALE ---
-                // Abbiamo tolto la chiamata "fetch(dispatches...)"
-                // Ora ci fidiamo del fatto che l'upload (PUT) sveglierà da solo il robot
-                // grazie alla regola "on: push: paths: spesa/volantini/**" nel file YAML.
-                
-                status.innerText = "✅ Caricato! Il robot partirà automaticamente.";
-                alert("File caricato! Il robot vedrà la modifica e partirà da solo.\nAttendi circa 60-90 secondi e riapri l'app.");
+                status.innerText = "✅ Caricato! Il robot lavora...";
+                alert("File caricato! Il robot vedrà la modifica e aggiornerà menu e offerte.\nAttendi circa 60-90 secondi e premi 'Reset Totale App' in Gestione.");
 
             } catch(e) {
                 status.innerText = "❌ Errore: " + e.message;
@@ -191,26 +189,31 @@
         alert("Dati salvati!");
     }
 
+    // --- LOGICA MENU SEQUENZIALE (NO RANDOM) ---
     function generateMenu() {
         if(!db || !db.ricette) return;
+        
+        // Separiamo le ricette per tipo
+        const r_colazione = db.ricette.filter(r => r.type === 'colazione');
+        const r_pranzo = db.ricette.filter(r => r.type === 'pranzo');
+        const r_merenda = db.ricette.filter(r => r.type === 'merenda');
+        const r_cena = db.ricette.filter(r => r.type === 'cena');
+
         const days = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
-        menu = days.map(d => ({
+        
+        menu = days.map((d, index) => ({
             day: d,
             meals: {
-                colazione: pick('colazione'),
-                pranzo: pick('pranzo'),
-                merenda: pick('merenda'),
-                cena: pick('cena')
+                // Usiamo l'operatore modulo (%) per assegnare ricette sequenzialmente
+                // Lun = index 0, Mar = index 1, ecc.
+                colazione: r_colazione[index % r_colazione.length] || {title:"...", ingredients:[]},
+                pranzo: r_pranzo[index % r_pranzo.length] || {title:"...", ingredients:[]},
+                merenda: r_merenda[index % r_merenda.length] || {title:"...", ingredients:[]},
+                cena: r_cena[index % r_cena.length] || {title:"...", ingredients:[]}
             }
         }));
         localStorage.setItem('v16_menu', JSON.stringify(menu));
         renderAll();
-    }
-
-    function pick(type) {
-        if(!db.ricette) return {title:"...", ingredients:[]};
-        const p = db.ricette.filter(r=>r.type===type);
-        return p.length ? p[Math.floor(Math.random()*p.length)] : {title:"Pasto Libero", ingredients:[]};
     }
 
     function renderAll() { renderMenu(); renderShop(); renderOffers(); }
