@@ -10,8 +10,9 @@ on:
     paths:
       - 'spesa/volantini/**'
 
+# Blocca esecuzioni multiple per non confondere git
 concurrency:
-  group: menu_update
+  group: spesa_update
   cancel-in-progress: false
 
 jobs:
@@ -34,30 +35,33 @@ jobs:
       - name: Installa librerie
         run: pip install -U google-generativeai
 
-      # CREAZIONE CARTELLA VOLANTINI (Se non esiste)
-      - name: Prepara Cartelle
+      # DEBUG: Stampa cosa c'è nella cartella PRIMA di iniziare
+      - name: Controllo File PDF
         run: |
-          mkdir -p spesa/volantini
-          echo "Cartella spesa/volantini pronta."
+          echo "📂 Controllo cartella spesa/volantini..."
+          ls -R spesa/volantini/ || echo "Cartella non trovata (verrà creata se necessario)"
 
       - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      # SALVATAGGIO (ORDINE CORRETTO)
+      # DEBUG: Controlla se il JSON è stato creato
+      - name: Controllo output JSON
+        run: |
+          cat spesa/dati_settimanali.json | head -n 10 || echo "❌ File JSON non generato!"
+
       - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
           
-          # 1. PRIMA salviamo le modifiche locali (il JSON generato)
+          # Aggiorniamo prima di tutto
+          git pull origin main --rebase || git pull origin master --rebase
+          
+          # Aggiungiamo il file generato
           git add spesa/dati_settimanali.json
-          git commit -m "🤖 Menu Aggiornato dal Robot" || echo "Nessuna modifica da salvare"
           
-          # 2. POI scarichiamo le novità dal server e applichiamo le nostre sopra (Rebase)
-          # Questo evita l'errore "local changes would be overwritten"
-          git pull --rebase origin main || git pull --rebase origin master
-          
-          # 3. INFINE spediamo tutto
+          # Se il file è cambiato, committa e spingi
+          git commit -m "🥦 Menu Mediterraneo & Offerte Aggiornate" || echo "Nessuna modifica rilevante"
           git push
