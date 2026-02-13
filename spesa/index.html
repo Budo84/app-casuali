@@ -9,24 +9,27 @@
         :root { --primary: #2E7D32; --bg: #f5f5f5; --card: #fff; --text: #333; --accent: #ff9800; --danger: #d32f2f; --lock: #C2185B; --price: #00897b; }
         body { font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
         
+        /* HEADER & STATUS */
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .status-badge { display: flex; align-items: center; font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 6px; }
         .dot.online { background: #00E676; box-shadow: 0 0 5px #00E676; }
 
+        /* PAGINE */
         .page { display: none; padding: 15px; animation: slideIn 0.3s ease-out; }
         .page.active { display: block; }
         @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+        /* MENU CARDS */
         .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; }
         .day-header { background: #e8f5e9; color: var(--primary); padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
         .meal-row { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; position: relative; }
-        .meal-content { flex: 1; padding-right: 80px; } /* Spazio per bottoni */
+        .meal-content { flex: 1; padding-right: 80px; } 
         .meal-title { font-weight: 600; font-size: 1rem; color: #444; }
         .meal-ing { font-size: 0.85rem; color: #777; margin-top: 2px; }
         .meal-actions { position: absolute; right: 10px; top: 12px; display: flex; gap: 5px; }
-        .action-btn { cursor: pointer; color: #ccc; font-size: 1.3rem; padding: 2px; }
-        .action-btn:hover { color: var(--primary); }
+        .action-btn { cursor: pointer; color: #ccc; font-size: 1.3rem; padding: 4px; border-radius: 50%; transition: 0.2s; }
+        .action-btn:hover { background: #eee; color: var(--primary); }
         .action-btn.active-lock { color: var(--lock); }
         .action-btn.active-fav { color: var(--danger); }
         
@@ -38,18 +41,23 @@
         .add-item-box button { background: var(--primary); color: white; border: none; width: 40px; border-radius: 4px; font-size: 1.2rem; cursor: pointer; }
         .shop-item { background: white; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
         .shop-item.checked { opacity: 0.6; background: #f9f9f9; }
-        .input-qty { width: 50px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; background: #f0f8ff; }
+        .shop-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .item-name { font-weight: bold; font-size: 1rem; }
+        .item-inputs { display: flex; gap: 10px; width: 100%; align-items: center; }
+        .input-qty { width: 40px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; background: #f0f8ff; font-weight: bold; }
         .input-price { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; }
         .input-price.auto-price { background: #e0f2f1; color: #00695c; font-weight: bold; border: 1px solid #b2dfdb; }
         .total-float { position: fixed; bottom: 80px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
 
+        /* OFFERTE CARD */
         .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; cursor: pointer; }
+        .offer-price { color: var(--price); font-weight: bold; font-size: 1.1rem; }
 
+        /* SETTINGS & CHIPS */
         .family-chip { background: white; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; display: inline-flex; align-items: center; margin-right: 5px; margin-bottom: 5px; }
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .input-group input, .input-group select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
-
         .settings-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
         .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
@@ -66,7 +74,7 @@
 <header>
     <div style="display:flex; flex-direction:column;">
         <span style="font-weight:bold; font-size:1.1rem;">Spesa Smart</span>
-        <small style="font-size:0.7rem; opacity:0.9">Dieta Flessibile</small>
+        <small style="font-size:0.7rem; opacity:0.9">Ricette & Offerte</small>
     </div>
     <div class="status-badge">
         <div id="statusDot" class="dot"></div>
@@ -75,10 +83,10 @@
 </header>
 
 <div id="p-menu" class="page active">
-    <div class="settings-box" style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-            <label style="font-size:0.8rem; color:#666; display:block;">Stile Dieta</label>
-            <select id="dietType" onchange="saveDietSettings()" style="border:none; background:transparent; font-weight:bold; color:var(--primary); font-size:1rem;">
+    <div class="settings-box" style="display:flex; justify-content:space-between; align-items:center; padding: 10px 15px;">
+        <div style="display:flex; flex-direction:column;">
+            <label style="font-size:0.7rem; color:#666; text-transform:uppercase;">Stile Cucina</label>
+            <select id="dietType" onchange="saveDietSettings()" style="border:none; background:transparent; font-weight:bold; color:var(--primary); font-size:1rem; outline:none;">
                 <option value="mediterranea">Mediterranea</option>
                 <option value="vegetariana">Vegetariana</option>
                 <option value="mondo">Dal Mondo</option>
@@ -107,7 +115,8 @@
 </div>
 
 <div id="p-offerte" class="page">
-    <h3>Offerte dal Volantino</h3>
+    <h3>Offerte dai Volantini</h3>
+    <p style="font-size:0.8rem; color:#666;">Seleziona un supermercato per vedere i prezzi estratti.</p>
     <select id="storeSelect" onchange="renderOffers()" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;"></select>
     <div id="offerList" class="offer-grid"></div>
 </div>
@@ -131,15 +140,15 @@
 
     <hr style="border:0; border-top:1px solid #eee;">
     
-    <h3>⚙️ Configurazione</h3>
+    <h3>⚙️ Cloud & Upload</h3>
     <div class="settings-box">
-        <input type="text" id="ghRepo" placeholder="Repo GitHub" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
+        <input type="text" id="ghRepo" placeholder="Repo GitHub (User/Repo)" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
         <input type="password" id="ghToken" placeholder="Token GitHub" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
-        <button onclick="saveCreds()" style="padding:5px; width:100%;">Salva Login</button>
+        <button onclick="saveCreds()" style="padding:5px; width:100%;">Salva Credenziali</button>
         
         <div style="margin-top:15px;">
-            <label>Carica PDF:</label>
-            <input type="text" id="pdfName" placeholder="Nome Supermercato" style="width:100%; margin-top:5px; padding:8px; border:1px solid #ddd;">
+            <label style="font-weight:bold;">Carica Volantino PDF:</label>
+            <input type="text" id="pdfName" placeholder="Nome Supermercato (es. Conad)" style="width:100%; margin-top:5px; padding:8px; border:1px solid #ddd;">
             <input type="file" id="pdfFile" accept="application/pdf" style="margin-top:5px;">
         </div>
         <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica e Analizza</button>
@@ -165,16 +174,17 @@
     let shopData = JSON.parse(localStorage.getItem('smart_shop_data')) || {}; 
     let dietSettings = localStorage.getItem('smart_diet') || 'mediterranea';
 
-    // DIZIONARIO RISCHI
+    // DIZIONARIO RISCHI (Mappa Allergia -> Parole chiave)
     const riskMap = {
-        "Glutine": ["pane", "pasta", "farina", "biscotti", "cereali", "orzo", "farro", "pizza", "focaccia"],
-        "Lattosio": ["latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", "ricotta"],
-        "Uova": ["uova", "frittata", "mayonese", "crema", "carbonara"],
-        "Pesce": ["pesce", "tonno", "merluzzo", "salmone", "sogliola", "gamberi", "cozze", "vongole"],
+        "Glutine": ["pane", "pasta", "farina", "biscotti", "cereali", "orzo", "farro", "pizza", "focaccia", "crostini"],
+        "Lattosio": ["latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", "ricotta", "mascarpone"],
+        "Uova": ["uova", "frittata", "mayonese", "crema", "carbonara", "pancakes"],
+        "Pesce": ["pesce", "tonno", "merluzzo", "salmone", "sogliola", "gamberi", "cozze", "vongole", "acciughe"],
         "Frutta a guscio": ["noci", "mandorle", "nocciole", "pistacchi", "anacardi", "arachidi", "pesto"],
-        "Diabete": ["zucchero", "miele", "cioccolato", "torta", "biscotti", "dolce", "marmellata", "succo", "sciroppo", "bevanda", "canditi"]
+        "Diabete": ["zucchero", "miele", "cioccolato", "torta", "biscotti", "dolce", "marmellata", "succo", "sciroppo", "bevanda", "canditi", "brioche"]
     };
 
+    // --- INIZIALIZZAZIONE ---
     async function init() {
         renderFamily();
         document.getElementById('dietType').value = dietSettings;
@@ -196,7 +206,7 @@
                 sel.value = stores[0];
             } else { sel.innerHTML = "<option>Nessun Volantino</option>"; }
 
-            // Se il menu è vecchio o vuoto, rigenera
+            // Se il menu è vuoto, rigenera
             if(!menu.length) generateMenu(false);
             renderAll();
         } catch(e) {
@@ -211,27 +221,20 @@
         document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline';
     }
 
-    // --- LOGICA MENU AVANZATA ---
+    // --- LOGICA MENU (CON RICETTARIO) ---
     function saveDietSettings() {
         dietSettings = document.getElementById('dietType').value;
         localStorage.setItem('smart_diet', dietSettings);
-        // Quando cambi dieta, chiediamo se vuole rigenerare? Meglio farlo manuale
     }
 
     function getPoolForMeal(type) {
-        // Recupera le ricette dal "database_ricette" in base alla dieta scelta
-        // Se db.database_ricette non esiste (vecchio json), usa fallback vuoto
         if(!db || !db.database_ricette) return [];
-
         let pools = [];
-        
         if(dietSettings === 'mix') {
-            // Unisce tutte le categorie
             Object.keys(db.database_ricette).forEach(cat => {
                 if(db.database_ricette[cat][type]) pools = pools.concat(db.database_ricette[cat][type]);
             });
         } else {
-            // Usa solo la categoria scelta
             if(db.database_ricette[dietSettings] && db.database_ricette[dietSettings][type]) {
                 pools = db.database_ricette[dietSettings][type];
             }
@@ -239,17 +242,15 @@
         return pools;
     }
 
-    function pickSafeRecipe(pool, currentTitleToAvoid) {
-        // 1. Filtra per evitare ricette con allergeni della famiglia
+    function pickSafeRecipe(pool, avoidTitle) {
+        // Filtra allergeni
         let safePool = pool.filter(r => checkAllergens(r.ingredients) === null);
+        if(safePool.length === 0) safePool = pool; // Se non c'è nulla di sicuro, mostra tutto (col warning)
         
-        // Se non ci sono ricette sicure, usa tutto il pool (ma segnalerà l'errore)
-        if(safePool.length === 0) safePool = pool;
+        // Evita duplicati immediati
+        if(avoidTitle) safePool = safePool.filter(r => r.title !== avoidTitle);
         
-        // 2. Filtra per non ripetere lo stesso piatto che stiamo cambiando
-        if(currentTitleToAvoid) safePool = safePool.filter(r => r.title !== currentTitleToAvoid);
-        
-        if(safePool.length === 0) return {title: "Pasto Libero", ingredients: []};
+        if(safePool.length === 0) return {title: "Pasto a scelta", ingredients: []};
         return safePool[Math.floor(Math.random() * safePool.length)];
     }
 
@@ -280,52 +281,55 @@
         renderAll();
     }
 
-    // --- CAMBIO SINGOLO PIATTO (Doppia Scelta) ---
+    // --- CAMBIO PIATTO ---
     function swapMeal(dayIdx, type) {
         if(locked[`${dayIdx}_${type}`]) return alert("Sblocca il piatto prima di cambiarlo!");
-        
-        let currentMeal = menu[dayIdx].meals[type];
+        let current = menu[dayIdx].meals[type];
         let pool = getPoolForMeal(type);
-        let newMeal = pickSafeRecipe(pool, currentMeal.title);
-        
-        menu[dayIdx].meals[type] = newMeal;
+        let newR = pickSafeRecipe(pool, current.title);
+        menu[dayIdx].meals[type] = newR;
         localStorage.setItem('smart_menu', JSON.stringify(menu));
         updateShopDataFromMenu();
         renderAll();
     }
 
-    // --- LISTA SPESA (Invariata ma vitale) ---
+    // --- LOGICA SPESA ---
     function updateShopDataFromMenu() {
-        let menuNeeds = {};
+        let needs = {};
         menu.forEach(d => Object.values(d.meals).forEach(m => {
-            if(m.ingredients) m.ingredients.forEach(i => menuNeeds[i] = (menuNeeds[i]||0)+1);
+            if(m.ingredients) m.ingredients.forEach(i => needs[i] = (needs[i]||0)+1);
         }));
 
-        let newShopData = {};
-        Object.keys(menuNeeds).forEach(item => {
-            let existing = shopData[item];
-            if(existing) {
-                newShopData[item] = { qty: menuNeeds[item], price: existing.price, checked: existing.checked, isManual: false, isOffer: existing.isOffer };
+        let newData = {};
+        // Aggiungi dal menu
+        Object.keys(needs).forEach(item => {
+            let exist = shopData[item];
+            if(exist) {
+                newData[item] = { qty: needs[item], price: exist.price, checked: exist.checked, isManual: false, isOffer: exist.isOffer };
             } else {
-                newShopData[item] = { qty: menuNeeds[item], price: 0, checked: false, isManual: false, isOffer: false };
+                newData[item] = { qty: needs[item], price: 0, checked: false, isManual: false, isOffer: false };
             }
-            if(!newShopData[item].price) {
-                let offer = findOfferPrice(item);
-                if(offer > 0) { newShopData[item].price = offer; newShopData[item].isOffer = true; }
+            if(!newData[item].price) {
+                let off = findBestOffer(item);
+                if(off > 0) { newData[item].price = off; newData[item].isOffer = true; }
             }
         });
-
-        Object.keys(shopData).forEach(item => { if(shopData[item].isManual) newShopData[item] = shopData[item]; });
-        shopData = newShopData;
+        // Mantieni manuali
+        Object.keys(shopData).forEach(item => { if(shopData[item].isManual) newData[item] = shopData[item]; });
+        
+        shopData = newData;
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
     }
 
-    function findOfferPrice(itemName) {
+    function findBestOffer(itemName) {
         if(!db || !db.offerte_per_supermercato) return 0;
         let best = 0;
+        // Cerca in TUTTI i volantini, non solo quello selezionato
         Object.values(db.offerte_per_supermercato).forEach(list => {
             let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase()));
-            if(match) best = match.price;
+            if(match) {
+                if(best === 0 || match.price < best) best = match.price;
+            }
         });
         return best;
     }
@@ -336,8 +340,8 @@
         name = name.charAt(0).toUpperCase() + name.slice(1);
         if(!shopData[name]) {
             shopData[name] = { qty: 1, price: 0, checked: false, isManual: true, isOffer: false };
-            let offer = findOfferPrice(name);
-            if(offer > 0) { shopData[name].price = offer; shopData[name].isOffer = true; }
+            let off = findBestOffer(name);
+            if(off > 0) { shopData[name].price = off; shopData[name].isOffer = true; }
         } else { shopData[name].qty++; shopData[name].isManual = true; }
         document.getElementById('manualItemName').value = "";
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
@@ -359,7 +363,7 @@
             let item = shopData[name];
             let sub = item.qty * item.price;
             if(!item.checked) total += sub;
-            let priceClass = item.isOffer ? 'auto-price' : '';
+            let pCls = item.isOffer ? 'auto-price' : '';
 
             c.innerHTML += `
             <div class="shop-item ${item.checked?'checked':''}">
@@ -373,51 +377,35 @@
                 <div class="item-inputs">
                     <input type="number" class="input-qty" value="${item.qty}" min="1" onchange="updateShopItem('${name}', 'qty', this.value)">
                     <span style="font-size:0.9rem;">x</span>
-                    <input type="number" class="input-price ${priceClass}" value="${item.price}" step="0.01" placeholder="Prezzo" onchange="updateShopItem('${name}', 'price', this.value)">
+                    <input type="number" class="input-price ${pCls}" value="${item.price}" step="0.01" placeholder="€" onchange="updateShopItem('${name}', 'price', this.value)">
                 </div>
             </div>`;
         });
         document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
     }
 
-    function updateShopItem(name, field, val) {
-        if(!shopData[name]) return;
-        shopData[name][field] = parseFloat(val) || 0;
-        if(field === 'price') shopData[name].isOffer = false;
-        localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
-        renderShop();
-    }
+    function updateShopItem(n, f, v) { if(shopData[n]) { shopData[n][f]=parseFloat(v)||0; if(f==='price') shopData[n].isOffer=false; localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); renderShop(); } }
+    function toggleCheck(n) { if(shopData[n]) { shopData[n].checked=!shopData[n].checked; localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); renderShop(); } }
+    function deleteItem(n) { if(confirm(`Rimuovere ${n}?`)) { delete shopData[n]; localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); renderShop(); } }
 
-    function toggleCheck(name) {
-        if(shopData[name]) shopData[name].checked = !shopData[name].checked;
-        localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
-        renderShop();
-    }
-
-    function deleteItem(name) {
-        if(confirm(`Rimuovere ${name}?`)) { delete shopData[name]; localStorage.setItem('smart_shop_data', JSON.stringify(shopData)); renderShop(); }
-    }
-
-    // --- OFFERTE ---
+    // --- OFFERTE UI ---
     function renderOffers() {
         const c = document.getElementById('offerList'); c.innerHTML = "";
         const s = document.getElementById('storeSelect').value;
         if(!s || !db.offerte_per_supermercato || !db.offerte_per_supermercato[s]) return;
-
         db.offerte_per_supermercato[s].forEach(o => {
             c.innerHTML += `<div class="offer-card" onclick="addOfferToList('${o.name}', ${o.price})"><div style="font-size:0.9rem; margin-bottom:5px;">${o.name}</div><div class="offer-price">€${o.price.toFixed(2)}</div><small style="color:#2E7D32">+ Aggiungi</small></div>`;
         });
     }
-
-    function addOfferToList(name, price) {
-        if(!shopData[name]) shopData[name] = { qty: 1, price: price, checked: false, isManual: true, isOffer: true };
-        else { shopData[name].price = price; shopData[name].isOffer = true; }
+    function addOfferToList(n,p) {
+        if(!shopData[n]) shopData[n] = { qty:1, price:p, checked:false, isManual:true, isOffer:true };
+        else { shopData[n].price = p; shopData[n].isOffer = true; }
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
-        alert(`Aggiunto: ${name}`);
+        alert(`Aggiunto: ${n}`);
         renderShop();
     }
 
-    // --- RENDER MENU & UI ---
+    // --- RENDER MENU UI ---
     function renderMenu() {
         const c = document.getElementById('menuList'); c.innerHTML = "";
         menu.forEach((d, dayIdx) => {
@@ -429,7 +417,6 @@
                 let isF = favorites.includes(m.title);
                 let w = checkAllergens(m.ingredients);
                 let ico = t==='colazione'?'☕': t==='pranzo'?'🍝': t==='merenda'?'🍎':'🌙';
-                
                 html += `
                 <div class="meal-row">
                     <div style="font-size:24px; width:35px;">${ico}</div>
@@ -439,7 +426,7 @@
                         ${w?`<div class="allergen-warning"><i class="material-icons">warning</i> ${w}</div>`:''}
                     </div>
                     <div class="meal-actions">
-                        <i class="material-icons action-btn" onclick="swapMeal(${dayIdx},'${t}')" title="Cambia Piatto">sync</i>
+                        <i class="material-icons action-btn" onclick="swapMeal(${dayIdx},'${t}')" title="Cambia">sync</i>
                         <i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i>
                         <i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i>
                     </div>
@@ -454,11 +441,11 @@
         let hits = [];
         family.forEach(f => {
             if(f.allergy) {
-                let keywords = riskMap[f.allergy] || [f.allergy.toLowerCase()];
-                if(ings.some(ing => keywords.some(key => ing.toLowerCase().includes(key)))) hits.push(f.name);
+                let keys = riskMap[f.allergy] || [f.allergy.toLowerCase()];
+                if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name);
             }
         });
-        return hits.length ? "⚠️ No per: " + hits.join(', ') : null;
+        return hits.length ? "No: " + hits.join(', ') : null;
     }
 
     function toggleLock(d,t){ let k=`${d}_${t}`; if(locked[k]) delete locked[k]; else locked[k]=menu[d].meals[t]; localStorage.setItem('smart_locked',JSON.stringify(locked)); renderMenu(); }
