@@ -7,7 +7,7 @@ import glob
 import time
 import random
 
-print("--- 🚀 AVVIO ROBOT: CHEF MULTI-TASKING ---")
+print("--- 🚀 AVVIO ROBOT: CHEF ACCUMULATORE ---")
 
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
@@ -24,7 +24,7 @@ def pulisci_json(text):
     if s != -1 and e != -1: return text[s:e]
     return text
 
-# --- FASE 1: ANALISI VOLANTINI ---
+# --- 1. OFFERTE ---
 def analizza_volantini():
     offerte_db = {}
     path_script = os.path.dirname(os.path.abspath(__file__))
@@ -33,28 +33,22 @@ def analizza_volantini():
     target_dir = dir_1 if os.path.exists(dir_1) else (dir_2 if os.path.exists(dir_2) else "")
 
     if not target_dir: return {}
-
     files = glob.glob(os.path.join(target_dir, "*.[pP][dD][fF]"))
-    print(f"🔎 Analisi {len(files)} volantini...")
-
+    
     for file_path in files:
         try:
             nome_file = os.path.basename(file_path)
             nome_store = os.path.splitext(nome_file)[0].replace("_", " ").title()
-            
             pdf = genai.upload_file(file_path, display_name=nome_store)
             attempt = 0
             while pdf.state.name == "PROCESSING" and attempt < 10:
                 time.sleep(2)
                 pdf = genai.get_file(pdf.name)
                 attempt += 1
-            
             if pdf.state.name == "FAILED": continue
-
             prompt = f"""Estrai prodotti e prezzi da "{nome_store}". JSON: {{ "{nome_store}": [ {{"name": "...", "price": 0.00}} ] }}"""
             res = model.generate_content([pdf, prompt])
             data = json.loads(pulisci_json(res.text))
-            
             chiave = nome_store if nome_store in data else list(data.keys())[0]
             if chiave in data: offerte_db[nome_store] = data[chiave]
             try: genai.delete_file(pdf.name)
@@ -62,7 +56,7 @@ def analizza_volantini():
         except: pass
     return offerte_db
 
-# --- FASE 2: GESTIONE DATABASE ---
+# --- 2. DB MANAGEMENT ---
 def carica_vecchio_db():
     path_script = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(path_script, "dati_settimanali.json")
@@ -77,68 +71,38 @@ def carica_vecchio_db():
 def importa_ricette_utenti(db_esistente):
     path_script = os.path.dirname(os.path.abspath(__file__))
     dir_utente = os.path.join(path_script, "ricette_utenti")
-    if not os.path.exists(dir_utente):
-        dir_utente = os.path.join(os.getcwd(), "spesa", "ricette_utenti")
-    
+    if not os.path.exists(dir_utente): dir_utente = os.path.join(os.getcwd(), "spesa", "ricette_utenti")
     if not os.path.exists(dir_utente): return db_esistente
 
     files = glob.glob(os.path.join(dir_utente, "*.json"))
-    if not files: return db_esistente
-
-    print(f"📥 Importazione di {len(files)} ricette...")
-    
-    count = 0
     for f in files:
         try:
             with open(f, "r", encoding="utf-8") as file_obj:
                 nuova = json.load(file_obj)
-                
-                # Supporto per LISTE di categorie e tipi
-                cats = nuova.get('categories', [])
-                types = nuova.get('types', [])
-                
-                # Se è il vecchio formato singolo, converti in lista
-                if not cats and 'category' in nuova: cats = [nuova['category']]
-                if not types and 'type' in nuova: types = [nuova['type']]
-                
+                cats = nuova.get('categories', [nuova.get('category')])
+                types = nuova.get('types', [nuova.get('type')])
                 ricetta = nuova.get('recipe')
-
+                
                 if ricetta:
-                    # Inserisci in OGNI combinazione richiesta
                     for cat in cats:
                         if cat not in db_esistente: db_esistente[cat] = {"colazione":[], "pranzo":[], "cena":[], "merenda":[]}
                         for tipo in types:
                             if tipo not in db_esistente[cat]: db_esistente[cat][tipo] = []
-                            
-                            # Controllo duplicati
                             titoli = [r['title'].lower() for r in db_esistente[cat][tipo]]
                             if ricetta['title'].lower() not in titoli:
                                 db_esistente[cat][tipo].append(ricetta)
-                                count += 1
-                                print(f"   + {ricetta['title']} -> {cat}/{tipo}")
-        except Exception as e:
-            print(f"   ❌ Errore import: {e}")
-
-    print(f"✅ Totale inserimenti: {count}")
+        except: pass
     return db_esistente
 
 def crea_nuove_ricette(offerte):
-    print("🍳 Chef AI al lavoro...")
     context = ""
     if offerte:
         items = [p['name'] for s in offerte for p in offerte[s]]
         if items:
             sample = random.sample(items, min(len(items), 15))
             context = f"Usa ingredienti: {', '.join(sample)}."
-
     try:
-        prompt = f"""
-        Crea 3 ricette NUOVE per categoria.
-        {context}
-        Categorie: mediterranea, vegetariana, mondo.
-        Pasti: colazione, pranzo, cena, merenda.
-        JSON: {{ "mediterranea": {{ "colazione": [...], ... }}, ... }}
-        """
+        prompt = f"""Crea 3 ricette nuove per categoria (mediterranea, vegetariana, mondo) e pasto (colazione, pranzo, cena, merenda). {context} JSON: {{ "mediterranea": {{ ... }} }}"""
         res = model.generate_content(prompt)
         return json.loads(pulisci_json(res.text))
     except: return {}
@@ -170,19 +134,19 @@ def esegui_tutto():
     file_out = os.path.join(base_dir, "dati_settimanali.json")
     
     offerte = analizza_volantini()
-    db_principale = carica_vecchio_db()
-    db_principale = importa_ricette_utenti(db_principale)
-    nuove_ai = crea_nuove_ricette(offerte)
-    db_principale = unisci_db(db_principale, nuove_ai)
+    db_prin = carica_vecchio_db()
+    db_prin = importa_ricette_utenti(db_prin)
+    nuove = crea_nuove_ricette(offerte)
+    db_prin = unisci_db(db_prin, nuove)
 
-    output = {
+    out = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "offerte_per_supermercato": offerte,
-        "database_ricette": db_principale
+        "database_ricette": db_prin
     }
 
     with open(file_out, "w", encoding="utf-8") as f:
-        json.dump(output, f, indent=4, ensure_ascii=False)
+        json.dump(out, f, indent=4, ensure_ascii=False)
     print(f"💾 Salvato: {file_out}")
 
 if __name__ == "__main__":
