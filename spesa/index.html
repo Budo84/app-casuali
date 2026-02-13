@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spesa Smart & Reale</title>
+    <title>Spesa Smart</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta name="theme-color" content="#2E7D32">
     <style>
         :root { --primary: #2E7D32; --bg: #f4f4f4; --card: #fff; --text: #333; --accent: #ff9800; --offer: #d32f2f; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
@@ -44,12 +43,12 @@
 </header>
 
 <div id="p-menu" class="page active">
+    <div id="statusMsg" style="padding:10px; text-align:center; color:#666; font-size:0.8rem; display:none;"></div>
     <div id="menuList" style="padding-bottom: 20px;"></div>
 </div>
 
 <div id="p-spesa" class="page">
     <h3>🛒 Lista Spesa <small id="storeName" style="color:var(--primary)"></small></h3>
-    <p style="font-size:0.8rem; color:#666;">I prezzi appaiono solo se hai caricato il volantino.</p>
     <div id="shopList" style="padding-bottom: 80px;"></div>
     <div class="total-float">
         <span style="font-size:0.9rem; opacity:0.8;">Totale</span>
@@ -65,19 +64,17 @@
 
 <div id="p-famiglia" class="page">
     <h3>📤 Carica Volantino</h3>
-    <p style="font-size:0.8rem; color:#555">Carica qui i PDF. Il robot leggerà i prezzi veri.</p>
     <div class="upload-box">
         <input type="text" id="ghRepo" placeholder="Utente/Repo (es. Budo84/app-casuali)">
-        <input type="password" id="ghToken" placeholder="Token GitHub (ghp_...)">
+        <input type="password" id="ghToken" placeholder="Token GitHub">
         <button class="btn" onclick="saveCreds()" style="background:#555; font-size:0.8rem; padding:8px;">Salva Dati</button>
         <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-        <label style="display:block; text-align:left; font-size:0.9rem; margin-bottom:5px; font-weight:bold;">Nome Supermercato:</label>
+        <label>Nome Supermercato:</label>
         <input type="text" id="pdfName" placeholder="es. conad">
         <input type="file" id="pdfFile" accept="application/pdf" style="margin-top:10px;">
         <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica e Analizza</button>
-        <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:10px; min-height:20px;"></p>
+        <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:10px;"></p>
     </div>
-    <h3>Gestione</h3>
     <button class="btn" style="background:#d32f2f" onclick="hardReset()">⚠️ Reset Totale App</button>
 </div>
 
@@ -94,22 +91,36 @@
     let mainStore = localStorage.getItem('v16_store') || "";
     let locked = JSON.parse(localStorage.getItem('v16_locked')) || {};
 
+    const LOCAL_BACKUP = [
+        {"type":"colazione","title":"Caffè e Biscotti","ingredients":["Caffè","Biscotti"]},
+        {"type":"pranzo","title":"Pasta al Pomodoro","ingredients":["Pasta","Pomodoro"]},
+        {"type":"merenda","title":"Frutto","ingredients":["Mela"]},
+        {"type":"cena","title":"Frittata","ingredients":["Uova","Verdure"]}
+    ];
+
     async function init() {
         if(localStorage.getItem('gh_repo')) document.getElementById('ghRepo').value = localStorage.getItem('gh_repo');
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
+        
+        const msg = document.getElementById('statusMsg');
+        msg.style.display = 'block';
+        msg.innerText = "Caricamento dati...";
+
         try {
+            // Aggiungiamo timestamp per evitare cache vecchia
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
-            if(!res.ok) throw new Error("File JSON non trovato");
-            db = await res.json();
-            document.getElementById('lastUpdate').innerText = "Aggiornato: " + db.data_aggiornamento;
+            if(!res.ok) throw new Error("File JSON non trovato (404)");
             
-            // Gestione Negozi
+            db = await res.json();
+            document.getElementById('lastUpdate').innerText = db.data_aggiornamento;
+            msg.innerText = "Dati caricati. Generazione menu...";
+
+            // Gestione Store Select
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
             const stores = Object.keys(db.offerte_per_supermercato || {});
-            if (stores.length === 0) {
-                sel.innerHTML = "<option>Nessun PDF</option>";
-            } else {
+            if (stores.length === 0) sel.innerHTML = "<option>Nessun PDF</option>";
+            else {
                 stores.forEach(s => {
                     let opt = document.createElement('option');
                     opt.value = s; opt.innerText = s;
@@ -119,11 +130,23 @@
                 sel.value = mainStore;
             }
 
-            // Generazione Menu SE non esiste o se è vecchio
+            // CONTROLLO DI SICUREZZA: Se il db.ricette è vuoto, usiamo il backup locale
+            if (!db.ricette || db.ricette.length === 0) {
+                console.warn("DB Ricette vuoto! Uso backup locale.");
+                db.ricette = LOCAL_BACKUP; 
+                msg.innerText = "Uso menu backup (errore dati server).";
+            } else {
+                msg.style.display = 'none';
+            }
+
             if(!menu.length) generateMenu();
             renderAll();
+
         } catch(e) {
-            document.getElementById('menuList').innerHTML = "<div style='text-align:center; padding:30px; color:#666'><h3>Benvenuto!</h3><p>Nessun dato presente.<br>Vai su <b>Opz</b> e carica il tuo primo volantino PDF.</p></div>";
+            console.error(e);
+            msg.innerHTML = "⚠️ Impossibile caricare i dati aggiornati.<br>Carica un PDF per avviare il robot.";
+            // Anche in caso di errore fatale, proviamo a mostrare un menu se esiste in memoria
+            if(menu.length) renderAll();
         }
     }
 
@@ -134,7 +157,7 @@
         const fileInp = document.getElementById('pdfFile');
         const status = document.getElementById('upStatus');
 
-        if(!repo || !token || !name || !fileInp.files[0]) return alert("Per favore compila tutti i campi!");
+        if(!repo || !token || !name || !fileInp.files[0]) return alert("Compila tutto!");
         if (repo.split('/').length > 2) repo = repo.split('/').slice(0, 2).join('/');
         
         const urlFile = `https://api.github.com/repos/${repo}/contents/spesa/volantini/${name}.pdf`;
@@ -169,15 +192,14 @@
 
                 if(!resUp.ok) {
                     const err = await resUp.json();
-                    throw new Error(`Errore GitHub (${resUp.status}): ${err.message}`);
+                    throw new Error(`Errore GitHub: ${err.message}`);
                 }
 
-                status.innerText = "✅ Caricato! Il robot lavora...";
-                alert("File caricato! Il robot vedrà la modifica e aggiornerà menu e offerte.\nAttendi circa 60-90 secondi e premi 'Reset Totale App' in Gestione.");
+                status.innerText = "✅ Caricato! Attendi 60s...";
+                alert("File caricato! Il robot sta lavorando. Attendi 1 minuto e poi premi 'Reset Totale App'.");
 
             } catch(e) {
                 status.innerText = "❌ Errore: " + e.message;
-                alert(e.message);
             }
         };
         reader.readAsDataURL(file);
@@ -186,30 +208,27 @@
     function saveCreds() {
         localStorage.setItem('gh_repo', document.getElementById('ghRepo').value);
         localStorage.setItem('gh_token', document.getElementById('ghToken').value);
-        alert("Dati salvati!");
+        alert("Salvati!");
     }
 
-    // --- LOGICA MENU SEQUENZIALE (NO RANDOM) ---
     function generateMenu() {
         if(!db || !db.ricette) return;
         
-        // Separiamo le ricette per tipo
-        const r_colazione = db.ricette.filter(r => r.type === 'colazione');
-        const r_pranzo = db.ricette.filter(r => r.type === 'pranzo');
-        const r_merenda = db.ricette.filter(r => r.type === 'merenda');
-        const r_cena = db.ricette.filter(r => r.type === 'cena');
+        // Separiamo per tipo
+        const r_col = db.ricette.filter(r => r.type === 'colazione');
+        const r_pra = db.ricette.filter(r => r.type === 'pranzo');
+        const r_mer = db.ricette.filter(r => r.type === 'merenda');
+        const r_cen = db.ricette.filter(r => r.type === 'cena');
 
         const days = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
         
-        menu = days.map((d, index) => ({
+        menu = days.map((d, i) => ({
             day: d,
             meals: {
-                // Usiamo l'operatore modulo (%) per assegnare ricette sequenzialmente
-                // Lun = index 0, Mar = index 1, ecc.
-                colazione: r_colazione[index % r_colazione.length] || {title:"...", ingredients:[]},
-                pranzo: r_pranzo[index % r_pranzo.length] || {title:"...", ingredients:[]},
-                merenda: r_merenda[index % r_merenda.length] || {title:"...", ingredients:[]},
-                cena: r_cena[index % r_cena.length] || {title:"...", ingredients:[]}
+                colazione: r_col[i % r_col.length] || {title:"...", ingredients:[]},
+                pranzo: r_pra[i % r_pra.length] || {title:"...", ingredients:[]},
+                merenda: r_mer[i % r_mer.length] || {title:"...", ingredients:[]},
+                cena: r_cen[i % r_cen.length] || {title:"...", ingredients:[]}
             }
         }));
         localStorage.setItem('v16_menu', JSON.stringify(menu));
@@ -256,6 +275,7 @@
         const c = document.getElementById('shopList');
         c.innerHTML = "";
         const need = {};
+        
         menu.forEach(d => Object.values(d.meals).forEach(m => {
             if(m.ingredients) m.ingredients.forEach(i => need[i]=(need[i]||0)+1);
         }));
@@ -288,7 +308,7 @@
                 <div style="flex:1">
                     <div style="font-weight:bold; ${found?'color:#2E7D32':''}">${dName}</div>
                     <div style="font-size:0.75rem; color:#666">
-                        ${found ? '' : '⚠️ Niente offerta'} 
+                        ${found ? '' : '⚠️ No offerta'} 
                         <span style="float:right">x${need[item]}</span>
                         ${isLock?`<i class="material-icons" style="font-size:12px; color:red; margin-left:5px; cursor:pointer;" onclick="unlock('${lKey}')">close</i>`:''}
                     </div>
@@ -320,7 +340,7 @@
         
         const list = (db.offerte_per_supermercato[s]||[]);
         if(list.length === 0) {
-            c.innerHTML = "<p>Nessuna offerta caricata per questo negozio.</p>";
+            c.innerHTML = "<p>Nessuna offerta caricata.</p>";
             return;
         }
 
