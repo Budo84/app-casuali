@@ -10,7 +10,7 @@ on:
     paths:
       - 'spesa/volantini/**'
 
-# Blocca esecuzioni multiple per non confondere git
+# Evitiamo conflitti se partono più processi insieme
 concurrency:
   group: spesa_update
   cancel-in-progress: false
@@ -35,33 +35,33 @@ jobs:
       - name: Installa librerie
         run: pip install -U google-generativeai
 
-      # DEBUG: Stampa cosa c'è nella cartella PRIMA di iniziare
-      - name: Controllo File PDF
+      - name: Prepara Cartelle
         run: |
-          echo "📂 Controllo cartella spesa/volantini..."
-          ls -R spesa/volantini/ || echo "Cartella non trovata (verrà creata se necessario)"
+          mkdir -p spesa/volantini
+          echo "Cartella pronta."
 
       - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      # DEBUG: Controlla se il JSON è stato creato
-      - name: Controllo output JSON
+      # --- QUI C'ERA L'ERRORE, ORA È CORRETTO ---
+      - name: Salva su GitHub (Ordine Corretto)
         run: |
-          cat spesa/dati_settimanali.json | head -n 10 || echo "❌ File JSON non generato!"
-
-      - name: Salva su GitHub
-        run: |
+          # 1. Configura Utente
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
           
-          # Aggiorniamo prima di tutto
-          git pull origin main --rebase || git pull origin master --rebase
-          
-          # Aggiungiamo il file generato
+          # 2. PRIMA AGGIUNGIAMO E COMMITTAMO LE MODIFICHE DEL ROBOT
+          # Questo "pulisce" lo stato e evita l'errore "unstaged changes"
           git add spesa/dati_settimanali.json
           
-          # Se il file è cambiato, committa e spingi
-          git commit -m "🥦 Menu Mediterraneo & Offerte Aggiornate" || echo "Nessuna modifica rilevante"
+          # Se non ci sono modifiche, il commit fallisce ma noi continuiamo lo stesso (|| echo)
+          git commit -m "🤖 Menu Aggiornato" || echo "Nessuna modifica da salvare"
+          
+          # 3. ORA CHE ABBIAMO SALVATO, POSSIAMO SCARICARE GLI AGGIORNAMENTI
+          # Usiamo rebase per mettere il nostro salvataggio in cima
+          git pull --rebase origin main || git pull --rebase origin master
+          
+          # 4. INFINE SPEDIAMO TUTTO
           git push
