@@ -1,18 +1,14 @@
 name: Aggiorna Menu Spesa
 
 on:
-  schedule:
-    - cron: '0 6 * * 1'
-  workflow_dispatch:
-  repository_dispatch:
-    types: [webhook]
-  push:
+  workflow_dispatch:      # Avvio manuale
+  push:                   # Avvio se carichi file
     paths:
       - 'spesa/volantini/**'
+      - 'spesa/automazione.py' # Parte anche se tocchi lo script
 
-# Evitiamo conflitti se partono più processi insieme
 concurrency:
-  group: spesa_update
+  group: menu_fix
   cancel-in-progress: false
 
 jobs:
@@ -22,46 +18,37 @@ jobs:
       contents: write
       
     steps:
-      - name: Checkout del codice
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Imposta Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10' 
 
-      - name: Installa librerie
+      - name: Install Libs
         run: pip install -U google-generativeai
 
-      - name: Prepara Cartelle
-        run: |
-          mkdir -p spesa/volantini
-          echo "Cartella pronta."
-
-      - name: Esegui Script Python
+      - name: Genera Menu (Python)
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      # --- QUI C'ERA L'ERRORE, ORA È CORRETTO ---
-      - name: Salva su GitHub (Ordine Corretto)
+      - name: Salva e Pubblica
         run: |
-          # 1. Configura Utente
-          git config --global user.name 'Robot Spesa'
-          git config --global user.email 'robot@spesa.app'
+          git config --global user.name 'Robot Menu'
+          git config --global user.email 'robot@menu.app'
           
-          # 2. PRIMA AGGIUNGIAMO E COMMITTAMO LE MODIFICHE DEL ROBOT
-          # Questo "pulisce" lo stato e evita l'errore "unstaged changes"
+          # 1. Aggiungi il file generato
           git add spesa/dati_settimanali.json
           
-          # Se non ci sono modifiche, il commit fallisce ma noi continuiamo lo stesso (|| echo)
-          git commit -m "🤖 Menu Aggiornato" || echo "Nessuna modifica da salvare"
+          # 2. Committa (Salva in locale)
+          git commit -m "🍳 Nuovo Menu Generato" || echo "Nessuna modifica al menu"
           
-          # 3. ORA CHE ABBIAMO SALVATO, POSSIAMO SCARICARE GLI AGGIORNAMENTI
-          # Usiamo rebase per mettere il nostro salvataggio in cima
+          # 3. Scarica aggiornamenti remoti (evita conflitti)
           git pull --rebase origin main || git pull --rebase origin master
           
-          # 4. INFINE SPEDIAMO TUTTO
+          # 4. Spingi sul server
           git push
