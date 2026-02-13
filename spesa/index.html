@@ -6,7 +6,6 @@
     <title>Spesa Smart</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
     <style>
         :root { --primary: #2E7D32; --bg: #f5f5f5; --card: #fff; --text: #333; --accent: #ff9800; --danger: #d32f2f; --lock: #C2185B; --price: #00897b; }
         body { font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
@@ -20,23 +19,28 @@
         .page.active { display: block; }
         @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; page-break-inside: avoid; }
+        /* CARDS */
+        .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; page-break-inside: avoid; transition: 0.3s; }
         .day-header { background: #e8f5e9; color: var(--primary); padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
+        
         .meal-row { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; position: relative; }
+        
+        /* STILE ALLARME ROSSO */
+        .meal-row.danger-alert { background-color: #ffebee; border-left: 6px solid var(--danger); }
+        .meal-row.danger-alert .meal-title { color: var(--danger); font-weight: 900; text-decoration: underline; }
+        
         .meal-content { flex: 1; padding-right: 80px; } 
         .meal-title { font-weight: 600; font-size: 1rem; color: #444; }
         .meal-ing { font-size: 0.85rem; color: #777; margin-top: 2px; }
-        
-        /* I bottoni non devono vedersi nel PDF */
         .meal-actions { position: absolute; right: 10px; top: 12px; display: flex; gap: 5px; }
-        
         .action-btn { cursor: pointer; color: #ccc; font-size: 1.3rem; padding: 4px; border-radius: 50%; transition: 0.2s; }
         .action-btn:hover { background: #eee; color: var(--primary); }
         .action-btn.active-lock { color: var(--lock); }
         .action-btn.active-fav { color: var(--danger); }
-        .allergen-warning { color: var(--danger); font-size: 0.75rem; display: flex; align-items: center; margin-top: 4px; font-weight: bold; background: #ffebee; padding: 2px 6px; border-radius: 4px; display: inline-flex;}
+        
+        .allergen-warning { color: white; background: var(--danger); font-size: 0.75rem; display: flex; align-items: center; margin-top: 6px; font-weight: bold; padding: 4px 8px; border-radius: 6px; display: inline-flex; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-        /* CHIPS E INPUT */
+        /* UI ELEMENTS */
         .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
         .choice-chip { display: none; } 
         .choice-label { padding: 8px 12px; background: #eee; border-radius: 20px; font-size: 0.85rem; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
@@ -54,14 +58,12 @@
         .input-price { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; }
         .input-price.auto-price { background: #e0f2f1; color: #00695c; font-weight: bold; border: 1px solid #b2dfdb; }
         .total-float { position: fixed; bottom: 80px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
-        
         .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; cursor: pointer; }
         .offer-price { color: var(--price); font-weight: bold; font-size: 1.1rem; }
         .family-chip { background: white; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; display: inline-flex; align-items: center; margin-right: 5px; margin-bottom: 5px; }
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .input-group input, .input-group select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
-        
         .settings-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
@@ -78,7 +80,7 @@
 <header>
     <div style="display:flex; flex-direction:column;">
         <span style="font-weight:bold; font-size:1.1rem;">Spesa Smart</span>
-        <small style="font-size:0.7rem; opacity:0.9">Ricette Infinite</small>
+        <small style="font-size:0.7rem; opacity:0.9">Controllo Allergeni</small>
     </div>
     <div class="status-badge">
         <div id="statusDot" class="dot"></div>
@@ -93,20 +95,15 @@
             <select id="dietType" onchange="saveDietSettings()" style="border:none; background:transparent; font-weight:bold; color:var(--primary); font-size:1rem; outline:none;">
                 <option value="mediterranea">Mediterranea</option>
                 <option value="vegetariana">Vegetariana</option>
-                <option value="mondo">Dal Mondo</option>
+                <option value="senza_glutine">Senza Glutine</option> <option value="mondo">Dal Mondo</option>
                 <option value="mix">Tutto (Mix)</option>
             </select>
         </div>
         <div style="display:flex; gap:5px;">
-            <button class="btn btn-outline btn-small" onclick="generateMenu(true)" title="Nuovo Menu">
-                <i class="material-icons" style="vertical-align:middle;">autorenew</i>
-            </button>
-            <button class="btn btn-outline btn-small" onclick="exportPDF()" title="Scarica PDF" style="border-color:#d32f2f; color:#d32f2f;">
-                <i class="material-icons" style="vertical-align:middle;">picture_as_pdf</i>
-            </button>
+            <button class="btn btn-outline btn-small" onclick="generateMenu(true)" title="Nuovo Menu"><i class="material-icons" style="vertical-align:middle;">autorenew</i></button>
+            <button class="btn btn-outline btn-small" onclick="exportPDF()" title="Scarica PDF" style="border-color:#d32f2f; color:#d32f2f;"><i class="material-icons" style="vertical-align:middle;">picture_as_pdf</i></button>
         </div>
     </div>
-
     <div id="printableArea">
         <div id="menuList" style="padding-bottom: 20px;"></div>
     </div>
@@ -115,18 +112,15 @@
 <div id="p-ricette" class="page">
     <h3>📖 Aggiungi al Database</h3>
     <div class="new-recipe-box">
-        <label>Titolo:</label>
-        <input type="text" id="customTitle" placeholder="es. Frittata di Zucchine">
-        <label>Ingredienti (virgola):</label>
-        <input type="text" id="customIng" placeholder="es. Uova, Zucchine, Sale">
-        
-        <label style="margin-top:10px; display:block; font-weight:bold;">Categoria:</label>
+        <label>Titolo:</label><input type="text" id="customTitle" placeholder="es. Pollo al Curry">
+        <label>Ingredienti (virgola):</label><input type="text" id="customIng" placeholder="es. Pollo, Riso, Curry">
+        <label style="margin-top:10px; display:block; font-weight:bold;">Categorie:</label>
         <div class="chip-container">
             <input type="checkbox" id="cat_med" class="choice-chip" name="cat" value="mediterranea"><label for="cat_med" class="choice-label">Mediterranea</label>
             <input type="checkbox" id="cat_veg" class="choice-chip" name="cat" value="vegetariana"><label for="cat_veg" class="choice-label">Vegetariana</label>
+            <input type="checkbox" id="cat_gf" class="choice-chip" name="cat" value="senza_glutine"><label for="cat_gf" class="choice-label">Senza Glutine</label>
             <input type="checkbox" id="cat_mondo" class="choice-chip" name="cat" value="mondo"><label for="cat_mondo" class="choice-label">Mondo</label>
         </div>
-
         <label style="margin-top:10px; display:block; font-weight:bold;">Pasto:</label>
         <div class="chip-container">
             <input type="checkbox" id="meal_col" class="choice-chip" name="type" value="colazione"><label for="meal_col" class="choice-label">Colazione</label>
@@ -134,7 +128,6 @@
             <input type="checkbox" id="meal_cen" class="choice-chip" name="type" value="cena"><label for="meal_cen" class="choice-label">Cena</label>
             <input type="checkbox" id="meal_mer" class="choice-chip" name="type" value="merenda"><label for="meal_mer" class="choice-label">Merenda</label>
         </div>
-
         <button class="btn" onclick="uploadRecipeToCloud()">☁️ Invia al Database</button>
         <p id="recUpStatus" style="font-size:0.8rem; color:#666; margin-top:5px; text-align:center;"></p>
     </div>
@@ -154,7 +147,8 @@
 </div>
 
 <div id="p-famiglia" class="page">
-    <h3>👨‍👩‍👧‍👦 Famiglia</h3>
+    <h3>👨‍👩‍👧‍👦 Famiglia & Salute</h3>
+    <p style="font-size:0.9rem; color:#666">Imposta qui le intolleranze per attivare l'allarme rosso.</p>
     <div class="input-group"><input type="text" id="memberName" placeholder="Nome"><select id="memberAllergy"><option value="">Nessuna</option><option value="Glutine">Glutine</option><option value="Lattosio">Lattosio</option><option value="Uova">Uova</option><option value="Pesce">Pesce</option><option value="Frutta a guscio">Frutta a guscio</option><option value="Diabete">Diabete</option></select></div>
     <button class="btn" onclick="addFamilyMember()">Aggiungi</button>
     <div id="familyContainer" style="margin-top:15px;"></div>
@@ -188,13 +182,14 @@
     let shopData = JSON.parse(localStorage.getItem('smart_shop_data')) || {}; 
     let dietSettings = localStorage.getItem('smart_diet') || 'mediterranea';
 
+    // --- MAPPA ALLERGENI ESTESA (IL CERVELLO DI SICUREZZA) ---
     const riskMap = {
-        "Glutine": ["pane", "pasta", "farina", "biscotti", "cereali", "orzo", "farro", "pizza", "focaccia", "crostini"],
-        "Lattosio": ["latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", "ricotta", "mascarpone"],
-        "Uova": ["uova", "frittata", "mayonese", "crema", "carbonara", "pancakes"],
-        "Pesce": ["pesce", "tonno", "merluzzo", "salmone", "sogliola", "gamberi", "cozze", "vongole", "acciughe"],
-        "Frutta a guscio": ["noci", "mandorle", "nocciole", "pistacchi", "anacardi", "arachidi", "pesto"],
-        "Diabete": ["zucchero", "miele", "cioccolato", "torta", "biscotti", "dolce", "marmellata", "succo", "sciroppo", "bevanda", "canditi", "brioche"]
+        "Glutine": ["pane", "pasta", "farina", "biscotti", "cereali", "orzo", "farro", "kamut", "seitan", "pizza", "focaccia", "crostini", "pangrattato", "piadina", "malto", "segale"],
+        "Lattosio": ["latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", "ricotta", "mascarpone", "fiordilatte", "besciamella", "provola", "gorgonzola"],
+        "Uova": ["uova", "frittata", "mayonese", "crema", "carbonara", "pancakes", "meringa", "tiramisù", "albume", "tuorlo"],
+        "Pesce": ["pesce", "tonno", "merluzzo", "salmone", "sogliola", "gamberi", "cozze", "vongole", "acciughe", "crostacei", "molluschi", "spada", "calamari", "polpo"],
+        "Frutta a guscio": ["noci", "mandorle", "nocciole", "pistacchi", "anacardi", "arachidi", "pesto", "macadamia", "pinoli", "praline", "croccante", "nocciolata"],
+        "Diabete": ["zucchero", "miele", "cioccolato", "torta", "biscotti", "dolce", "marmellata", "succo", "sciroppo", "bevanda", "canditi", "brioche", "nutella", "caramello"]
     };
 
     async function init() {
@@ -222,28 +217,14 @@
 
     function updateStatus(s) { document.getElementById('statusDot').className = 'dot ' + s; document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline'; }
 
-    // --- PDF EXPORT ---
     function exportPDF() {
         const el = document.getElementById('printableArea');
-        // Nascondi i bottoni temporaneamente
         const btns = el.querySelectorAll('.meal-actions');
         btns.forEach(b => b.style.display = 'none');
-        
-        const opt = {
-            margin: 10,
-            filename: `Menu_Settimanale_${new Date().toLocaleDateString()}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().from(el).set(opt).save().then(() => {
-            // Ripristina bottoni
-            btns.forEach(b => b.style.display = 'flex');
-        });
+        const opt = { margin: 10, filename: `Menu_Settimanale_${new Date().toLocaleDateString()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+        html2pdf().from(el).set(opt).save().then(() => { btns.forEach(b => b.style.display = 'flex'); });
     }
 
-    // --- UPLOAD RICETTA CLOUD ---
     async function uploadRecipeToCloud() {
         let t = document.getElementById('customTitle').value.trim();
         let i = document.getElementById('customIng').value.trim();
@@ -273,6 +254,7 @@
     }
 
     function saveDietSettings() { dietSettings = document.getElementById('dietType').value; localStorage.setItem('smart_diet', dietSettings); }
+    
     function getPoolForMeal(type) {
         let pools = [];
         if(db && db.database_ricette) {
@@ -281,13 +263,20 @@
         }
         return pools;
     }
+
+    // --- SMART SWAP: CERCA UNA RICETTA SICURA ---
     function pickSafeRecipe(pool, avoidTitle) {
+        // Filtra: rimuovi ricette che contengono allergeni segnalati nella "Famiglia"
         let safePool = pool.filter(r => checkAllergens(r.ingredients) === null);
+        
+        // Se non ci sono ricette sicure (raro), usa l'intera lista ma mostrerà il warning rosso
         if(safePool.length === 0) safePool = pool;
+        
         if(avoidTitle) safePool = safePool.filter(r => r.title !== avoidTitle);
         if(safePool.length === 0) return {title: "Libero", ingredients: []};
         return safePool[Math.floor(Math.random() * safePool.length)];
     }
+
     function generateMenu(force) {
         const days = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
         const types = ['colazione','pranzo','merenda','cena'];
@@ -300,7 +289,7 @@
                 if(locked[k] && force) dayObj.meals[t] = locked[k];
                 else {
                     let pool = getPoolForMeal(t);
-                    let pick = pickSafeRecipe(pool, null);
+                    let pick = pickSafeRecipe(pool, null); // Qui avviene la magia della selezione sicura
                     dayObj.meals[t] = pick;
                 }
             });
@@ -310,15 +299,18 @@
         localStorage.setItem('smart_menu', JSON.stringify(menu));
         updateShopDataFromMenu(); renderAll();
     }
+
     function swapMeal(dayIdx, type) {
         if(locked[`${dayIdx}_${type}`]) return alert("Sblocca prima!");
         let current = menu[dayIdx].meals[type];
         let pool = getPoolForMeal(type);
+        // Quando fai "Swap", il sistema cerca attivamente una ricetta SICURA (pickSafeRecipe)
         let newR = pickSafeRecipe(pool, current.title);
         menu[dayIdx].meals[type] = newR;
         localStorage.setItem('smart_menu', JSON.stringify(menu));
         updateShopDataFromMenu(); renderAll();
     }
+
     function updateShopDataFromMenu() {
         let needs = {};
         menu.forEach(d => Object.values(d.meals).forEach(m => { if(m.ingredients) m.ingredients.forEach(i => needs[i] = (needs[i]||0)+1); }));
@@ -371,6 +363,7 @@
         db.offerte_per_supermercato[s].forEach(o => { c.innerHTML += `<div class="offer-card" onclick="addOfferToList('${o.name}',${o.price})"><div style="font-size:0.9rem">${o.name}</div><div style="color:#00897b;font-weight:bold">€${o.price.toFixed(2)}</div><small>+ Aggiungi</small></div>`; });
     }
     function addOfferToList(n,p) { if(!shopData[n]) shopData[n]={qty:1,price:p,checked:false,isManual:true,isOffer:true}; else {shopData[n].price=p;shopData[n].isOffer=true;} localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); alert("Aggiunto!"); renderShop(); }
+    
     function renderMenu() {
         const c = document.getElementById('menuList'); c.innerHTML = "";
         menu.forEach((d, dayIdx) => {
@@ -382,23 +375,27 @@
                 let isF = favorites.includes(m.title);
                 let w = checkAllergens(m.ingredients);
                 let ico = t==='colazione'?'☕': t==='pranzo'?'🍝': t==='merenda'?'🍎':'🌙';
-                // AGGIUNTO: data-html2canvas-ignore="true" per nascondere i bottoni nel PDF (se supportato), ma la logica JS è più sicura
-                html += `<div class="meal-row"><div style="font-size:24px; width:35px;">${ico}</div><div class="meal-content"><div class="meal-title">${m.title} ${m.isCustom?'<span style="font-size:0.7rem;background:#E3F2FD;padding:2px;border-radius:4px">MIO</span>':''}</div><div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>${w?`<div class="allergen-warning"><i class="material-icons">warning</i> ${w}</div>`:''}</div><div class="meal-actions"><i class="material-icons action-btn" onclick="swapMeal(${dayIdx},'${t}')">sync</i><i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i><i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i></div></div>`;
+                // CLASSE DINAMICA PER ALLARME
+                let dangerClass = w ? 'danger-alert' : '';
+                html += `<div class="meal-row ${dangerClass}"><div style="font-size:24px; width:35px;">${ico}</div><div class="meal-content"><div class="meal-title">${m.title} ${m.isCustom?'<span style="font-size:0.7rem;background:#E3F2FD;padding:2px;border-radius:4px">MIO</span>':''}</div><div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>${w?`<div class="allergen-warning"><i class="material-icons" style="font-size:16px; margin-right:5px;">warning</i> ${w}</div>`:''}</div><div class="meal-actions"><i class="material-icons action-btn" onclick="swapMeal(${dayIdx},'${t}')">sync</i><i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i><i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i></div></div>`;
             });
             c.innerHTML += html + "</div>";
         });
     }
+
     function checkAllergens(ings) {
         if(!ings) return null;
         let hits = [];
         family.forEach(f => {
             if(f.allergy) {
                 let keys = riskMap[f.allergy] || [f.allergy.toLowerCase()];
-                if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name);
+                // Controllo se un ingrediente contiene una delle parole chiave
+                if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name + " (" + f.allergy + ")");
             }
         });
-        return hits.length ? "No: " + hits.join(', ') : null;
+        return hits.length ? "PERICOLO: " + hits.join(', ') : null;
     }
+
     function toggleLock(d,t){ let k=`${d}_${t}`; if(locked[k]) delete locked[k]; else locked[k]=menu[d].meals[t]; localStorage.setItem('smart_locked',JSON.stringify(locked)); renderMenu(); }
     function toggleFav(t){ if(favorites.includes(t)) favorites=favorites.filter(x=>x!==t); else favorites.push(t); localStorage.setItem('smart_fav',JSON.stringify(favorites)); renderMenu(); }
     function addFamilyMember() { let n=document.getElementById('memberName').value, a=document.getElementById('memberAllergy').value; if(n){ family.push({name:n, allergy:a}); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu(); } }
