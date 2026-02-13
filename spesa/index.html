@@ -9,12 +9,12 @@
         :root { --primary: #2E7D32; --bg: #f5f5f5; --card: #fff; --text: #333; --accent: #ff9800; --danger: #d32f2f; --lock: #C2185B; --price: #00897b; }
         body { font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
         
-        /* HEADER */
+        /* HEADER & STATUS */
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .status-badge { display: flex; align-items: center; font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 6px; }
         .dot.online { background: #00E676; box-shadow: 0 0 5px #00E676; }
-        
+
         /* PAGINE */
         .page { display: none; padding: 15px; animation: slideIn 0.3s ease-out; }
         .page.active { display: block; }
@@ -32,35 +32,40 @@
         .action-btn.active-lock { color: var(--lock); }
         .action-btn.active-fav { color: var(--danger); }
         .allergen-warning { color: var(--accent); font-size: 0.75rem; display: flex; align-items: center; margin-top: 4px; font-weight: bold; }
-        .allergen-warning i { font-size: 14px; margin-right: 4px; }
+        
+        /* LISTA SPESA */
+        .add-item-box { display: flex; gap: 10px; margin-bottom: 15px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+        .add-item-box input { flex: 1; padding: 8px; border: none; outline: none; font-size: 1rem; }
+        .add-item-box button { background: var(--primary); color: white; border: none; width: 40px; border-radius: 4px; font-size: 1.2rem; cursor: pointer; }
 
-        /* LISTA SPESA AVANZATA */
-        .shop-item { background: white; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
+        .shop-item { background: white; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; transition: 0.2s; }
         .shop-item.checked { opacity: 0.6; background: #f9f9f9; }
         .shop-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .item-name { font-weight: bold; font-size: 1rem; }
         .item-inputs { display: flex; gap: 10px; width: 100%; align-items: center; }
         
-        /* Input Prezzi/Quantità */
-        .input-qty, .input-price { padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; text-align: center; }
-        .input-qty { width: 50px; background: #f0f8ff; }
-        .input-price { flex: 1; background: #fff; color: var(--price); font-weight: bold; }
-        .input-price.auto-price { border: 1px solid var(--price); background: #e0f2f1; } /* Prezzo trovato nel volantino */
+        .input-qty { width: 50px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; background: #f0f8ff; }
+        .input-price { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; }
+        .input-price.auto-price { background: #e0f2f1; color: #00695c; font-weight: bold; border: 1px solid #b2dfdb; } /* Stile Offerta Volantino */
         
         .check-btn { font-size: 24px; color: #ccc; cursor: pointer; }
         .check-btn.checked { color: var(--primary); }
+        .delete-item { color: #ff9800; font-size: 18px; cursor: pointer; margin-left: 10px; }
 
-        /* TOTALE FLUTTUANTE */
         .total-float { position: fixed; bottom: 80px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
 
-        /* FAMIGLIA */
-        .family-chip { background: white; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; display: flex; align-items: center; font-size: 0.9rem; margin-right: 5px; margin-bottom: 5px; display: inline-flex; }
+        /* OFFERTE CARD */
+        .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; cursor: pointer; position: relative; }
+        .offer-price { color: var(--price); font-weight: bold; font-size: 1.1rem; }
+
+        /* UI GENERALE */
+        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .family-chip { background: white; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; display: inline-flex; align-items: center; margin-right: 5px; margin-bottom: 5px; }
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .input-group input, .input-group select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
 
-        /* UI ELEMENTS */
-        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 65px; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; font-size: 0.75rem; }
         .nav a.active { color: var(--primary); font-weight: bold; }
@@ -89,7 +94,12 @@
 
 <div id="p-spesa" class="page">
     <h3>🛒 Lista della Spesa</h3>
-    <p style="font-size:0.8rem; color:#666;">I prezzi verdi vengono dai volantini caricati.</p>
+    
+    <div class="add-item-box">
+        <input type="text" id="manualItemName" placeholder="Aggiungi prodotto (es. Detersivo)...">
+        <button onclick="addManualItem()">+</button>
+    </div>
+
     <div id="shopList" style="padding-bottom: 80px;"></div>
     
     <div class="total-float">
@@ -98,68 +108,86 @@
     </div>
 </div>
 
+<div id="p-offerte" class="page">
+    <h3>Offerte dal Volantino</h3>
+    <p style="font-size:0.8rem; color:#666">Clicca su un prodotto per aggiungerlo alla lista spesa col prezzo bloccato.</p>
+    <select id="storeSelect" onchange="renderOffers()" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;"></select>
+    <div id="offerList" class="offer-grid"></div>
+</div>
+
 <div id="p-famiglia" class="page">
-    <h3>👨‍👩‍👧‍👦 La tua Famiglia</h3>
+    <h3>👨‍👩‍👧‍👦 Famiglia</h3>
     <div class="input-group">
         <input type="text" id="memberName" placeholder="Nome">
         <select id="memberAllergy">
             <option value="">Nessuna allergia</option>
             <option value="Glutine">Glutine</option>
             <option value="Lattosio">Lattosio</option>
-            <option value="Nichel">Nichel</option>
             <option value="Uova">Uova</option>
             <option value="Pesce">Pesce</option>
         </select>
     </div>
-    <button class="btn" onclick="addFamilyMember()">Aggiungi</button>
-    <div id="familyContainer" style="margin-top:15px;"></div>
+    <button class="btn" onclick="addFamilyMember()">Aggiungi Membro</button>
+    <div id="familyContainer" style="margin-top:15px; margin-bottom:20px;"></div>
 
-    <hr style="margin: 20px 0; border:0; border-top:1px solid #eee;">
-    <h3>⚙️ Impostazioni</h3>
+    <hr style="border:0; border-top:1px solid #eee;">
+    
+    <h3>⚙️ Configurazione</h3>
     <div style="background:white; padding:15px; border-radius:10px; border:2px dashed #ccc;">
-        <input type="text" id="ghRepo" placeholder="Repo (es. User/Repo)" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
+        <input type="text" id="ghRepo" placeholder="Repo GitHub" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
         <input type="password" id="ghToken" placeholder="Token GitHub" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
         <button onclick="saveCreds()" style="padding:5px; width:100%;">Salva Login</button>
         
         <div style="margin-top:15px;">
-            <label>Carica PDF:</label>
+            <label>Carica Volantino PDF:</label>
             <input type="text" id="pdfName" placeholder="Nome Supermercato" style="width:100%; margin-top:5px; padding:8px; border:1px solid #ddd;">
             <input type="file" id="pdfFile" accept="application/pdf" style="margin-top:5px;">
         </div>
-        <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica Volantino</button>
+        <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica e Analizza</button>
         <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
     </div>
-    <button class="btn" style="background:var(--danger); margin-top:20px;" onclick="hardReset()">⚠️ Reset App</button>
 </div>
 
 <nav class="nav">
     <a onclick="go('p-menu', this)" class="active"><i class="material-icons">restaurant_menu</i>Menu</a>
     <a onclick="go('p-spesa', this)"><i class="material-icons">shopping_cart</i>Spesa</a>
-    <a onclick="go('p-famiglia', this)"><i class="material-icons">people</i>Famiglia</a>
+    <a onclick="go('p-offerte', this)"><i class="material-icons">local_offer</i>Offerte</a>
+    <a onclick="go('p-famiglia', this)"><i class="material-icons">settings</i>Opz</a>
 </nav>
 
 <script>
-    // DATI
+    // --- STATO DATI ---
     let db = null;
     let menu = JSON.parse(localStorage.getItem('smart_menu')) || [];
     let family = JSON.parse(localStorage.getItem('smart_family')) || [];
     let locked = JSON.parse(localStorage.getItem('smart_locked')) || {};
     let favorites = JSON.parse(localStorage.getItem('smart_fav')) || [];
-    // Shop Data: { "Pasta": {qty: 2, price: 1.20, checked: false} }
+    // ShopData contiene: { "Pasta": {qty:1, price:0.79, checked:false, isManual:false, isOffer:true} }
     let shopData = JSON.parse(localStorage.getItem('smart_shop_data')) || {}; 
+    let mainStore = localStorage.getItem('smart_store') || "";
 
-    // INIT
     async function init() {
         renderFamily();
         if(localStorage.getItem('gh_repo')) document.getElementById('ghRepo').value = localStorage.getItem('gh_repo');
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
+        
         updateStatus('loading');
-
         try {
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
             if(!res.ok) throw new Error("JSON 404");
             db = await res.json();
             updateStatus('online');
+            
+            // Popola Select Store
+            const sel = document.getElementById('storeSelect');
+            sel.innerHTML = "";
+            const stores = Object.keys(db.offerte_per_supermercato || {});
+            if(stores.length>0) {
+                stores.forEach(s => { let opt=document.createElement('option'); opt.value=s; opt.innerText=s; sel.appendChild(opt); });
+                if(!mainStore || !stores.includes(mainStore)) mainStore = stores[0];
+                sel.value = mainStore;
+            } else { sel.innerHTML = "<option>Nessun Volantino</option>"; }
+
             if(!menu.length) generateMenu(false);
             renderAll();
         } catch(e) {
@@ -171,33 +199,25 @@
 
     function updateStatus(s) {
         document.getElementById('statusDot').className = 'dot ' + s;
-        document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : (s==='loading'?'...':'Offline');
+        document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline';
     }
 
-    // MENU
+    // --- LOGICA MENU ---
     function generateMenu(force) {
         if(!db || !db.ricette) return;
         const days = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
         const types = ['colazione','pranzo','merenda','cena'];
-        
         let newMenu = force ? [] : menu;
-        
+
         for(let i=0; i<7; i++) {
             if(!force && newMenu[i]) continue;
             let dayObj = { day: days[i], meals: {} };
-            
             types.forEach(t => {
-                let key = `${i}_${t}`;
-                if(locked[key] && force) dayObj.meals[t] = locked[key];
+                let k = `${i}_${t}`;
+                if(locked[k] && force) dayObj.meals[t] = locked[k];
                 else {
                     let pool = db.ricette.filter(r => r.type === t);
-                    // Prova a inserire i preferiti ogni tanto
-                    let favPool = pool.filter(r => favorites.includes(r.title));
-                    let pick = null;
-                    
-                    if(favPool.length > 0 && Math.random() > 0.7) pick = favPool[Math.floor(Math.random()*favPool.length)];
-                    else pick = pool.length ? pool[Math.floor(Math.random()*pool.length)] : {title:"Libero", ingredients:[]};
-                    
+                    let pick = pool.length ? pool[Math.floor(Math.random()*pool.length)] : {title:"Libero", ingredients:[]};
                     dayObj.meals[t] = pick;
                 }
             });
@@ -206,138 +226,139 @@
         menu = newMenu;
         localStorage.setItem('smart_menu', JSON.stringify(menu));
         
-        // Quando rigeneriamo il menu, resettiamo i dati "automatici" della spesa ma teniamo le modifiche manuali?
-        // Per semplicità: ricalcoliamo le quantità suggerite, ma se l'utente ha toccato i prezzi li teniamo.
         updateShopDataFromMenu(); 
-        
-        renderMenu();
-        renderShop();
+        renderAll();
     }
 
+    // --- LOGICA LISTA SPESA (CORE) ---
     function updateShopDataFromMenu() {
-        // Calcola fabbisogno dal menu
-        let needs = {};
+        // 1. Calcola fabbisogno dal menu attuale
+        let menuNeeds = {};
         menu.forEach(d => Object.values(d.meals).forEach(m => {
-            if(m.ingredients) m.ingredients.forEach(ing => needs[ing] = (needs[ing]||0)+1);
+            if(m.ingredients) m.ingredients.forEach(i => menuNeeds[i] = (menuNeeds[i]||0)+1);
         }));
 
-        // Sincronizza con shopData
-        Object.keys(needs).forEach(item => {
-            if(!shopData[item]) shopData[item] = { qty: needs[item], price: 0, checked: false };
-            else {
-                // Se c'è già, aggiorniamo solo la quantità "suggerita" se l'utente non l'ha sovrascritta (difficile saperlo, quindi sommiamo/aggiorniamo)
-                // Strategia semplice: Aggiorna quantità base = occorrenze
-                shopData[item].qty = needs[item];
+        // 2. Unisci con i dati esistenti per non perdere lo stato (checked/manual/prezzo editato)
+        let newShopData = {};
+
+        // A. Aggiungi ingredienti del menu
+        Object.keys(menuNeeds).forEach(item => {
+            let existing = shopData[item];
+            if(existing) {
+                // Se esisteva, mantieni prezzo manuale e check, aggiorna solo quantità suggerita
+                newShopData[item] = { 
+                    qty: menuNeeds[item], 
+                    price: existing.price, 
+                    checked: existing.checked,
+                    isManual: false,
+                    isOffer: existing.isOffer
+                };
+            } else {
+                // Nuovo ingrediente dal menu
+                newShopData[item] = { qty: menuNeeds[item], price: 0, checked: false, isManual: false, isOffer: false };
             }
             
-            // Cerca prezzo nei volantini se il prezzo è 0
-            if(shopData[item].price === 0) {
-                let offerPrice = findOfferPrice(item);
-                if(offerPrice > 0) {
-                    shopData[item].price = offerPrice;
-                    shopData[item].isOffer = true; // Flag per colorarlo di verde
+            // Auto-Prezzo: Se il prezzo è 0 o nullo, cerca nel volantino
+            if(!newShopData[item].price) {
+                let offer = findOfferPrice(item);
+                if(offer > 0) {
+                    newShopData[item].price = offer;
+                    newShopData[item].isOffer = true;
                 }
             }
         });
-        
-        // Pulizia: rimuovi item che non servono più e non sono checkati? 
-        // No, meglio lasciarli, l'utente li cancella se vuole.
+
+        // B. Aggiungi elementi MANUALI dell'utente (che non sono nel menu)
+        Object.keys(shopData).forEach(item => {
+            if(shopData[item].isManual) {
+                newShopData[item] = shopData[item];
+            }
+        });
+
+        shopData = newShopData;
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
+    }
+
+    function addManualItem() {
+        let name = document.getElementById('manualItemName').value.trim();
+        if(!name) return;
+        
+        // Prima lettera maiuscola
+        name = name.charAt(0).toUpperCase() + name.slice(1);
+
+        if(!shopData[name]) {
+            shopData[name] = { qty: 1, price: 0, checked: false, isManual: true, isOffer: false };
+            // Cerca comunque se c'è un'offerta per questo prodotto manuale
+            let offer = findOfferPrice(name);
+            if(offer > 0) { shopData[name].price = offer; shopData[name].isOffer = true; }
+        } else {
+            shopData[name].qty++;
+            shopData[name].isManual = true; // Diventa manuale così non sparisce se rigeneri menu
+        }
+        
+        document.getElementById('manualItemName').value = "";
+        localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
+        renderShop();
     }
 
     function findOfferPrice(itemName) {
         if(!db || !db.offerte_per_supermercato) return 0;
-        let bestPrice = 0;
-        // Cerca in tutti i supermercati
+        let best = 0;
+        // Cerca in tutti i volantini caricati
         Object.values(db.offerte_per_supermercato).forEach(list => {
-            let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase()) || itemName.toLowerCase().includes(o.name.toLowerCase()));
-            if(match) {
-                // Prendi il primo o il più basso? Prendiamo il primo trovato per ora
-                if(bestPrice === 0 || match.price < bestPrice) bestPrice = match.price;
-            }
+            let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase()));
+            if(match) best = match.price;
         });
-        return bestPrice;
+        return best;
     }
 
-    // RENDER MENU
-    function renderMenu() {
-        const c = document.getElementById('menuList');
-        c.innerHTML = "";
-        menu.forEach((d, dayIdx) => {
-            let html = `<div class="card"><div class="day-header">${d.day}</div>`;
-            ['colazione','pranzo','merenda','cena'].forEach(t => {
-                let m = d.meals[t];
-                let key = `${dayIdx}_${t}`;
-                let isL = !!locked[key];
-                let isF = favorites.includes(m.title);
-                let warn = checkAllergens(m.ingredients);
-                let ico = t==='colazione'?'☕': t==='pranzo'?'🍝': t==='merenda'?'🍎':'🌙';
-                
-                html += `
-                <div class="meal-row">
-                    <div style="font-size:24px; width:40px;">${ico}</div>
-                    <div class="meal-content">
-                        <div class="meal-title">${m.title}</div>
-                        <div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>
-                        ${warn?`<div class="allergen-warning"><i class="material-icons">warning</i> ${warn}</div>`:''}
-                    </div>
-                    <div class="meal-actions">
-                        <i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i>
-                        <i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i>
-                        <i class="material-icons action-btn" onclick="editMeal(${dayIdx},'${t}')">edit</i>
-                    </div>
-                </div>`;
-            });
-            c.innerHTML += html + "</div>";
-        });
-    }
-
-    // LISTA SPESA (NUOVA LOGICA PREZZI/QTÀ)
     function renderShop() {
         const c = document.getElementById('shopList');
         c.innerHTML = "";
         let total = 0;
+        
+        // Ordina: Prima non spuntati, poi spuntati
+        let keys = Object.keys(shopData).sort((a,b) => {
+            if(shopData[a].checked === shopData[b].checked) return a.localeCompare(b);
+            return shopData[a].checked ? 1 : -1;
+        });
 
-        // Ordina: Non checkati prima
-        let items = Object.keys(shopData).sort();
-
-        if(items.length === 0) {
-            c.innerHTML = "<p style='text-align:center; color:#999; margin-top:20px;'>Lista vuota. Genera un menu!</p>";
+        if(keys.length === 0) {
+            c.innerHTML = "<p style='text-align:center; color:#999; margin-top:20px'>Lista vuota. Aggiungi prodotti o genera un menu.</p>";
             document.getElementById('totalPrice').innerText = "€ 0.00";
             return;
         }
 
-        items.forEach(name => {
+        keys.forEach(name => {
             let item = shopData[name];
-            // Calcola parziale
-            let subtotal = item.qty * item.price;
-            if(!item.checked) total += subtotal;
-
+            let sub = item.qty * item.price;
+            if(!item.checked) total += sub;
+            
             let priceClass = item.isOffer ? 'auto-price' : '';
 
             c.innerHTML += `
             <div class="shop-item ${item.checked?'checked':''}">
                 <div class="shop-header">
-                    <span class="item-name">${name}</span>
-                    <i class="material-icons check-btn ${item.checked?'checked':''}" onclick="toggleCheck('${name}')">check_circle</i>
+                    <span class="item-name">${name} ${item.isManual ? '<small style="color:#ff9800">*</small>' : ''}</span>
+                    <div style="display:flex; align-items:center;">
+                        ${item.isManual ? `<i class="material-icons delete-item" onclick="deleteItem('${name}')">delete</i>` : ''}
+                        <i class="material-icons check-btn ${item.checked?'checked':''}" onclick="toggleCheck('${name}')">check_circle</i>
+                    </div>
                 </div>
                 <div class="item-inputs">
                     <input type="number" class="input-qty" value="${item.qty}" min="1" onchange="updateShopItem('${name}', 'qty', this.value)">
                     <span style="font-size:0.9rem;">x</span>
-                    <input type="number" class="input-price ${priceClass}" value="${item.price}" step="0.01" placeholder="€ 0.00" onchange="updateShopItem('${name}', 'price', this.value)">
+                    <input type="number" class="input-price ${priceClass}" value="${item.price}" step="0.01" placeholder="Prezzo" onchange="updateShopItem('${name}', 'price', this.value)">
                 </div>
             </div>`;
         });
-
         document.getElementById('totalPrice').innerText = "€ " + total.toFixed(2);
     }
 
-    function updateShopItem(name, field, value) {
+    function updateShopItem(name, field, val) {
         if(!shopData[name]) return;
-        shopData[name][field] = parseFloat(value) || 0;
-        // Se l'utente modifica il prezzo, non è più un'offerta automatica
-        if(field === 'price') shopData[name].isOffer = false;
-        
+        shopData[name][field] = parseFloat(val) || 0;
+        if(field === 'price') shopData[name].isOffer = false; // Se tocchi il prezzo, perde lo status di offerta automatica
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
         renderShop();
     }
@@ -348,44 +369,83 @@
         renderShop();
     }
 
-    // ACTIONS
-    function toggleLock(d,t) {
-        let k=`${d}_${t}`;
-        if(locked[k]) delete locked[k]; else locked[k] = menu[d].meals[t];
-        localStorage.setItem('smart_locked', JSON.stringify(locked));
-        renderMenu();
-    }
-    function toggleFav(title) {
-        if(favorites.includes(title)) favorites=favorites.filter(x=>x!==title); else favorites.push(title);
-        localStorage.setItem('smart_fav', JSON.stringify(favorites));
-        renderMenu();
-    }
-    function editMeal(d,t) {
-        let m=prompt("Modifica:", menu[d].meals[t].title);
-        if(m) { menu[d].meals[t].title=m; menu[d].meals[t].ingredients=[m]; localStorage.setItem('smart_menu', JSON.stringify(menu)); updateShopDataFromMenu(); renderAll(); }
+    function deleteItem(name) {
+        if(confirm(`Rimuovere ${name}?`)) {
+            delete shopData[name];
+            localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
+            renderShop();
+        }
     }
 
-    // FAMIGLIA
-    function addFamilyMember() {
-        let n = document.getElementById('memberName').value;
-        let a = document.getElementById('memberAllergy').value;
-        if(n) { family.push({name:n, allergy:a}); localStorage.setItem('smart_family', JSON.stringify(family)); renderFamily(); renderMenu(); }
-    }
-    function renderFamily() {
-        let c = document.getElementById('familyContainer'); c.innerHTML="";
-        family.forEach((f,i)=> c.innerHTML+=`<div class="family-chip">${f.name} ${f.allergy?'('+f.allergy+')':''} <i class="material-icons" style="font-size:16px; margin-left:5px; cursor:pointer" onclick="family.splice(${i},1); localStorage.setItem('smart_family', JSON.stringify(family)); renderFamily(); renderMenu();">close</i></div>`);
-    }
-    function checkAllergens(ing) {
-        if(!ing) return null;
-        let w=[];
-        family.forEach(f=>{
-            if(f.allergy && ing.some(i=>i.toLowerCase().includes(f.allergy.toLowerCase()))) w.push(`${f.name}`);
+    // --- OFFERTE ---
+    function renderOffers() {
+        const c = document.getElementById('offerList');
+        c.innerHTML = "";
+        const s = document.getElementById('storeSelect').value;
+        if(!s || !db.offerte_per_supermercato[s]) return;
+        mainStore = s; localStorage.setItem('smart_store', s);
+
+        db.offerte_per_supermercato[s].forEach(o => {
+            c.innerHTML += `
+            <div class="offer-card" onclick="addOfferToList('${o.name}', ${o.price})">
+                <div style="font-size:0.9rem; margin-bottom:5px;">${o.name}</div>
+                <div class="offer-price">€${o.price.toFixed(2)}</div>
+                <small style="color:#2E7D32">+ Aggiungi</small>
+            </div>`;
         });
-        return w.length ? "No per: " + w.join(', ') : null;
     }
 
-    // UPLOAD
-    function saveCreds() { localStorage.setItem('gh_repo', document.getElementById('ghRepo').value); localStorage.setItem('gh_token', document.getElementById('ghToken').value); alert("OK"); }
+    function addOfferToList(name, price) {
+        // Aggiunge offerta alla lista spesa (o aggiorna prezzo se esiste)
+        if(!shopData[name]) {
+            shopData[name] = { qty: 1, price: price, checked: false, isManual: true, isOffer: true };
+        } else {
+            shopData[name].price = price;
+            shopData[name].isOffer = true;
+        }
+        localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
+        alert(`Aggiunto: ${name}`);
+        renderShop(); // Aggiorna UI se siamo nella tab spesa
+    }
+
+    // --- ALTRE FUNZIONI ---
+    function renderMenu() {
+        const c = document.getElementById('menuList');
+        c.innerHTML = "";
+        menu.forEach((d, dayIdx) => {
+            let html = `<div class="card"><div class="day-header">${d.day}</div>`;
+            ['colazione','pranzo','merenda','cena'].forEach(t => {
+                let m = d.meals[t];
+                let k = `${dayIdx}_${t}`;
+                let isL = !!locked[k];
+                let isF = favorites.includes(m.title);
+                let w = checkAllergens(m.ingredients);
+                let ico = t==='colazione'?'☕': t==='pranzo'?'🍝': t==='merenda'?'🍎':'🌙';
+                html += `<div class="meal-row"><div style="font-size:24px; width:40px;">${ico}</div>
+                <div class="meal-content"><div class="meal-title">${m.title}</div><div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>${w?`<div class="allergen-warning"><i class="material-icons">warning</i> ${w}</div>`:''}</div>
+                <div class="meal-actions"><i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i><i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i><i class="material-icons action-btn" onclick="editMeal(${dayIdx},'${t}')">edit</i></div></div>`;
+            });
+            c.innerHTML += html + "</div>";
+        });
+    }
+
+    function checkAllergens(ings) {
+        if(!ings) return null;
+        let hits = [];
+        family.forEach(f => {
+            if(f.allergy && ings.some(i => i.toLowerCase().includes(f.allergy.toLowerCase()))) hits.push(f.name);
+        });
+        return hits.length ? "No: " + hits.join(', ') : null;
+    }
+
+    function toggleLock(d,t){ let k=`${d}_${t}`; if(locked[k]) delete locked[k]; else locked[k]=menu[d].meals[t]; localStorage.setItem('smart_locked',JSON.stringify(locked)); renderMenu(); }
+    function toggleFav(t){ if(favorites.includes(t)) favorites=favorites.filter(x=>x!==t); else favorites.push(t); localStorage.setItem('smart_fav',JSON.stringify(favorites)); renderMenu(); }
+    function editMeal(d,t){ let m=prompt("Modifica:",menu[d].meals[t].title); if(m){ menu[d].meals[t].title=m; menu[d].meals[t].ingredients=[m]; localStorage.setItem('smart_menu',JSON.stringify(menu)); updateShopDataFromMenu(); renderAll(); } }
+    
+    function addFamilyMember() { let n=document.getElementById('memberName').value, a=document.getElementById('memberAllergy').value; if(n){ family.push({name:n, allergy:a}); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu(); } }
+    function renderFamily() { document.getElementById('familyContainer').innerHTML = family.map((f,i)=>`<div class="family-chip">${f.name} ${f.allergy||''} <i class="material-icons" style="font-size:16px; margin-left:5px; cursor:pointer" onclick="family.splice(${i},1); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu();">close</i></div>`).join(''); }
+
+    function saveCreds() { localStorage.setItem('gh_repo', document.getElementById('ghRepo').value); localStorage.setItem('gh_token', document.getElementById('ghToken').value); alert("Login Salvato"); }
     async function uploadPDF() {
         let r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value, n=document.getElementById('pdfName').value, f=document.getElementById('pdfFile').files[0], s=document.getElementById('upStatus');
         if(!r||!t||!n||!f) return alert("Dati mancanti");
@@ -396,15 +456,16 @@
                 let url=`https://api.github.com/repos/${r}/contents/spesa/volantini/${n.toLowerCase().replace(/\s/g,'')}.pdf`;
                 let sha=null; try{let c=await fetch(url,{headers:{Authorization:`token ${t}`}}); if(c.ok) sha=(await c.json()).sha;}catch(e){}
                 let res=await fetch(url,{method:'PUT',headers:{Authorization:`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:"Up",content:reader.result.split(',')[1],sha:sha})});
-                if(!res.ok) throw new Error("Err GitHub");
+                if(!res.ok) throw new Error("Err Github");
                 s.innerText="Fatto! Analisi in corso...";
             } catch(e) { s.innerText="Errore: "+e.message; }
         };
         reader.readAsDataURL(f);
     }
+    
     function hardReset() { if(confirm("Reset Totale?")) { localStorage.clear(); location.reload(); } }
-    function go(p,b) { document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); document.getElementById(p).classList.add('active'); document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active')); b.classList.add('active'); }
-    function renderAll() { renderMenu(); renderShop(); }
+    function go(p,b) { document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); document.getElementById(p).classList.add('active'); document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active')); b.classList.add('active'); renderAll(); }
+    function renderAll() { renderMenu(); renderShop(); renderOffers(); }
 
     init();
 </script>
