@@ -9,62 +9,51 @@
         :root { --primary: #2E7D32; --bg: #f5f5f5; --card: #fff; --text: #333; --accent: #ff9800; --danger: #d32f2f; --lock: #C2185B; --price: #00897b; }
         body { font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
         
-        /* HEADER & STATUS */
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .status-badge { display: flex; align-items: center; font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 6px; }
         .dot.online { background: #00E676; box-shadow: 0 0 5px #00E676; }
 
-        /* PAGINE */
         .page { display: none; padding: 15px; animation: slideIn 0.3s ease-out; }
         .page.active { display: block; }
         @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* MENU CARDS */
         .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; }
         .day-header { background: #e8f5e9; color: var(--primary); padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
         .meal-row { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; position: relative; }
-        .meal-content { flex: 1; padding-right: 50px; }
+        .meal-content { flex: 1; padding-right: 80px; } /* Spazio per bottoni */
         .meal-title { font-weight: 600; font-size: 1rem; color: #444; }
         .meal-ing { font-size: 0.85rem; color: #777; margin-top: 2px; }
-        .meal-actions { position: absolute; right: 10px; top: 12px; display: flex; gap: 8px; }
-        .action-btn { cursor: pointer; color: #ddd; font-size: 1.2rem; }
+        .meal-actions { position: absolute; right: 10px; top: 12px; display: flex; gap: 5px; }
+        .action-btn { cursor: pointer; color: #ccc; font-size: 1.3rem; padding: 2px; }
+        .action-btn:hover { color: var(--primary); }
         .action-btn.active-lock { color: var(--lock); }
         .action-btn.active-fav { color: var(--danger); }
-        .allergen-warning { color: var(--accent); font-size: 0.75rem; display: flex; align-items: center; margin-top: 4px; font-weight: bold; }
         
+        .allergen-warning { color: var(--danger); font-size: 0.75rem; display: flex; align-items: center; margin-top: 4px; font-weight: bold; background: #ffebee; padding: 2px 6px; border-radius: 4px; display: inline-flex;}
+
         /* LISTA SPESA */
         .add-item-box { display: flex; gap: 10px; margin-bottom: 15px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
         .add-item-box input { flex: 1; padding: 8px; border: none; outline: none; font-size: 1rem; }
         .add-item-box button { background: var(--primary); color: white; border: none; width: 40px; border-radius: 4px; font-size: 1.2rem; cursor: pointer; }
-
-        .shop-item { background: white; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; transition: 0.2s; }
+        .shop-item { background: white; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
         .shop-item.checked { opacity: 0.6; background: #f9f9f9; }
-        .shop-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .item-name { font-weight: bold; font-size: 1rem; }
-        .item-inputs { display: flex; gap: 10px; width: 100%; align-items: center; }
-        
         .input-qty { width: 50px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; background: #f0f8ff; }
         .input-price { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; }
         .input-price.auto-price { background: #e0f2f1; color: #00695c; font-weight: bold; border: 1px solid #b2dfdb; }
-        
-        .check-btn { font-size: 24px; color: #ccc; cursor: pointer; }
-        .check-btn.checked { color: var(--primary); }
-        .delete-item { color: #ff9800; font-size: 18px; cursor: pointer; margin-left: 10px; }
-
         .total-float { position: fixed; bottom: 80px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
 
-        /* OFFERTE CARD */
         .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; cursor: pointer; position: relative; }
-        .offer-price { color: var(--price); font-weight: bold; font-size: 1.1rem; }
+        .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; cursor: pointer; }
 
-        /* UI GENERALE */
-        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .family-chip { background: white; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; display: inline-flex; align-items: center; margin-right: 5px; margin-bottom: 5px; }
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .input-group input, .input-group select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+
+        .settings-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
 
         .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 65px; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; font-size: 0.75rem; }
@@ -77,7 +66,7 @@
 <header>
     <div style="display:flex; flex-direction:column;">
         <span style="font-weight:bold; font-size:1.1rem;">Spesa Smart</span>
-        <small style="font-size:0.7rem; opacity:0.9">Dieta Mediterranea</small>
+        <small style="font-size:0.7rem; opacity:0.9">Dieta Flessibile</small>
     </div>
     <div class="status-badge">
         <div id="statusDot" class="dot"></div>
@@ -86,22 +75,31 @@
 </header>
 
 <div id="p-menu" class="page active">
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <button class="btn btn-outline" onclick="generateMenu(true)"><i class="material-icons" style="vertical-align:middle; font-size:18px;">autorenew</i> Rigenera Menu</button>
+    <div class="settings-box" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <label style="font-size:0.8rem; color:#666; display:block;">Stile Dieta</label>
+            <select id="dietType" onchange="saveDietSettings()" style="border:none; background:transparent; font-weight:bold; color:var(--primary); font-size:1rem;">
+                <option value="mediterranea">Mediterranea</option>
+                <option value="vegetariana">Vegetariana</option>
+                <option value="mondo">Dal Mondo</option>
+                <option value="mix">Misto (Sorpresa)</option>
+            </select>
+        </div>
+        <button class="btn btn-outline" style="width:auto; margin:0; padding:8px 15px;" onclick="generateMenu(true)">
+            <i class="material-icons" style="vertical-align:middle;">autorenew</i>
+        </button>
     </div>
+
     <div id="menuList" style="padding-bottom: 20px;"></div>
 </div>
 
 <div id="p-spesa" class="page">
     <h3>🛒 Lista della Spesa</h3>
-    
     <div class="add-item-box">
         <input type="text" id="manualItemName" placeholder="Aggiungi prodotto...">
         <button onclick="addManualItem()">+</button>
     </div>
-
     <div id="shopList" style="padding-bottom: 80px;"></div>
-    
     <div class="total-float">
         <span style="font-size:0.9rem; opacity:0.8;">Totale Stimato</span>
         <span id="totalPrice" style="font-size:1.4rem; font-weight:bold; color:#b2dfdb;">€ 0.00</span>
@@ -115,7 +113,7 @@
 </div>
 
 <div id="p-famiglia" class="page">
-    <h3>👨‍👩‍👧‍👦 Famiglia</h3>
+    <h3>👨‍👩‍👧‍👦 Famiglia & Salute</h3>
     <div class="input-group">
         <input type="text" id="memberName" placeholder="Nome">
         <select id="memberAllergy">
@@ -124,7 +122,7 @@
             <option value="Lattosio">Lattosio</option>
             <option value="Uova">Uova</option>
             <option value="Pesce">Pesce</option>
-            <option value="Frutta a guscio">Frutta a guscio (Noci, ecc)</option>
+            <option value="Frutta a guscio">Frutta a guscio</option>
             <option value="Diabete">Diabete (Zuccheri)</option>
         </select>
     </div>
@@ -134,19 +132,20 @@
     <hr style="border:0; border-top:1px solid #eee;">
     
     <h3>⚙️ Configurazione</h3>
-    <div style="background:white; padding:15px; border-radius:10px; border:2px dashed #ccc;">
+    <div class="settings-box">
         <input type="text" id="ghRepo" placeholder="Repo GitHub" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
         <input type="password" id="ghToken" placeholder="Token GitHub" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
         <button onclick="saveCreds()" style="padding:5px; width:100%;">Salva Login</button>
         
         <div style="margin-top:15px;">
-            <label>Carica Volantino PDF:</label>
+            <label>Carica PDF:</label>
             <input type="text" id="pdfName" placeholder="Nome Supermercato" style="width:100%; margin-top:5px; padding:8px; border:1px solid #ddd;">
             <input type="file" id="pdfFile" accept="application/pdf" style="margin-top:5px;">
         </div>
         <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica e Analizza</button>
         <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
     </div>
+    <button class="btn" style="background:var(--danger);" onclick="hardReset()">⚠️ Reset App</button>
 </div>
 
 <nav class="nav">
@@ -164,20 +163,21 @@
     let locked = JSON.parse(localStorage.getItem('smart_locked')) || {};
     let favorites = JSON.parse(localStorage.getItem('smart_fav')) || [];
     let shopData = JSON.parse(localStorage.getItem('smart_shop_data')) || {}; 
-    let mainStore = localStorage.getItem('smart_store') || "";
+    let dietSettings = localStorage.getItem('smart_diet') || 'mediterranea';
 
-    // DIZIONARIO RISCHI (Mappa Allergia -> Parole chiave)
+    // DIZIONARIO RISCHI
     const riskMap = {
         "Glutine": ["pane", "pasta", "farina", "biscotti", "cereali", "orzo", "farro", "pizza", "focaccia"],
         "Lattosio": ["latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", "ricotta"],
-        "Uova": ["uova", "frittata", "mayonese", "crema"],
-        "Pesce": ["pesce", "tonno", "merluzzo", "salmone", "sogliola", "gamberi"],
-        "Frutta a guscio": ["noci", "mandorle", "nocciole", "pistacchi", "anacardi", "frutta secca", "arachidi"],
+        "Uova": ["uova", "frittata", "mayonese", "crema", "carbonara"],
+        "Pesce": ["pesce", "tonno", "merluzzo", "salmone", "sogliola", "gamberi", "cozze", "vongole"],
+        "Frutta a guscio": ["noci", "mandorle", "nocciole", "pistacchi", "anacardi", "arachidi", "pesto"],
         "Diabete": ["zucchero", "miele", "cioccolato", "torta", "biscotti", "dolce", "marmellata", "succo", "sciroppo", "bevanda", "canditi"]
     };
 
     async function init() {
         renderFamily();
+        document.getElementById('dietType').value = dietSettings;
         if(localStorage.getItem('gh_repo')) document.getElementById('ghRepo').value = localStorage.getItem('gh_repo');
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
         
@@ -193,10 +193,10 @@
             const stores = Object.keys(db.offerte_per_supermercato || {});
             if(stores.length>0) {
                 stores.forEach(s => { let opt=document.createElement('option'); opt.value=s; opt.innerText=s; sel.appendChild(opt); });
-                if(!mainStore || !stores.includes(mainStore)) mainStore = stores[0];
-                sel.value = mainStore;
+                sel.value = stores[0];
             } else { sel.innerHTML = "<option>Nessun Volantino</option>"; }
 
+            // Se il menu è vecchio o vuoto, rigenera
             if(!menu.length) generateMenu(false);
             renderAll();
         } catch(e) {
@@ -211,9 +211,49 @@
         document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline';
     }
 
-    // --- LOGICA MENU ---
+    // --- LOGICA MENU AVANZATA ---
+    function saveDietSettings() {
+        dietSettings = document.getElementById('dietType').value;
+        localStorage.setItem('smart_diet', dietSettings);
+        // Quando cambi dieta, chiediamo se vuole rigenerare? Meglio farlo manuale
+    }
+
+    function getPoolForMeal(type) {
+        // Recupera le ricette dal "database_ricette" in base alla dieta scelta
+        // Se db.database_ricette non esiste (vecchio json), usa fallback vuoto
+        if(!db || !db.database_ricette) return [];
+
+        let pools = [];
+        
+        if(dietSettings === 'mix') {
+            // Unisce tutte le categorie
+            Object.keys(db.database_ricette).forEach(cat => {
+                if(db.database_ricette[cat][type]) pools = pools.concat(db.database_ricette[cat][type]);
+            });
+        } else {
+            // Usa solo la categoria scelta
+            if(db.database_ricette[dietSettings] && db.database_ricette[dietSettings][type]) {
+                pools = db.database_ricette[dietSettings][type];
+            }
+        }
+        return pools;
+    }
+
+    function pickSafeRecipe(pool, currentTitleToAvoid) {
+        // 1. Filtra per evitare ricette con allergeni della famiglia
+        let safePool = pool.filter(r => checkAllergens(r.ingredients) === null);
+        
+        // Se non ci sono ricette sicure, usa tutto il pool (ma segnalerà l'errore)
+        if(safePool.length === 0) safePool = pool;
+        
+        // 2. Filtra per non ripetere lo stesso piatto che stiamo cambiando
+        if(currentTitleToAvoid) safePool = safePool.filter(r => r.title !== currentTitleToAvoid);
+        
+        if(safePool.length === 0) return {title: "Pasto Libero", ingredients: []};
+        return safePool[Math.floor(Math.random() * safePool.length)];
+    }
+
     function generateMenu(force) {
-        if(!db || !db.ricette) return;
         const days = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
         const types = ['colazione','pranzo','merenda','cena'];
         let newMenu = force ? [] : menu;
@@ -221,13 +261,14 @@
         for(let i=0; i<7; i++) {
             if(!force && newMenu[i]) continue;
             let dayObj = { day: days[i], meals: {} };
+            
             types.forEach(t => {
                 let k = `${i}_${t}`;
-                if(locked[k] && force) dayObj.meals[t] = locked[k];
-                else {
-                    let pool = db.ricette.filter(r => r.type === t);
-                    let favPool = pool.filter(r => favorites.includes(r.title));
-                    let pick = (favPool.length > 0 && Math.random() > 0.7) ? favPool[Math.floor(Math.random()*favPool.length)] : (pool.length ? pool[Math.floor(Math.random()*pool.length)] : {title:"Libero", ingredients:[]});
+                if(locked[k] && force) {
+                    dayObj.meals[t] = locked[k];
+                } else {
+                    let pool = getPoolForMeal(t);
+                    let pick = pickSafeRecipe(pool, null);
                     dayObj.meals[t] = pick;
                 }
             });
@@ -239,7 +280,21 @@
         renderAll();
     }
 
-    // --- LOGICA LISTA SPESA ---
+    // --- CAMBIO SINGOLO PIATTO (Doppia Scelta) ---
+    function swapMeal(dayIdx, type) {
+        if(locked[`${dayIdx}_${type}`]) return alert("Sblocca il piatto prima di cambiarlo!");
+        
+        let currentMeal = menu[dayIdx].meals[type];
+        let pool = getPoolForMeal(type);
+        let newMeal = pickSafeRecipe(pool, currentMeal.title);
+        
+        menu[dayIdx].meals[type] = newMeal;
+        localStorage.setItem('smart_menu', JSON.stringify(menu));
+        updateShopDataFromMenu();
+        renderAll();
+    }
+
+    // --- LISTA SPESA (Invariata ma vitale) ---
     function updateShopDataFromMenu() {
         let menuNeeds = {};
         menu.forEach(d => Object.values(d.meals).forEach(m => {
@@ -265,6 +320,16 @@
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
     }
 
+    function findOfferPrice(itemName) {
+        if(!db || !db.offerte_per_supermercato) return 0;
+        let best = 0;
+        Object.values(db.offerte_per_supermercato).forEach(list => {
+            let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase()));
+            if(match) best = match.price;
+        });
+        return best;
+    }
+
     function addManualItem() {
         let name = document.getElementById('manualItemName').value.trim();
         if(!name) return;
@@ -277,16 +342,6 @@
         document.getElementById('manualItemName').value = "";
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
         renderShop();
-    }
-
-    function findOfferPrice(itemName) {
-        if(!db || !db.offerte_per_supermercato) return 0;
-        let best = 0;
-        Object.values(db.offerte_per_supermercato).forEach(list => {
-            let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase()));
-            if(match) best = match.price;
-        });
-        return best;
     }
 
     function renderShop() {
@@ -347,8 +402,7 @@
     function renderOffers() {
         const c = document.getElementById('offerList'); c.innerHTML = "";
         const s = document.getElementById('storeSelect').value;
-        if(!s || !db.offerte_per_supermercato[s]) return;
-        mainStore = s; localStorage.setItem('smart_store', s);
+        if(!s || !db.offerte_per_supermercato || !db.offerte_per_supermercato[s]) return;
 
         db.offerte_per_supermercato[s].forEach(o => {
             c.innerHTML += `<div class="offer-card" onclick="addOfferToList('${o.name}', ${o.price})"><div style="font-size:0.9rem; margin-bottom:5px;">${o.name}</div><div class="offer-price">€${o.price.toFixed(2)}</div><small style="color:#2E7D32">+ Aggiungi</small></div>`;
@@ -363,7 +417,7 @@
         renderShop();
     }
 
-    // --- RENDER MENU & CHECK ALLERGENI INTELLIGENTE ---
+    // --- RENDER MENU & UI ---
     function renderMenu() {
         const c = document.getElementById('menuList'); c.innerHTML = "";
         menu.forEach((d, dayIdx) => {
@@ -375,9 +429,21 @@
                 let isF = favorites.includes(m.title);
                 let w = checkAllergens(m.ingredients);
                 let ico = t==='colazione'?'☕': t==='pranzo'?'🍝': t==='merenda'?'🍎':'🌙';
-                html += `<div class="meal-row"><div style="font-size:24px; width:40px;">${ico}</div>
-                <div class="meal-content"><div class="meal-title">${m.title}</div><div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>${w?`<div class="allergen-warning"><i class="material-icons">warning</i> ${w}</div>`:''}</div>
-                <div class="meal-actions"><i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i><i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i><i class="material-icons action-btn" onclick="editMeal(${dayIdx},'${t}')">edit</i></div></div>`;
+                
+                html += `
+                <div class="meal-row">
+                    <div style="font-size:24px; width:35px;">${ico}</div>
+                    <div class="meal-content">
+                        <div class="meal-title">${m.title}</div>
+                        <div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>
+                        ${w?`<div class="allergen-warning"><i class="material-icons">warning</i> ${w}</div>`:''}
+                    </div>
+                    <div class="meal-actions">
+                        <i class="material-icons action-btn" onclick="swapMeal(${dayIdx},'${t}')" title="Cambia Piatto">sync</i>
+                        <i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i>
+                        <i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i>
+                    </div>
+                </div>`;
             });
             c.innerHTML += html + "</div>";
         });
@@ -388,23 +454,15 @@
         let hits = [];
         family.forEach(f => {
             if(f.allergy) {
-                // Controllo Intelligente usando riskMap
                 let keywords = riskMap[f.allergy] || [f.allergy.toLowerCase()];
-                
-                // Controlla se uno degli ingredienti contiene una delle keyword
-                let isDangerous = ings.some(ing => {
-                    return keywords.some(key => ing.toLowerCase().includes(key));
-                });
-
-                if(isDangerous) hits.push(f.name + " (" + f.allergy + ")");
+                if(ings.some(ing => keywords.some(key => ing.toLowerCase().includes(key)))) hits.push(f.name);
             }
         });
-        return hits.length ? "No per: " + hits.join(', ') : null;
+        return hits.length ? "⚠️ No per: " + hits.join(', ') : null;
     }
 
     function toggleLock(d,t){ let k=`${d}_${t}`; if(locked[k]) delete locked[k]; else locked[k]=menu[d].meals[t]; localStorage.setItem('smart_locked',JSON.stringify(locked)); renderMenu(); }
     function toggleFav(t){ if(favorites.includes(t)) favorites=favorites.filter(x=>x!==t); else favorites.push(t); localStorage.setItem('smart_fav',JSON.stringify(favorites)); renderMenu(); }
-    function editMeal(d,t){ let m=prompt("Modifica:",menu[d].meals[t].title); if(m){ menu[d].meals[t].title=m; menu[d].meals[t].ingredients=[m]; localStorage.setItem('smart_menu',JSON.stringify(menu)); updateShopDataFromMenu(); renderAll(); } }
     
     function addFamilyMember() { let n=document.getElementById('memberName').value, a=document.getElementById('memberAllergy').value; if(n){ family.push({name:n, allergy:a}); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu(); } }
     function renderFamily() { document.getElementById('familyContainer').innerHTML = family.map((f,i)=>`<div class="family-chip">${f.name} ${f.allergy||''} <i class="material-icons" style="font-size:16px; margin-left:5px; cursor:pointer" onclick="family.splice(${i},1); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu();">close</i></div>`).join(''); }
