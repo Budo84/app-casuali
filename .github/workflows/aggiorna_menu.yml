@@ -1,54 +1,63 @@
 name: Aggiorna Menu Spesa
 
 on:
-  workflow_dispatch:      # Avvio manuale
-  push:                   # Avvio se carichi file
+  schedule:
+    - cron: '0 6 * * 1'      # Esegue ogni lunedì alle 6:00
+  workflow_dispatch:         # Permette l'avvio manuale
+  repository_dispatch:
+    types: [webhook]         # Permette avvio da app esterna
+  push:
     paths:
-      - 'spesa/volantini/**'
-      - 'spesa/automazione.py' # Parte anche se tocchi lo script
+      - 'spesa/volantini/**' # Si avvia se carichi un PDF
 
 concurrency:
-  group: menu_fix
+  group: menu_update
   cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write        # Fondamentale per poter salvare il file JSON
       
     steps:
-      - name: Checkout
+      - name: Checkout del codice
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0     # Scarica tutto lo storico per evitare errori di git
 
-      - name: Setup Python
+      - name: Imposta Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10' 
 
-      - name: Install Libs
-        run: pip install -U google-generativeai
+      - name: Installa librerie aggiornate
+        # Questa riga risolve l'errore 404 installando la versione corretta
+        run: pip install -U "google-generativeai>=0.7.2"
 
-      - name: Genera Menu (Python)
+      - name: Debug Cartelle
+        run: |
+          echo "Cartella corrente:"
+          pwd
+          echo "Contenuto spesa/volantini:"
+          ls -R spesa/volantini/ || echo "Nessun file trovato qui"
+
+      - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      - name: Salva e Pubblica
+      - name: Salva su GitHub
         run: |
-          git config --global user.name 'Robot Menu'
-          git config --global user.email 'robot@menu.app'
+          git config --global user.name 'Robot Spesa'
+          git config --global user.email 'robot@spesa.app'
           
-          # 1. Aggiungi il file generato
+          # Aggiunge il file generato
           git add spesa/dati_settimanali.json
           
-          # 2. Committa (Salva in locale)
-          git commit -m "🍳 Nuovo Menu Generato" || echo "Nessuna modifica al menu"
+          # Se ci sono modifiche, crea il commit
+          git commit -m "🤖 Menu e Offerte Aggiornati" || echo "Nessuna modifica da salvare"
           
-          # 3. Scarica aggiornamenti remoti (evita conflitti)
+          # Scarica eventuali modifiche remote per evitare conflitti e poi carica
           git pull --rebase origin main || git pull --rebase origin master
-          
-          # 4. Spingi sul server
           git push
