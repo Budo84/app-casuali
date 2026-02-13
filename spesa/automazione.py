@@ -7,7 +7,7 @@ import glob
 import time
 import random
 
-print("--- 🚀 AVVIO ROBOT: GESTORE CLOUD ---")
+print("--- 🚀 AVVIO ROBOT: CHEF MULTI-TASKING ---")
 
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
@@ -75,10 +75,8 @@ def carica_vecchio_db():
     return DATABASE_BACKUP
 
 def importa_ricette_utenti(db_esistente):
-    # Cerca file JSON caricati dagli utenti
     path_script = os.path.dirname(os.path.abspath(__file__))
     dir_utente = os.path.join(path_script, "ricette_utenti")
-    # Supporto anche per CWD
     if not os.path.exists(dir_utente):
         dir_utente = os.path.join(os.getcwd(), "spesa", "ricette_utenti")
     
@@ -87,31 +85,41 @@ def importa_ricette_utenti(db_esistente):
     files = glob.glob(os.path.join(dir_utente, "*.json"))
     if not files: return db_esistente
 
-    print(f"📥 Trovate {len(files)} nuove ricette utente da importare...")
+    print(f"📥 Importazione di {len(files)} ricette...")
     
     count = 0
     for f in files:
         try:
             with open(f, "r", encoding="utf-8") as file_obj:
                 nuova = json.load(file_obj)
-                # Struttura attesa: {"category": "mediterranea", "type": "pranzo", "recipe": {...}}
-                cat = nuova.get('category', 'mediterranea')
-                tipo = nuova.get('type', 'pranzo')
+                
+                # Supporto per LISTE di categorie e tipi
+                cats = nuova.get('categories', [])
+                types = nuova.get('types', [])
+                
+                # Se è il vecchio formato singolo, converti in lista
+                if not cats and 'category' in nuova: cats = [nuova['category']]
+                if not types and 'type' in nuova: types = [nuova['type']]
+                
                 ricetta = nuova.get('recipe')
 
-                if cat in db_esistente and tipo in db_esistente[cat] and ricetta:
-                    # Evita duplicati
-                    titoli = [r['title'].lower() for r in db_esistente[cat][tipo]]
-                    if ricetta['title'].lower() not in titoli:
-                        db_esistente[cat][tipo].append(ricetta)
-                        count += 1
-                        print(f"   + Aggiunta: {ricetta['title']}")
-            
-            # Cancelliamo il file dopo l'import (ci pensa git rm nel workflow, ma qui lo segniamo come fatto)
+                if ricetta:
+                    # Inserisci in OGNI combinazione richiesta
+                    for cat in cats:
+                        if cat not in db_esistente: db_esistente[cat] = {"colazione":[], "pranzo":[], "cena":[], "merenda":[]}
+                        for tipo in types:
+                            if tipo not in db_esistente[cat]: db_esistente[cat][tipo] = []
+                            
+                            # Controllo duplicati
+                            titoli = [r['title'].lower() for r in db_esistente[cat][tipo]]
+                            if ricetta['title'].lower() not in titoli:
+                                db_esistente[cat][tipo].append(ricetta)
+                                count += 1
+                                print(f"   + {ricetta['title']} -> {cat}/{tipo}")
         except Exception as e:
-            print(f"   ❌ Errore import file {f}: {e}")
+            print(f"   ❌ Errore import: {e}")
 
-    print(f"✅ Importate {count} ricette nel Database Principale.")
+    print(f"✅ Totale inserimenti: {count}")
     return db_esistente
 
 def crea_nuove_ricette(offerte):
@@ -125,7 +133,7 @@ def crea_nuove_ricette(offerte):
 
     try:
         prompt = f"""
-        Crea 3-4 ricette NUOVE per categoria.
+        Crea 3 ricette NUOVE per categoria.
         {context}
         Categorie: mediterranea, vegetariana, mondo.
         Pasti: colazione, pranzo, cena, merenda.
@@ -162,14 +170,8 @@ def esegui_tutto():
     file_out = os.path.join(base_dir, "dati_settimanali.json")
     
     offerte = analizza_volantini()
-    
-    # 1. Carica DB esistente
     db_principale = carica_vecchio_db()
-    
-    # 2. Importa Ricette Utente (Cloud)
     db_principale = importa_ricette_utenti(db_principale)
-    
-    # 3. Genera Nuove Ricette AI
     nuove_ai = crea_nuove_ricette(offerte)
     db_principale = unisci_db(db_principale, nuove_ai)
 
