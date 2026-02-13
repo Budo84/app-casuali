@@ -10,9 +10,10 @@ on:
     paths:
       - 'spesa/volantini/**'
 
+# Evita che due processi partano insieme
 concurrency:
   group: menu_update
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -21,34 +22,46 @@ jobs:
       contents: write
       
     steps:
-      - name: Checkout
+      - name: Checkout del codice
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Scarica tutta la storia
 
-      - name: Setup Python
+      - name: Imposta Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10' 
 
-      - name: Installa Librerie (Clean)
+      - name: Installa librerie
+        run: pip install -U google-generativeai
+
+      # DEBUG: Stampa file per capire se il PDF è lì
+      - name: 📂 Controllo File
         run: |
-          pip install --upgrade pip
-          pip install -U google-generativeai
+          echo "Cartella corrente:"
+          pwd
+          echo "Contenuto spesa/volantini:"
+          ls -R spesa/volantini/ || echo "Nessun volantino trovato"
 
-      - name: Debug Cartelle
-        run: ls -R spesa/volantini/ || echo "Nessun file"
-
-      - name: Esegui Robot
+      - name: Esegui Script Python
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
+      # SALVATAGGIO BLINDATO
       - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
+          
+          # 1. Aggiorna la repo locale per essere sicuro
+          git pull origin main || git pull origin master
+          
+          # 2. Aggiunge il file JSON appena generato
           git add spesa/dati_settimanali.json
-          git commit -m "🤖 Dati Aggiornati" || echo "Nessuna modifica"
-          git pull --rebase origin main || git pull --rebase origin master
+          
+          # 3. Committa solo se c'è qualcosa di nuovo
+          git commit -m "🤖 Dati Aggiornati dal Robot" || echo "Nessuna modifica"
+          
+          # 4. Spinge su GitHub
           git push
