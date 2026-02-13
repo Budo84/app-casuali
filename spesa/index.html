@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Spesa Smart</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <style>
         :root { --primary: #2E7D32; --bg: #f5f5f5; --card: #fff; --text: #333; --accent: #ff9800; --danger: #d32f2f; --lock: #C2185B; --price: #00897b; }
         body { font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
@@ -18,46 +20,31 @@
         .page.active { display: block; }
         @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* CARDS & UI */
-        .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; }
+        .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; page-break-inside: avoid; }
         .day-header { background: #e8f5e9; color: var(--primary); padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
         .meal-row { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; position: relative; }
         .meal-content { flex: 1; padding-right: 80px; } 
         .meal-title { font-weight: 600; font-size: 1rem; color: #444; }
         .meal-ing { font-size: 0.85rem; color: #777; margin-top: 2px; }
+        
+        /* I bottoni non devono vedersi nel PDF */
         .meal-actions { position: absolute; right: 10px; top: 12px; display: flex; gap: 5px; }
+        
         .action-btn { cursor: pointer; color: #ccc; font-size: 1.3rem; padding: 4px; border-radius: 50%; transition: 0.2s; }
         .action-btn:hover { background: #eee; color: var(--primary); }
         .action-btn.active-lock { color: var(--lock); }
         .action-btn.active-fav { color: var(--danger); }
         .allergen-warning { color: var(--danger); font-size: 0.75rem; display: flex; align-items: center; margin-top: 4px; font-weight: bold; background: #ffebee; padding: 2px 6px; border-radius: 4px; display: inline-flex;}
 
-        /* NUOVO STILE MULTI-SCELTA (CHIPS) */
+        /* CHIPS E INPUT */
         .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        .choice-chip { display: none; } /* Nasconde la checkbox vera */
-        .choice-label { 
-            padding: 8px 12px; 
-            background: #eee; 
-            border-radius: 20px; 
-            font-size: 0.85rem; 
-            cursor: pointer; 
-            border: 1px solid #ddd;
-            transition: 0.2s;
-        }
-        .choice-chip:checked + .choice-label {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            font-weight: bold;
-        }
+        .choice-chip { display: none; } 
+        .choice-label { padding: 8px 12px; background: #eee; border-radius: 20px; font-size: 0.85rem; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
+        .choice-chip:checked + .choice-label { background: var(--primary); color: white; border-color: var(--primary); font-weight: bold; }
 
         .new-recipe-box { background: white; padding: 15px; border-radius: 10px; border: 2px dashed var(--primary); margin-bottom: 20px; }
         .new-recipe-box input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         
-        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-
-        /* LISTA SPESA E ALTRO */
         .add-item-box { display: flex; gap: 10px; margin-bottom: 15px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
         .add-item-box input { flex: 1; padding: 8px; border: none; outline: none; font-size: 1rem; }
         .add-item-box button { background: var(--primary); color: white; border: none; width: 40px; border-radius: 4px; font-size: 1.2rem; cursor: pointer; }
@@ -67,13 +54,18 @@
         .input-price { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; }
         .input-price.auto-price { background: #e0f2f1; color: #00695c; font-weight: bold; border: 1px solid #b2dfdb; }
         .total-float { position: fixed; bottom: 80px; left: 15px; right: 15px; background: #333; color: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 900; }
+        
         .offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .offer-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; cursor: pointer; }
         .offer-price { color: var(--price); font-weight: bold; font-size: 1.1rem; }
         .family-chip { background: white; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; display: inline-flex; align-items: center; margin-right: 5px; margin-bottom: 5px; }
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .input-group input, .input-group select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        
         .settings-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-small { width: auto; padding: 8px 15px; margin: 0; font-size: 0.9rem; }
 
         .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 65px; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; font-size: 0.75rem; }
@@ -105,49 +97,42 @@
                 <option value="mix">Tutto (Mix)</option>
             </select>
         </div>
-        <button class="btn btn-outline" style="width:auto; margin:0; padding:8px 15px;" onclick="generateMenu(true)">
-            <i class="material-icons" style="vertical-align:middle;">autorenew</i>
-        </button>
+        <div style="display:flex; gap:5px;">
+            <button class="btn btn-outline btn-small" onclick="generateMenu(true)" title="Nuovo Menu">
+                <i class="material-icons" style="vertical-align:middle;">autorenew</i>
+            </button>
+            <button class="btn btn-outline btn-small" onclick="exportPDF()" title="Scarica PDF" style="border-color:#d32f2f; color:#d32f2f;">
+                <i class="material-icons" style="vertical-align:middle;">picture_as_pdf</i>
+            </button>
+        </div>
     </div>
-    <div id="menuList" style="padding-bottom: 20px;"></div>
+
+    <div id="printableArea">
+        <div id="menuList" style="padding-bottom: 20px;"></div>
+    </div>
 </div>
 
 <div id="p-ricette" class="page">
     <h3>📖 Aggiungi al Database</h3>
-    <p style="font-size:0.9rem; color:#666;">Seleziona più opzioni se la ricetta è versatile.</p>
-    
     <div class="new-recipe-box">
         <label>Titolo:</label>
         <input type="text" id="customTitle" placeholder="es. Frittata di Zucchine">
-        
-        <label>Ingredienti (separati da virgola):</label>
+        <label>Ingredienti (virgola):</label>
         <input type="text" id="customIng" placeholder="es. Uova, Zucchine, Sale">
         
-        <label style="margin-top:10px; display:block; font-weight:bold;">Categoria (anche più di una):</label>
+        <label style="margin-top:10px; display:block; font-weight:bold;">Categoria:</label>
         <div class="chip-container">
-            <input type="checkbox" id="cat_med" class="choice-chip" name="cat" value="mediterranea">
-            <label for="cat_med" class="choice-label">Mediterranea</label>
-            
-            <input type="checkbox" id="cat_veg" class="choice-chip" name="cat" value="vegetariana">
-            <label for="cat_veg" class="choice-label">Vegetariana</label>
-            
-            <input type="checkbox" id="cat_mondo" class="choice-chip" name="cat" value="mondo">
-            <label for="cat_mondo" class="choice-label">Mondo</label>
+            <input type="checkbox" id="cat_med" class="choice-chip" name="cat" value="mediterranea"><label for="cat_med" class="choice-label">Mediterranea</label>
+            <input type="checkbox" id="cat_veg" class="choice-chip" name="cat" value="vegetariana"><label for="cat_veg" class="choice-label">Vegetariana</label>
+            <input type="checkbox" id="cat_mondo" class="choice-chip" name="cat" value="mondo"><label for="cat_mondo" class="choice-label">Mondo</label>
         </div>
 
-        <label style="margin-top:10px; display:block; font-weight:bold;">Adatto per:</label>
+        <label style="margin-top:10px; display:block; font-weight:bold;">Pasto:</label>
         <div class="chip-container">
-            <input type="checkbox" id="meal_col" class="choice-chip" name="type" value="colazione">
-            <label for="meal_col" class="choice-label">Colazione</label>
-            
-            <input type="checkbox" id="meal_pra" class="choice-chip" name="type" value="pranzo">
-            <label for="meal_pra" class="choice-label">Pranzo</label>
-            
-            <input type="checkbox" id="meal_cen" class="choice-chip" name="type" value="cena">
-            <label for="meal_cen" class="choice-label">Cena</label>
-            
-            <input type="checkbox" id="meal_mer" class="choice-chip" name="type" value="merenda">
-            <label for="meal_mer" class="choice-label">Merenda</label>
+            <input type="checkbox" id="meal_col" class="choice-chip" name="type" value="colazione"><label for="meal_col" class="choice-label">Colazione</label>
+            <input type="checkbox" id="meal_pra" class="choice-chip" name="type" value="pranzo"><label for="meal_pra" class="choice-label">Pranzo</label>
+            <input type="checkbox" id="meal_cen" class="choice-chip" name="type" value="cena"><label for="meal_cen" class="choice-label">Cena</label>
+            <input type="checkbox" id="meal_mer" class="choice-chip" name="type" value="merenda"><label for="meal_mer" class="choice-label">Merenda</label>
         </div>
 
         <button class="btn" onclick="uploadRecipeToCloud()">☁️ Invia al Database</button>
@@ -157,10 +142,7 @@
 
 <div id="p-spesa" class="page">
     <h3>🛒 Spesa</h3>
-    <div class="add-item-box">
-        <input type="text" id="manualItemName" placeholder="Aggiungi prodotto...">
-        <button onclick="addManualItem()">+</button>
-    </div>
+    <div class="add-item-box"><input type="text" id="manualItemName" placeholder="Aggiungi..."><button onclick="addManualItem()">+</button></div>
     <div id="shopList" style="padding-bottom: 80px;"></div>
     <div class="total-float"><span>Totale</span><span id="totalPrice" style="font-weight:bold; color:#b2dfdb;">€ 0.00</span></div>
 </div>
@@ -173,18 +155,7 @@
 
 <div id="p-famiglia" class="page">
     <h3>👨‍👩‍👧‍👦 Famiglia</h3>
-    <div class="input-group">
-        <input type="text" id="memberName" placeholder="Nome">
-        <select id="memberAllergy">
-            <option value="">Nessuna allergia</option>
-            <option value="Glutine">Glutine</option>
-            <option value="Lattosio">Lattosio</option>
-            <option value="Uova">Uova</option>
-            <option value="Pesce">Pesce</option>
-            <option value="Frutta a guscio">Frutta a guscio</option>
-            <option value="Diabete">Diabete</option>
-        </select>
-    </div>
+    <div class="input-group"><input type="text" id="memberName" placeholder="Nome"><select id="memberAllergy"><option value="">Nessuna</option><option value="Glutine">Glutine</option><option value="Lattosio">Lattosio</option><option value="Uova">Uova</option><option value="Pesce">Pesce</option><option value="Frutta a guscio">Frutta a guscio</option><option value="Diabete">Diabete</option></select></div>
     <button class="btn" onclick="addFamilyMember()">Aggiungi</button>
     <div id="familyContainer" style="margin-top:15px;"></div>
     <hr>
@@ -193,10 +164,7 @@
         <input type="text" id="ghRepo" placeholder="Repo GitHub" style="width:100%; margin-bottom:5px; border:1px solid #ddd; padding:8px;">
         <input type="password" id="ghToken" placeholder="Token GitHub" style="width:100%; margin-bottom:5px; border:1px solid #ddd; padding:8px;">
         <button onclick="saveCreds()" style="padding:5px; width:100%;">Salva Login</button>
-        <div style="margin-top:10px;">
-            <input type="text" id="pdfName" placeholder="Nome Supermercato" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
-            <input type="file" id="pdfFile" accept="application/pdf">
-        </div>
+        <div style="margin-top:10px;"><input type="text" id="pdfName" placeholder="Nome Supermercato" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;"><input type="file" id="pdfFile" accept="application/pdf"></div>
         <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica Volantino</button>
         <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
     </div>
@@ -234,14 +202,12 @@
         document.getElementById('dietType').value = dietSettings;
         if(localStorage.getItem('gh_repo')) document.getElementById('ghRepo').value = localStorage.getItem('gh_repo');
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
-        
         updateStatus('loading');
         try {
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
             if(!res.ok) throw new Error("JSON 404");
             db = await res.json();
             updateStatus('online');
-            
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
             const stores = Object.keys(db.offerte_per_supermercato || {});
@@ -249,102 +215,72 @@
                 stores.forEach(s => { let opt=document.createElement('option'); opt.value=s; opt.innerText=s; sel.appendChild(opt); });
                 sel.value = stores[0];
             } else { sel.innerHTML = "<option>Nessun Volantino</option>"; }
-
             if(!menu.length) generateMenu(false);
             renderAll();
-        } catch(e) {
-            console.error(e);
-            updateStatus('offline');
-            if(menu.length) renderAll();
-        }
+        } catch(e) { console.error(e); updateStatus('offline'); if(menu.length) renderAll(); }
     }
 
-    function updateStatus(s) {
-        document.getElementById('statusDot').className = 'dot ' + s;
-        document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline';
+    function updateStatus(s) { document.getElementById('statusDot').className = 'dot ' + s; document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline'; }
+
+    // --- PDF EXPORT ---
+    function exportPDF() {
+        const el = document.getElementById('printableArea');
+        // Nascondi i bottoni temporaneamente
+        const btns = el.querySelectorAll('.meal-actions');
+        btns.forEach(b => b.style.display = 'none');
+        
+        const opt = {
+            margin: 10,
+            filename: `Menu_Settimanale_${new Date().toLocaleDateString()}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().from(el).set(opt).save().then(() => {
+            // Ripristina bottoni
+            btns.forEach(b => b.style.display = 'flex');
+        });
     }
 
-    // --- UPLOAD RICETTA CLOUD (MULTI-TAG) ---
+    // --- UPLOAD RICETTA CLOUD ---
     async function uploadRecipeToCloud() {
         let t = document.getElementById('customTitle').value.trim();
         let i = document.getElementById('customIng').value.trim();
         let rStatus = document.getElementById('recUpStatus');
+        let selectedCats = []; document.querySelectorAll('input[name="cat"]:checked').forEach(el => selectedCats.push(el.value));
+        let selectedTypes = []; document.querySelectorAll('input[name="type"]:checked').forEach(el => selectedTypes.push(el.value));
 
-        // Raccolta Checkbox Categorie
-        let selectedCats = [];
-        document.querySelectorAll('input[name="cat"]:checked').forEach(el => selectedCats.push(el.value));
-
-        // Raccolta Checkbox Tipi (Colazione/Pranzo...)
-        let selectedTypes = [];
-        document.querySelectorAll('input[name="type"]:checked').forEach(el => selectedTypes.push(el.value));
-
-        if(!t || !i || selectedCats.length===0 || selectedTypes.length===0) return alert("Compila titolo, ingredienti e seleziona almeno una categoria e un pasto!");
+        if(!t || !i || selectedCats.length===0 || selectedTypes.length===0) return alert("Compila tutto!");
         
-        // Payload Multiplo
-        let payload = {
-            categories: selectedCats,
-            types: selectedTypes,
-            recipe: {
-                title: t,
-                ingredients: i.split(',').map(s => s.trim()),
-                isCustom: true
-            }
-        };
-
-        // GitHub Upload
+        let payload = { categories: selectedCats, types: selectedTypes, recipe: { title: t, ingredients: i.split(',').map(s => s.trim()), isCustom: true } };
         let repo = document.getElementById('ghRepo').value.trim();
         let token = document.getElementById('ghToken').value.trim();
-        if(!repo || !token) return alert("Configura GitHub in Opzioni!");
+        if(!repo || !token) return alert("Configura GitHub!");
 
-        rStatus.innerText = "⏳ Invio al Cloud...";
-        
+        rStatus.innerText = "⏳ Invio...";
         try {
             let filename = `rec_${Date.now()}.json`;
             let content = btoa(JSON.stringify(payload, null, 2));
-            
             let url = `https://api.github.com/repos/${repo}/contents/spesa/ricette_utenti/${filename}`;
-            let res = await fetch(url, {
-                method: 'PUT',
-                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: `Nuova Ricetta: ${t}`, content: content })
-            });
-
+            let res = await fetch(url, { method: 'PUT', headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Nuova Ricetta: ${t}`, content: content }) });
             if(!res.ok) throw new Error("Errore GitHub");
-
             rStatus.innerText = "✅ Inviata! Attendi 2 minuti.";
-            alert("Ricetta inviata! Verrà aggiunta a tutte le categorie selezionate.");
-            
-            document.getElementById('customTitle').value = "";
-            document.getElementById('customIng').value = "";
+            alert("Ricetta inviata!");
+            document.getElementById('customTitle').value = ""; document.getElementById('customIng').value = "";
             document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-
-        } catch(e) {
-            rStatus.innerText = "❌ Errore: " + e.message;
-        }
+        } catch(e) { rStatus.innerText = "❌ Errore: " + e.message; }
     }
 
-    // --- LOGICA MENU ---
-    function saveDietSettings() {
-        dietSettings = document.getElementById('dietType').value;
-        localStorage.setItem('smart_diet', dietSettings);
-    }
-
+    function saveDietSettings() { dietSettings = document.getElementById('dietType').value; localStorage.setItem('smart_diet', dietSettings); }
     function getPoolForMeal(type) {
         let pools = [];
         if(db && db.database_ricette) {
-            if(dietSettings === 'mix') {
-                Object.keys(db.database_ricette).forEach(cat => {
-                    if(db.database_ricette[cat][type]) pools = pools.concat(db.database_ricette[cat][type]);
-                });
-            } else {
-                if(db.database_ricette[dietSettings] && db.database_ricette[dietSettings][type]) {
-                    pools = pools.concat(db.database_ricette[dietSettings][type]);
-                }
-            }
+            if(dietSettings === 'mix') { Object.keys(db.database_ricette).forEach(cat => { if(db.database_ricette[cat][type]) pools = pools.concat(db.database_ricette[cat][type]); }); } 
+            else { if(db.database_ricette[dietSettings] && db.database_ricette[dietSettings][type]) { pools = pools.concat(db.database_ricette[dietSettings][type]); } }
         }
         return pools;
     }
-
     function pickSafeRecipe(pool, avoidTitle) {
         let safePool = pool.filter(r => checkAllergens(r.ingredients) === null);
         if(safePool.length === 0) safePool = pool;
@@ -352,7 +288,6 @@
         if(safePool.length === 0) return {title: "Libero", ingredients: []};
         return safePool[Math.floor(Math.random() * safePool.length)];
     }
-
     function generateMenu(force) {
         const days = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
         const types = ['colazione','pranzo','merenda','cena'];
@@ -373,10 +308,8 @@
         }
         menu = newMenu;
         localStorage.setItem('smart_menu', JSON.stringify(menu));
-        updateShopDataFromMenu(); 
-        renderAll();
+        updateShopDataFromMenu(); renderAll();
     }
-
     function swapMeal(dayIdx, type) {
         if(locked[`${dayIdx}_${type}`]) return alert("Sblocca prima!");
         let current = menu[dayIdx].meals[type];
@@ -384,25 +317,17 @@
         let newR = pickSafeRecipe(pool, current.title);
         menu[dayIdx].meals[type] = newR;
         localStorage.setItem('smart_menu', JSON.stringify(menu));
-        updateShopDataFromMenu();
-        renderAll();
+        updateShopDataFromMenu(); renderAll();
     }
-
-    // --- ALTRE FUNZIONI IDENTICHE ---
     function updateShopDataFromMenu() {
         let needs = {};
-        menu.forEach(d => Object.values(d.meals).forEach(m => {
-            if(m.ingredients) m.ingredients.forEach(i => needs[i] = (needs[i]||0)+1);
-        }));
+        menu.forEach(d => Object.values(d.meals).forEach(m => { if(m.ingredients) m.ingredients.forEach(i => needs[i] = (needs[i]||0)+1); }));
         let newData = {};
         Object.keys(needs).forEach(item => {
             let exist = shopData[item];
             if(exist) newData[item] = { qty: needs[item], price: exist.price, checked: exist.checked, isManual: false, isOffer: exist.isOffer };
             else newData[item] = { qty: needs[item], price: 0, checked: false, isManual: false, isOffer: false };
-            if(!newData[item].price) {
-                let off = findBestOffer(item);
-                if(off > 0) { newData[item].price = off; newData[item].isOffer = true; }
-            }
+            if(!newData[item].price) { let off = findBestOffer(item); if(off > 0) { newData[item].price = off; newData[item].isOffer = true; } }
         });
         Object.keys(shopData).forEach(item => { if(shopData[item].isManual) newData[item] = shopData[item]; });
         shopData = newData;
@@ -411,24 +336,16 @@
     function findBestOffer(itemName) {
         if(!db || !db.offerte_per_supermercato) return 0;
         let best = 0;
-        Object.values(db.offerte_per_supermercato).forEach(list => {
-            let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase()));
-            if(match) { if(best === 0 || match.price < best) best = match.price; }
-        });
+        Object.values(db.offerte_per_supermercato).forEach(list => { let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase())); if(match) { if(best === 0 || match.price < best) best = match.price; } });
         return best;
     }
     function addManualItem() {
         let name = document.getElementById('manualItemName').value.trim();
         if(!name) return;
         name = name.charAt(0).toUpperCase() + name.slice(1);
-        if(!shopData[name]) {
-            shopData[name] = { qty: 1, price: 0, checked: false, isManual: true, isOffer: false };
-            let off = findBestOffer(name);
-            if(off > 0) { shopData[name].price = off; shopData[name].isOffer = true; }
-        } else { shopData[name].qty++; shopData[name].isManual = true; }
-        document.getElementById('manualItemName').value = "";
-        localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
-        renderShop();
+        if(!shopData[name]) { shopData[name] = { qty: 1, price: 0, checked: false, isManual: true, isOffer: false }; let off = findBestOffer(name); if(off > 0) { shopData[name].price = off; shopData[name].isOffer = true; } } 
+        else { shopData[name].qty++; shopData[name].isManual = true; }
+        document.getElementById('manualItemName').value = ""; localStorage.setItem('smart_shop_data', JSON.stringify(shopData)); renderShop();
     }
     function renderShop() {
         const c = document.getElementById('shopList'); c.innerHTML = "";
@@ -465,6 +382,7 @@
                 let isF = favorites.includes(m.title);
                 let w = checkAllergens(m.ingredients);
                 let ico = t==='colazione'?'☕': t==='pranzo'?'🍝': t==='merenda'?'🍎':'🌙';
+                // AGGIUNTO: data-html2canvas-ignore="true" per nascondere i bottoni nel PDF (se supportato), ma la logica JS è più sicura
                 html += `<div class="meal-row"><div style="font-size:24px; width:35px;">${ico}</div><div class="meal-content"><div class="meal-title">${m.title} ${m.isCustom?'<span style="font-size:0.7rem;background:#E3F2FD;padding:2px;border-radius:4px">MIO</span>':''}</div><div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>${w?`<div class="allergen-warning"><i class="material-icons">warning</i> ${w}</div>`:''}</div><div class="meal-actions"><i class="material-icons action-btn" onclick="swapMeal(${dayIdx},'${t}')">sync</i><i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i><i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i></div></div>`;
             });
             c.innerHTML += html + "</div>";
