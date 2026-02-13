@@ -1,39 +1,12 @@
 {
-    "data_aggiornamento": "13/02/2026 11:01",
+    "data_aggiornamento": "13/02/2026 11:05",
     "offerte_per_supermercato": {},
     "ricette": [
         {
-            "title": "Latte e Cereali",
-            "type": "colazione",
-            "ingredients": [
-                "Latte",
-                "Cereali"
-            ],
-            "contains": []
-        },
-        {
-            "title": "Pasta al Sugo",
+            "title": "Backup Pasta",
             "type": "pranzo",
             "ingredients": [
-                "Pasta",
-                "Pomodoro"
-            ],
-            "contains": []
-        },
-        {
-            "title": "Frutto",
-            "type": "merenda",
-            "ingredients": [
-                "Mela"
-            ],
-            "contains": []
-        },
-        {
-            "title": "Frittata e Verdure",
-            "type": "cena",
-            "ingredients": [
-                "Uova",
-                "Zucchine"
+                "Pasta"
             ],
             "contains": []
         }
