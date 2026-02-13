@@ -2,13 +2,13 @@ name: Aggiorna Menu Spesa
 
 on:
   schedule:
-    - cron: '0 6 * * 1'      # Esegue ogni lunedì alle 6:00
-  workflow_dispatch:         # Permette l'avvio manuale
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
   repository_dispatch:
-    types: [webhook]         # Permette avvio da app esterna
+    types: [webhook]
   push:
     paths:
-      - 'spesa/volantini/**' # Si avvia se carichi un PDF
+      - 'spesa/volantini/**'
 
 concurrency:
   group: menu_update
@@ -18,31 +18,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write        # Fondamentale per poter salvare il file JSON
+      contents: write
       
     steps:
-      - name: Checkout del codice
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0     # Scarica tutto lo storico per evitare errori di git
+          fetch-depth: 0
 
-      - name: Imposta Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10' 
 
-      - name: Installa librerie aggiornate
-        # Questa riga risolve l'errore 404 installando la versione corretta
-        run: pip install -U "google-generativeai>=0.7.2"
+      - name: Installa Librerie (Clean)
+        run: |
+          pip install --upgrade pip
+          pip install -U google-generativeai
 
       - name: Debug Cartelle
-        run: |
-          echo "Cartella corrente:"
-          pwd
-          echo "Contenuto spesa/volantini:"
-          ls -R spesa/volantini/ || echo "Nessun file trovato qui"
+        run: ls -R spesa/volantini/ || echo "Nessun file"
 
-      - name: Esegui Script Python
+      - name: Esegui Robot
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
@@ -51,13 +48,7 @@ jobs:
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
-          
-          # Aggiunge il file generato
           git add spesa/dati_settimanali.json
-          
-          # Se ci sono modifiche, crea il commit
-          git commit -m "🤖 Menu e Offerte Aggiornati" || echo "Nessuna modifica da salvare"
-          
-          # Scarica eventuali modifiche remote per evitare conflitti e poi carica
+          git commit -m "🤖 Dati Aggiornati" || echo "Nessuna modifica"
           git pull --rebase origin main || git pull --rebase origin master
           git push
