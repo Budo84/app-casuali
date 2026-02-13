@@ -1,9 +1,18 @@
 {
-    "data_aggiornamento": "12/02/2026 19:24",
+    "data_aggiornamento": "13/02/2026 11:01",
     "offerte_per_supermercato": {},
     "ricette": [
         {
-            "title": "Pasta Pomodoro",
+            "title": "Latte e Cereali",
+            "type": "colazione",
+            "ingredients": [
+                "Latte",
+                "Cereali"
+            ],
+            "contains": []
+        },
+        {
+            "title": "Pasta al Sugo",
             "type": "pranzo",
             "ingredients": [
                 "Pasta",
@@ -12,11 +21,19 @@
             "contains": []
         },
         {
-            "title": "Pollo e Insalata",
+            "title": "Frutto",
+            "type": "merenda",
+            "ingredients": [
+                "Mela"
+            ],
+            "contains": []
+        },
+        {
+            "title": "Frittata e Verdure",
             "type": "cena",
             "ingredients": [
-                "Pollo",
-                "Insalata"
+                "Uova",
+                "Zucchine"
             ],
             "contains": []
         }
