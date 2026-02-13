@@ -9,11 +9,11 @@ on:
   push:
     paths:
       - 'spesa/volantini/**'
+      - 'spesa/ricette_utenti/**' # <--- NUOVO: Si attiva quando carichi una ricetta
 
-# Evita che due processi partano insieme
 concurrency:
   group: menu_update
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -22,46 +22,42 @@ jobs:
       contents: write
       
     steps:
-      - name: Checkout del codice
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Scarica tutta la storia
+          fetch-depth: 0
 
-      - name: Imposta Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10' 
 
-      - name: Installa librerie
-        run: pip install -U google-generativeai
-
-      # DEBUG: Stampa file per capire se il PDF è lì
-      - name: 📂 Controllo File
+      - name: Installa Librerie
         run: |
-          echo "Cartella corrente:"
-          pwd
-          echo "Contenuto spesa/volantini:"
-          ls -R spesa/volantini/ || echo "Nessun volantino trovato"
+          pip install --upgrade pip
+          pip install google-generativeai
 
-      - name: Esegui Script Python
+      - name: Crea Cartelle Necessarie
+        run: |
+          mkdir -p spesa/volantini
+          mkdir -p spesa/ricette_utenti
+
+      - name: Esegui Robot
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/automazione.py
 
-      # SALVATAGGIO BLINDATO
       - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
           
-          # 1. Aggiorna la repo locale per essere sicuro
-          git pull origin main || git pull origin master
-          
-          # 2. Aggiunge il file JSON appena generato
+          # Aggiungiamo il database aggiornato
           git add spesa/dati_settimanali.json
           
-          # 3. Committa solo se c'è qualcosa di nuovo
-          git commit -m "🤖 Dati Aggiornati dal Robot" || echo "Nessuna modifica"
+          # Rimuoviamo i file temporanei delle ricette utenti (già importati)
+          git rm spesa/ricette_utenti/*.json --ignore-unmatch
           
-          # 4. Spinge su GitHub
+          git commit -m "🤖 DB Aggiornato + Ricette Utente Importate" || echo "Nessuna modifica"
+          git pull --rebase origin main || git pull --rebase origin master
           git push
