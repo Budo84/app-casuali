@@ -7,7 +7,7 @@ import glob
 import time
 import random
 
-print("--- 🚀 AVVIO ROBOT: CHEF ACCUMULATORE ---")
+print("--- 🚀 AVVIO ROBOT: CHEF GLUTEN-FREE & SAFETY ---")
 
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
@@ -100,9 +100,22 @@ def crea_nuove_ricette(offerte):
         items = [p['name'] for s in offerte for p in offerte[s]]
         if items:
             sample = random.sample(items, min(len(items), 15))
-            context = f"Usa ingredienti: {', '.join(sample)}."
+            context = f"Usa ingredienti in offerta: {', '.join(sample)}."
     try:
-        prompt = f"""Crea 3 ricette nuove per categoria (mediterranea, vegetariana, mondo) e pasto (colazione, pranzo, cena, merenda). {context} JSON: {{ "mediterranea": {{ ... }} }}"""
+        # AGGIUNTA CATEGORIA SENZA GLUTINE
+        prompt = f"""
+        Crea 3 ricette nuove per categoria.
+        {context}
+        
+        4 CATEGORIE: 
+        1. "mediterranea" (Tradizionale)
+        2. "vegetariana" (No carne/pesce)
+        3. "mondo" (Etnica)
+        4. "senza_glutine" (TASSATIVO: Riso, Mais, Grano Saraceno, Patate, Legumi. VIETATO: Grano, Orzo, Farro, Pasta normale, Pane normale).
+        
+        Pasti: colazione, pranzo, cena, merenda.
+        JSON: {{ "mediterranea": {{ ... }}, "senza_glutine": {{ ... }} }}
+        """
         res = model.generate_content(prompt)
         return json.loads(pulisci_json(res.text))
     except: return {}
@@ -110,12 +123,13 @@ def crea_nuove_ricette(offerte):
 def unisci_db(main_db, new_db):
     if not new_db: return main_db
     for cat in new_db:
-        if cat in main_db:
-            for pasto in new_db[cat]:
-                if pasto in main_db[cat]:
-                    titoli = [r['title'] for r in main_db[cat][pasto]]
-                    for r in new_db[cat][pasto]:
-                        if r['title'] not in titoli: main_db[cat][pasto].append(r)
+        if cat not in main_db: main_db[cat] = {"colazione":[], "pranzo":[], "cena":[], "merenda":[]}
+        for pasto in new_db[cat]:
+            if pasto not in main_db[cat]: main_db[cat][pasto] = []
+            
+            titoli = [r['title'] for r in main_db[cat][pasto]]
+            for r in new_db[cat][pasto]:
+                if r['title'] not in titoli: main_db[cat][pasto].append(r)
     return main_db
 
 DATABASE_BACKUP = {
@@ -126,7 +140,13 @@ DATABASE_BACKUP = {
         "merenda": [{"title": "Mela", "ingredients": ["Mela"]}]
     },
     "vegetariana": {"colazione":[], "pranzo":[], "cena":[], "merenda":[]},
-    "mondo": {"colazione":[], "pranzo":[], "cena":[], "merenda":[]}
+    "mondo": {"colazione":[], "pranzo":[], "cena":[], "merenda":[]},
+    "senza_glutine": {
+        "colazione": [{"title": "Yogurt e Frutta", "ingredients": ["Yogurt", "Banana"]}],
+        "pranzo": [{"title": "Risotto allo Zafferano", "ingredients": ["Riso", "Zafferano", "Parmigiano"]}],
+        "cena": [{"title": "Petto di Pollo e Patate", "ingredients": ["Pollo", "Patate", "Rosmarino"]}],
+        "merenda": [{"title": "Gallette di Mais", "ingredients": ["Gallette mais", "Marmellata"]}]
+    }
 }
 
 def esegui_tutto():
