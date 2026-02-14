@@ -32,11 +32,11 @@ jobs:
         with:
           python-version: '3.10' 
 
-      - name: Installa Libreria Stabile
+      - name: Installa Librerie
         run: |
           pip install --upgrade pip
-          # Usiamo la libreria classica ma aggiornata
-          pip install -U google-generativeai
+          # IMPORTANTE: Versione che supporta upload file e lista modelli
+          pip install "google-generativeai>=0.7.2"
 
       - name: 🛒 Analisi Offerte
         if: github.event_name == 'repository_dispatch' && github.event.action == 'start_analysis'
@@ -60,6 +60,6 @@ jobs:
           
           git rm spesa/ricette_utenti/*.json --ignore-unmatch
           
-          git commit -m "🤖 Update Menu e Offerte" || echo "Nessuna modifica"
+          git commit -m "🤖 Analisi Completata" || echo "Nessuna modifica"
           git pull --rebase origin main || git pull --rebase origin master
           git push
