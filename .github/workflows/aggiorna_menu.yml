@@ -3,13 +3,12 @@ name: Aggiorna Menu Spesa
 on:
   schedule:
     - cron: '0 6 * * 1'
-  workflow_dispatch:
-  repository_dispatch:
-    types: [webhook]
+  workflow_dispatch:         # Permette avvio manuale da GitHub
+  repository_dispatch:       # <--- QUESTO ASCOLTA IL TUO PULSANTE
+    types: [start_analysis, webhook]
   push:
     paths:
-      - 'spesa/volantini/**'
-      - 'spesa/ricette_utenti/**' # <--- NUOVO: Si attiva quando carichi una ricetta
+      - 'spesa/ricette_utenti/**' # Parte SOLO per le ricette, NON per i volantini
 
 concurrency:
   group: menu_update
@@ -35,12 +34,7 @@ jobs:
       - name: Installa Librerie
         run: |
           pip install --upgrade pip
-          pip install google-generativeai
-
-      - name: Crea Cartelle Necessarie
-        run: |
-          mkdir -p spesa/volantini
-          mkdir -p spesa/ricette_utenti
+          pip install -U google-generativeai
 
       - name: Esegui Robot
         env:
@@ -58,6 +52,6 @@ jobs:
           # Rimuoviamo i file temporanei delle ricette utenti (già importati)
           git rm spesa/ricette_utenti/*.json --ignore-unmatch
           
-          git commit -m "🤖 DB Aggiornato + Ricette Utente Importate" || echo "Nessuna modifica"
+          git commit -m "🤖 Analisi Completata e Menu Aggiornato" || echo "Nessuna modifica"
           git pull --rebase origin main || git pull --rebase origin master
           git push
