@@ -1,22 +1,17 @@
 import os
 import json
-import google.generativeai as genai
-from datetime import datetime
-import sys
 import glob
 import random
+from datetime import datetime
+import requests
+import sys
 
-print("--- 👨‍🍳 AVVIO GESTORE MENU (CREATIVO) ---")
+print("--- 👨‍🍳 AVVIO GESTORE MENU (METODO DIRETTO REST API) ---")
 
-if "GEMINI_KEY" in os.environ:
-    genai.configure(api_key=os.environ["GEMINI_KEY"])
-else:
+API_KEY = os.environ.get("GEMINI_KEY")
+if not API_KEY:
     print("❌ Chiave mancante.")
     sys.exit(0)
-
-# Temperatura alta = Più varietà
-generation_config = {"temperature": 0.9, "top_p": 1, "top_k": 32, "max_output_tokens": 4096}
-model = genai.GenerativeModel("gemini-pro", generation_config=generation_config)
 
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
@@ -61,42 +56,43 @@ def importa_ricette_utenti(db):
                                 if c and c not in db: db[c] = {}
                                 for t in types:
                                     if t and t not in db[c]: db[c][t] = []
-                                    if not any(x['title'] == r['title'] for x in db[c][t]): 
+                                    if t and not any(x['title'] == r['title'] for x in db[c][t]): 
                                         db[c][t].append(r)
                 except: pass
     except: pass
     return db
 
 def genera_nuove(ingr):
-    print("🍳 Chef AI al lavoro per nuove idee...")
-    
-    # TEMA CASUALE PER VARIARE
-    temi = ["Tradizione Rustica", "Cucina Veloce", "Sapori Esotici", "Comfort Food", "Gourmet Casalingo", "Leggero e Fresco"]
-    tema_scelto = random.choice(temi)
-    print(f"   ✨ Tema di oggi: {tema_scelto}")
-
+    print("🍳 Chef AI genera nuove idee...")
     context = ""
     if ingr:
         sample = random.sample(ingr, min(len(ingr), 10))
-        context = f"Ingredienti bonus da usare se possibile: {', '.join(sample)}."
+        context = f"Cerca di usare alcuni di questi ingredienti: {', '.join(sample)}."
         
+    prompt = f"""
+    Sei uno Chef molto creativo. Inventa 3 ricette nuove per categoria. {context}
+    Categorie: mediterranea, vegetariana, mondo, senza_glutine (USA SOLO: Riso, Mais, Grano Saraceno, Patate. VIETATO Grano/Pasta).
+    Pasti: colazione, pranzo, cena, merenda.
+    JSON: {{ "mediterranea": {{ "pranzo": [{{ "title": "...", "ingredients": [...] }}] }} }}
+    """
+
     try:
-        prompt = f"""
-        Sei uno chef creativo. Inventa 3 ricette NUOVE e ORIGINALI per ogni categoria.
-        Stile cucina di oggi: {tema_scelto}.
-        {context}
+        # Chiamata Diretta Senza Librerie Google
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"temperature": 0.9} # Creatività Alta
+        }
+        res = requests.post(url, headers={"Content-Type": "application/json"}, json=payload)
         
-        REGOLE:
-        1. Non ripetere ricette banali (es. pasta al pomodoro semplice).
-        2. Categorie: mediterranea, vegetariana, mondo, senza_glutine (USA SOLO: Riso, Mais, Grano Saraceno, Patate, Quinoa. VIETATO: Grano, Orzo, Farro).
-        3. Pasti: colazione, pranzo, cena, merenda.
-        
-        RISPONDI SOLO JSON: {{ "mediterranea": {{ "pranzo": [{{ "title": "Nome Creativo", "ingredients": ["Ing1", "Ing2"] }}] }} }}
-        """
-        res = model.generate_content(prompt)
-        return json.loads(pulisci_json(res.text))
+        if res.status_code == 200:
+            ai_text = res.json().get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+            return json.loads(pulisci_json(ai_text))
+        else:
+            print(f"❌ Errore Google API: {res.status_code}")
+            return {}
     except Exception as e:
-        print(f"⚠️ Errore AI: {e}")
+        print(f"⚠️ Errore di rete: {e}")
         return {}
 
 def unisci(old, new):
@@ -111,7 +107,7 @@ def unisci(old, new):
 
 DB_BACKUP = {
     "mediterranea": {"pranzo": [{"title": "Pasta Pomodoro", "ingredients": ["Pasta", "Pomodoro"]}]},
-    "senza_glutine": {"pranzo": [{"title": "Risotto", "ingredients": ["Riso"]}]}
+    "senza_glutine": {"pranzo": [{"title": "Risotto Zafferano", "ingredients": ["Riso", "Zafferano"]}]}
 }
 
 if __name__ == "__main__":
