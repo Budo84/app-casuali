@@ -1,6 +1,6 @@
 import os
 import json
-import google.generativeai as genai
+import google as genai
 from datetime import datetime
 import sys
 import glob
@@ -9,9 +9,10 @@ import random
 print("--- 👨‍🍳 AVVIO GESTORE MENU E RICETTE ---")
 
 if "GEMINI_KEY" in os.environ:
-    genai.configure(api_key=os.environ["GEMINI_KEY"])
+    # Nuova inizializzazione Client
+    client = genai.Client(api_key=os.environ["GEMINI_KEY"])
 else:
-    print("❌ Chiave mancante. Uso backup.")
+    print("❌ Chiave mancante.")
     sys.exit(0)
 
 # Usa il modello TEXT standard (funziona sempre, non dà errore 404)
