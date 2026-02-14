@@ -7,7 +7,7 @@ import glob
 import time
 import random
 
-print("--- 🚀 AVVIO ROBOT: CHEF GLUTEN-FREE & SAFETY ---")
+print("--- 🚀 AVVIO ROBOT: ANALISI E MENU ---")
 
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
@@ -15,7 +15,21 @@ else:
     print("❌ ERRORE: Chiave Mancante.")
     sys.exit(1)
 
-model = genai.GenerativeModel("gemini-pro")
+# SELETTORE MODELLO INTELLIGENTE
+# Prova prima Flash (ottimizzato per documenti) poi Pro
+def get_model():
+    try:
+        # Tenta di caricare Flash
+        m = genai.GenerativeModel("gemini-1.5-flash")
+        print("✅ Uso modello: Flash")
+        return m
+    except:
+        pass
+    
+    print("⚠️ Flash non disponibile, uso Pro")
+    return genai.GenerativeModel("gemini-1.5-pro")
+
+model = get_model()
 
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
@@ -34,29 +48,56 @@ def analizza_volantini():
 
     if not target_dir: return {}
     files = glob.glob(os.path.join(target_dir, "*.[pP][dD][fF]"))
+    print(f"🔎 Analisi {len(files)} file PDF...")
     
     for file_path in files:
         try:
             nome_file = os.path.basename(file_path)
             nome_store = os.path.splitext(nome_file)[0].replace("_", " ").title()
+            
+            # Upload
             pdf = genai.upload_file(file_path, display_name=nome_store)
-            attempt = 0
-            while pdf.state.name == "PROCESSING" and attempt < 10:
+            
+            # Attesa attiva
+            for _ in range(10):
                 time.sleep(2)
                 pdf = genai.get_file(pdf.name)
-                attempt += 1
-            if pdf.state.name == "FAILED": continue
-            prompt = f"""Estrai prodotti e prezzi da "{nome_store}". JSON: {{ "{nome_store}": [ {{"name": "...", "price": 0.00}} ] }}"""
+                if pdf.state.name == "ACTIVE": break
+            
+            if pdf.state.name != "ACTIVE":
+                print(f"❌ PDF {nome_file} non pronto.")
+                continue
+
+            # Prompt specifico per LISTA PRODOTTI
+            prompt = f"""
+            Analizza il volantino "{nome_store}".
+            Estrai una LISTA COMPLETA di prodotti alimentari e relativi prezzi.
+            
+            RISPONDI SOLO JSON:
+            {{
+                "{nome_store}": [
+                    {{"name": "Prodotto 1", "price": 1.00}},
+                    {{"name": "Prodotto 2", "price": 2.50}}
+                ]
+            }}
+            """
+            
             res = model.generate_content([pdf, prompt])
             data = json.loads(pulisci_json(res.text))
+            
             chiave = nome_store if nome_store in data else list(data.keys())[0]
-            if chiave in data: offerte_db[nome_store] = data[chiave]
+            if chiave in data:
+                offerte_db[nome_store] = data[chiave]
+                print(f"✅ Estratti {len(data[chiave])} prodotti da {nome_store}")
+            
             try: genai.delete_file(pdf.name)
             except: pass
-        except: pass
+        except Exception as e:
+            print(f"⚠️ Errore su {file_path}: {e}")
+            
     return offerte_db
 
-# --- 2. DB MANAGEMENT ---
+# --- 2. DB MANAGEMENT (LOGICA INVARIATA) ---
 def carica_vecchio_db():
     path_script = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(path_script, "dati_settimanali.json")
@@ -97,7 +138,9 @@ def importa_ricette_utenti(db_esistente):
 def crea_nuove_ricette(offerte):
     context = ""
     if offerte:
-        items = [p['name'] for s in offerte for p in offerte[s]]
+        items = []
+        for s in offerte:
+            for p in offerte[s]: items.append(p['name'])
         if items:
             sample = random.sample(items, min(len(items), 15))
             context = f"Usa ingredienti in offerta: {', '.join(sample)}."
