@@ -6,7 +6,7 @@ import sys
 import glob
 import random
 
-print("--- 👨‍🍳 AVVIO GESTORE MENU (LIBRERIA CLASSICA) ---")
+print("--- 👨‍🍳 AVVIO GESTORE MENU (CREATIVO) ---")
 
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
@@ -14,8 +14,9 @@ else:
     print("❌ Chiave mancante.")
     sys.exit(0)
 
-# Usa Gemini Pro standard (testuale, affidabile al 100%)
-model = genai.GenerativeModel("gemini-pro")
+# Temperatura alta = Più varietà
+generation_config = {"temperature": 0.9, "top_p": 1, "top_k": 32, "max_output_tokens": 4096}
+model = genai.GenerativeModel("gemini-pro", generation_config=generation_config)
 
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
@@ -60,24 +61,37 @@ def importa_ricette_utenti(db):
                                 if c and c not in db: db[c] = {}
                                 for t in types:
                                     if t and t not in db[c]: db[c][t] = []
-                                    if t and not any(x['title'] == r['title'] for x in db[c][t]): 
+                                    if not any(x['title'] == r['title'] for x in db[c][t]): 
                                         db[c][t].append(r)
                 except: pass
     except: pass
     return db
 
 def genera_nuove(ingr):
-    print("🍳 Chef AI al lavoro...")
+    print("🍳 Chef AI al lavoro per nuove idee...")
+    
+    # TEMA CASUALE PER VARIARE
+    temi = ["Tradizione Rustica", "Cucina Veloce", "Sapori Esotici", "Comfort Food", "Gourmet Casalingo", "Leggero e Fresco"]
+    tema_scelto = random.choice(temi)
+    print(f"   ✨ Tema di oggi: {tema_scelto}")
+
     context = ""
     if ingr:
-        sample = random.sample(ingr, min(len(ingr), 15))
-        context = f"Usa ingredienti: {', '.join(sample)}."
+        sample = random.sample(ingr, min(len(ingr), 10))
+        context = f"Ingredienti bonus da usare se possibile: {', '.join(sample)}."
+        
     try:
         prompt = f"""
-        Crea 3 ricette per categoria. {context}
-        Categorie: mediterranea, vegetariana, mondo, senza_glutine (solo riso/mais/patate).
-        Pasti: colazione, pranzo, cena, merenda.
-        JSON: {{ "mediterranea": {{ "pranzo": [{{ "title": "...", "ingredients": [...] }}] }} }}
+        Sei uno chef creativo. Inventa 3 ricette NUOVE e ORIGINALI per ogni categoria.
+        Stile cucina di oggi: {tema_scelto}.
+        {context}
+        
+        REGOLE:
+        1. Non ripetere ricette banali (es. pasta al pomodoro semplice).
+        2. Categorie: mediterranea, vegetariana, mondo, senza_glutine (USA SOLO: Riso, Mais, Grano Saraceno, Patate, Quinoa. VIETATO: Grano, Orzo, Farro).
+        3. Pasti: colazione, pranzo, cena, merenda.
+        
+        RISPONDI SOLO JSON: {{ "mediterranea": {{ "pranzo": [{{ "title": "Nome Creativo", "ingredients": ["Ing1", "Ing2"] }}] }} }}
         """
         res = model.generate_content(prompt)
         return json.loads(pulisci_json(res.text))
@@ -111,4 +125,4 @@ if __name__ == "__main__":
     out = { "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"), "database_ricette": db }
     with open(os.path.join(base, "dati_settimanali.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, indent=4, ensure_ascii=False)
-    print("✅ Menu salvato.")
+    print("✅ Menu aggiornato.")
