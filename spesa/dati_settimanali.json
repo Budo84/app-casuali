@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "13/02/2026 17:36",
+    "data_aggiornamento": "14/02/2026 09:19",
     "offerte_per_supermercato": {},
     "database_ricette": {
         "mediterranea": {
@@ -102,6 +102,15 @@
                         "Peperoni",
                         "Melanzane"
                     ]
+                },
+                {
+                    "title": "Pizza di budo",
+                    "ingredients": [
+                        "Farina",
+                        "acqua",
+                        "olio"
+                    ],
+                    "isCustom": true
                 }
             ],
             "cena": [
@@ -161,6 +170,15 @@
                         "Uova",
                         "Pomodoro"
                     ]
+                },
+                {
+                    "title": "Pizza di budo",
+                    "ingredients": [
+                        "Farina",
+                        "acqua",
+                        "olio"
+                    ],
+                    "isCustom": true
                 }
             ],
             "merenda": [
@@ -194,6 +212,15 @@
                         "Pane",
                         "Olio EVO"
                     ]
+                },
+                {
+                    "title": "Pizza di budo",
+                    "ingredients": [
+                        "Farina",
+                        "acqua",
+                        "olio"
+                    ],
+                    "isCustom": true
                 }
             ]
         },
@@ -298,6 +325,15 @@
                         "Mais",
                         "Pomodori"
                     ]
+                },
+                {
+                    "title": "Pizza di budo",
+                    "ingredients": [
+                        "Farina",
+                        "acqua",
+                        "olio"
+                    ],
+                    "isCustom": true
                 }
             ],
             "cena": [
@@ -356,6 +392,15 @@
                         "Gorgonzola",
                         "Pere"
                     ]
+                },
+                {
+                    "title": "Pizza di budo",
+                    "ingredients": [
+                        "Farina",
+                        "acqua",
+                        "olio"
+                    ],
+                    "isCustom": true
                 }
             ],
             "merenda": [
@@ -391,6 +436,15 @@
                     "ingredients": [
                         "Pera"
                     ]
+                },
+                {
+                    "title": "Pizza di budo",
+                    "ingredients": [
+                        "Farina",
+                        "acqua",
+                        "olio"
+                    ],
+                    "isCustom": true
                 }
             ]
         },
@@ -608,6 +662,42 @@
                         "Farina",
                         "Burro"
                     ]
+                }
+            ]
+        },
+        "senza_glutine": {
+            "colazione": [],
+            "pranzo": [
+                {
+                    "title": "Pizza di budo",
+                    "ingredients": [
+                        "Farina",
+                        "acqua",
+                        "olio"
+                    ],
+                    "isCustom": true
+                }
+            ],
+            "cena": [
+                {
+                    "title": "Pizza di budo",
+                    "ingredients": [
+                        "Farina",
+                        "acqua",
+                        "olio"
+                    ],
+                    "isCustom": true
+                }
+            ],
+            "merenda": [
+                {
+                    "title": "Pizza di budo",
+                    "ingredients": [
+                        "Farina",
+                        "acqua",
+                        "olio"
+                    ],
+                    "isCustom": true
                 }
             ]
         }
