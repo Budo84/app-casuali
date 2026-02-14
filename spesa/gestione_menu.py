@@ -1,21 +1,20 @@
 import os
 import json
-import google as genai
+import google.generativeai as genai
 from datetime import datetime
 import sys
 import glob
 import random
 
-print("--- 👨‍🍳 AVVIO GESTORE MENU E RICETTE ---")
+print("--- 👨‍🍳 AVVIO GESTORE MENU (LIBRERIA CLASSICA) ---")
 
 if "GEMINI_KEY" in os.environ:
-    # Nuova inizializzazione Client
-    client = genai.Client(api_key=os.environ["GEMINI_KEY"])
+    genai.configure(api_key=os.environ["GEMINI_KEY"])
 else:
     print("❌ Chiave mancante.")
     sys.exit(0)
 
-# Usa il modello TEXT standard (funziona sempre, non dà errore 404)
+# Usa Gemini Pro standard (testuale, affidabile al 100%)
 model = genai.GenerativeModel("gemini-pro")
 
 def pulisci_json(text):
@@ -25,73 +24,57 @@ def pulisci_json(text):
     if s != -1 and e != -1: return text[s:e]
     return text
 
-# --- LEGGE LE OFFERTE (SOLO PER ISPIRAZIONE) ---
 def get_ingredienti_offerte():
     try:
-        # Cerca il file delle offerte generato dall'altro script
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "offerte.json")
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, "r") as f:
             data = json.load(f)
             items = []
             for store in data:
-                for prod in data[store]:
-                    items.append(prod['name'])
+                for prod in data[store]: items.append(prod['name'])
             return items
-    except:
-        return []
+    except: return []
 
-# --- GESTIONE DATABASE RICETTE (LOGICA AUTOMAZIONE 1.PY) ---
-def carica_db_esistente():
+def carica_db():
     try:
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dati_settimanali.json")
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f).get("database_ricette", DATABASE_BACKUP)
-    except:
-        return DATABASE_BACKUP
+        with open(path, "r") as f: return json.load(f).get("database_ricette", DB_BACKUP)
+    except: return DB_BACKUP
 
 def importa_ricette_utenti(db):
     try:
         base = os.path.dirname(os.path.abspath(__file__))
         path = os.path.join(base, "ricette_utenti")
         if not os.path.exists(path): path = os.path.join(os.getcwd(), "spesa", "ricette_utenti")
-        
         if os.path.exists(path):
             files = glob.glob(os.path.join(path, "*.json"))
-            print(f"📥 Trovate {len(files)} ricette utente da importare.")
             for f in files:
                 try:
-                    with open(f, "r", encoding="utf-8") as fo:
+                    with open(f, "r") as fo:
                         j = json.load(fo)
-                        # Supporto sia per formato singolo che lista
-                        ric = j.get('recipe')
+                        r = j.get('recipe')
                         cats = j.get('categories', [j.get('category')])
                         types = j.get('types', [j.get('type')])
-                        
-                        if ric:
+                        if r:
                             for c in cats:
                                 if c and c not in db: db[c] = {}
                                 for t in types:
-                                    if t:
-                                        if t not in db[c]: db[c][t] = []
-                                        # Evita duplicati
-                                        if not any(x['title'] == ric['title'] for x in db[c][t]):
-                                            db[c][t].append(ric)
+                                    if t and t not in db[c]: db[c][t] = []
+                                    if t and not any(x['title'] == r['title'] for x in db[c][t]): 
+                                        db[c][t].append(r)
                 except: pass
-    except Exception as e:
-        print(f"⚠️ Errore import utenti: {e}")
+    except: pass
     return db
 
-def genera_nuove_ricette(ingredienti):
+def genera_nuove(ingr):
     print("🍳 Chef AI al lavoro...")
     context = ""
-    if ingredienti:
-        sample = random.sample(ingredienti, min(len(ingredienti), 15))
-        context = f"Usa questi ingredienti in offerta: {', '.join(sample)}."
-        
+    if ingr:
+        sample = random.sample(ingr, min(len(ingr), 15))
+        context = f"Usa ingredienti: {', '.join(sample)}."
     try:
         prompt = f"""
-        Crea 3 ricette per categoria.
-        {context}
+        Crea 3 ricette per categoria. {context}
         Categorie: mediterranea, vegetariana, mondo, senza_glutine (solo riso/mais/patate).
         Pasti: colazione, pranzo, cena, merenda.
         JSON: {{ "mediterranea": {{ "pranzo": [{{ "title": "...", "ingredients": [...] }}] }} }}
@@ -109,43 +92,23 @@ def unisci(old, new):
         for t in new[c]:
             if t not in old[c]: old[c][t] = []
             for r in new[c][t]:
-                if not any(x['title'] == r['title'] for x in old[c][t]):
-                    old[c][t].append(r)
+                if not any(x['title'] == r['title'] for x in old[c][t]): old[c][t].append(r)
     return old
 
-DATABASE_BACKUP = {
-    "mediterranea": {
-        "colazione": [{"title": "Latte e Biscotti", "ingredients": ["Latte", "Biscotti"]}],
-        "pranzo": [{"title": "Pasta al Pomodoro", "ingredients": ["Pasta", "Pomodoro"]}],
-        "cena": [{"title": "Pollo al Limone", "ingredients": ["Pollo", "Limone"]}],
-        "merenda": [{"title": "Mela", "ingredients": ["Mela"]}]
-    },
-    "senza_glutine": {
-        "pranzo": [{"title": "Risotto Zafferano", "ingredients": ["Riso", "Zafferano"]}],
-        "cena": [{"title": "Frittata", "ingredients": ["Uova", "Verdure"]}]
-    }
+DB_BACKUP = {
+    "mediterranea": {"pranzo": [{"title": "Pasta Pomodoro", "ingredients": ["Pasta", "Pomodoro"]}]},
+    "senza_glutine": {"pranzo": [{"title": "Risotto", "ingredients": ["Riso"]}]}
 }
 
 if __name__ == "__main__":
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # 1. Carica ingredienti (se ci sono offerte)
+    base = os.path.dirname(os.path.abspath(__file__))
     ingr = get_ingredienti_offerte()
-    
-    # 2. Gestione DB
-    db = carica_db_esistente()
+    db = carica_db()
     db = importa_ricette_utenti(db)
-    nuove = genera_nuove_ricette(ingr)
+    nuove = genera_nuove(ingr)
     db = unisci(db, nuove)
     
-    # 3. Salva
-    file_out = os.path.join(base_dir, "dati_settimanali.json")
-    # Manteniamo la struttura che l'HTML si aspetta
-    out = {
-        "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
-        "database_ricette": db
-    }
-    
-    with open(file_out, "w", encoding="utf-8") as f:
+    out = { "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"), "database_ricette": db }
+    with open(os.path.join(base, "dati_settimanali.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, indent=4, ensure_ascii=False)
-    print(f"✅ Menu salvato in {file_out}")
+    print("✅ Menu salvato.")
