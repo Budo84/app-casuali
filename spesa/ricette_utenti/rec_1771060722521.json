@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "mediterranea",
+    "vegetariana",
+    "senza_glutine"
+  ],
+  "types": [
+    "pranzo",
+    "cena",
+    "merenda"
+  ],
+  "recipe": {
+    "title": "Pizza di budo",
+    "ingredients": [
+      "Farina",
+      "acqua",
+      "olio"
+    ],
+    "isCustom": true
+  }
+}
