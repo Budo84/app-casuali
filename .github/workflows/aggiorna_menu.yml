@@ -32,17 +32,20 @@ jobs:
           python-version: '3.10' 
 
       - name: Installa Librerie
+        # Aggiornamento forzato per vedere i nuovi modelli
         run: |
           pip install --upgrade pip
           pip install -U "google-generativeai>=0.5.0"
 
-      - name: 🛒 Analisi Offerte (Solo se richiesto)
+      # Parte 1: Se hai premuto il pulsante, analizza le offerte
+      - name: 🛒 Analisi Offerte
         if: github.event_name == 'repository_dispatch' && github.event.action == 'start_analysis'
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/gestione_offerte.py
 
-      - name: 🍳 Aggiorna Menu (Sempre)
+      # Parte 2: Aggiorna SEMPRE il menu (così legge eventuali nuove offerte o ricette)
+      - name: 🍳 Aggiorna Menu
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/gestione_menu.py
@@ -52,11 +55,13 @@ jobs:
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
           
-          git add spesa/dati_settimanali.json
-          git add spesa/offerte.json || echo "Nessun file offerte nuovo"
+          # Salva entrambi i file se esistono
+          git add spesa/dati_settimanali.json || true
+          git add spesa/offerte.json || true
           
+          # Pulisce ricette temporanee
           git rm spesa/ricette_utenti/*.json --ignore-unmatch
           
-          git commit -m "🤖 Aggiornamento Modulare" || echo "Nessuna modifica"
+          git commit -m "🤖 Aggiornamento Dati" || echo "Nessuna modifica"
           git pull --rebase origin main || git pull --rebase origin master
           git push
