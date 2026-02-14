@@ -9,7 +9,7 @@ on:
   push:
     paths:
       - 'spesa/ricette_utenti/**'
-      - 'spesa/allergeni.json' # Si attiva se modifichi gli allergeni
+      - 'spesa/allergeni.json'
 
 concurrency:
   group: menu_update
@@ -32,19 +32,18 @@ jobs:
         with:
           python-version: '3.10' 
 
-      - name: Installa Librerie
+      - name: Installa Libreria Stabile
         run: |
           pip install --upgrade pip
-          pip install google-genai
+          # Usiamo la libreria classica ma aggiornata
+          pip install -U google-generativeai
 
-      # Parte 1: Analisi Offerte (Solo se richiesto col pulsante)
       - name: 🛒 Analisi Offerte
         if: github.event_name == 'repository_dispatch' && github.event.action == 'start_analysis'
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/gestione_offerte.py
 
-      # Parte 2: Aggiorna Menu (Sempre)
       - name: 🍳 Aggiorna Menu
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
@@ -61,6 +60,6 @@ jobs:
           
           git rm spesa/ricette_utenti/*.json --ignore-unmatch
           
-          git commit -m "🤖 Update Completo" || echo "Nessuna modifica"
+          git commit -m "🤖 Update Menu e Offerte" || echo "Nessuna modifica"
           git pull --rebase origin main || git pull --rebase origin master
           git push
