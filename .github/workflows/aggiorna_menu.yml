@@ -35,8 +35,8 @@ jobs:
       - name: Installa Librerie
         run: |
           pip install --upgrade pip
-          pip install -U google-generativeai
-          pip install pypdf  # <--- FONDAMENTALE PER LEGGERE I PDF
+          pip install google-generativeai
+          pip install pypdf  # <--- AGGIUNTO QUESTO
 
       - name: 🛒 Analisi Offerte
         if: github.event_name == 'repository_dispatch' && github.event.action == 'start_analysis'
@@ -56,7 +56,6 @@ jobs:
           
           git add spesa/dati_settimanali.json
           git add spesa/offerte.json || true
-          git add spesa/allergeni.json || true
           
           git rm spesa/ricette_utenti/*.json --ignore-unmatch
           
