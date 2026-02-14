@@ -68,7 +68,7 @@
 <header>
     <div style="display:flex; flex-direction:column;">
         <span style="font-weight:bold; font-size:1.1rem;">Spesa Smart</span>
-        <small style="font-size:0.7rem; opacity:0.9">Controllo Manuale</small>
+        <small style="font-size:0.7rem; opacity:0.9">Sistemato</small>
     </div>
     <div class="status-badge" onclick="window.location.reload()">
         <div id="statusDot" class="dot"></div>
@@ -174,7 +174,7 @@
 
 <script>
     let db = null;
-    let offersDb = null; // NUOVO DB SOLO OFFERTE
+    let offersDb = null;
     let menu = JSON.parse(localStorage.getItem('smart_menu')) || [];
     let family = JSON.parse(localStorage.getItem('smart_family')) || [];
     let locked = JSON.parse(localStorage.getItem('smart_locked')) || {};
@@ -211,7 +211,6 @@
 
             updateStatus('online');
             
-            // POPOLA TENDINA OFFERTE
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
             const stores = Object.keys(offersDb || {});
@@ -351,7 +350,6 @@
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
     }
     function findBestOffer(itemName) {
-        // CERCA NEL NUOVO DB OFFERTE
         if(!offersDb) return 0;
         let best = 0;
         Object.values(offersDb).forEach(list => { let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase())); if(match) { if(best === 0 || match.price < best) best = match.price; } });
@@ -382,8 +380,6 @@
     function updateShopItem(n, f, v) { if(shopData[n]) { shopData[n][f]=parseFloat(v)||0; if(f==='price') shopData[n].isOffer=false; localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); renderShop(); } }
     function toggleCheck(n) { if(shopData[n]) { shopData[n].checked=!shopData[n].checked; localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); renderShop(); } }
     function deleteItem(n) { if(confirm("Rimuovere?")) { delete shopData[n]; localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); renderShop(); } }
-    
-    // RENDER OFFERTE DAL NUOVO DB
     function renderOffers() {
         const c = document.getElementById('offerList'); c.innerHTML = "";
         const s = document.getElementById('storeSelect').value;
@@ -409,22 +405,40 @@
             c.innerHTML += html + "</div>";
         });
     }
+
     function checkAllergens(ings) {
         if(!ings) return null;
         let hits = [];
         family.forEach(f => {
             if(f.allergy) {
                 let keys = riskMap[f.allergy] || [f.allergy.toLowerCase()];
-                if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name);
+                if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name + " (" + f.allergy + ")");
             }
         });
-        return hits.length ? "ATTENZIONE: " + hits.join(', ') : null;
+        return hits.length ? "PERICOLO: " + hits.join(', ') : null;
     }
+
     function toggleLock(d,t){ let k=`${d}_${t}`; if(locked[k]) delete locked[k]; else locked[k]=menu[d].meals[t]; localStorage.setItem('smart_locked',JSON.stringify(locked)); renderMenu(); }
     function toggleFav(t){ if(favorites.includes(t)) favorites=favorites.filter(x=>x!==t); else favorites.push(t); localStorage.setItem('smart_fav',JSON.stringify(favorites)); renderMenu(); }
     function addFamilyMember() { let n=document.getElementById('memberName').value, a=document.getElementById('memberAllergy').value; if(n){ family.push({name:n, allergy:a}); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu(); } }
     function renderFamily() { document.getElementById('familyContainer').innerHTML = family.map((f,i)=>`<div class="family-chip">${f.name} ${f.allergy||''} <i class="material-icons" style="font-size:16px; margin-left:5px; cursor:pointer" onclick="family.splice(${i},1); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu();">close</i></div>`).join(''); }
     function saveCreds() { localStorage.setItem('gh_repo', document.getElementById('ghRepo').value); localStorage.setItem('gh_token', document.getElementById('ghToken').value); alert("Login Salvato"); }
+    async function uploadPDF() {
+        let r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value, n=document.getElementById('pdfName').value, f=document.getElementById('pdfFile').files[0], s=document.getElementById('upStatus');
+        if(!r||!t||!n||!f) return alert("Dati mancanti");
+        s.innerText="Upload in corso...";
+        let reader = new FileReader();
+        reader.onload = async function() {
+            try {
+                let url=`https://api.github.com/repos/${r}/contents/spesa/volantini/${n.toLowerCase().replace(/\s/g,'')}.pdf`;
+                let sha=null; try{let c=await fetch(url,{headers:{Authorization:`token ${t}`}}); if(c.ok) sha=(await c.json()).sha;}catch(e){}
+                let res=await fetch(url,{method:'PUT',headers:{Authorization:`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:"Up",content:reader.result.split(',')[1],sha:sha})});
+                if(!res.ok) throw new Error("Err Github");
+                s.innerText="✅ File caricato! Ora premi 'Avvia Analisi'.";
+            } catch(e) { s.innerText="Errore: "+e.message; }
+        };
+        reader.readAsDataURL(f);
+    }
     function hardReset() { if(confirm("Reset Totale?")) { localStorage.clear(); location.reload(); } }
     function go(p,b) { document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); document.getElementById(p).classList.add('active'); document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active')); b.classList.add('active'); renderAll(); }
     function renderAll() { renderMenu(); renderShop(); renderOffers(); }
