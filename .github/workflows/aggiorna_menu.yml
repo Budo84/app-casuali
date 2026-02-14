@@ -34,25 +34,29 @@ jobs:
       - name: Installa Librerie
         run: |
           pip install --upgrade pip
-          pip install -U google-generativeai
+          pip install -U "google-generativeai>=0.5.0"
 
-      - name: Esegui Robot
+      - name: 🛒 Analisi Offerte (Solo se richiesto)
+        if: github.event_name == 'repository_dispatch' && github.event.action == 'start_analysis'
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
-        run: python spesa/automazione.py
+        run: python spesa/gestione_offerte.py
+
+      - name: 🍳 Aggiorna Menu (Sempre)
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+        run: python spesa/gestione_menu.py
 
       - name: Salva su GitHub
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
           
-          # Aggiungiamo ENTRAMBI i file
           git add spesa/dati_settimanali.json
-          git add spesa/offerte.json
+          git add spesa/offerte.json || echo "Nessun file offerte nuovo"
           
-          # Pulizia ricette
           git rm spesa/ricette_utenti/*.json --ignore-unmatch
           
-          git commit -m "🤖 Update: Offerte e Ricette" || echo "Nessuna modifica"
+          git commit -m "🤖 Aggiornamento Modulare" || echo "Nessuna modifica"
           git pull --rebase origin main || git pull --rebase origin master
           git push
