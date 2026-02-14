@@ -129,7 +129,6 @@
 
 <div id="p-offerte" class="page">
     <h3>Gestione Volantini</h3>
-    
     <div class="settings-box" style="margin-bottom:20px; border:2px solid var(--primary);">
         <h4 style="margin-top:0;">1. Carica Volantino</h4>
         <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">Carica il PDF. Il file verrà salvato nel cloud senza avviare subito l'analisi.</div>
@@ -138,14 +137,12 @@
         <button class="btn" onclick="uploadPDF()" id="btnUp" style="margin-top:10px;">📤 Carica PDF</button>
         <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
     </div>
-
     <div class="settings-box" style="margin-bottom:20px; border:2px solid var(--accent);">
         <h4 style="margin-top:0;">2. Avvia Analisi</h4>
         <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">Dopo aver caricato, premi qui per svegliare il robot e fargli leggere il PDF.</div>
         <button class="btn" onclick="startAnalysis()" style="background:var(--accent);">🚀 Avvia Analisi Offerte</button>
         <p id="analysisStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
     </div>
-
     <hr>
     <h3>Offerte Rilevate</h3>
     <select id="storeSelect" onchange="renderOffers()" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;"></select>
@@ -177,6 +174,7 @@
 
 <script>
     let db = null;
+    let offersDb = null; // NUOVO DB SOLO OFFERTE
     let menu = JSON.parse(localStorage.getItem('smart_menu')) || [];
     let family = JSON.parse(localStorage.getItem('smart_family')) || [];
     let locked = JSON.parse(localStorage.getItem('smart_locked')) || {};
@@ -199,18 +197,29 @@
         if(localStorage.getItem('gh_repo')) document.getElementById('ghRepo').value = localStorage.getItem('gh_repo');
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
         updateStatus('loading');
+        
         try {
+            // CARICA RICETTE
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
-            if(!res.ok) throw new Error("JSON 404");
-            db = await res.json();
+            if(res.ok) db = await res.json();
+            
+            // CARICA OFFERTE (SEPARATAMENTE)
+            try {
+                const resOff = await fetch('offerte.json?t=' + Date.now());
+                if(resOff.ok) offersDb = await resOff.json();
+            } catch(e) { console.log("Nessuna offerta ancora"); }
+
             updateStatus('online');
+            
+            // POPOLA TENDINA OFFERTE
             const sel = document.getElementById('storeSelect');
             sel.innerHTML = "";
-            const stores = Object.keys(db.offerte_per_supermercato || {});
+            const stores = Object.keys(offersDb || {});
             if(stores.length>0) {
                 stores.forEach(s => { let opt=document.createElement('option'); opt.value=s; opt.innerText=s; sel.appendChild(opt); });
                 sel.value = stores[0];
             } else { sel.innerHTML = "<option>Nessun Volantino</option>"; }
+
             if(!menu.length) generateMenu(false);
             renderAll();
         } catch(e) { console.error(e); updateStatus('offline'); if(menu.length) renderAll(); }
@@ -218,39 +227,20 @@
 
     function updateStatus(s) { document.getElementById('statusDot').className = 'dot ' + s; document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline'; }
 
-    // --- NUOVA LOGICA AVVIO MANUALE ---
     async function startAnalysis() {
         let repo = document.getElementById('ghRepo').value.trim();
         let token = document.getElementById('ghToken').value.trim();
         let status = document.getElementById('analysisStatus');
-        
         if(!repo || !token) return alert("Mancano le credenziali GitHub in Opzioni!");
-        
         status.innerText = "⏳ Invio comando al robot...";
-        
         try {
             let url = `https://api.github.com/repos/${repo}/dispatches`;
-            let res = await fetch(url, {
-                method: 'POST',
-                headers: { 
-                    'Authorization': `token ${token}`, 
-                    'Accept': 'application/vnd.github.v3+json'
-                },
-                body: JSON.stringify({ event_type: "start_analysis" })
-            });
-
-            if(res.ok) {
-                status.innerText = "✅ Comando inviato! Il robot sta lavorando. Attendi 2 minuti e ricarica la pagina.";
-                alert("Analisi avviata. Attendi 2 minuti poi ricarica l'App per vedere i prezzi.");
-            } else {
-                throw new Error("Errore GitHub: " + res.status);
-            }
-        } catch(e) {
-            status.innerText = "❌ Errore: " + e.message;
-        }
+            let res = await fetch(url, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ event_type: "start_analysis" }) });
+            if(res.ok) { status.innerText = "✅ Comando inviato! Il robot sta lavorando. Attendi 2 minuti e ricarica la pagina."; alert("Analisi avviata. Attendi 2 minuti poi ricarica l'App per vedere i prezzi."); } 
+            else { throw new Error("Errore GitHub: " + res.status); }
+        } catch(e) { status.innerText = "❌ Errore: " + e.message; }
     }
 
-    // --- UPLOAD PDF (SOLO CARICAMENTO) ---
     async function uploadPDF() {
         let r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value, n=document.getElementById('pdfName').value, f=document.getElementById('pdfFile').files[0], s=document.getElementById('upStatus');
         if(!r||!t||!n||!f) return alert("Dati mancanti");
@@ -361,9 +351,10 @@
         localStorage.setItem('smart_shop_data', JSON.stringify(shopData));
     }
     function findBestOffer(itemName) {
-        if(!db || !db.offerte_per_supermercato) return 0;
+        // CERCA NEL NUOVO DB OFFERTE
+        if(!offersDb) return 0;
         let best = 0;
-        Object.values(db.offerte_per_supermercato).forEach(list => { let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase())); if(match) { if(best === 0 || match.price < best) best = match.price; } });
+        Object.values(offersDb).forEach(list => { let match = list.find(o => o.name.toLowerCase().includes(itemName.toLowerCase())); if(match) { if(best === 0 || match.price < best) best = match.price; } });
         return best;
     }
     function addManualItem() {
@@ -391,11 +382,13 @@
     function updateShopItem(n, f, v) { if(shopData[n]) { shopData[n][f]=parseFloat(v)||0; if(f==='price') shopData[n].isOffer=false; localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); renderShop(); } }
     function toggleCheck(n) { if(shopData[n]) { shopData[n].checked=!shopData[n].checked; localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); renderShop(); } }
     function deleteItem(n) { if(confirm("Rimuovere?")) { delete shopData[n]; localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); renderShop(); } }
+    
+    // RENDER OFFERTE DAL NUOVO DB
     function renderOffers() {
         const c = document.getElementById('offerList'); c.innerHTML = "";
         const s = document.getElementById('storeSelect').value;
-        if(!s || !db.offerte_per_supermercato || !db.offerte_per_supermercato[s]) return;
-        db.offerte_per_supermercato[s].forEach(o => { c.innerHTML += `<div class="offer-card" onclick="addOfferToList('${o.name}',${o.price})"><div style="font-size:0.9rem">${o.name}</div><div style="color:#00897b;font-weight:bold">€${o.price.toFixed(2)}</div><small>+ Aggiungi</small></div>`; });
+        if(!s || !offersDb || !offersDb[s]) return;
+        offersDb[s].forEach(o => { c.innerHTML += `<div class="offer-card" onclick="addOfferToList('${o.name}',${o.price})"><div style="font-size:0.9rem">${o.name}</div><div style="color:#00897b;font-weight:bold">€${o.price.toFixed(2)}</div><small>+ Aggiungi</small></div>`; });
     }
     function addOfferToList(n,p) { if(!shopData[n]) shopData[n]={qty:1,price:p,checked:false,isManual:true,isOffer:true}; else {shopData[n].price=p;shopData[n].isOffer=true;} localStorage.setItem('smart_shop_data',JSON.stringify(shopData)); alert("Aggiunto!"); renderShop(); }
     
@@ -416,40 +409,22 @@
             c.innerHTML += html + "</div>";
         });
     }
-
     function checkAllergens(ings) {
         if(!ings) return null;
         let hits = [];
         family.forEach(f => {
             if(f.allergy) {
                 let keys = riskMap[f.allergy] || [f.allergy.toLowerCase()];
-                if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name + " (" + f.allergy + ")");
+                if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name);
             }
         });
-        return hits.length ? "PERICOLO: " + hits.join(', ') : null;
+        return hits.length ? "ATTENZIONE: " + hits.join(', ') : null;
     }
-
     function toggleLock(d,t){ let k=`${d}_${t}`; if(locked[k]) delete locked[k]; else locked[k]=menu[d].meals[t]; localStorage.setItem('smart_locked',JSON.stringify(locked)); renderMenu(); }
     function toggleFav(t){ if(favorites.includes(t)) favorites=favorites.filter(x=>x!==t); else favorites.push(t); localStorage.setItem('smart_fav',JSON.stringify(favorites)); renderMenu(); }
     function addFamilyMember() { let n=document.getElementById('memberName').value, a=document.getElementById('memberAllergy').value; if(n){ family.push({name:n, allergy:a}); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu(); } }
     function renderFamily() { document.getElementById('familyContainer').innerHTML = family.map((f,i)=>`<div class="family-chip">${f.name} ${f.allergy||''} <i class="material-icons" style="font-size:16px; margin-left:5px; cursor:pointer" onclick="family.splice(${i},1); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu();">close</i></div>`).join(''); }
     function saveCreds() { localStorage.setItem('gh_repo', document.getElementById('ghRepo').value); localStorage.setItem('gh_token', document.getElementById('ghToken').value); alert("Login Salvato"); }
-    async function uploadPDF() {
-        let r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value, n=document.getElementById('pdfName').value, f=document.getElementById('pdfFile').files[0], s=document.getElementById('upStatus');
-        if(!r||!t||!n||!f) return alert("Dati mancanti");
-        s.innerText="Upload...";
-        let reader = new FileReader();
-        reader.onload = async function() {
-            try {
-                let url=`https://api.github.com/repos/${r}/contents/spesa/volantini/${n.toLowerCase().replace(/\s/g,'')}.pdf`;
-                let sha=null; try{let c=await fetch(url,{headers:{Authorization:`token ${t}`}}); if(c.ok) sha=(await c.json()).sha;}catch(e){}
-                let res=await fetch(url,{method:'PUT',headers:{Authorization:`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:"Up",content:reader.result.split(',')[1],sha:sha})});
-                if(!res.ok) throw new Error("Err Github");
-                s.innerText="Fatto! Analisi in corso...";
-            } catch(e) { s.innerText="Errore: "+e.message; }
-        };
-        reader.readAsDataURL(f);
-    }
     function hardReset() { if(confirm("Reset Totale?")) { localStorage.clear(); location.reload(); } }
     function go(p,b) { document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); document.getElementById(p).classList.add('active'); document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active')); b.classList.add('active'); renderAll(); }
     function renderAll() { renderMenu(); renderShop(); renderOffers(); }
