@@ -12,9 +12,9 @@ if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
 else:
     print("❌ Chiave mancante. Uso backup.")
-    sys.exit(0) # Non rompiamo il workflow, usciamo puliti
+    sys.exit(0)
 
-# Usa il modello TEXT standard (funziona sempre)
+# Usa il modello TEXT standard (funziona sempre, non dà errore 404)
 model = genai.GenerativeModel("gemini-pro")
 
 def pulisci_json(text):
@@ -27,8 +27,9 @@ def pulisci_json(text):
 # --- LEGGE LE OFFERTE (SOLO PER ISPIRAZIONE) ---
 def get_ingredienti_offerte():
     try:
+        # Cerca il file delle offerte generato dall'altro script
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "offerte.json")
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
             items = []
             for store in data:
@@ -38,11 +39,11 @@ def get_ingredienti_offerte():
     except:
         return []
 
-# --- GESTIONE DATABASE RICETTE ---
+# --- GESTIONE DATABASE RICETTE (LOGICA AUTOMAZIONE 1.PY) ---
 def carica_db_esistente():
     try:
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dati_settimanali.json")
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             return json.load(f).get("database_ricette", DATABASE_BACKUP)
     except:
         return DATABASE_BACKUP
@@ -58,20 +59,22 @@ def importa_ricette_utenti(db):
             print(f"📥 Trovate {len(files)} ricette utente da importare.")
             for f in files:
                 try:
-                    with open(f, "r") as fo:
+                    with open(f, "r", encoding="utf-8") as fo:
                         j = json.load(fo)
+                        # Supporto sia per formato singolo che lista
                         ric = j.get('recipe')
                         cats = j.get('categories', [j.get('category')])
                         types = j.get('types', [j.get('type')])
                         
                         if ric:
                             for c in cats:
-                                if c not in db: db[c] = {}
+                                if c and c not in db: db[c] = {}
                                 for t in types:
-                                    if t not in db[c]: db[c][t] = []
-                                    # Evita duplicati
-                                    if not any(x['title'] == ric['title'] for x in db[c][t]):
-                                        db[c][t].append(ric)
+                                    if t:
+                                        if t not in db[c]: db[c][t] = []
+                                        # Evita duplicati
+                                        if not any(x['title'] == ric['title'] for x in db[c][t]):
+                                            db[c][t].append(ric)
                 except: pass
     except Exception as e:
         print(f"⚠️ Errore import utenti: {e}")
@@ -136,6 +139,7 @@ if __name__ == "__main__":
     
     # 3. Salva
     file_out = os.path.join(base_dir, "dati_settimanali.json")
+    # Manteniamo la struttura che l'HTML si aspetta
     out = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "database_ricette": db
