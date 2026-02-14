@@ -3,12 +3,12 @@ name: Aggiorna Menu Spesa
 on:
   schedule:
     - cron: '0 6 * * 1'
-  workflow_dispatch:         # Permette avvio manuale da GitHub
-  repository_dispatch:       # <--- QUESTO ASCOLTA IL TUO PULSANTE
+  workflow_dispatch:
+  repository_dispatch:
     types: [start_analysis, webhook]
   push:
     paths:
-      - 'spesa/ricette_utenti/**' # Parte SOLO per le ricette, NON per i volantini
+      - 'spesa/ricette_utenti/**'
 
 concurrency:
   group: menu_update
@@ -46,12 +46,13 @@ jobs:
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
           
-          # Aggiungiamo il database aggiornato
+          # Aggiungiamo ENTRAMBI i file
           git add spesa/dati_settimanali.json
+          git add spesa/offerte.json
           
-          # Rimuoviamo i file temporanei delle ricette utenti (già importati)
+          # Pulizia ricette
           git rm spesa/ricette_utenti/*.json --ignore-unmatch
           
-          git commit -m "🤖 Analisi Completata e Menu Aggiornato" || echo "Nessuna modifica"
+          git commit -m "🤖 Update: Offerte e Ricette" || echo "Nessuna modifica"
           git pull --rebase origin main || git pull --rebase origin master
           git push
