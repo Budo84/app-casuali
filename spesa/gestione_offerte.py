@@ -1,18 +1,37 @@
 import os
 import json
-from google import genai
+import google.generativeai as genai
 import glob
 import time
 import sys
 
-print("--- 🛒 AVVIO ANALISI OFFERTE (NUOVA LIBRERIA) ---")
+print("--- 🛒 AVVIO ANALISI OFFERTE (LIBRERIA CLASSICA) ---")
 
 if "GEMINI_KEY" in os.environ:
-    # Nuova inizializzazione Client
-    client = genai.Client(api_key=os.environ["GEMINI_KEY"])
+    genai.configure(api_key=os.environ["GEMINI_KEY"])
 else:
     print("❌ Chiave mancante.")
     sys.exit(0)
+
+# FUNZIONE CERCA MODELLO FUNZIONANTE
+def get_working_model():
+    # 1. Prova Flash 1.5 (Veloce per PDF)
+    try:
+        m = genai.GenerativeModel("gemini-1.5-flash")
+        return m
+    except: pass
+    
+    # 2. Prova Pro 1.5 (Potente per PDF)
+    try:
+        m = genai.GenerativeModel("gemini-1.5-pro")
+        return m
+    except: pass
+
+    # 3. Fallback standard
+    print("⚠️ Uso modello standard (potrebbe non leggere bene i PDF)")
+    return genai.GenerativeModel("gemini-pro")
+
+model = get_working_model()
 
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
@@ -37,50 +56,44 @@ def analizza():
                 nome = os.path.splitext(os.path.basename(fp))[0].replace("_", " ").title()
                 print(f"📄 Analisi: {nome}")
                 
-                # CARICAMENTO FILE (Nuovo Metodo)
-                try:
-                    file_ref = client.files.upload(file=fp)
-                    print(f"   Upload OK: {file_ref.name}")
-                except Exception as e:
-                    print(f"   ❌ Errore Upload: {e}")
-                    continue
+                # Upload vecchio stile (funziona con la libreria classica)
+                pdf = genai.upload_file(fp, display_name=nome)
                 
-                # ATTESA ATTIVA (Il file deve essere 'ACTIVE')
-                for _ in range(30):
-                    file_info = client.files.get(name=file_ref.name)
-                    if file_info.state == "ACTIVE":
-                        break
+                # Attesa attiva
+                for _ in range(15):
                     time.sleep(2)
+                    pdf = genai.get_file(pdf.name)
+                    if pdf.state.name == "ACTIVE": break
                 
-                # PROMPT
+                if pdf.state.name != "ACTIVE":
+                    print("❌ PDF non pronto.")
+                    continue
+                    
                 prompt = f"""
-                Analizza questo volantino di "{nome}".
-                Estrai una lista di prodotti alimentari e prezzi.
+                Analizza il volantino "{nome}".
+                Estrai TUTTI i prodotti alimentari e i prezzi.
                 RISPONDI SOLO JSON: {{ "{nome}": [ {{"name": "...", "price": 0.00}} ] }}
                 """
                 
-                # GENERAZIONE (Nuovo Metodo)
-                response = client.models.generate_content(
-                    model='gemini-1.5-flash',
-                    contents=[file_ref, prompt]
-                )
+                res = model.generate_content([pdf, prompt])
+                data = json.loads(pulisci_json(res.text))
                 
-                if response.text:
-                    data = json.loads(pulisci_json(response.text))
-                    if data:
-                        k = list(data.keys())[0]
-                        offerte[nome] = data[k]
-                        print(f"   ✅ Trovati {len(data[k])} prodotti.")
+                if data:
+                    k = list(data.keys())[0]
+                    offerte[nome] = data[k]
+                    print(f"✅ Trovati {len(data[k])} prodotti.")
+                
+                try: genai.delete_file(pdf.name)
+                except: pass
                 
             except Exception as e:
-                print(f"   ⚠️ Errore AI su {nome}: {e}")
+                print(f"⚠️ Errore su {nome}: {e}")
 
-    # SALVATAGGIO
+    # SALVATAGGIO ANCHE SE VUOTO
     if not offerte:
-        offerte = {"Nessuna Offerta": [{"name": "Riprova Analisi", "price": 0.00}]}
+        offerte = {"Info": [{"name": "Nessuna offerta trovata. Riprova.", "price": 0.00}]}
     
-    file_out = os.path.join(base, "offerte.json")
-    with open(file_out, "w", encoding="utf-8") as f:
+    with open(os.path.join(base, "offerte.json"), "w", encoding="utf-8") as f:
         json.dump(offerte, f, indent=4, ensure_ascii=False)
     print("💾 Offerte salvate.")
 
