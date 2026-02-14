@@ -7,7 +7,7 @@ import glob
 import time
 import random
 
-print("--- 🚀 AVVIO ROBOT: ANALISI E MENU ---")
+print("--- 🚀 AVVIO ROBOT: SISTEMA DOPPIO FILE ---")
 
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
@@ -15,19 +15,12 @@ else:
     print("❌ ERRORE: Chiave Mancante.")
     sys.exit(1)
 
-# SELETTORE MODELLO INTELLIGENTE
-# Prova prima Flash (ottimizzato per documenti) poi Pro
+# SELETTORE MODELLO (Usa Pro per i PDF che è più affidabile)
 def get_model():
     try:
-        # Tenta di caricare Flash
-        m = genai.GenerativeModel("gemini-1.5-flash")
-        print("✅ Uso modello: Flash")
-        return m
+        return genai.GenerativeModel("gemini-1.5-pro")
     except:
-        pass
-    
-    print("⚠️ Flash non disponibile, uso Pro")
-    return genai.GenerativeModel("gemini-1.5-pro")
+        return genai.GenerativeModel("gemini-pro")
 
 model = get_model()
 
@@ -38,7 +31,7 @@ def pulisci_json(text):
     if s != -1 and e != -1: return text[s:e]
     return text
 
-# --- 1. OFFERTE ---
+# --- FASE 1: ANALISI VOLANTINI -> offerte.json ---
 def analizza_volantini():
     offerte_db = {}
     path_script = os.path.dirname(os.path.abspath(__file__))
@@ -47,15 +40,16 @@ def analizza_volantini():
     target_dir = dir_1 if os.path.exists(dir_1) else (dir_2 if os.path.exists(dir_2) else "")
 
     if not target_dir: return {}
+
     files = glob.glob(os.path.join(target_dir, "*.[pP][dD][fF]"))
-    print(f"🔎 Analisi {len(files)} file PDF...")
-    
+    print(f"🔎 Analisi {len(files)} volantini...")
+
     for file_path in files:
         try:
             nome_file = os.path.basename(file_path)
             nome_store = os.path.splitext(nome_file)[0].replace("_", " ").title()
+            print(f"📄 Leggo: {nome_store}")
             
-            # Upload
             pdf = genai.upload_file(file_path, display_name=nome_store)
             
             # Attesa attiva
@@ -64,20 +58,19 @@ def analizza_volantini():
                 pdf = genai.get_file(pdf.name)
                 if pdf.state.name == "ACTIVE": break
             
-            if pdf.state.name != "ACTIVE":
-                print(f"❌ PDF {nome_file} non pronto.")
+            if pdf.state.name != "ACTIVE": 
+                print("❌ PDF non pronto")
                 continue
 
-            # Prompt specifico per LISTA PRODOTTI
             prompt = f"""
             Analizza il volantino "{nome_store}".
-            Estrai una LISTA COMPLETA di prodotti alimentari e relativi prezzi.
+            Estrai TUTTI i prodotti alimentari e i prezzi.
             
             RISPONDI SOLO JSON:
             {{
                 "{nome_store}": [
-                    {{"name": "Prodotto 1", "price": 1.00}},
-                    {{"name": "Prodotto 2", "price": 2.50}}
+                    {{"name": "Pasta Barilla 500g", "price": 0.89}},
+                    {{"name": "Latte 1L", "price": 1.20}}
                 ]
             }}
             """
@@ -88,92 +81,83 @@ def analizza_volantini():
             chiave = nome_store if nome_store in data else list(data.keys())[0]
             if chiave in data:
                 offerte_db[nome_store] = data[chiave]
-                print(f"✅ Estratti {len(data[chiave])} prodotti da {nome_store}")
+                print(f"   ✅ Trovati {len(data[chiave])} prodotti.")
             
             try: genai.delete_file(pdf.name)
             except: pass
+
         except Exception as e:
-            print(f"⚠️ Errore su {file_path}: {e}")
-            
+            print(f"   ⚠️ Errore file {file_path}: {e}")
+
     return offerte_db
 
-# --- 2. DB MANAGEMENT (LOGICA INVARIATA) ---
+# --- FASE 2: GESTIONE RICETTE -> dati_settimanali.json ---
 def carica_vecchio_db():
-    path_script = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(path_script, "dati_settimanali.json")
-    if os.path.exists(file_path):
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                return data.get("database_ricette", DATABASE_BACKUP)
-        except: pass
-    return DATABASE_BACKUP
+    try:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dati_settimanali.json")
+        with open(path, "r") as f:
+            return json.load(f).get("database_ricette", DATABASE_BACKUP)
+    except: return DATABASE_BACKUP
 
 def importa_ricette_utenti(db_esistente):
-    path_script = os.path.dirname(os.path.abspath(__file__))
-    dir_utente = os.path.join(path_script, "ricette_utenti")
-    if not os.path.exists(dir_utente): dir_utente = os.path.join(os.getcwd(), "spesa", "ricette_utenti")
-    if not os.path.exists(dir_utente): return db_esistente
-
-    files = glob.glob(os.path.join(dir_utente, "*.json"))
-    for f in files:
-        try:
-            with open(f, "r", encoding="utf-8") as file_obj:
-                nuova = json.load(file_obj)
-                cats = nuova.get('categories', [nuova.get('category')])
-                types = nuova.get('types', [nuova.get('type')])
-                ricetta = nuova.get('recipe')
-                
-                if ricetta:
-                    for cat in cats:
-                        if cat not in db_esistente: db_esistente[cat] = {"colazione":[], "pranzo":[], "cena":[], "merenda":[]}
-                        for tipo in types:
-                            if tipo not in db_esistente[cat]: db_esistente[cat][tipo] = []
-                            titoli = [r['title'].lower() for r in db_esistente[cat][tipo]]
-                            if ricetta['title'].lower() not in titoli:
-                                db_esistente[cat][tipo].append(ricetta)
-        except: pass
+    try:
+        path = os.path.dirname(os.path.abspath(__file__))
+        d_user = os.path.join(path, "ricette_utenti")
+        if not os.path.exists(d_user): d_user = os.path.join(os.getcwd(), "spesa", "ricette_utenti")
+        
+        if os.path.exists(d_user):
+            files = glob.glob(os.path.join(d_user, "*.json"))
+            for f in files:
+                try:
+                    with open(f, "r") as fo:
+                        j = json.load(fo)
+                        r = j.get('recipe')
+                        cats = j.get('categories', [j.get('category')])
+                        types = j.get('types', [j.get('type')])
+                        if r:
+                            for c in cats:
+                                if c not in db_esistente: db_esistente[c] = {}
+                                for t in types:
+                                    if t not in db_esistente[c]: db_esistente[c][t] = []
+                                    if not any(x['title'] == r['title'] for x in db_esistente[c][t]):
+                                        db_esistente[c][t].append(r)
+                except: pass
+    except: pass
     return db_esistente
 
-def crea_nuove_ricette(offerte):
+def crea_nuove_ricette(offerte_data):
+    # Usa le offerte appena lette per ispirare le ricette
     context = ""
-    if offerte:
+    if offerte_data:
         items = []
-        for s in offerte:
-            for p in offerte[s]: items.append(p['name'])
+        for s in offerte_data:
+            for p in offerte_data[s]: items.append(p['name'])
         if items:
-            sample = random.sample(items, min(len(items), 15))
+            sample = random.sample(items, min(len(items), 10))
             context = f"Usa ingredienti in offerta: {', '.join(sample)}."
+            
     try:
-        # AGGIUNTA CATEGORIA SENZA GLUTINE
         prompt = f"""
-        Crea 3 ricette nuove per categoria.
+        Crea 2 ricette NUOVE per categoria.
         {context}
-        
-        4 CATEGORIE: 
-        1. "mediterranea" (Tradizionale)
-        2. "vegetariana" (No carne/pesce)
-        3. "mondo" (Etnica)
-        4. "senza_glutine" (TASSATIVO: Riso, Mais, Grano Saraceno, Patate, Legumi. VIETATO: Grano, Orzo, Farro, Pasta normale, Pane normale).
-        
+        Categorie: mediterranea, vegetariana, mondo, senza_glutine.
         Pasti: colazione, pranzo, cena, merenda.
-        JSON: {{ "mediterranea": {{ ... }}, "senza_glutine": {{ ... }} }}
+        JSON: {{ "mediterranea": {{ "pranzo": [...] }} }}
         """
         res = model.generate_content(prompt)
         return json.loads(pulisci_json(res.text))
     except: return {}
 
-def unisci_db(main_db, new_db):
-    if not new_db: return main_db
-    for cat in new_db:
-        if cat not in main_db: main_db[cat] = {"colazione":[], "pranzo":[], "cena":[], "merenda":[]}
-        for pasto in new_db[cat]:
-            if pasto not in main_db[cat]: main_db[cat][pasto] = []
-            
-            titoli = [r['title'] for r in main_db[cat][pasto]]
-            for r in new_db[cat][pasto]:
-                if r['title'] not in titoli: main_db[cat][pasto].append(r)
-    return main_db
+def unisci_db(old, new):
+    if not new: return old
+    for cat in new:
+        if cat not in old: old[cat] = {}
+        for pasto in new[cat]:
+            if pasto not in old[cat]: old[cat][pasto] = []
+            for r in new[cat][pasto]:
+                if not any(x['title'] == r['title'] for x in old[cat][pasto]):
+                    old[cat][pasto].append(r)
+    return old
 
 DATABASE_BACKUP = {
     "mediterranea": {
@@ -182,35 +166,37 @@ DATABASE_BACKUP = {
         "cena": [{"title": "Pollo al Limone", "ingredients": ["Pollo", "Limone"]}],
         "merenda": [{"title": "Mela", "ingredients": ["Mela"]}]
     },
-    "vegetariana": {"colazione":[], "pranzo":[], "cena":[], "merenda":[]},
-    "mondo": {"colazione":[], "pranzo":[], "cena":[], "merenda":[]},
     "senza_glutine": {
-        "colazione": [{"title": "Yogurt e Frutta", "ingredients": ["Yogurt", "Banana"]}],
-        "pranzo": [{"title": "Risotto allo Zafferano", "ingredients": ["Riso", "Zafferano", "Parmigiano"]}],
-        "cena": [{"title": "Petto di Pollo e Patate", "ingredients": ["Pollo", "Patate", "Rosmarino"]}],
-        "merenda": [{"title": "Gallette di Mais", "ingredients": ["Gallette mais", "Marmellata"]}]
+        "pranzo": [{"title": "Risotto Zafferano", "ingredients": ["Riso", "Zafferano"]}],
+        "cena": [{"title": "Frittata", "ingredients": ["Uova", "Verdure"]}]
     }
 }
 
 def esegui_tutto():
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    file_out = os.path.join(base_dir, "dati_settimanali.json")
     
+    # 1. ANALISI OFFERTE -> FILE SEPARATO
     offerte = analizza_volantini()
-    db_prin = carica_vecchio_db()
-    db_prin = importa_ricette_utenti(db_prin)
-    nuove = crea_nuove_ricette(offerte)
-    db_prin = unisci_db(db_prin, nuove)
+    file_offerte = os.path.join(base_dir, "offerte.json")
+    with open(file_offerte, "w", encoding="utf-8") as f:
+        json.dump(offerte, f, indent=4, ensure_ascii=False)
+    print(f"💾 Offerte salvate in: {file_offerte}")
 
+    # 2. GESTIONE RICETTE -> FILE PRINCIPALE
+    db = carica_vecchio_db()
+    db = importa_ricette_utenti(db)
+    nuove = crea_nuove_ricette(offerte)
+    db = unisci_db(db, nuove)
+
+    file_ricette = os.path.join(base_dir, "dati_settimanali.json")
     out = {
         "data_aggiornamento": datetime.now().strftime("%d/%m/%Y %H:%M"),
-        "offerte_per_supermercato": offerte,
-        "database_ricette": db_prin
+        "database_ricette": db
     }
 
-    with open(file_out, "w", encoding="utf-8") as f:
+    with open(file_ricette, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=4, ensure_ascii=False)
-    print(f"💾 Salvato: {file_out}")
+    print(f"💾 Ricette salvate in: {file_ricette}")
 
 if __name__ == "__main__":
     esegui_tutto()
