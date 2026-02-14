@@ -20,8 +20,12 @@
         .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; page-break-inside: avoid; transition: 0.3s; }
         .day-header { background: #e8f5e9; color: var(--primary); padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
         .meal-row { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; position: relative; }
+        
+        /* STILE ALLERGENI (FONDAMENTALE) */
         .meal-row.danger-alert { background-color: #ffebee; border-left: 6px solid var(--danger); }
         .meal-row.danger-alert .meal-title { color: var(--danger); font-weight: 900; text-decoration: underline; }
+        .allergen-warning { color: white; background: var(--danger); font-size: 0.75rem; display: flex; align-items: center; margin-top: 6px; font-weight: bold; padding: 4px 8px; border-radius: 6px; display: inline-flex; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
         .meal-content { flex: 1; padding-right: 80px; } 
         .meal-title { font-weight: 600; font-size: 1rem; color: #444; }
         .meal-ing { font-size: 0.85rem; color: #777; margin-top: 2px; }
@@ -30,7 +34,7 @@
         .action-btn:hover { background: #eee; color: var(--primary); }
         .action-btn.active-lock { color: var(--lock); }
         .action-btn.active-fav { color: var(--danger); }
-        .allergen-warning { color: white; background: var(--danger); font-size: 0.75rem; display: flex; align-items: center; margin-top: 6px; font-weight: bold; padding: 4px 8px; border-radius: 6px; display: inline-flex; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        
         /* UI */
         .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
         .choice-chip { display: none; } 
@@ -68,7 +72,7 @@
 <header>
     <div style="display:flex; flex-direction:column;">
         <span style="font-weight:bold; font-size:1.1rem;">Spesa Smart</span>
-        <small style="font-size:0.7rem; opacity:0.9">Sistemato</small>
+        <small style="font-size:0.7rem; opacity:0.9">Finale</small>
     </div>
     <div class="status-badge" onclick="window.location.reload()">
         <div id="statusDot" class="dot"></div>
@@ -182,6 +186,7 @@
     let shopData = JSON.parse(localStorage.getItem('smart_shop_data')) || {}; 
     let dietSettings = localStorage.getItem('smart_diet') || 'mediterranea';
 
+    // --- MAPPA ALLERGENI ESTESA (Include Spaghetti, ecc.) ---
     const riskMap = {
         "Glutine": ["pane", "pasta", "farina", "biscotti", "cereali", "orzo", "farro", "kamut", "seitan", "pizza", "focaccia", "crostini", "pangrattato", "piadina", "malto", "segale", "spaghetti", "penne", "fusilli", "rigatoni", "lasagne", "tortellini", "ravioli", "couscous", "bulgur", "gnocchi", "tagliatelle", "pappardelle", "orecchiette", "cracker", "fette biscottate"],
         "Lattosio": ["latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", "ricotta", "mascarpone", "fiordilatte", "besciamella", "provola", "gorgonzola", "stracchino", "robbiola", "scamorza", "pecorino", "grana", "gelato", "crema"],
@@ -397,8 +402,9 @@
                 let k = `${dayIdx}_${t}`;
                 let isL = !!locked[k];
                 let isF = favorites.includes(m.title);
-                let w = checkAllergens(m.ingredients);
+                let w = checkAllergens(m.ingredients); // CONTROLLA ALLERGENI QUI
                 let ico = t==='colazione'?'☕': t==='pranzo'?'🍝': t==='merenda'?'🍎':'🌙';
+                // AGGIUNGE CLASSE 'danger-alert' SE C'È UN RISCHIO
                 let dangerClass = w ? 'danger-alert' : '';
                 html += `<div class="meal-row ${dangerClass}"><div style="font-size:24px; width:35px;">${ico}</div><div class="meal-content"><div class="meal-title">${m.title} ${m.isCustom?'<span style="font-size:0.7rem;background:#E3F2FD;padding:2px;border-radius:4px">MIO</span>':''}</div><div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>${w?`<div class="allergen-warning"><i class="material-icons" style="font-size:16px; margin-right:5px;">warning</i> ${w}</div>`:''}</div><div class="meal-actions"><i class="material-icons action-btn" onclick="swapMeal(${dayIdx},'${t}')">sync</i><i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i><i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i></div></div>`;
             });
@@ -406,12 +412,14 @@
         });
     }
 
+    // --- FUNZIONE CONTROLLO ALLERGENI CON MAPPA ESTESA ---
     function checkAllergens(ings) {
         if(!ings) return null;
         let hits = [];
         family.forEach(f => {
             if(f.allergy) {
                 let keys = riskMap[f.allergy] || [f.allergy.toLowerCase()];
+                // Cerca se uno degli ingredienti contiene una delle parole chiave
                 if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name + " (" + f.allergy + ")");
             }
         });
@@ -426,7 +434,7 @@
     async function uploadPDF() {
         let r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value, n=document.getElementById('pdfName').value, f=document.getElementById('pdfFile').files[0], s=document.getElementById('upStatus');
         if(!r||!t||!n||!f) return alert("Dati mancanti");
-        s.innerText="Upload in corso...";
+        s.innerText="Upload...";
         let reader = new FileReader();
         reader.onload = async function() {
             try {
@@ -434,7 +442,7 @@
                 let sha=null; try{let c=await fetch(url,{headers:{Authorization:`token ${t}`}}); if(c.ok) sha=(await c.json()).sha;}catch(e){}
                 let res=await fetch(url,{method:'PUT',headers:{Authorization:`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:"Up",content:reader.result.split(',')[1],sha:sha})});
                 if(!res.ok) throw new Error("Err Github");
-                s.innerText="✅ File caricato! Ora premi 'Avvia Analisi'.";
+                s.innerText="Fatto! Analisi in corso...";
             } catch(e) { s.innerText="Errore: "+e.message; }
         };
         reader.readAsDataURL(f);
