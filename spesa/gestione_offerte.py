@@ -4,9 +4,9 @@ import google.generativeai as genai
 import glob
 import time
 import sys
-from pypdf import PdfReader  # Libreria per leggere il testo
+from pypdf import PdfReader  # Libreria per leggere il testo locale
 
-print("--- 🛒 AVVIO ANALISI OFFERTE (TEXT EXTRACTION) ---")
+print("--- 🛒 AVVIO ANALISI OFFERTE (ESTRAZIONE TESTO) ---")
 
 if "GEMINI_KEY" in os.environ:
     genai.configure(api_key=os.environ["GEMINI_KEY"])
@@ -14,7 +14,7 @@ else:
     print("❌ Chiave mancante.")
     sys.exit(0)
 
-# Usa Gemini Pro Standard (solo testo, affidabilissimo)
+# Usa il modello STANDARD (Testuale) che non fallisce mai
 model = genai.GenerativeModel("gemini-pro")
 
 def pulisci_json(text):
@@ -38,59 +38,56 @@ def analizza():
         for fp in files:
             try:
                 nome = os.path.splitext(os.path.basename(fp))[0].replace("_", " ").title()
-                print(f"📄 Elaborazione: {nome}")
+                print(f"📄 Leggo testo di: {nome}")
                 
-                # 1. ESTRAZIONE TESTO (Locale)
-                print("   📖 Estraggo testo dal PDF...")
-                testo_pdf = ""
+                # 1. ESTRAZIONE TESTO LOCALE (Senza inviare file a Google)
+                full_text = ""
                 try:
                     reader = PdfReader(fp)
                     for page in reader.pages:
-                        testo_pdf += page.extract_text() + "\n"
+                        full_text += page.extract_text() + "\n"
                 except Exception as e:
-                    print(f"   ❌ Errore lettura PDF: {e}")
+                    print(f"   ❌ Errore lettura PDF locale: {e}")
                     continue
-                
-                # Tagliamo il testo se troppo lungo (Gemini Pro accetta molto, ma stiamo sicuri)
-                if len(testo_pdf) > 30000: 
-                    testo_pdf = testo_pdf[:30000]
-                    print("   ⚠️ Testo troncato a 30k caratteri.")
 
-                # 2. INVIO A GEMINI
-                print("   🤖 Invio testo all'AI...")
+                if len(full_text) < 50:
+                    print("   ⚠️ PDF sembra vuoto o è un'immagine.")
+                    continue
+
+                # Limitiamo i caratteri per non intasare l'IA
+                testo_ridotto = full_text[:30000] 
+
+                # 2. INVIO TESTO A GEMINI
                 prompt = f"""
-                Sei un assistente per la spesa. Ecco il testo estratto da un volantino di "{nome}".
-                Estrai una lista dei prodotti alimentari in offerta e i loro prezzi.
-                Ignora codici, date o frasi pubblicitarie.
+                Sei un assistente per la spesa. Analizza il seguente testo estratto da un volantino del supermercato "{nome}".
+                Estrai una lista di prodotti alimentari e i loro prezzi.
+                Ignora codici, date o indirizzi.
                 
-                TESTO VOLANTINO:
-                {testo_pdf}
+                TESTO:
+                {testo_ridotto}
                 
-                RISPONDI SOLO CON QUESTO JSON:
+                RISPONDI SOLO JSON:
                 {{
                     "{nome}": [
-                        {{"name": "Nome Prodotto", "price": 0.00}},
-                        {{"name": "Altro Prodotto", "price": 0.00}}
+                        {{"name": "Esempio Prodotto", "price": 1.99}}
                     ]
                 }}
                 """
                 
+                print("   🤖 Invio testo all'IA...")
                 res = model.generate_content(prompt)
                 
-                # 3. SALVATAGGIO DATI
-                try:
-                    data = json.loads(pulisci_json(res.text))
-                    if data:
-                        k = list(data.keys())[0]
-                        offerte[nome] = data[k]
-                        print(f"   ✅ Estratti {len(data[k])} prodotti.")
-                except:
-                    print("   ⚠️ L'AI non ha restituito un JSON valido.")
+                # 3. SALVATAGGIO
+                data = json.loads(pulisci_json(res.text))
+                if data:
+                    k = list(data.keys())[0]
+                    offerte[nome] = data[k]
+                    print(f"   ✅ Estratti {len(data[k])} prodotti.")
                 
             except Exception as e:
-                print(f"   ⚠️ Errore generico su {nome}: {e}")
+                print(f"   ⚠️ Errore su {nome}: {e}")
 
-    # SALVATAGGIO FILE
+    # SALVATAGGIO FILE JSON
     if not offerte:
         offerte = {"Info": [{"name": "Nessuna offerta trovata", "price": 0.00}]}
     
