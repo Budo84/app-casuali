@@ -9,26 +9,19 @@
     <style>
         :root { --primary: #2E7D32; --bg: #f5f5f5; --card: #fff; --text: #333; --accent: #ff9800; --danger: #d32f2f; --lock: #C2185B; --price: #00897b; }
         body { font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
-        
         header { background: var(--primary); color: white; padding: 15px; position: sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .status-badge { display: flex; align-items: center; font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 6px; }
         .dot.online { background: #00E676; box-shadow: 0 0 5px #00E676; }
-
         .page { display: none; padding: 15px; animation: slideIn 0.3s ease-out; }
         .page.active { display: block; }
         @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
         /* CARDS */
         .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; page-break-inside: avoid; transition: 0.3s; }
         .day-header { background: #e8f5e9; color: var(--primary); padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
-        
         .meal-row { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; position: relative; }
-        
-        /* STILE ALLARME ROSSO */
         .meal-row.danger-alert { background-color: #ffebee; border-left: 6px solid var(--danger); }
         .meal-row.danger-alert .meal-title { color: var(--danger); font-weight: 900; text-decoration: underline; }
-        
         .meal-content { flex: 1; padding-right: 80px; } 
         .meal-title { font-weight: 600; font-size: 1rem; color: #444; }
         .meal-ing { font-size: 0.85rem; color: #777; margin-top: 2px; }
@@ -37,18 +30,14 @@
         .action-btn:hover { background: #eee; color: var(--primary); }
         .action-btn.active-lock { color: var(--lock); }
         .action-btn.active-fav { color: var(--danger); }
-        
         .allergen-warning { color: white; background: var(--danger); font-size: 0.75rem; display: flex; align-items: center; margin-top: 6px; font-weight: bold; padding: 4px 8px; border-radius: 6px; display: inline-flex; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-
-        /* UI ELEMENTS */
+        /* UI */
         .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
         .choice-chip { display: none; } 
         .choice-label { padding: 8px 12px; background: #eee; border-radius: 20px; font-size: 0.85rem; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
         .choice-chip:checked + .choice-label { background: var(--primary); color: white; border-color: var(--primary); font-weight: bold; }
-
         .new-recipe-box { background: white; padding: 15px; border-radius: 10px; border: 2px dashed var(--primary); margin-bottom: 20px; }
         .new-recipe-box input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        
         .add-item-box { display: flex; gap: 10px; margin-bottom: 15px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
         .add-item-box input { flex: 1; padding: 8px; border: none; outline: none; font-size: 1rem; }
         .add-item-box button { background: var(--primary); color: white; border: none; width: 40px; border-radius: 4px; font-size: 1.2rem; cursor: pointer; }
@@ -68,7 +57,6 @@
         .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-small { width: auto; padding: 8px 15px; margin: 0; font-size: 0.9rem; }
-
         .nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; height: 65px; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; font-size: 0.75rem; }
         .nav a.active { color: var(--primary); font-weight: bold; }
@@ -80,9 +68,9 @@
 <header>
     <div style="display:flex; flex-direction:column;">
         <span style="font-weight:bold; font-size:1.1rem;">Spesa Smart</span>
-        <small style="font-size:0.7rem; opacity:0.9">Controllo Allergeni</small>
+        <small style="font-size:0.7rem; opacity:0.9">Controllo Manuale</small>
     </div>
-    <div class="status-badge">
+    <div class="status-badge" onclick="window.location.reload()">
         <div id="statusDot" class="dot"></div>
         <span id="statusText">Sync</span>
     </div>
@@ -95,7 +83,8 @@
             <select id="dietType" onchange="saveDietSettings()" style="border:none; background:transparent; font-weight:bold; color:var(--primary); font-size:1rem; outline:none;">
                 <option value="mediterranea">Mediterranea</option>
                 <option value="vegetariana">Vegetariana</option>
-                <option value="senza_glutine">Senza Glutine</option> <option value="mondo">Dal Mondo</option>
+                <option value="senza_glutine">Senza Glutine</option>
+                <option value="mondo">Dal Mondo</option>
                 <option value="mix">Tutto (Mix)</option>
             </select>
         </div>
@@ -104,9 +93,7 @@
             <button class="btn btn-outline btn-small" onclick="exportPDF()" title="Scarica PDF" style="border-color:#d32f2f; color:#d32f2f;"><i class="material-icons" style="vertical-align:middle;">picture_as_pdf</i></button>
         </div>
     </div>
-    <div id="printableArea">
-        <div id="menuList" style="padding-bottom: 20px;"></div>
-    </div>
+    <div id="printableArea"><div id="menuList" style="padding-bottom: 20px;"></div></div>
 </div>
 
 <div id="p-ricette" class="page">
@@ -141,26 +128,41 @@
 </div>
 
 <div id="p-offerte" class="page">
-    <h3>Offerte</h3>
+    <h3>Gestione Volantini</h3>
+    
+    <div class="settings-box" style="margin-bottom:20px; border:2px solid var(--primary);">
+        <h4 style="margin-top:0;">1. Carica Volantino</h4>
+        <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">Carica il PDF. Il file verrà salvato nel cloud senza avviare subito l'analisi.</div>
+        <input type="text" id="pdfName" placeholder="Nome Supermercato (es. Conad)" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;">
+        <input type="file" id="pdfFile" accept="application/pdf">
+        <button class="btn" onclick="uploadPDF()" id="btnUp" style="margin-top:10px;">📤 Carica PDF</button>
+        <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
+    </div>
+
+    <div class="settings-box" style="margin-bottom:20px; border:2px solid var(--accent);">
+        <h4 style="margin-top:0;">2. Avvia Analisi</h4>
+        <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">Dopo aver caricato, premi qui per svegliare il robot e fargli leggere il PDF.</div>
+        <button class="btn" onclick="startAnalysis()" style="background:var(--accent);">🚀 Avvia Analisi Offerte</button>
+        <p id="analysisStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
+    </div>
+
+    <hr>
+    <h3>Offerte Rilevate</h3>
     <select id="storeSelect" onchange="renderOffers()" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;"></select>
     <div id="offerList" class="offer-grid"></div>
 </div>
 
 <div id="p-famiglia" class="page">
     <h3>👨‍👩‍👧‍👦 Famiglia & Salute</h3>
-    <p style="font-size:0.9rem; color:#666">Imposta qui le intolleranze per attivare l'allarme rosso.</p>
     <div class="input-group"><input type="text" id="memberName" placeholder="Nome"><select id="memberAllergy"><option value="">Nessuna</option><option value="Glutine">Glutine</option><option value="Lattosio">Lattosio</option><option value="Uova">Uova</option><option value="Pesce">Pesce</option><option value="Frutta a guscio">Frutta a guscio</option><option value="Diabete">Diabete</option></select></div>
     <button class="btn" onclick="addFamilyMember()">Aggiungi</button>
     <div id="familyContainer" style="margin-top:15px;"></div>
     <hr>
-    <h3>⚙️ Config</h3>
+    <h3>⚙️ Configurazione</h3>
     <div class="settings-box">
         <input type="text" id="ghRepo" placeholder="Repo GitHub" style="width:100%; margin-bottom:5px; border:1px solid #ddd; padding:8px;">
         <input type="password" id="ghToken" placeholder="Token GitHub" style="width:100%; margin-bottom:5px; border:1px solid #ddd; padding:8px;">
         <button onclick="saveCreds()" style="padding:5px; width:100%;">Salva Login</button>
-        <div style="margin-top:10px;"><input type="text" id="pdfName" placeholder="Nome Supermercato" style="width:100%; padding:8px; margin-bottom:5px; border:1px solid #ddd;"><input type="file" id="pdfFile" accept="application/pdf"></div>
-        <button class="btn" onclick="uploadPDF()" id="btnUp">⬆️ Carica Volantino</button>
-        <p id="upStatus" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
     </div>
     <button class="btn" style="background:var(--danger);" onclick="hardReset()">⚠️ Reset App</button>
 </div>
@@ -182,37 +184,13 @@
     let shopData = JSON.parse(localStorage.getItem('smart_shop_data')) || {}; 
     let dietSettings = localStorage.getItem('smart_diet') || 'mediterranea';
 
-    // --- MAPPA ALLERGENI ESTESA (IL CERVELLO DI SICUREZZA) ---
     const riskMap = {
-        "Glutine": [
-            "pane", "pasta", "farina", "biscotti", "cornetto", "brioche", "cereali", "orzo", "farro", "kamut", "seitan", 
-            "pizza", "focaccia", "crostini", "pangrattato", "piadina", "malto", "segale", 
-            "spaghetti", "penne", "fusilli", "rigatoni", "lasagne", "tortellini", "ravioli", 
-            "couscous", "bulgur", "gnocchi", "tagliatelle", "pappardelle", "orecchiette", "cracker", "fette biscottate"
-        ],
-        "Lattosio": [
-            "latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", 
-            "ricotta", "mascarpone", "fiordilatte", "besciamella", "provola", "gorgonzola", 
-            "stracchino", "robbiola", "scamorza", "pecorino", "grana", "gelato", "crema"
-        ],
-        "Uova": [
-            "uova", "frittata", "mayonese", "crema", "carbonara", "pancakes", "meringa", 
-            "tiramisù", "albume", "tuorlo", "pan di spagna", "crepes", "zabaione"
-        ],
-        "Pesce": [
-            "pesce", "tonno", "merluzzo", "salmone", "sogliola", "gamberi", "cozze", 
-            "vongole", "acciughe", "crostacei", "molluschi", "spada", "calamari", "polpo", 
-            "orata", "branzino", "sarde", "gamberetti", "scampi"
-        ],
-        "Frutta a guscio": [
-            "noci", "mandorle", "nocciole", "pistacchi", "anacardi", "arachidi", "pesto", 
-            "macadamia", "pinoli", "praline", "croccante", "nocciolata", "marzapane", "granella"
-        ],
-        "Diabete": [
-            "zucchero", "miele", "cioccolato", "torta", "biscotti", "dolce", "marmellata", 
-            "succo", "sciroppo", "bevanda", "canditi", "brioche", "nutella", "caramello", 
-            "gelato", "dessert", "merendina"
-        ]   
+        "Glutine": ["pane", "pasta", "farina", "biscotti", "cereali", "orzo", "farro", "kamut", "seitan", "pizza", "focaccia", "crostini", "pangrattato", "piadina", "malto", "segale", "spaghetti", "penne", "fusilli", "rigatoni", "lasagne", "tortellini", "ravioli", "couscous", "bulgur", "gnocchi", "tagliatelle", "pappardelle", "orecchiette", "cracker", "fette biscottate"],
+        "Lattosio": ["latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", "ricotta", "mascarpone", "fiordilatte", "besciamella", "provola", "gorgonzola", "stracchino", "robbiola", "scamorza", "pecorino", "grana", "gelato", "crema"],
+        "Uova": ["uova", "frittata", "mayonese", "crema", "carbonara", "pancakes", "meringa", "tiramisù", "albume", "tuorlo", "pan di spagna", "crepes", "zabaione"],
+        "Pesce": ["pesce", "tonno", "merluzzo", "salmone", "sogliola", "gamberi", "cozze", "vongole", "acciughe", "crostacei", "molluschi", "spada", "calamari", "polpo", "orata", "branzino", "sarde", "gamberetti", "scampi"],
+        "Frutta a guscio": ["noci", "mandorle", "nocciole", "pistacchi", "anacardi", "arachidi", "pesto", "macadamia", "pinoli", "praline", "croccante", "nocciolata", "marzapane", "granella"],
+        "Diabete": ["zucchero", "miele", "cioccolato", "torta", "biscotti", "dolce", "marmellata", "succo", "sciroppo", "bevanda", "canditi", "brioche", "nutella", "caramello", "gelato", "dessert", "merendina"]
     };
 
     async function init() {
@@ -240,11 +218,61 @@
 
     function updateStatus(s) { document.getElementById('statusDot').className = 'dot ' + s; document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline'; }
 
+    // --- NUOVA LOGICA AVVIO MANUALE ---
+    async function startAnalysis() {
+        let repo = document.getElementById('ghRepo').value.trim();
+        let token = document.getElementById('ghToken').value.trim();
+        let status = document.getElementById('analysisStatus');
+        
+        if(!repo || !token) return alert("Mancano le credenziali GitHub in Opzioni!");
+        
+        status.innerText = "⏳ Invio comando al robot...";
+        
+        try {
+            let url = `https://api.github.com/repos/${repo}/dispatches`;
+            let res = await fetch(url, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `token ${token}`, 
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify({ event_type: "start_analysis" })
+            });
+
+            if(res.ok) {
+                status.innerText = "✅ Comando inviato! Il robot sta lavorando. Attendi 2 minuti e ricarica la pagina.";
+                alert("Analisi avviata. Attendi 2 minuti poi ricarica l'App per vedere i prezzi.");
+            } else {
+                throw new Error("Errore GitHub: " + res.status);
+            }
+        } catch(e) {
+            status.innerText = "❌ Errore: " + e.message;
+        }
+    }
+
+    // --- UPLOAD PDF (SOLO CARICAMENTO) ---
+    async function uploadPDF() {
+        let r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value, n=document.getElementById('pdfName').value, f=document.getElementById('pdfFile').files[0], s=document.getElementById('upStatus');
+        if(!r||!t||!n||!f) return alert("Dati mancanti");
+        s.innerText="Upload in corso...";
+        let reader = new FileReader();
+        reader.onload = async function() {
+            try {
+                let url=`https://api.github.com/repos/${r}/contents/spesa/volantini/${n.toLowerCase().replace(/\s/g,'')}.pdf`;
+                let sha=null; try{let c=await fetch(url,{headers:{Authorization:`token ${t}`}}); if(c.ok) sha=(await c.json()).sha;}catch(e){}
+                let res=await fetch(url,{method:'PUT',headers:{Authorization:`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:"Up",content:reader.result.split(',')[1],sha:sha})});
+                if(!res.ok) throw new Error("Err Github");
+                s.innerText="✅ File caricato! Ora premi 'Avvia Analisi'.";
+            } catch(e) { s.innerText="Errore: "+e.message; }
+        };
+        reader.readAsDataURL(f);
+    }
+
     function exportPDF() {
         const el = document.getElementById('printableArea');
         const btns = el.querySelectorAll('.meal-actions');
         btns.forEach(b => b.style.display = 'none');
-        const opt = { margin: 10, filename: `Menu_Settimanale_${new Date().toLocaleDateString()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+        const opt = { margin: 10, filename: `Menu_${new Date().toLocaleDateString()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
         html2pdf().from(el).set(opt).save().then(() => { btns.forEach(b => b.style.display = 'flex'); });
     }
 
@@ -254,14 +282,10 @@
         let rStatus = document.getElementById('recUpStatus');
         let selectedCats = []; document.querySelectorAll('input[name="cat"]:checked').forEach(el => selectedCats.push(el.value));
         let selectedTypes = []; document.querySelectorAll('input[name="type"]:checked').forEach(el => selectedTypes.push(el.value));
-
         if(!t || !i || selectedCats.length===0 || selectedTypes.length===0) return alert("Compila tutto!");
-        
         let payload = { categories: selectedCats, types: selectedTypes, recipe: { title: t, ingredients: i.split(',').map(s => s.trim()), isCustom: true } };
-        let repo = document.getElementById('ghRepo').value.trim();
-        let token = document.getElementById('ghToken').value.trim();
+        let repo = document.getElementById('ghRepo').value.trim(), token = document.getElementById('ghToken').value.trim();
         if(!repo || !token) return alert("Configura GitHub!");
-
         rStatus.innerText = "⏳ Invio...";
         try {
             let filename = `rec_${Date.now()}.json`;
@@ -269,15 +293,13 @@
             let url = `https://api.github.com/repos/${repo}/contents/spesa/ricette_utenti/${filename}`;
             let res = await fetch(url, { method: 'PUT', headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Nuova Ricetta: ${t}`, content: content }) });
             if(!res.ok) throw new Error("Errore GitHub");
-            rStatus.innerText = "✅ Inviata! Attendi 2 minuti.";
-            alert("Ricetta inviata!");
+            rStatus.innerText = "✅ Inviata!"; alert("Ricetta inviata!");
             document.getElementById('customTitle').value = ""; document.getElementById('customIng').value = "";
             document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
         } catch(e) { rStatus.innerText = "❌ Errore: " + e.message; }
     }
 
     function saveDietSettings() { dietSettings = document.getElementById('dietType').value; localStorage.setItem('smart_diet', dietSettings); }
-    
     function getPoolForMeal(type) {
         let pools = [];
         if(db && db.database_ricette) {
@@ -286,20 +308,13 @@
         }
         return pools;
     }
-
-    // --- SMART SWAP: CERCA UNA RICETTA SICURA ---
     function pickSafeRecipe(pool, avoidTitle) {
-        // Filtra: rimuovi ricette che contengono allergeni segnalati nella "Famiglia"
         let safePool = pool.filter(r => checkAllergens(r.ingredients) === null);
-        
-        // Se non ci sono ricette sicure (raro), usa l'intera lista ma mostrerà il warning rosso
         if(safePool.length === 0) safePool = pool;
-        
         if(avoidTitle) safePool = safePool.filter(r => r.title !== avoidTitle);
         if(safePool.length === 0) return {title: "Libero", ingredients: []};
         return safePool[Math.floor(Math.random() * safePool.length)];
     }
-
     function generateMenu(force) {
         const days = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
         const types = ['colazione','pranzo','merenda','cena'];
@@ -312,7 +327,7 @@
                 if(locked[k] && force) dayObj.meals[t] = locked[k];
                 else {
                     let pool = getPoolForMeal(t);
-                    let pick = pickSafeRecipe(pool, null); // Qui avviene la magia della selezione sicura
+                    let pick = pickSafeRecipe(pool, null);
                     dayObj.meals[t] = pick;
                 }
             });
@@ -322,18 +337,15 @@
         localStorage.setItem('smart_menu', JSON.stringify(menu));
         updateShopDataFromMenu(); renderAll();
     }
-
     function swapMeal(dayIdx, type) {
         if(locked[`${dayIdx}_${type}`]) return alert("Sblocca prima!");
         let current = menu[dayIdx].meals[type];
         let pool = getPoolForMeal(type);
-        // Quando fai "Swap", il sistema cerca attivamente una ricetta SICURA (pickSafeRecipe)
         let newR = pickSafeRecipe(pool, current.title);
         menu[dayIdx].meals[type] = newR;
         localStorage.setItem('smart_menu', JSON.stringify(menu));
         updateShopDataFromMenu(); renderAll();
     }
-
     function updateShopDataFromMenu() {
         let needs = {};
         menu.forEach(d => Object.values(d.meals).forEach(m => { if(m.ingredients) m.ingredients.forEach(i => needs[i] = (needs[i]||0)+1); }));
@@ -398,7 +410,6 @@
                 let isF = favorites.includes(m.title);
                 let w = checkAllergens(m.ingredients);
                 let ico = t==='colazione'?'☕': t==='pranzo'?'🍝': t==='merenda'?'🍎':'🌙';
-                // CLASSE DINAMICA PER ALLARME
                 let dangerClass = w ? 'danger-alert' : '';
                 html += `<div class="meal-row ${dangerClass}"><div style="font-size:24px; width:35px;">${ico}</div><div class="meal-content"><div class="meal-title">${m.title} ${m.isCustom?'<span style="font-size:0.7rem;background:#E3F2FD;padding:2px;border-radius:4px">MIO</span>':''}</div><div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>${w?`<div class="allergen-warning"><i class="material-icons" style="font-size:16px; margin-right:5px;">warning</i> ${w}</div>`:''}</div><div class="meal-actions"><i class="material-icons action-btn" onclick="swapMeal(${dayIdx},'${t}')">sync</i><i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i><i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i></div></div>`;
             });
@@ -412,7 +423,6 @@
         family.forEach(f => {
             if(f.allergy) {
                 let keys = riskMap[f.allergy] || [f.allergy.toLowerCase()];
-                // Controllo se un ingrediente contiene una delle parole chiave
                 if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name + " (" + f.allergy + ")");
             }
         });
