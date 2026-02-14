@@ -1,21 +1,17 @@
 import os
 import json
-import google.generativeai as genai
 import glob
-import time
+import base64
+import requests
+import fitz  # Libreria PyMuPDF
 import sys
-from pypdf import PdfReader  # Libreria per leggere il testo locale
 
-print("--- 🛒 AVVIO ANALISI OFFERTE (ESTRAZIONE TESTO) ---")
+print("--- 🛒 AVVIO ANALISI OFFERTE (METODO DIRETTO REST API) ---")
 
-if "GEMINI_KEY" in os.environ:
-    genai.configure(api_key=os.environ["GEMINI_KEY"])
-else:
+API_KEY = os.environ.get("GEMINI_KEY")
+if not API_KEY:
     print("❌ Chiave mancante.")
     sys.exit(0)
-
-# Usa il modello STANDARD (Testuale) che non fallisce mai
-model = genai.GenerativeModel("gemini-pro")
 
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
@@ -28,69 +24,82 @@ def analizza():
     base = os.path.dirname(os.path.abspath(__file__))
     paths = [os.path.join(base, "volantini"), os.path.join(os.getcwd(), "spesa", "volantini")]
     target = next((p for p in paths if os.path.exists(p)), None)
-    
+
     offerte = {}
-    
+
     if target:
         files = glob.glob(os.path.join(target, "*.[pP][dD][fF]"))
         print(f"🔎 Trovati {len(files)} PDF.")
-        
+
         for fp in files:
             try:
                 nome = os.path.splitext(os.path.basename(fp))[0].replace("_", " ").title()
-                print(f"📄 Leggo testo di: {nome}")
-                
-                # 1. ESTRAZIONE TESTO LOCALE (Senza inviare file a Google)
-                full_text = ""
-                try:
-                    reader = PdfReader(fp)
-                    for page in reader.pages:
-                        full_text += page.extract_text() + "\n"
-                except Exception as e:
-                    print(f"   ❌ Errore lettura PDF locale: {e}")
-                    continue
+                print(f"📄 Elaborazione: {nome}")
 
-                if len(full_text) < 50:
-                    print("   ⚠️ PDF sembra vuoto o è un'immagine.")
-                    continue
-
-                # Limitiamo i caratteri per non intasare l'IA
-                testo_ridotto = full_text[:30000] 
-
-                # 2. INVIO TESTO A GEMINI
-                prompt = f"""
-                Sei un assistente per la spesa. Analizza il seguente testo estratto da un volantino del supermercato "{nome}".
-                Estrai una lista di prodotti alimentari e i loro prezzi.
-                Ignora codici, date o indirizzi.
+                # 1. Converti PDF in immagini (Risolve il problema dei file "Pewex" fotocopiati)
+                print("   📖 Scatto foto alle pagine del PDF...")
+                doc = fitz.open(fp)
+                image_parts = []
                 
-                TESTO:
-                {testo_ridotto}
+                # Elaboriamo massimo 20 pagine per non superare i limiti di grandezza
+                max_pages = min(len(doc), 20) 
+                for i in range(max_pages):
+                    page = doc.load_page(i)
+                    pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5))
+                    img_bytes = pix.tobytes("jpeg")
+                    b64_img = base64.b64encode(img_bytes).decode("utf-8")
+                    image_parts.append({
+                        "inline_data": {
+                            "mime_type": "image/jpeg",
+                            "data": b64_img
+                        }
+                    })
                 
-                RISPONDI SOLO JSON:
+                doc.close()
+
+                # 2. Invia tutto direttamente al server Google tramite HTTP
+                print("   🤖 Inoltro immagini all'Intelligenza Artificiale...")
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+                
+                prompt_text = f"""
+                Analizza le immagini di questo volantino di "{nome}". 
+                Estrai TUTTI i prodotti alimentari e i relativi prezzi. Ignora detersivi e prodotti per la casa.
+                RISPONDI TASSATIVAMENTE SOLO CON QUESTO JSON ESATTO:
                 {{
                     "{nome}": [
-                        {{"name": "Esempio Prodotto", "price": 1.99}}
+                        {{"name": "Nome Prodotto", "price": 0.00}}
                     ]
                 }}
                 """
-                
-                print("   🤖 Invio testo all'IA...")
-                res = model.generate_content(prompt)
-                
-                # 3. SALVATAGGIO
-                data = json.loads(pulisci_json(res.text))
-                if data:
-                    k = list(data.keys())[0]
-                    offerte[nome] = data[k]
-                    print(f"   ✅ Estratti {len(data[k])} prodotti.")
-                
-            except Exception as e:
-                print(f"   ⚠️ Errore su {nome}: {e}")
 
-    # SALVATAGGIO FILE JSON
+                payload = {
+                    "contents": [{
+                        "parts": [{"text": prompt_text}] + image_parts
+                    }]
+                }
+
+                response = requests.post(url, headers={"Content-Type": "application/json"}, json=payload)
+                
+                # 3. Leggi la risposta
+                if response.status_code == 200:
+                    res_json = response.json()
+                    ai_text = res_json.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                    
+                    data = json.loads(pulisci_json(ai_text))
+                    if data:
+                        k = list(data.keys())[0]
+                        offerte[nome] = data[k]
+                        print(f"   ✅ Successo! Estratti {len(data[k])} prodotti.")
+                else:
+                    print(f"   ❌ Errore Google API: {response.status_code} - {response.text}")
+
+            except Exception as e:
+                print(f"   ⚠️ Errore critico su {nome}: {e}")
+
+    # SALVATAGGIO
     if not offerte:
-        offerte = {"Info": [{"name": "Nessuna offerta trovata", "price": 0.00}]}
-    
+        offerte = {"Info": [{"name": "Nessuna offerta trovata. Controlla il PDF.", "price": 0.00}]}
+
     file_out = os.path.join(base, "offerte.json")
     with open(file_out, "w", encoding="utf-8") as f:
         json.dump(offerte, f, indent=4, ensure_ascii=False)
