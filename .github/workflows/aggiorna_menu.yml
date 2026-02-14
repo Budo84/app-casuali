@@ -35,7 +35,7 @@ jobs:
       - name: Installa Librerie
         run: |
           pip install --upgrade pip
-          pip install -U "google-generativeai>=0.5.0"
+          pip install google-genai
 
       # Parte 1: Analisi Offerte (Solo se richiesto col pulsante)
       - name: 🛒 Analisi Offerte
