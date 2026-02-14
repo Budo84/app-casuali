@@ -1,25 +1,19 @@
 import os
 import json
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import glob
 import time
 import sys
 
-print("--- 🛒 AVVIO ANALISI OFFERTE ---")
+print("--- 🛒 AVVIO ANALISI OFFERTE (NUOVA LIBRERIA) ---")
 
 if "GEMINI_KEY" in os.environ:
-    genai.configure(api_key=os.environ["GEMINI_KEY"])
+    # Nuova inizializzazione Client
+    client = genai.Client(api_key=os.environ["GEMINI_KEY"])
 else:
     print("❌ Chiave mancante.")
     sys.exit(0)
-
-def get_model():
-    try: return genai.GenerativeModel("gemini-1.5-flash")
-    except: 
-        try: return genai.GenerativeModel("gemini-1.5-pro")
-        except: return genai.GenerativeModel("gemini-pro")
-
-model = get_model()
 
 def pulisci_json(text):
     text = text.replace("```json", "").replace("```", "").strip()
@@ -34,33 +28,60 @@ def analizza():
     target = next((p for p in paths if os.path.exists(p)), None)
     
     offerte = {}
+    
     if target:
         files = glob.glob(os.path.join(target, "*.[pP][dD][fF]"))
         print(f"🔎 Trovati {len(files)} PDF.")
+        
         for fp in files:
             try:
                 nome = os.path.splitext(os.path.basename(fp))[0].replace("_", " ").title()
                 print(f"📄 Analisi: {nome}")
-                pdf = genai.upload_file(fp, display_name=nome)
                 
-                for _ in range(15):
+                # CARICAMENTO FILE (Nuovo Metodo)
+                try:
+                    file_ref = client.files.upload(file=fp)
+                    print(f"   Upload OK: {file_ref.name}")
+                except Exception as e:
+                    print(f"   ❌ Errore Upload: {e}")
+                    continue
+                
+                # ATTESA ATTIVA (Il file deve essere 'ACTIVE')
+                for _ in range(30):
+                    file_info = client.files.get(name=file_ref.name)
+                    if file_info.state == "ACTIVE":
+                        break
                     time.sleep(2)
-                    pdf = genai.get_file(pdf.name)
-                    if pdf.state.name == "ACTIVE": break
                 
-                if pdf.state.name != "ACTIVE": continue
+                # PROMPT
+                prompt = f"""
+                Analizza questo volantino di "{nome}".
+                Estrai una lista di prodotti alimentari e prezzi.
+                RISPONDI SOLO JSON: {{ "{nome}": [ {{"name": "...", "price": 0.00}} ] }}
+                """
                 
-                prompt = f"""Analizza "{nome}". Estrai prodotti e prezzi. JSON: {{ "{nome}": [ {{"name": "...", "price": 0.00}} ] }}"""
-                res = model.generate_content([pdf, prompt])
-                data = json.loads(pulisci_json(res.text))
-                if data: offerte[nome] = data[list(data.keys())[0]]
-                try: genai.delete_file(pdf.name)
-                except: pass
-            except Exception as e: print(f"⚠️ Errore {nome}: {e}")
+                # GENERAZIONE (Nuovo Metodo)
+                response = client.models.generate_content(
+                    model='gemini-1.5-flash',
+                    contents=[file_ref, prompt]
+                )
+                
+                if response.text:
+                    data = json.loads(pulisci_json(response.text))
+                    if data:
+                        k = list(data.keys())[0]
+                        offerte[nome] = data[k]
+                        print(f"   ✅ Trovati {len(data[k])} prodotti.")
+                
+            except Exception as e:
+                print(f"   ⚠️ Errore AI su {nome}: {e}")
 
-    if not offerte: offerte = {"Info": [{"name": "Nessuna offerta trovata", "price": 0.00}]}
+    # SALVATAGGIO
+    if not offerte:
+        offerte = {"Nessuna Offerta": [{"name": "Riprova Analisi", "price": 0.00}]}
     
-    with open(os.path.join(base, "offerte.json"), "w", encoding="utf-8") as f:
+    file_out = os.path.join(base, "offerte.json")
+    with open(file_out, "w", encoding="utf-8") as f:
         json.dump(offerte, f, indent=4, ensure_ascii=False)
     print("💾 Offerte salvate.")
 
