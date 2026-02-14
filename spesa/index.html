@@ -20,12 +20,8 @@
         .card { background: var(--card); padding: 0; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; page-break-inside: avoid; transition: 0.3s; }
         .day-header { background: #e8f5e9; color: var(--primary); padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
         .meal-row { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; position: relative; }
-        
-        /* STILE ALLERGENI (FONDAMENTALE) */
         .meal-row.danger-alert { background-color: #ffebee; border-left: 6px solid var(--danger); }
         .meal-row.danger-alert .meal-title { color: var(--danger); font-weight: 900; text-decoration: underline; }
-        .allergen-warning { color: white; background: var(--danger); font-size: 0.75rem; display: flex; align-items: center; margin-top: 6px; font-weight: bold; padding: 4px 8px; border-radius: 6px; display: inline-flex; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-
         .meal-content { flex: 1; padding-right: 80px; } 
         .meal-title { font-weight: 600; font-size: 1rem; color: #444; }
         .meal-ing { font-size: 0.85rem; color: #777; margin-top: 2px; }
@@ -34,7 +30,7 @@
         .action-btn:hover { background: #eee; color: var(--primary); }
         .action-btn.active-lock { color: var(--lock); }
         .action-btn.active-fav { color: var(--danger); }
-        
+        .allergen-warning { color: white; background: var(--danger); font-size: 0.75rem; display: flex; align-items: center; margin-top: 6px; font-weight: bold; padding: 4px 8px; border-radius: 6px; display: inline-flex; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         /* UI */
         .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
         .choice-chip { display: none; } 
@@ -65,6 +61,7 @@
         .nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; text-decoration: none; font-size: 0.75rem; }
         .nav a.active { color: var(--primary); font-weight: bold; }
         .nav i { font-size: 24px; margin-bottom: 4px; }
+        textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -72,12 +69,9 @@
 <header>
     <div style="display:flex; flex-direction:column;">
         <span style="font-weight:bold; font-size:1.1rem;">Spesa Smart</span>
-        <small style="font-size:0.7rem; opacity:0.9">Finale</small>
+        <small style="font-size:0.7rem; opacity:0.9">Allergeni & Offerte</small>
     </div>
-    <div class="status-badge" onclick="window.location.reload()">
-        <div id="statusDot" class="dot"></div>
-        <span id="statusText">Sync</span>
-    </div>
+    <div class="status-badge" onclick="window.location.reload()"><div id="statusDot" class="dot"></div><span id="statusText">Sync</span></div>
 </header>
 
 <div id="p-menu" class="page active">
@@ -154,10 +148,28 @@
 </div>
 
 <div id="p-famiglia" class="page">
-    <h3>👨‍👩‍👧‍👦 Famiglia & Salute</h3>
+    <h3>👨‍👩‍👧‍👦 Famiglia</h3>
     <div class="input-group"><input type="text" id="memberName" placeholder="Nome"><select id="memberAllergy"><option value="">Nessuna</option><option value="Glutine">Glutine</option><option value="Lattosio">Lattosio</option><option value="Uova">Uova</option><option value="Pesce">Pesce</option><option value="Frutta a guscio">Frutta a guscio</option><option value="Diabete">Diabete</option></select></div>
     <button class="btn" onclick="addFamilyMember()">Aggiungi</button>
     <div id="familyContainer" style="margin-top:15px;"></div>
+    
+    <hr>
+    <h3>✏️ Modifica Allergeni</h3>
+    <div class="settings-box">
+        <p style="font-size:0.85rem; color:#666;">Seleziona la categoria e modifica le parole chiave (separate da virgola).</p>
+        <select id="editAllergenSelect" onchange="loadAllergenKeywords()" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px;">
+            <option value="Glutine">Glutine</option>
+            <option value="Lattosio">Lattosio</option>
+            <option value="Uova">Uova</option>
+            <option value="Pesce">Pesce</option>
+            <option value="Frutta a guscio">Frutta a guscio</option>
+            <option value="Diabete">Diabete</option>
+        </select>
+        <textarea id="allergenKeywords" placeholder="Parole chiave..."></textarea>
+        <button class="btn" onclick="saveAllergens()" style="background:var(--lock);">Salva Modifiche</button>
+        <p id="allSaveStatus" style="font-size:0.8rem; color:#666; text-align:center; margin-top:5px;"></p>
+    </div>
+
     <hr>
     <h3>⚙️ Configurazione</h3>
     <div class="settings-box">
@@ -185,9 +197,9 @@
     let favorites = JSON.parse(localStorage.getItem('smart_fav')) || [];
     let shopData = JSON.parse(localStorage.getItem('smart_shop_data')) || {}; 
     let dietSettings = localStorage.getItem('smart_diet') || 'mediterranea';
-
-    // --- MAPPA ALLERGENI ESTESA (Include Spaghetti, ecc.) ---
-    const riskMap = {
+    
+    // Default Map (usata se il file non carica)
+    let riskMap = {
         "Glutine": ["pane", "pasta", "farina", "biscotti", "cereali", "orzo", "farro", "kamut", "seitan", "pizza", "focaccia", "crostini", "pangrattato", "piadina", "malto", "segale", "spaghetti", "penne", "fusilli", "rigatoni", "lasagne", "tortellini", "ravioli", "couscous", "bulgur", "gnocchi", "tagliatelle", "pappardelle", "orecchiette", "cracker", "fette biscottate"],
         "Lattosio": ["latte", "yogurt", "formaggio", "mozzarella", "burro", "panna", "parmigiano", "ricotta", "mascarpone", "fiordilatte", "besciamella", "provola", "gorgonzola", "stracchino", "robbiola", "scamorza", "pecorino", "grana", "gelato", "crema"],
         "Uova": ["uova", "frittata", "mayonese", "crema", "carbonara", "pancakes", "meringa", "tiramisù", "albume", "tuorlo", "pan di spagna", "crepes", "zabaione"],
@@ -198,17 +210,24 @@
 
     async function init() {
         renderFamily();
+        loadAllergenKeywords(); // Carica nel form
         document.getElementById('dietType').value = dietSettings;
         if(localStorage.getItem('gh_repo')) document.getElementById('ghRepo').value = localStorage.getItem('gh_repo');
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
         updateStatus('loading');
         
         try {
-            // CARICA RICETTE
+            // 1. CARICA ALLERGENI
+            try {
+                const resAll = await fetch('allergeni.json?t=' + Date.now());
+                if(resAll.ok) riskMap = await resAll.json();
+            } catch(e) { console.log("Uso riskMap default"); }
+
+            // 2. CARICA RICETTE
             const res = await fetch('dati_settimanali.json?t=' + Date.now());
             if(res.ok) db = await res.json();
             
-            // CARICA OFFERTE (SEPARATAMENTE)
+            // 3. CARICA OFFERTE
             try {
                 const resOff = await fetch('offerte.json?t=' + Date.now());
                 if(resOff.ok) offersDb = await resOff.json();
@@ -231,10 +250,48 @@
 
     function updateStatus(s) { document.getElementById('statusDot').className = 'dot ' + s; document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline'; }
 
-    async function startAnalysis() {
+    // --- EDIT ALLERGENI ---
+    function loadAllergenKeywords() {
+        let cat = document.getElementById('editAllergenSelect').value;
+        if(riskMap[cat]) document.getElementById('allergenKeywords').value = riskMap[cat].join(', ');
+        else document.getElementById('allergenKeywords').value = "";
+    }
+
+    async function saveAllergens() {
+        let cat = document.getElementById('editAllergenSelect').value;
+        let text = document.getElementById('allergenKeywords').value;
+        let keywords = text.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        
+        riskMap[cat] = keywords;
+        
+        // Upload to GitHub
         let repo = document.getElementById('ghRepo').value.trim();
         let token = document.getElementById('ghToken').value.trim();
-        let status = document.getElementById('analysisStatus');
+        let status = document.getElementById('allSaveStatus');
+        
+        if(!repo || !token) return alert("Configura GitHub!");
+        
+        status.innerText = "⏳ Salvataggio...";
+        try {
+            let url = `https://api.github.com/repos/${repo}/contents/spesa/allergeni.json`;
+            let sha = null; 
+            try{ let c = await fetch(url, {headers:{Authorization:`token ${token}`}}); if(c.ok) sha = (await c.json()).sha; } catch(e){}
+            
+            let content = btoa(JSON.stringify(riskMap, null, 4)); // Pretty print
+            
+            let res = await fetch(url, {
+                method: 'PUT',
+                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: "Update Allergeni", content: content, sha: sha })
+            });
+            
+            if(res.ok) { status.innerText = "✅ Salvato!"; renderAll(); } 
+            else throw new Error("Err");
+        } catch(e) { status.innerText = "❌ Errore"; }
+    }
+
+    async function startAnalysis() {
+        let repo = document.getElementById('ghRepo').value.trim(), token = document.getElementById('ghToken').value.trim(), status = document.getElementById('analysisStatus');
         if(!repo || !token) return alert("Mancano le credenziali GitHub in Opzioni!");
         status.innerText = "⏳ Invio comando al robot...";
         try {
@@ -402,9 +459,8 @@
                 let k = `${dayIdx}_${t}`;
                 let isL = !!locked[k];
                 let isF = favorites.includes(m.title);
-                let w = checkAllergens(m.ingredients); // CONTROLLA ALLERGENI QUI
+                let w = checkAllergens(m.ingredients);
                 let ico = t==='colazione'?'☕': t==='pranzo'?'🍝': t==='merenda'?'🍎':'🌙';
-                // AGGIUNGE CLASSE 'danger-alert' SE C'È UN RISCHIO
                 let dangerClass = w ? 'danger-alert' : '';
                 html += `<div class="meal-row ${dangerClass}"><div style="font-size:24px; width:35px;">${ico}</div><div class="meal-content"><div class="meal-title">${m.title} ${m.isCustom?'<span style="font-size:0.7rem;background:#E3F2FD;padding:2px;border-radius:4px">MIO</span>':''}</div><div class="meal-ing">${m.ingredients?m.ingredients.join(', '):''}</div>${w?`<div class="allergen-warning"><i class="material-icons" style="font-size:16px; margin-right:5px;">warning</i> ${w}</div>`:''}</div><div class="meal-actions"><i class="material-icons action-btn" onclick="swapMeal(${dayIdx},'${t}')">sync</i><i class="material-icons action-btn ${isF?'active-fav':''}" onclick="toggleFav('${m.title}')">${isF?'favorite':'favorite_border'}</i><i class="material-icons action-btn ${isL?'active-lock':''}" onclick="toggleLock(${dayIdx},'${t}')">${isL?'lock':'lock_open'}</i></div></div>`;
             });
@@ -412,14 +468,12 @@
         });
     }
 
-    // --- FUNZIONE CONTROLLO ALLERGENI CON MAPPA ESTESA ---
     function checkAllergens(ings) {
         if(!ings) return null;
         let hits = [];
         family.forEach(f => {
-            if(f.allergy) {
-                let keys = riskMap[f.allergy] || [f.allergy.toLowerCase()];
-                // Cerca se uno degli ingredienti contiene una delle parole chiave
+            if(f.allergy && riskMap[f.allergy]) {
+                let keys = riskMap[f.allergy];
                 if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name + " (" + f.allergy + ")");
             }
         });
@@ -431,22 +485,6 @@
     function addFamilyMember() { let n=document.getElementById('memberName').value, a=document.getElementById('memberAllergy').value; if(n){ family.push({name:n, allergy:a}); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu(); } }
     function renderFamily() { document.getElementById('familyContainer').innerHTML = family.map((f,i)=>`<div class="family-chip">${f.name} ${f.allergy||''} <i class="material-icons" style="font-size:16px; margin-left:5px; cursor:pointer" onclick="family.splice(${i},1); localStorage.setItem('smart_family',JSON.stringify(family)); renderFamily(); renderMenu();">close</i></div>`).join(''); }
     function saveCreds() { localStorage.setItem('gh_repo', document.getElementById('ghRepo').value); localStorage.setItem('gh_token', document.getElementById('ghToken').value); alert("Login Salvato"); }
-    async function uploadPDF() {
-        let r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value, n=document.getElementById('pdfName').value, f=document.getElementById('pdfFile').files[0], s=document.getElementById('upStatus');
-        if(!r||!t||!n||!f) return alert("Dati mancanti");
-        s.innerText="Upload...";
-        let reader = new FileReader();
-        reader.onload = async function() {
-            try {
-                let url=`https://api.github.com/repos/${r}/contents/spesa/volantini/${n.toLowerCase().replace(/\s/g,'')}.pdf`;
-                let sha=null; try{let c=await fetch(url,{headers:{Authorization:`token ${t}`}}); if(c.ok) sha=(await c.json()).sha;}catch(e){}
-                let res=await fetch(url,{method:'PUT',headers:{Authorization:`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:"Up",content:reader.result.split(',')[1],sha:sha})});
-                if(!res.ok) throw new Error("Err Github");
-                s.innerText="Fatto! Analisi in corso...";
-            } catch(e) { s.innerText="Errore: "+e.message; }
-        };
-        reader.readAsDataURL(f);
-    }
     function hardReset() { if(confirm("Reset Totale?")) { localStorage.clear(); location.reload(); } }
     function go(p,b) { document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); document.getElementById(p).classList.add('active'); document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active')); b.classList.add('active'); renderAll(); }
     function renderAll() { renderMenu(); renderShop(); renderOffers(); }
