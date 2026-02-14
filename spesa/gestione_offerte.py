@@ -1,7 +1,6 @@
 import os
 import json
 from google import genai
-from google.genai import types
 import glob
 import time
 import sys
