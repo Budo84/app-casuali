@@ -468,10 +468,33 @@
         startConfetti();
     }
 
-    function closeWin() {
+    // --- GESTIONE FINE PARTITA ---
+
+    // Opzione 1: Prossimo Round (Mantiene i punteggi accumulati)
+    function nextRound() {
         document.getElementById('winOverlay').style.display = 'none';
-        stopConfetti();
-        newRound();
+        stopConfetti(); // Ferma i coriandoli
+        newRound();     // Carica una nuova frase
+    }
+
+    // Opzione 2: Reset Totale (Azzera i punteggi e riparte)
+    function fullReset() {
+        if(confirm("Sei sicuro? Questo cancellerà i soldi di tutti i giocatori.")) {
+            document.getElementById('winOverlay').style.display = 'none';
+            stopConfetti();
+            
+            // Azzera i punteggi di tutti i giocatori
+            players.forEach(p => p.score = 0);
+            
+            // Il turno torna al primo giocatore della lista
+            currentPlayerIndex = 0;
+            
+            // Aggiorna la grafica dei punteggi a zero
+            renderPlayers();
+            
+            // Avvia una nuova frase
+            newRound();
+        }
     }
 
     // --- CONFETTI SYSTEM (Semplice JS) ---
