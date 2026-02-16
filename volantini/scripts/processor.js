@@ -2,7 +2,7 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const path = require('path');
 
-const API_KEY = process.env.GEMINI_API_KEY;
+const API_KEY = process.env.GEMINI_KEY;
 
 // Percorsi relativi alla posizione di QUESTO script (dentro /scripts)
 const INPUT_DIR = path.join(__dirname, '../input');
