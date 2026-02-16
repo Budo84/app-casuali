@@ -1,0 +1,43 @@
+name: Auto Volantini AI
+
+on:
+  push:
+    paths:
+      - 'volantini/input/*.pdf' # Scatta solo se tocchi questa sottocartella
+
+permissions:
+  contents: write
+
+jobs:
+  ai-process:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./volantini # FONDAMENTALE: Lavora nella sottocartella
+
+    steps:
+      - name: 📥 Scarica Repository
+        uses: actions/checkout@v3
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: 📦 Installa Dipendenze
+        run: npm install
+
+      - name: 🤖 Esegui AI Processor
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/processor.js
+
+      - name: 💾 Salva JSON
+        run: |
+          git config --global user.name "VolantiniBot"
+          git config --global user.email "bot@github.com"
+          # Torna alla root per fare il git add
+          cd ..
+          git add volantini/output/offerte.json
+          git commit -m "Aggiornamento offerte JSON [skip ci]" || echo "Nessuna modifica"
+          git push
