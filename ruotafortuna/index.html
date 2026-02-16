@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>La Ruota: Multiplayer</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <style>
+        /* --- STILI DI BASE --- */
+        * { box-sizing: border-box; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+        body {
+            margin: 0; padding: 0;
+            background: #121212; color: white;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            height: 100vh; display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- LAYOUT GENERALE --- */
+        .app-container {
+            display: flex; flex-direction: column; height: 100%;
+            padding: 10px; gap: 8px; position: relative;
+        }
+
+        /* 1. SEZIONE PUNTEGGI (Nuova) */
+        .players-bar {
+            display: flex; gap: 10px; overflow-x: auto; 
+            padding-bottom: 5px; min-height: 60px;
+        }
+        
+        .player-card {
+            background: #333; padding: 8px 15px; border-radius: 8px;
+            min-width: 100px; text-align: center;
+            border: 2px solid transparent; opacity: 0.7;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        
+        .player-card.active {
+            background: #1e1e1e;
+            border-color: #00e676;
+            opacity: 1;
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+            transform: scale(1.05);
+            animation: pulse 1.5s infinite;
+        }
+
+        .p-name { font-size: 0.8rem; font-weight: bold; color: #bbb; }
+        .p-score { font-size: 1.1rem; font-weight: bold; color: #fff; }
+        .player-card.active .p-score { color: #00e676; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 5px #00e676; } 50% { box-shadow: 0 0 15px #00e676; } 100% { box-shadow: 0 0 5px #00e676; } }
+
+        /* 2. TABELLONE */
+        .board-area {
+            flex: 1; background: #222; border-radius: 10px;
+            display: flex; justify-content: center; align-items: center;
+            padding: 10px; overflow-y: auto;
+        }
+        .puzzle-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+        .letter {
+            width: 28px; height: 38px;
+            background: white; color: black;
+            font-weight: 800; font-size: 20px;
+            display: flex; justify-content: center; align-items: center;
+            border-radius: 4px;
+        }
+        .letter.hidden { background: #009688; color: transparent; }
+        .letter.empty { background: transparent; }
+
+        /* 3. RUOTA E INFO */
+        .mid-section { flex: 1.2; display: flex; gap: 10px; min-height: 0; }
+        .wheel-box { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; }
+        canvas { max-width: 95%; max-height: 95%; }
+        .pointer {
+            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+            border-top: 15px solid transparent; border-bottom: 15px solid transparent;
+            border-right: 30px solid white; z-index: 10;
+        }
+
+        .info-panel {
+            flex: 0.6; background: #1e1e1e; border-radius: 10px; padding: 10px;
+            display: flex; flex-direction: column; justify-content: center; text-align: center;
+        }
+        .status-msg { font-size: 0.9rem; color: #ccc; margin-bottom: 5px; }
+        .wheel-val { font-size: 1.5rem; font-weight: bold; color: #ffeb3b; }
+
+        /* 4. TASTIERA E CONTROLLI */
+        .controls { background: #1e1e1e; padding: 10px; border-radius: 10px; }
+        .btn-row { display: flex; gap: 5px; margin-bottom: 8px; }
+        button { border: none; border-radius: 5px; padding: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; color: black; }
+        button:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        .btn-spin { flex: 2; background: #00e676; }
+        .btn-vowel { flex: 1; background: #7c4dff; color: white; }
+        .btn-solve { flex: 1; background: #ff1744; color: white; }
+
+        .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+        .key { width: 32px; height: 40px; background: #444; color: white; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
+        .key.used { background: #222; color: #555; }
+        .key.active-hint { background: #00e676; color: black; }
+
+        /* DESKTOP LAYOUT */
+        @media (min-width: 768px) {
+            .app-container { flex-direction: row; }
+            .board-area { order: 2; flex: 1.5; }
+            .players-bar { flex-direction: column; width: 150px; min-height: auto; order: 1; }
+            .mid-section { display: none; } /* Nascondi struttura mobile */
+            
+            /* Struttura Desktop Custom */
+            .desktop-right { flex: 1; display: flex; flex-direction: column; gap: 10px; order: 3; }
+            .wheel-box { height: 300px; } /* Altezza fissa su desktop */
+        }
+
+        /* MODALS */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; flex-direction: column;}
+        .modal-content { background: #333; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #555; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div class="players-bar" id="playersBar">
+        </div>
+
+    <div class="board-area">
+        <div class="puzzle-wrap" id="board"></div>
+    </div>
+
+    <div class="mid-section" id="mobileMidSection">
+        <div class="wheel-box" id="wheelBoxMobile">
+            <div class="pointer"></div>
+            <canvas id="wheelCanvas"></canvas>
+        </div>
+        <div class="info-panel">
+            <div class="status-msg" id="msg">Benvenuto</div>
+            <div class="wheel-val" id="currentVal">-</div>
+        </div>
+    </div>
+
+    <div class="desktop-right" id="desktopRight">
+        </div>
+
+    <div class="controls">
+        <div class="btn-row">
+            <button class="btn-spin" id="btnSpin" onclick="spin()">GIRA</button>
+            <button class="btn-vowel" id="btnVowel" onclick="buyVowel()">VOCALE</button>
+            <button class="btn-solve" onclick="trySolve()">SOLUZIONE</button>
+        </div>
+        <div class="keyboard" id="keyboard"></div>
+        <button onclick="openSettings()" style="background:transparent; color:#777; font-size:0.8rem; width:100%; margin-top:5px;">⚙️ Opzioni / Frasi</button>
+    </div>
+</div>
+
+<div id="setupModal" class="modal" style="display: flex;">
+    <div class="modal-content">
+        <h3>Nuova Partita</h3>
+        <p>Inserisci i nomi dei giocatori (uno per riga):</p>
+        <textarea id="playerNamesInput" rows="4">GIOCATORE 1&#10;GIOCATORE 2&#10;GIOCATORE 3</textarea>
+        <button onclick="startGame()" style="background: #00e676; width: 100%;">INIZIA GIOCO</button>
+    </div>
+</div>
+
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <h3>Frasi Personalizzate</h3>
+        <textarea id="phrasesInput" rows="5"></textarea>
+        <button onclick="savePhrases()" style="background: #00e676; width: 100%;">SALVA FRASI</button>
+        <button onclick="closeSettings()" style="background: #555; width: 100%; color: white; margin-top: 5px;">ANNULLA</button>
+    </div>
+</div>
+
+<script>
+    // --- VARIABILI GLOBALI ---
+    let players = []; // Array di oggetti {name: "Mario", score: 0}
+    let currentPlayerIndex = 0;
+    
+    let phrases = ["ROMA CAPITALE", "PIZZA MARGHERITA", "DOLCE VITA"];
+    let currentPhrase = "";
+    
+    let isSpinning = false;
+    let waitingForConsonant = false;
+    let turnValue = 0; // Valore ottenuto dalla ruota
+    
+    // --- SETUP CANVAS ---
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const segments = [
+        { label: "100", val: 100, color: "#f44336" },
+        { label: "500", val: 500, color: "#4CAF50" },
+        { label: "PERDI", val: -1, color: "#ffffff", text: "black" },
+        { label: "300", val: 300, color: "#2196F3" },
+        { label: "1000", val: 1000, color: "#E91E63" },
+        { label: "BANK", val: 0, color: "#000000", text: "white" },
+        { label: "200", val: 200, color: "#FF9800" },
+        { label: "JOLLY", val: 999, color: "#FFC107", text: "black" }
+    ];
+    let angle = 0;
+
+    // --- INIZIALIZZAZIONE ---
+    function init() {
+        // Carica frasi salvate
+        if(localStorage.getItem('my_phrases')) {
+            phrases = JSON.parse(localStorage.getItem('my_phrases'));
+        }
+        
+        resizeWheel();
+        window.addEventListener('resize', resizeWheel);
+        generateKeyboard();
+        
+        // Se su Desktop, sposta la ruota nel pannello di destra (hack layout)
+        if(window.innerWidth >= 768) {
+            const right = document.getElementById('desktopRight');
+            const wheelBox = document.getElementById('wheelBoxMobile');
+            const info = document.querySelector('.info-panel');
+            right.appendChild(wheelBox);
+            right.appendChild(info);
+        }
+    }
+
+    function resizeWheel() {
+        const container = canvas.parentElement;
+        const size = Math.min(container.clientWidth, container.clientHeight);
+        canvas.width = size;
+        canvas.height = size;
+        drawWheel();
+    }
+
+    // --- GESTIONE GIOCATORI ---
+    function startGame() {
+        const input = document.getElementById('playerNamesInput').value;
+        const names = input.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+        
+        if (names.length === 0) {
+            alert("Inserisci almeno un nome!");
+            return;
+        }
+
+        players = names.map(n => ({ name: n.toUpperCase(), score: 0 }));
+        currentPlayerIndex = 0;
+        
+        document.getElementById('setupModal').style.display = 'none';
+        
+        renderPlayers();
+        newRound();
+    }
+
+    function renderPlayers() {
+        const bar = document.getElementById('playersBar');
+        bar.innerHTML = '';
+        players.forEach((p, i) => {
+            const card = document.createElement('div');
+            card.className = `player-card ${i === currentPlayerIndex ? 'active' : ''}`;
+            card.innerHTML = `
+                <div class="p-name">${p.name}</div>
+                <div class="p-score">${p.score} €</div>
+            `;
+            bar.appendChild(card);
+        });
+    }
+
+    function nextTurn() {
+        waitingForConsonant = false;
+        highlightKeyboard(false);
+        
+        // Passa al prossimo
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        renderPlayers();
+        
+        const nextPlayerName = players[currentPlayerIndex].name;
+        message(`Tocca a ${nextPlayerName}. Gira la ruota!`);
+        enableSpin(true);
+    }
+
+    // --- LOGICA DI GIOCO ---
+    function newRound() {
+        currentPhrase = phrases[Math.floor(Math.random() * phrases.length)].toUpperCase();
+        waitingForConsonant = false;
+        isSpinning = false;
+        
+        // Resetta tastiera
+        document.querySelectorAll('.key').forEach(k => {
+            k.disabled = false;
+            k.classList.remove('used');
+            k.classList.remove('active-hint');
+            k.style.background = "#444";
+            k.style.color = "white";
+        });
+
+        drawBoard();
+        
+        const currP = players[currentPlayerIndex].name;
+        message(`Nuova frase! Tocca a ${currP}`);
+        enableSpin(true);
+        disableKeyboard(true);
+    }
+
+    function spin() {
+        if(isSpinning || waitingForConsonant) return;
+        isSpinning = true;
+        enableSpin(false);
+        disableKeyboard(true);
+        message("La ruota gira...");
+
+        let velocity = Math.random() * 20 + 20;
+        
+        function animate() {
+            velocity *= 0.97;
+            angle += velocity * 0.01;
+            drawWheel();
+            if (velocity > 0.1) requestAnimationFrame(animate);
+            else {
+                isSpinning = false;
+                processResult();
+            }
+        }
+        animate();
+    }
+
+    function processResult() {
+        const PI2 = Math.PI * 2;
+        const normAngle = angle % PI2;
+        const sliceArc = PI2 / segments.length;
+        // Calcolo indice: 0 è a destra
+        let index = Math.floor((PI2 - normAngle) / sliceArc) % segments.length;
+        
+        let res = segments[index];
+        turnValue = res.val;
+        
+        document.getElementById('currentVal').innerText = res.label;
+
+        if (turnValue === 0) { // Bancarotta
+            message("BANCAROTTA! Punteggio azzerato.");
+            players[currentPlayerIndex].score = 0;
+            renderPlayers();
+            setTimeout(nextTurn, 2000);
+        } else if (turnValue === -1) { // Perdi turno
+            message("PERDI IL TURNO!");
+            setTimeout(nextTurn, 2000);
+        } else {
+            message(`Vale ${res.label}! Scegli una CONSONANTE.`);
+            waitingForConsonant = true;
+            highlightKeyboard(true);
+        }
+    }
+
+    // --- INTERAZIONE ---
+    function handleKey(char, btn) {
+        if(waitingForConsonant) {
+            // Fase post-spin
+            if(isVowel(char)) {
+                alert("Ora devi scegliere una consonante!");
+                return;
+            }
+            playLetter(char, btn, false);
+        }
+    }
+
+    function buyVowel() {
+        // Controllo turno e soldi
+        if(isSpinning || waitingForConsonant) return; // Si può comprare solo PRIMA di girare o se si ha la mano (ma semplifichiamo: sempre attivo se è il tuo turno e non stai girando)
+        
+        if (players[currentPlayerIndex].score < 1000) {
+            alert("Ti servono 1000€ per la vocale.");
+            return;
+        }
+
+        let char = prompt("Quale vocale? (A, E, I, O, U)").toUpperCase();
+        if(!char || !isVowel(char)) { alert("Non valida."); return; }
+        
+        // Verifica se già usata
+        const btn = document.getElementById('key-'+char);
+        if(btn.disabled) { alert("Già chiamata."); return; }
+
+        players[currentPlayerIndex].score -= 1000;
+        renderPlayers();
+        playLetter(char, btn, true);
+    }
+
+    function playLetter(char, btn, isBuyingVowel) {
+        btn.disabled = true;
+        btn.classList.add('used');
+        btn.style.background = "#222";
+
+        const boxes = document.querySelectorAll(`.letter[data-char="${char}"]`);
+        
+        if (boxes.length > 0) {
+            // Trovata
+            boxes.forEach(b => { b.classList.remove('hidden'); b.style.color = "black"; });
+            
+            if(!isBuyingVowel) {
+                let val = (turnValue === 999) ? 500 : turnValue;
+                let gain = val * boxes.length;
+                players[currentPlayerIndex].score += gain;
+                renderPlayers();
+                message(`Trovate ${boxes.length}! Gira ancora.`);
+                // Resta allo stesso giocatore, deve girare di nuovo
+                waitingForConsonant = false;
+                enableSpin(true);
+                highlightKeyboard(false);
+            } else {
+                message("Vocale trovata! Gira ancora.");
+            }
+            checkWin();
+        } else {
+            // Sbagliata
+            message(`La lettera ${char} non c'è.`);
+            setTimeout(nextTurn, 1500);
+        }
+    }
+
+    function trySolve() {
+        let sol = prompt("Scrivi la soluzione:");
+        if (!sol) return;
+        if(sol.toUpperCase() === currentPhrase) {
+            players[currentPlayerIndex].score += 2000;
+            renderPlayers();
+            // Rivela tutto
+            document.querySelectorAll('.letter.hidden').forEach(l => {
+                l.classList.remove('hidden'); l.style.color = "black";
+            });
+            message(`VINCE ${players[currentPlayerIndex].name}!`);
+            
+            // Bottone nuova partita
+            setTimeout(() => {
+                if(confirm("Vittoria! Iniziare nuova manche?")) newRound();
+            }, 1000);
+        } else {
+            alert("Sbagliato!");
+            nextTurn();
+        }
+    }
+
+    // --- HELPER UI ---
+    function drawBoard() {
+        const b = document.getElementById('board');
+        b.innerHTML = '';
+        currentPhrase.split(' ').forEach(word => {
+            const wDiv = document.createElement('div');
+            wDiv.style.display="flex"; wDiv.style.margin="0 10px 5px 0";
+            for(let c of word) {
+                const l = document.createElement('div');
+                l.className = 'letter hidden';
+                l.innerText = c;
+                l.dataset.char = c;
+                if(!/[A-Z]/.test(c)) { // Simboli
+                    l.classList.remove('hidden'); l.style.color="black"; l.style.background="transparent";
+                }
+                wDiv.appendChild(l);
+            }
+            b.appendChild(wDiv);
+        });
+    }
+
+    function generateKeyboard() {
+        const k = document.getElementById('keyboard');
+        const abc = "ABCDEFGHILMNOPQRSTUVZ";
+        k.innerHTML = '';
+        for(let c of abc) {
+            const btn = document.createElement('button');
+            btn.className = 'key';
+            btn.innerText = c;
+            btn.id = 'key-'+c;
+            btn.onclick = () => handleKey(c, btn);
+            k.appendChild(btn);
+        }
+    }
+
+    function highlightKeyboard(on) {
+        document.querySelectorAll('.key').forEach(k => {
+            if(!k.classList.contains('used') && !isVowel(k.innerText)) {
+                k.disabled = !on;
+                if(on) { k.classList.add('active-hint'); k.style.color="black"; }
+                else { k.classList.remove('active-hint'); k.style.color="white"; k.style.background="#444"; }
+            } else {
+                k.disabled = true;
+            }
+        });
+    }
+
+    function enableSpin(on) {
+        document.getElementById('btnSpin').disabled = !on;
+        document.getElementById('btnVowel').disabled = !on; 
+    }
+    
+    function disableKeyboard(bool) {
+        document.querySelectorAll('.key').forEach(k => k.disabled = bool);
+    }
+    
+    function isVowel(c) { return ['A','E','I','O','U'].includes(c); }
+    
+    function checkWin() {
+        if(document.querySelectorAll('.letter.hidden').length === 0) {
+            message("PUZZLE RISOLTO!");
+            setTimeout(() => { if(confirm("Puzzle finito. Nuova manche?")) newRound(); }, 2000);
+        }
+    }
+
+    // --- CANVAS DRAW ---
+    function drawWheel() {
+        const r = canvas.width/2;
+        const arc = (Math.PI*2)/segments.length;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.translate(r,r); ctx.rotate(angle);
+        segments.forEach((s,i) => {
+            ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,i*arc,i*arc+arc);
+            ctx.fillStyle = s.color; ctx.fill();
+            ctx.save(); ctx.rotate(i*arc + arc/2); ctx.textAlign="right";
+            ctx.fillStyle = s.text||"white"; ctx.font="bold "+(r/10)+"px Arial";
+            ctx.fillText(s.label, r-10, 5); ctx.restore();
+        });
+        ctx.rotate(-angle); ctx.translate(-r,-r);
+        ctx.beginPath(); ctx.arc(r,r,r/6,0,Math.PI*2); ctx.fillStyle="white"; ctx.fill();
+    }
+
+    // --- SETTINGS ---
+    function openSettings() {
+        document.getElementById('phrasesInput').value = phrases.join('\n');
+        document.getElementById('settingsModal').style.display = 'flex';
+    }
+    function savePhrases() {
+        const raw = document.getElementById('phrasesInput').value;
+        const p = raw.split('\n').map(x=>x.trim().toUpperCase()).filter(x=>x.length>0);
+        if(p.length>0) {
+            localStorage.setItem('my_phrases', JSON.stringify(p));
+            phrases = p;
+            alert("Frasi salvate! Saranno usate dalla prossima manche.");
+            closeSettings();
+        }
+    }
+    function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
+
+    // Start
+    init();
+
+</script>
+</body>
+</html>
