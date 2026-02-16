@@ -2,27 +2,106 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>App Volantini</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Volantini AI</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #eef2f3; }
-        .card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
-        .btn { display: block; margin: 15px 0; padding: 15px; text-decoration: none; border-radius: 8px; color: white; font-weight: bold; }
-        .upload { background: #3498db; }
-        .json { background: #2ecc71; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #333; margin-bottom: 20px; }
+        
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 14px; color: #666; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        
+        .btn { display: block; width: 100%; padding: 12px; margin-top: 15px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; text-decoration: none; color: white; font-weight: 500; transition: background 0.3s; }
+        .btn-config { background-color: #6c757d; }
+        .btn-upload { background-color: #007bff; display: none; } /* Nascosto all'inizio */
+        .btn-view { background-color: #28a745; display: none; }   /* Nascosto all'inizio */
+        
+        .btn-upload:hover { background-color: #0056b3; }
+        .btn-view:hover { background-color: #218838; }
+
+        #status-msg { margin-top: 15px; font-size: 14px; color: #28a745; display: none; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>📑 Gestore Volantini</h1>
-        <p>Carica il PDF nella cartella dell'app.</p>
-        
-        <a href="https://github.com/USER/REPO/upload/main/volantini/input" target="_blank" class="btn upload">
-            📤 Carica PDF in /volantini/input
-        </a>
-        
-        <a href="https://github.com/USER/REPO/blob/main/volantini/output/offerte.json" target="_blank" class="btn json">
-            👁️ Vedi JSON Offerte
-        </a>
+
+<div class="card">
+    <h2>🚀 Configurazione App</h2>
+    
+    <div id="config-form">
+        <div class="input-group">
+            <label>Tuo Username GitHub</label>
+            <input type="text" id="username" placeholder="Es. mario-rossi">
+        </div>
+        <div class="input-group">
+            <label>Nome della Repository</label>
+            <input type="text" id="repo" placeholder="Es. le-mie-app">
+        </div>
+        <button onclick="generaLink()" class="btn btn-config">Salva e Genera Link</button>
     </div>
+
+    <div id="actions-area">
+        <p id="status-msg">✅ Configurazione salvata!</p>
+        
+        <a id="link-upload" href="#" target="_blank" class="btn btn-upload">
+            📤 1. Carica PDF (Input)
+        </a>
+        
+        <a id="link-json" href="#" target="_blank" class="btn btn-view">
+            👁️ 2. Vedi Offerte (Output)
+        </a>
+        
+        <button onclick="resetConfig()" style="background:none; border:none; color:#999; margin-top:15px; cursor:pointer; font-size:12px;">Modifica dati</button>
+    </div>
+</div>
+
+<script>
+    // Al caricamento, controlla se abbiamo già salvato i dati
+    window.onload = function() {
+        const savedUser = localStorage.getItem('gh_user');
+        const savedRepo = localStorage.getItem('gh_repo');
+        
+        if(savedUser && savedRepo) {
+            document.getElementById('username').value = savedUser;
+            document.getElementById('repo').value = savedRepo;
+            generaLink();
+        }
+    }
+
+    function generaLink() {
+        const user = document.getElementById('username').value.trim();
+        const repo = document.getElementById('repo').value.trim();
+
+        if(!user || !repo) {
+            alert("Inserisci username e nome repository!");
+            return;
+        }
+
+        // Salva nel browser per la prossima volta
+        localStorage.setItem('gh_user', user);
+        localStorage.setItem('gh_repo', repo);
+
+        // Genera i link dinamici
+        const uploadUrl = `https://github.com/${user}/${repo}/upload/main/volantini/input`;
+        const jsonUrl = `https://github.com/${user}/${repo}/blob/main/volantini/output/offerte.json`;
+
+        document.getElementById('link-upload').href = uploadUrl;
+        document.getElementById('link-json').href = jsonUrl;
+
+        // Mostra i bottoni
+        document.getElementById('config-form').style.display = 'none';
+        document.getElementById('link-upload').style.display = 'block';
+        document.getElementById('link-json').style.display = 'block';
+        document.getElementById('status-msg').style.display = 'block';
+    }
+
+    function resetConfig() {
+        localStorage.removeItem('gh_user');
+        localStorage.removeItem('gh_repo');
+        location.reload();
+    }
+</script>
+
 </body>
 </html>
