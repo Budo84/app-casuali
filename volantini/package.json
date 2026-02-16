@@ -1,12 +1,10 @@
 {
-  "name": "volantino-ai-auto",
+  "name": "app-volantini",
   "version": "1.0.0",
-  "description": "Estrazione automatica offerte volantini",
+  "description": "Processor AI per Volantini",
   "main": "scripts/processor.js",
   "dependencies": {
+    "@google/generative-ai": "^0.1.3",
     "node-fetch": "^2.6.1"
-  },
-  "scripts": {
-    "start": "node scripts/processor.js"
   }
 }
