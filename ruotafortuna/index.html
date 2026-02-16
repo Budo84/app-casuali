@@ -561,7 +561,8 @@
 
     function generateKeyboard() {
         const k = document.getElementById('keyboard'); k.innerHTML='';
-        "ABCDEFGHILMNOPQRSTUVZ".split('').forEach(c=>{
+        // AGGIUNTE LETTERE MANCANTI (J, K, W, X, Y)
+        "ABCDEFGHILMNOPQRSTUVZJKWXY".split('').forEach(c=>{
             const b=document.createElement('div'); b.className='key'; b.innerText=c; b.id='key-'+c;
             
             // MODIFICA: Se è una vocale, aggiungiamo una classe speciale
