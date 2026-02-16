@@ -4,6 +4,12 @@ const path = require('path');
 
 const API_KEY = process.env.GEMINI_KEY;
 
+// AGGIUNGI QUESTO BLOCCO SUBITO DOPO
+if (!API_KEY) {
+    console.error("❌ ERRORE CRITICO: Manca la GEMINI_API_KEY nei Secrets di GitHub!");
+    process.exit(1);
+}
+
 // Percorsi relativi alla posizione di QUESTO script (dentro /scripts)
 const INPUT_DIR = path.join(__dirname, '../input');
 const OUTPUT_FILE = path.join(__dirname, '../output/offerte.json');
