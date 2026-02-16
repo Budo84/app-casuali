@@ -1,0 +1,12 @@
+{
+  "name": "volantino-ai-auto",
+  "version": "1.0.0",
+  "description": "Estrazione automatica offerte volantini",
+  "main": "scripts/processor.js",
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  },
+  "scripts": {
+    "start": "node scripts/processor.js"
+  }
+}
