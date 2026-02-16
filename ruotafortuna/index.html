@@ -122,6 +122,14 @@
         .key { width: 36px; height: 40px; background: #444; color: white; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; }
         .key.used { background: #222; color: #555; }
         .key.active-hint { background: #00e676; color: black; box-shadow: 0 0 8px #00e676; }
+        
+        /* Stile per le vocali sulla tastiera: le rendiamo più scure/spente */
+        .key.is-vowel {
+            background-color: #222; /* Molto scuro */
+            color: #555;            /* Testo grigio scuro */
+            border: 1px solid #333;
+            opacity: 0.5;           /* Semitrasparente */
+        }
 
         /* --- MODALS & OVERLAYS --- */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 200; justify-content: center; align-items: center; }
@@ -234,16 +242,21 @@
     // --- CANVAS RUOTA ---
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
+    
+    // NUOVA LISTA SEGMENTI (10 Spicchi)
     const segments = [
-        { label: "100", val: 100, color: "#e53935" },
-        { label: "500", val: 500, color: "#43a047" },
-        { label: "PERDI", val: -1, color: "#ffffff", text: "black" },
-        { label: "300", val: 300, color: "#1e88e5" },
-        { label: "1000", val: 1000, color: "#d81b60" },
-        { label: "BANCAROTTA", val: 0, color: "#000000", text: "white" },
-        { label: "200", val: 200, color: "#fb8c00" },
-        { label: "JOLLY", val: 999, color: "#fdd835", text: "black" }
+        { label: "100", val: 100, color: "#e53935" },   // Rosso
+        { label: "500", val: 500, color: "#43a047" },   // Verde
+        { label: "PERDI", val: -1, color: "#ffffff", text: "black" }, // Bianco
+        { label: "250", val: 250, color: "#fb8c00" },   // Arancio (NUOVO)
+        { label: "1000", val: 1000, color: "#d81b60" }, // Rosa scuro
+        { label: "BANK", val: 0, color: "#000000", text: "white" }, // Nero
+        { label: "750", val: 750, color: "#8e24aa" },   // Viola (NUOVO)
+        { label: "JOLLY", val: 999, color: "#fdd835", text: "black" }, // Oro
+        { label: "200", val: 200, color: "#039be5" },   // Azzurro
+        { label: "150", val: 150, color: "#7cb342" }    // Verde chiaro (NUOVO)
     ];
+
     let angle = 0;
     let isSpinning = false;
     let waitingForConsonant = false;
@@ -303,7 +316,7 @@
         waitingForConsonant = false; isSpinning = false;
         
         // Reset tastiera
-        document.querySelectorAll('.key').forEach(k=>{ k.disabled=false; k.classList.remove('used','active-hint'); k.style.background="#444"; });
+        document.querySelectorAll('.key').forEach(k=>{ k.disabled=false; k.classList.remove('used','active-hint'); k.style.background="#444"; k.style.opacity="1"; k.style.cursor="pointer"; });
         
         drawBoardTV(currentPuzzle.text);
         document.getElementById('hintText').innerText = currentPuzzle.hint;
@@ -311,6 +324,7 @@
         renderPlayers();
         message(`Nuova Manche: ${players[currentPlayerIndex].name}`);
         enableSpin(true);
+        generateKeyboard(); // Rigenera per resettare le classi vocali corrette
     }
 
     // --- IL NUOVO TABELLONE TV (12-14-14-12) ---
@@ -549,18 +563,39 @@
         const k = document.getElementById('keyboard'); k.innerHTML='';
         "ABCDEFGHILMNOPQRSTUVZ".split('').forEach(c=>{
             const b=document.createElement('div'); b.className='key'; b.innerText=c; b.id='key-'+c;
+            
+            // MODIFICA: Se è una vocale, aggiungiamo una classe speciale
+            if(['A','E','I','O','U'].includes(c)) {
+                b.classList.add('is-vowel');
+            }
+
             b.onclick=()=>handleKey(c,b); k.appendChild(b);
         });
     }
 
     function enableSpin(on) { document.getElementById('btnSpin').disabled=!on; }
+    
     function highlightKeyboard(on) { 
         document.querySelectorAll('.key').forEach(k=>{ 
-            if(!k.classList.contains('used') && !['A','E','I','O','U'].includes(k.innerText)) {
-                if(on) k.classList.add('active-hint'); else k.classList.remove('active-hint');
+            if(k.classList.contains('used')) return;
+
+            // Logica per le vocali
+            if(['A','E','I','O','U'].includes(k.innerText)) {
+                k.style.opacity = "0.3"; 
+                k.style.cursor = "default";
+            } else {
+                // Logica per le Consonanti
+                if(on) {
+                    k.classList.add('active-hint'); 
+                    k.style.opacity = "1";
+                } else {
+                    k.classList.remove('active-hint');
+                    k.style.opacity = "1";
+                }
             }
         }); 
     }
+    
     function message(t) { document.getElementById('msg').innerText=t; }
 
     // Settings
