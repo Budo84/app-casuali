@@ -198,7 +198,20 @@
 <div id="winOverlay" class="win-overlay">
     <div class="win-text" id="winMessage">VITTORIA!</div>
     <div style="font-size: 1.5rem; color: white; margin-top: 10px;" id="winSub"></div>
-    <button onclick="closeWin()" style="background: #00e676; padding: 15px 30px; margin-top: 30px; font-size: 1.2rem;">PROSSIMA PARTITA</button>
+    
+    <div style="display: flex; gap: 20px; margin-top: 40px; flex-wrap: wrap; justify-content: center;">
+        
+        <button onclick="nextRound()" style="background: #00e676; padding: 15px 30px; font-size: 1.2rem; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; color: black; box-shadow: 0 0 15px rgba(0,230,118,0.4);">
+            CONTINUA TORNEO ➡️
+            <div style="font-size:0.8rem; font-weight:normal; margin-top:5px;">(Mantieni i soldi vinti)</div>
+        </button>
+        
+        <button onclick="fullReset()" style="background: #ff1744; color: white; padding: 15px 30px; font-size: 1.2rem; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 0 15px rgba(255,23,68,0.4);">
+            NUOVA PARTITA 🔄
+            <div style="font-size:0.8rem; font-weight:normal; margin-top:5px;">(Azzera tutti i punteggi)</div>
+        </button>
+
+    </div>
 </div>
 <canvas id="confettiCanvas"></canvas>
 
@@ -227,7 +240,7 @@
         { label: "PERDI", val: -1, color: "#ffffff", text: "black" },
         { label: "300", val: 300, color: "#1e88e5" },
         { label: "1000", val: 1000, color: "#d81b60" },
-        { label: "BANK", val: 0, color: "#000000", text: "white" },
+        { label: "BANCAROTTA", val: 0, color: "#000000", text: "white" },
         { label: "200", val: 200, color: "#fb8c00" },
         { label: "JOLLY", val: 999, color: "#fdd835", text: "black" }
     ];
