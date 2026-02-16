@@ -3,178 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Ruota PWA v6</title>
+    <title>La Ruota v7 (Tabellone Focus)</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <style>
-        /* --- RESET E BASI --- */
+        /* --- RESET --- */
         * { box-sizing: border-box; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
         body {
             margin: 0; padding: 0;
             background: #121212; color: white;
             font-family: 'Segoe UI', system-ui, sans-serif;
             height: 100vh; width: 100vw;
-            overflow: hidden; /* Niente scroll della pagina intera */
+            overflow: hidden;
         }
 
-        /* --- LAYOUT GRID (IL CUORE DELLA RIPARAZIONE) --- */
-        .app-grid {
-            display: grid;
+        /* --- LAYOUT PRINCIPALE (GRID) --- */
+        .main-layout {
+            display: flex;
+            flex-direction: column; /* Mobile first: colonna */
             height: 100%;
-            width: 100%;
             padding: 10px;
             gap: 10px;
-            /* Layout Mobile di default: Tutto in colonna */
-            grid-template-columns: 1fr;
-            grid-template-rows: auto auto 1fr auto; 
-            grid-template-areas: 
-                "players"
-                "board"
-                "wheel"
-                "controls";
         }
 
-        /* Layout DESKTOP / IPAD LANDSCAPE */
-        @media (min-width: 900px) {
-            .app-grid {
-                /* 3 Colonne: Giocatori (Sinistra) | Ruota (Centro) | Tabellone+Controlli (Destra) */
-                grid-template-columns: 200px 1fr 400px; 
-                grid-template-rows: 1fr;
-                grid-template-areas: "players wheel right-panel";
+        /* DESKTOP / IPAD LANDSCAPE (Il layout che hai chiesto) */
+        @media (min-width: 768px) {
+            .main-layout {
+                flex-direction: row; /* Due colonne affiancate */
+            }
+            
+            /* COLONNA SINISTRA: TABELLONE E GIOCATORI */
+            .stage-area {
+                flex: 2.5; /* Occupa il 70% circa */
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                min-width: 0; /* Fix flex overflow */
+            }
+
+            /* COLONNA DESTRA: RUOTA E LETTERE */
+            .sidebar-area {
+                flex: 1; /* Occupa il 30% circa */
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                min-width: 300px; /* Larghezza minima per la ruota */
             }
         }
 
-        /* --- 1. AREA GIOCATORI --- */
-        .area-players {
-            grid-area: players;
-            background: #1e1e1e; border-radius: 12px;
-            display: flex; gap: 10px; padding: 10px;
-            overflow-x: auto; /* Scroll orizzontale su mobile */
-        }
+        /* --- COMPONENTI SINISTRA (STAGE) --- */
         
-        /* Su desktop diventa verticale */
-        @media (min-width: 900px) {
-            .area-players { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+        /* 1. TABELLONE */
+        .board-container {
+            flex: 1; /* Prende tutto lo spazio verticale disponibile */
+            background: #222;
+            border-radius: 15px;
+            border: 4px solid #333;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 20px black;
         }
+        .puzzle-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        
+        .letter {
+            width: 40px; height: 55px; /* Lettere più grandi */
+            background: white; color: black;
+            font-weight: 800; font-size: 28px;
+            display: flex; justify-content: center; align-items: center;
+            border-radius: 6px; box-shadow: 2px 2px 0 #888;
+        }
+        .letter.hidden { background: #009688; color: transparent; border: 2px solid #fff; box-shadow: none; }
+        .letter.empty { background: transparent; box-shadow: none; width: 20px; }
 
+        /* 2. DEFINIZIONE E STATUS */
+        .status-bar {
+            background: #1e1e1e; padding: 15px; border-radius: 10px;
+            text-align: center; border-left: 5px solid #ffeb3b;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .msg-text { font-size: 1.2rem; color: #ddd; }
+        .val-text { font-size: 1.4rem; font-weight: bold; color: #ffeb3b; }
+
+        /* 3. GIOCATORI (Striscia Orizzontale) */
+        .players-strip {
+            display: flex; gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            height: 90px;
+        }
         .player-card {
-            background: #333; padding: 10px; border-radius: 8px;
-            min-width: 100px; text-align: center;
+            flex: 1;
+            background: #333; border-radius: 10px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-width: 120px;
             border: 2px solid transparent; opacity: 0.6; transition: 0.3s;
-            display: flex; flex-direction: column; justify-content: center;
         }
         .player-card.active {
-            background: #2b2b2b; border-color: #00e676; opacity: 1;
-            transform: scale(1.05); box-shadow: 0 0 15px rgba(0,230,118,0.2);
+            background: #2e2e2e; border-color: #00e676; opacity: 1;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,230,118,0.2);
         }
-        .p-name { font-size: 0.9rem; font-weight: bold; color: #ccc; }
-        .p-score { font-size: 1.2rem; font-weight: bold; color: white; }
+        .p-name { font-size: 0.9rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .p-score { font-size: 1.5rem; font-weight: bold; color: white; }
         .active .p-score { color: #00e676; }
 
-        /* --- 2. AREA RUOTA --- */
-        .area-wheel {
-            grid-area: wheel;
+
+        /* --- COMPONENTI DESTRA (SIDEBAR) --- */
+
+        /* QUADRATO 1: RUOTA */
+        .wheel-panel {
+            flex: 1; /* Metà colonna */
+            background: #1e1e1e; border-radius: 15px;
             position: relative;
-            background: #1e1e1e; border-radius: 12px;
             display: flex; justify-content: center; align-items: center;
             overflow: hidden;
-            min-height: 250px; /* Altezza minima */
+            border: 1px solid #333;
         }
-        canvas { max-width: 90%; max-height: 90%; object-fit: contain; }
+        canvas { max-width: 95%; max-height: 95%; object-fit: contain; }
         .pointer {
             position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
             width: 0; height: 0;
-            border-top: 15px solid transparent; border-bottom: 15px solid transparent;
-            border-right: 30px solid white; z-index: 10;
+            border-top: 20px solid transparent; border-bottom: 20px solid transparent;
+            border-right: 40px solid white; z-index: 10;
         }
 
-        /* --- 3. PANNELLO DESTRO (BOARD + CONTROLLI SU DESKTOP) --- */
-        .right-panel-wrapper {
-            grid-area: right-panel; /* Usato solo su desktop */
-            display: contents; /* Su mobile sparisce il wrapper e mostra i figli */
-        }
-        
-        @media (min-width: 900px) {
-            .right-panel-wrapper {
-                display: flex; flex-direction: column; gap: 10px; height: 100%;
-            }
-            /* Su desktop forziamo board e controls dentro questa colonna */
-            .area-board { grid-area: auto; flex: 1; }
-            .area-controls { grid-area: auto; height: auto; }
+        /* QUADRATO 2: CONTROLLI */
+        .controls-panel {
+            flex: 1; /* Metà colonna */
+            background: #1e1e1e; border-radius: 15px;
+            padding: 10px;
+            display: flex; flex-direction: column; gap: 8px;
+            border: 1px solid #333;
+            overflow-y: auto;
         }
 
-        /* --- 4. AREA TABELLONE --- */
-        .area-board {
-            grid-area: board;
-            background: #222; border-radius: 12px;
-            display: flex; justify-content: center; align-items: center;
-            padding: 15px; overflow-y: auto;
-            min-height: 100px;
-        }
-        .puzzle-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
-        .letter {
-            width: 30px; height: 40px; background: white; color: black;
-            font-weight: 800; font-size: 20px; display: flex; justify-content: center; align-items: center;
-            border-radius: 4px; box-shadow: 2px 2px 0 #888;
-        }
-        .letter.hidden { background: #009688; color: transparent; box-shadow: none; border: 1px solid #444; }
-        .letter.empty { background: transparent; box-shadow: none; }
-
-        /* --- 5. AREA CONTROLLI --- */
-        .area-controls {
-            grid-area: controls;
-            background: #1e1e1e; border-radius: 12px; padding: 10px;
-            display: flex; flex-direction: column; gap: 8px; justify-content: flex-end;
-        }
-        
-        .info-bar { text-align: center; margin-bottom: 5px; min-height: 20px; color: #aaa; font-size: 0.9rem; }
-        .info-val { color: #ffeb3b; font-weight: bold; margin-left: 5px; }
-
-        .btn-row { display: flex; gap: 8px; height: 50px; }
-        button { border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; color: black; flex: 1; }
+        /* Pulsanti */
+        .btn-row { display: flex; gap: 8px; height: 50px; flex-shrink: 0; }
+        button { border: none; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; color: black; flex: 1; }
         button:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(100%); }
-        button:active { transform: scale(0.98); }
-        
-        .btn-spin { flex: 2; background: #00e676; }
+        .btn-spin { flex: 2; background: #00e676; box-shadow: 0 4px 0 #00b25c; }
+        .btn-spin:active { transform: translateY(4px); box-shadow: none; }
         .btn-vowel { background: #7c4dff; color: white; }
         .btn-solve { background: #ff1744; color: white; }
 
-        .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 5px; }
-        .key { width: 34px; height: 42px; background: #444; color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; }
+        /* Tastiera */
+        .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; align-content: center; height: 100%; }
+        .key { width: 38px; height: 42px; background: #444; color: white; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; font-weight: bold; }
         .key.used { background: #222; color: #555; border: 1px solid #333; }
-        .key.active-hint { background: #00e676; color: black; box-shadow: 0 0 8px #00e676; }
+        .key.active-hint { background: #00e676; color: black; box-shadow: 0 0 10px #00e676; }
 
         /* --- MODALS --- */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 200; justify-content: center; align-items: center; }
-        .modal-box { background: #333; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; color: white; }
-        textarea, input { width: 100%; background: #222; border: 1px solid #555; color: white; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .modal-box { background: #333; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; color: white; border: 1px solid #555; }
+        textarea, input { width: 100%; background: #222; border: 1px solid #555; color: white; padding: 12px; margin: 15px 0; border-radius: 5px; font-size: 1rem; }
+        
+        /* Adattamento Mobile (Portrait) */
+        @media (max-width: 768px) {
+            .stage-area { flex: none; }
+            .board-container { min-height: 200px; }
+            .sidebar-area { flex: none; }
+            .wheel-panel { height: 300px; }
+            .letter { width: 25px; height: 35px; font-size: 18px; }
+            .controls-panel { height: auto; }
+        }
     </style>
 </head>
 <body>
 
-<div class="app-grid">
+<div class="main-layout">
     
-    <div class="area-players" id="playersBar">
-        </div>
-
-    <div class="area-wheel" id="wheelContainer">
-        <div class="pointer"></div>
-        <canvas id="wheelCanvas"></canvas>
-    </div>
-
-    <div class="right-panel-wrapper">
+    <div class="stage-area">
         
-        <div class="area-board">
+        <div class="board-container">
             <div class="puzzle-wrap" id="board"></div>
         </div>
 
-        <div class="area-controls">
-            <div class="info-bar">
-                <span id="msg">Benvenuto</span> 
-                <span id="currentVal" class="info-val"></span>
+        <div class="status-bar">
+            <span id="msg" class="msg-text">Benvenuto alla Ruota!</span>
+            <span id="currentVal" class="val-text"></span>
+        </div>
+
+        <div class="players-strip" id="playersBar">
             </div>
-            
+
+    </div>
+
+    <div class="sidebar-area">
+        
+        <div class="wheel-panel" id="wheelContainer">
+            <div class="pointer"></div>
+            <canvas id="wheelCanvas"></canvas>
+        </div>
+
+        <div class="controls-panel">
             <div class="btn-row">
                 <button class="btn-spin" id="btnSpin" onclick="spin()">GIRA</button>
                 <button class="btn-vowel" id="btnVowel" onclick="buyVowel()">VOCALE</button>
@@ -183,51 +206,55 @@
             
             <div class="keyboard" id="keyboard"></div>
             
-            <button onclick="openSettings()" style="background:transparent; color:#666; font-size:0.8rem; margin-top:5px; padding:5px;">⚙️ Opzioni / Nomi</button>
+            <div style="text-align: center; margin-top: auto;">
+                <button onclick="openSettings()" style="background:transparent; color:#555; font-size:0.8rem; margin-top:5px;">⚙️ IMPOSTAZIONI</button>
+            </div>
         </div>
+
     </div>
+
 </div>
 
 <div id="setupModal" class="modal" style="display: flex;">
     <div class="modal-box">
-        <h3>Chi gioca?</h3>
-        <p style="font-size:0.9rem; color:#aaa;">Inserisci i nomi (uno per riga)</p>
+        <h2 style="margin-top:0; color:#00e676;">CHI GIOCA?</h2>
+        <p style="color:#aaa;">Scrivi i nomi dei partecipanti (uno per riga)</p>
         <textarea id="playerNamesInput" rows="4">BUDO&#10;BABY&#10;FRANCY</textarea>
-        <button onclick="startGame()" style="background: #00e676; width: 100%; padding:12px;">INIZIA PARTITA</button>
+        <button onclick="startGame()" style="background: #00e676; width: 100%; padding:15px; border-radius:8px; border:none; font-weight:bold; font-size:1.1rem; cursor:pointer;">INIZIA PARTITA</button>
     </div>
 </div>
 
 <div id="settingsModal" class="modal">
     <div class="modal-box">
-        <h3>Modifica Frasi</h3>
-        <textarea id="phrasesInput" rows="5"></textarea>
-        <button onclick="savePhrases()" style="background: #00e676; width: 100%; padding:10px;">SALVA</button>
-        <button onclick="closeSettings()" style="background: #444; width: 100%; padding:10px; margin-top:5px;">CHIUDI</button>
+        <h3>MODIFICA FRASI</h3>
+        <textarea id="phrasesInput" rows="6"></textarea>
+        <button onclick="savePhrases()" style="background: #00e676; width: 100%; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">SALVA</button>
+        <button onclick="closeSettings()" style="background: #444; width: 100%; padding:12px; margin-top:10px; border:none; border-radius:5px; color:white; cursor:pointer;">CHIUDI</button>
     </div>
 </div>
 
 <script>
-    // --- STATO DEL GIOCO ---
+    // --- VARIABILI GLOBALI ---
     let players = [];
     let currentPlayerIndex = 0;
-    let phrases = ["ROMA CAPITALE", "PIZZA MARGHERITA", "DOLCE VITA", "FORO ROMANO", "ESTATE ITALIANA"];
+    let phrases = ["ROMA CITTÀ ETERNA", "PIZZA MARGHERITA", "IL COLOSSEO", "DOLCE VITA", "ESTATE ITALIANA"];
     let currentPhrase = "";
     let isSpinning = false;
     let waitingForConsonant = false;
     let turnValue = 0;
 
-    // --- CANVAS ---
+    // --- SETUP CANVAS ---
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
     const segments = [
-        { label: "100", val: 100, color: "#f44336" }, // Rosso
-        { label: "500", val: 500, color: "#4CAF50" }, // Verde
+        { label: "100", val: 100, color: "#e53935" },
+        { label: "500", val: 500, color: "#43a047" },
         { label: "PERDI", val: -1, color: "#ffffff", text: "black" },
-        { label: "300", val: 300, color: "#2196F3" }, // Blu
-        { label: "1000", val: 1000, color: "#E91E63" }, // Rosa
+        { label: "300", val: 300, color: "#1e88e5" },
+        { label: "1000", val: 1000, color: "#d81b60" },
         { label: "BANK", val: 0, color: "#000000", text: "white" },
-        { label: "200", val: 200, color: "#FF9800" }, // Arancio
-        { label: "JOLLY", val: 999, color: "#FFC107", text: "black" } // Oro
+        { label: "200", val: 200, color: "#fb8c00" },
+        { label: "JOLLY", val: 999, color: "#fdd835", text: "black" }
     ];
     let angle = 0;
 
@@ -236,18 +263,14 @@
         if(localStorage.getItem('my_phrases')) {
             phrases = JSON.parse(localStorage.getItem('my_phrases'));
         }
-        
-        // Resize Canvas Intelligente
         window.addEventListener('resize', resizeWheel);
-        setTimeout(resizeWheel, 100); // Ritardo per essere sicuri che il layout sia caricato
-        
+        setTimeout(resizeWheel, 100);
         generateKeyboard();
     }
 
     function resizeWheel() {
         const container = document.getElementById('wheelContainer');
-        // Prende il lato più piccolo del contenitore per fare un cerchio perfetto
-        const size = Math.min(container.clientWidth, container.clientHeight) - 20; 
+        const size = Math.min(container.clientWidth, container.clientHeight) - 20;
         if(size > 0) {
             canvas.width = size;
             canvas.height = size;
@@ -255,7 +278,7 @@
         }
     }
 
-    // --- LOGICA UTENTI ---
+    // --- GAME LOGIC ---
     function startGame() {
         const input = document.getElementById('playerNamesInput').value;
         const names = input.split('\n').map(n => n.trim()).filter(n => n.length > 0);
@@ -268,7 +291,7 @@
         document.getElementById('setupModal').style.display = 'none';
         renderPlayers();
         newRound();
-        resizeWheel(); // Forza resize dopo apertura
+        setTimeout(resizeWheel, 200); // Assicura che la ruota si adatti al layout
     }
 
     function renderPlayers() {
@@ -291,20 +314,18 @@
         enableSpin(true);
     }
 
-    // --- GAMEPLAY ---
     function newRound() {
         currentPhrase = phrases[Math.floor(Math.random() * phrases.length)].toUpperCase();
         waitingForConsonant = false;
         isSpinning = false;
         
-        // Reset Keys
         document.querySelectorAll('.key').forEach(k => {
             k.className = 'key'; k.disabled = false; k.style.background = "#444"; k.style.color="white";
         });
 
         drawBoard();
         renderPlayers();
-        message(`Nuovo Puzzle! Tocca a ${players[currentPlayerIndex].name}`);
+        message(`Nuova Frase! Tocca a ${players[currentPlayerIndex].name}`);
         enableSpin(true);
         disableKeyboard(true);
     }
@@ -314,19 +335,18 @@
         isSpinning = true;
         enableSpin(false);
         disableKeyboard(true);
-        message("La ruota gira...");
+        message("Gira...");
         document.getElementById('currentVal').innerText = "";
 
         let velocity = Math.random() * 20 + 20;
         
         function animate() {
-            velocity *= 0.97; // Attrito
+            velocity *= 0.97;
             angle += velocity * 0.01;
             drawWheel();
             
-            if (velocity > 0.1) {
-                requestAnimationFrame(animate);
-            } else {
+            if (velocity > 0.1) requestAnimationFrame(animate);
+            else {
                 isSpinning = false;
                 processResult();
             }
@@ -344,7 +364,7 @@
         let res = segments[index];
         turnValue = res.val;
         
-        document.getElementById('currentVal').innerText = `[ ${res.label} ]`;
+        document.getElementById('currentVal').innerText = res.label;
 
         if (turnValue === 0) {
             message("BANCAROTTA!");
@@ -355,31 +375,29 @@
             message("PERDI IL TURNO!");
             setTimeout(nextTurn, 2000);
         } else {
-            message(`Vale ${res.label}! Scegli CONSONANTE`);
+            message(`Per ${res.label}€: Scegli CONSONANTE`);
             waitingForConsonant = true;
             highlightKeyboard(true);
         }
     }
 
-    // --- INTERAZIONE ---
+    // --- INPUT HANDLING ---
     function handleKey(char, btn) {
         if(!waitingForConsonant) return;
-        if(isVowel(char)) { alert("Solo consonanti ora!"); return; }
-        
+        if(isVowel(char)) { alert("Ora solo consonanti!"); return; }
         playLetter(char, btn, false);
     }
 
     function buyVowel() {
         if(isSpinning) return;
-        if(players[currentPlayerIndex].score < 1000) { alert("Servono 1000€"); return; }
+        if(players[currentPlayerIndex].score < 1000) { alert("Servono 1000€ per la vocale"); return; }
         
-        let char = prompt("Scegli Vocale (A,E,I,O,U):");
+        let char = prompt("Quale Vocale? (A, E, I, O, U)").toUpperCase();
         if(!char) return;
-        char = char.toUpperCase();
         if(!isVowel(char)) { alert("Non è una vocale!"); return; }
         
         const btn = document.getElementById('key-'+char);
-        if(btn.classList.contains('used')) { alert("Già chiamata"); return; }
+        if(btn.classList.contains('used')) { alert("Già chiamata!"); return; }
         
         players[currentPlayerIndex].score -= 1000;
         renderPlayers();
@@ -399,7 +417,7 @@
                 let val = (turnValue === 999) ? 500 : turnValue;
                 players[currentPlayerIndex].score += (val * boxes.length);
                 renderPlayers();
-                message(`Bene! Gira ancora.`);
+                message(`Trovate ${boxes.length}! Gira ancora.`);
                 waitingForConsonant = false;
                 enableSpin(true);
                 highlightKeyboard(false);
@@ -409,13 +427,12 @@
             checkWin();
         } else {
             message(`La ${char} non c'è.`);
-            playFailSound();
             setTimeout(nextTurn, 1500);
         }
     }
 
     function trySolve() {
-        let sol = prompt("Soluzione:");
+        let sol = prompt("Scrivi la soluzione:");
         if(!sol) return;
         if(sol.toUpperCase() === currentPhrase) {
             players[currentPlayerIndex].score += 2000;
@@ -426,7 +443,7 @@
             message(`VINCE ${players[currentPlayerIndex].name}!`);
             setTimeout(() => {
                 if(confirm("Vittoria! Nuova partita?")) newRound();
-            }, 1000);
+            }, 1500);
         } else {
             alert("Sbagliato!");
             nextTurn();
@@ -439,7 +456,7 @@
         b.innerHTML = '';
         currentPhrase.split(' ').forEach(word => {
             const wDiv = document.createElement('div');
-            wDiv.style.display="flex"; wDiv.style.margin="0 8px 8px 0";
+            wDiv.style.display="flex"; wDiv.style.margin="0 10px 10px 0";
             for(let c of word) {
                 const l = document.createElement('div');
                 l.className = 'letter hidden';
@@ -485,9 +502,8 @@
         document.querySelectorAll('.key').forEach(k => {
             if(k.classList.contains('used')) return;
             if(isVowel(k.innerText)) { k.style.opacity = "0.3"; return; }
-            
-            if(on) { k.classList.add('active-hint'); }
-            else { k.classList.remove('active-hint'); }
+            if(on) k.classList.add('active-hint');
+            else k.classList.remove('active-hint');
         });
     }
 
@@ -496,13 +512,9 @@
         document.getElementById('btnVowel').disabled = !on;
     }
     
-    function disableKeyboard(bool) {
-        // Graficamente gestito da opacity/classes
-    }
-    
+    function disableKeyboard(bool) { /* Visual cue only */ }
     function isVowel(c) { return ['A','E','I','O','U'].includes(c); }
     function message(t) { document.getElementById('msg').innerText = t; }
-    function playFailSound() { /* Opzionale */ }
     function checkWin() { if(document.querySelectorAll('.letter.hidden').length===0) setTimeout(()=>alert("Puzzle Completato!"),500); }
 
     // Settings
