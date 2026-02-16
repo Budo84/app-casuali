@@ -2,7 +2,7 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const path = require('path');
 
-const API_KEY = process.env.GEMINI_KEY;
+const API_KEY = process.env.GEMINI_API_KEY;
 
 // AGGIUNGI QUESTO BLOCCO SUBITO DOPO
 if (!API_KEY) {
