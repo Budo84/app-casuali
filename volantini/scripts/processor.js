@@ -1,80 +1,126 @@
 const fs = require('fs');
 const path = require('path');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const fetch = require('node-fetch');
 
 // CONFIGURAZIONE
 const API_KEY = process.env.GEMINI_API_KEY;
 const INPUT_DIR = path.join(__dirname, '../input');
 const OUTPUT_FILE = path.join(__dirname, '../output/offerte.json');
 
+// Lista di modelli da tentare (tutti su endpoint v1beta)
+const MODELS = [
+    'gemini-1.5-flash',
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-pro',
+    'gemini-1.5-pro-latest',
+    'gemini-1.0-pro-vision-latest' // Fallback vecchio ma affidabile
+];
+
+async function callGemini(modelName, base64Image) {
+    // NOTA: Forziamo qui v1beta
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`;
+    
+    console.log(`📡 Tento connessione a: ${modelName}...`);
+
+    const prompt = `Analizza questo volantino (PDF) come se fossi un estrattore dati OCR avanzato.
+    Estrai un array JSON valido con le offerte.
+    Struttura: [{"prodotto": "Nome Prodotto", "prezzo": 1.99, "unita": "pz"}]
+    Regole:
+    - Prezzi: usa il punto per i decimali (es. 1.50).
+    - Ignora: indirizzi, orari, numeri telefono, slogan.
+    - Se trovi scritte come "SANTAGATA" e "1.5L" vicine, uniscile in "Acqua Santagata 1.5L".
+    - Rispondi SOLO con il JSON.`;
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            contents: [{
+                parts: [
+                    { text: prompt },
+                    { 
+                        inline_data: { 
+                            mime_type: "application/pdf", 
+                            data: base64Image 
+                        } 
+                    }
+                ]
+            }]
+        })
+    });
+
+    if (!response.ok) {
+        // Se è un errore 404, ritorna null per provare il prossimo modello
+        if (response.status === 404) {
+            console.log(`⚠️ Modello ${modelName} non trovato (404). Passo al prossimo.`);
+            return null;
+        }
+        // Altri errori (es. chiave scaduta, 500)
+        const errText = await response.text();
+        throw new Error(`Errore HTTP ${response.status}: ${errText}`);
+    }
+
+    const data = await response.json();
+    return data;
+}
+
 async function main() {
-    // 1. Controllo Sicurezza
     if (!API_KEY) {
-        console.error("❌ ERRORE: Manca la GEMINI_API_KEY nei Secrets di GitHub!");
+        console.error("❌ ERRORE: Manca la GEMINI_API_KEY nei Secrets!");
         process.exit(1);
     }
 
-    // 2. Cerca PDF
     if (!fs.existsSync(INPUT_DIR)) fs.mkdirSync(INPUT_DIR, { recursive: true });
+    
+    // Cerca PDF
     const files = fs.readdirSync(INPUT_DIR).filter(f => f.toLowerCase().endsWith('.pdf'));
-
     if (files.length === 0) {
-        console.log("⚠️ Nessun PDF trovato da elaborare.");
+        console.log("⚠️ Nessun PDF trovato.");
         return;
     }
 
     const pdfPath = path.join(INPUT_DIR, files[0]);
-    console.log(`📄 Trovato file: ${files[0]}`);
+    console.log(`📄 Elaborazione file: ${files[0]}`);
 
-    // 3. Prepara il file per l'SDK di Google
     const pdfBuffer = fs.readFileSync(pdfPath);
-    // Converte il buffer in formato base64 accettato da Gemini
-    const pdfBase64 = pdfBuffer.toString('base64');
-    
-    const filePart = {
-        inlineData: {
-            data: pdfBase64,
-            mimeType: "application/pdf",
-        },
-    };
+    const base64Data = pdfBuffer.toString('base64');
 
-    // 4. Inizializza l'AI (Usa la libreria ufficiale)
-    console.log("🤖 Connessione a Gemini...");
-    const genAI = new GoogleGenerativeAI(API_KEY);
-    
-    // Usa il modello più stabile
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    let finalJson = null;
 
-    const prompt = `Analizza questo volantino (file PDF).
-    Estrai un array JSON contenente le offerte.
-    Ogni oggetto deve avere: "prodotto", "prezzo" (numero con punto), "unita" (kg/pz/lt).
-    Regole:
-    - Ignora indirizzi, orari, telefoni e testo generico.
-    - Correggi i nomi dei prodotti se sono spezzati.
-    - Rispondi SOLO con il codice JSON, niente markdown.`;
+    // 🔄 Loop tentativi modelli
+    for (const model of MODELS) {
+        try {
+            const result = await callGemini(model, base64Data);
+            if (result && result.candidates && result.candidates.length > 0) {
+                finalJson = result.candidates[0].content.parts[0].text;
+                console.log(`✅ Successo con il modello: ${model}`);
+                break; // Uscita dal loop
+            }
+        } catch (err) {
+            console.error(`❌ Errore con ${model}:`, err.message);
+        }
+    }
 
+    if (!finalJson) {
+        console.error("❌ TUTTI I TENTATIVI SONO FALLITI.");
+        process.exit(1);
+    }
+
+    // Pulizia e Salvataggio
     try {
-        const result = await model.generateContent([prompt, filePart]);
-        const response = await result.response;
-        const text = response.text();
+        const cleanJson = finalJson.replace(/```json/g, '').replace(/```/g, '').trim();
+        // Test validità JSON
+        JSON.parse(cleanJson);
 
-        // 5. Pulisci il risultato
-        let jsonString = text.replace(/```json/g, '').replace(/```/g, '').trim();
-
-        // Verifica che sia JSON valido
-        JSON.parse(jsonString); 
-
-        // 6. Salva
         const outputDir = path.dirname(OUTPUT_FILE);
         if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
-        
-        fs.writeFileSync(OUTPUT_FILE, jsonString);
-        console.log("✅ Successo! JSON salvato in output/offerte.json");
 
-    } catch (error) {
-        console.error("❌ Errore durante l'analisi AI:");
-        console.error(error.message);
-        // Se l'errore è 500 o block, spesso riprovare funziona, ma qui usciamo.
+        fs.writeFileSync(OUTPUT_FILE, cleanJson);
+        console.log("💾 File offerte.json salvato correttamente!");
+
+    } catch (e) {
+        console.error("❌ L'AI ha risposto ma il JSON non è valido:", e.message);
+        console.log("Raw output:", finalJson);
         process.exit(1);
     }
 }
