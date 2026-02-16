@@ -3,250 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Ruota: Multiplayer</title>
-    
+    <title>La Ruota PWA v6</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <style>
-        /* --- STILI DI BASE --- */
+        /* --- RESET E BASI --- */
         * { box-sizing: border-box; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
         body {
             margin: 0; padding: 0;
             background: #121212; color: white;
             font-family: 'Segoe UI', system-ui, sans-serif;
-            height: 100vh; display: flex; flex-direction: column;
-            overflow: hidden;
+            height: 100vh; width: 100vw;
+            overflow: hidden; /* Niente scroll della pagina intera */
         }
 
-        /* --- LAYOUT GENERALE --- */
-        .app-container {
-            display: flex; flex-direction: column; height: 100%;
-            padding: 10px; gap: 8px; position: relative;
+        /* --- LAYOUT GRID (IL CUORE DELLA RIPARAZIONE) --- */
+        .app-grid {
+            display: grid;
+            height: 100%;
+            width: 100%;
+            padding: 10px;
+            gap: 10px;
+            /* Layout Mobile di default: Tutto in colonna */
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto 1fr auto; 
+            grid-template-areas: 
+                "players"
+                "board"
+                "wheel"
+                "controls";
         }
 
-        /* 1. SEZIONE PUNTEGGI (Nuova) */
-        .players-bar {
-            display: flex; gap: 10px; overflow-x: auto; 
-            padding-bottom: 5px; min-height: 60px;
+        /* Layout DESKTOP / IPAD LANDSCAPE */
+        @media (min-width: 900px) {
+            .app-grid {
+                /* 3 Colonne: Giocatori (Sinistra) | Ruota (Centro) | Tabellone+Controlli (Destra) */
+                grid-template-columns: 200px 1fr 400px; 
+                grid-template-rows: 1fr;
+                grid-template-areas: "players wheel right-panel";
+            }
+        }
+
+        /* --- 1. AREA GIOCATORI --- */
+        .area-players {
+            grid-area: players;
+            background: #1e1e1e; border-radius: 12px;
+            display: flex; gap: 10px; padding: 10px;
+            overflow-x: auto; /* Scroll orizzontale su mobile */
         }
         
+        /* Su desktop diventa verticale */
+        @media (min-width: 900px) {
+            .area-players { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+        }
+
         .player-card {
-            background: #333; padding: 8px 15px; border-radius: 8px;
+            background: #333; padding: 10px; border-radius: 8px;
             min-width: 100px; text-align: center;
-            border: 2px solid transparent; opacity: 0.7;
+            border: 2px solid transparent; opacity: 0.6; transition: 0.3s;
             display: flex; flex-direction: column; justify-content: center;
         }
-        
         .player-card.active {
-            background: #1e1e1e;
-            border-color: #00e676;
-            opacity: 1;
-            box-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
-            transform: scale(1.05);
-            animation: pulse 1.5s infinite;
+            background: #2b2b2b; border-color: #00e676; opacity: 1;
+            transform: scale(1.05); box-shadow: 0 0 15px rgba(0,230,118,0.2);
         }
+        .p-name { font-size: 0.9rem; font-weight: bold; color: #ccc; }
+        .p-score { font-size: 1.2rem; font-weight: bold; color: white; }
+        .active .p-score { color: #00e676; }
 
-        .p-name { font-size: 0.8rem; font-weight: bold; color: #bbb; }
-        .p-score { font-size: 1.1rem; font-weight: bold; color: #fff; }
-        .player-card.active .p-score { color: #00e676; }
-
-        @keyframes pulse { 0% { box-shadow: 0 0 5px #00e676; } 50% { box-shadow: 0 0 15px #00e676; } 100% { box-shadow: 0 0 5px #00e676; } }
-
-        /* 2. TABELLONE */
-        .board-area {
-            flex: 1; background: #222; border-radius: 10px;
+        /* --- 2. AREA RUOTA --- */
+        .area-wheel {
+            grid-area: wheel;
+            position: relative;
+            background: #1e1e1e; border-radius: 12px;
             display: flex; justify-content: center; align-items: center;
-            padding: 10px; overflow-y: auto;
+            overflow: hidden;
+            min-height: 250px; /* Altezza minima */
         }
-        .puzzle-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
-        .letter {
-            width: 28px; height: 38px;
-            background: white; color: black;
-            font-weight: 800; font-size: 20px;
-            display: flex; justify-content: center; align-items: center;
-            border-radius: 4px;
-        }
-        .letter.hidden { background: #009688; color: transparent; }
-        .letter.empty { background: transparent; }
-
-        /* 3. RUOTA E INFO */
-        .mid-section { flex: 1.2; display: flex; gap: 10px; min-height: 0; }
-        .wheel-box { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; }
-        canvas { max-width: 95%; max-height: 95%; }
+        canvas { max-width: 90%; max-height: 90%; object-fit: contain; }
         .pointer {
-            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            width: 0; height: 0;
             border-top: 15px solid transparent; border-bottom: 15px solid transparent;
             border-right: 30px solid white; z-index: 10;
         }
 
-        .info-panel {
-            flex: 0.6; background: #1e1e1e; border-radius: 10px; padding: 10px;
-            display: flex; flex-direction: column; justify-content: center; text-align: center;
+        /* --- 3. PANNELLO DESTRO (BOARD + CONTROLLI SU DESKTOP) --- */
+        .right-panel-wrapper {
+            grid-area: right-panel; /* Usato solo su desktop */
+            display: contents; /* Su mobile sparisce il wrapper e mostra i figli */
         }
-        .status-msg { font-size: 0.9rem; color: #ccc; margin-bottom: 5px; }
-        .wheel-val { font-size: 1.5rem; font-weight: bold; color: #ffeb3b; }
+        
+        @media (min-width: 900px) {
+            .right-panel-wrapper {
+                display: flex; flex-direction: column; gap: 10px; height: 100%;
+            }
+            /* Su desktop forziamo board e controls dentro questa colonna */
+            .area-board { grid-area: auto; flex: 1; }
+            .area-controls { grid-area: auto; height: auto; }
+        }
 
-        /* 4. TASTIERA E CONTROLLI */
-        .controls { background: #1e1e1e; padding: 10px; border-radius: 10px; }
-        .btn-row { display: flex; gap: 5px; margin-bottom: 8px; }
-        button { border: none; border-radius: 5px; padding: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; color: black; }
-        button:disabled { opacity: 0.3; cursor: not-allowed; }
+        /* --- 4. AREA TABELLONE --- */
+        .area-board {
+            grid-area: board;
+            background: #222; border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            padding: 15px; overflow-y: auto;
+            min-height: 100px;
+        }
+        .puzzle-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+        .letter {
+            width: 30px; height: 40px; background: white; color: black;
+            font-weight: 800; font-size: 20px; display: flex; justify-content: center; align-items: center;
+            border-radius: 4px; box-shadow: 2px 2px 0 #888;
+        }
+        .letter.hidden { background: #009688; color: transparent; box-shadow: none; border: 1px solid #444; }
+        .letter.empty { background: transparent; box-shadow: none; }
+
+        /* --- 5. AREA CONTROLLI --- */
+        .area-controls {
+            grid-area: controls;
+            background: #1e1e1e; border-radius: 12px; padding: 10px;
+            display: flex; flex-direction: column; gap: 8px; justify-content: flex-end;
+        }
+        
+        .info-bar { text-align: center; margin-bottom: 5px; min-height: 20px; color: #aaa; font-size: 0.9rem; }
+        .info-val { color: #ffeb3b; font-weight: bold; margin-left: 5px; }
+
+        .btn-row { display: flex; gap: 8px; height: 50px; }
+        button { border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; color: black; flex: 1; }
+        button:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(100%); }
+        button:active { transform: scale(0.98); }
         
         .btn-spin { flex: 2; background: #00e676; }
-        .btn-vowel { flex: 1; background: #7c4dff; color: white; }
-        .btn-solve { flex: 1; background: #ff1744; color: white; }
+        .btn-vowel { background: #7c4dff; color: white; }
+        .btn-solve { background: #ff1744; color: white; }
 
-        .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
-        .key { width: 32px; height: 40px; background: #444; color: white; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
-        .key.used { background: #222; color: #555; }
-        .key.active-hint { background: #00e676; color: black; }
+        .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 5px; }
+        .key { width: 34px; height: 42px; background: #444; color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; }
+        .key.used { background: #222; color: #555; border: 1px solid #333; }
+        .key.active-hint { background: #00e676; color: black; box-shadow: 0 0 8px #00e676; }
 
-        /* DESKTOP LAYOUT */
-        @media (min-width: 768px) {
-            .app-container { flex-direction: row; }
-            .board-area { order: 2; flex: 1.5; }
-            .players-bar { flex-direction: column; width: 150px; min-height: auto; order: 1; }
-            .mid-section { display: none; } /* Nascondi struttura mobile */
-            
-            /* Struttura Desktop Custom */
-            .desktop-right { flex: 1; display: flex; flex-direction: column; gap: 10px; order: 3; }
-            .wheel-box { height: 300px; } /* Altezza fissa su desktop */
-        }
-
-        /* MODALS */
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; flex-direction: column;}
-        .modal-content { background: #333; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; }
-        input, textarea { width: 100%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #555; color: white; }
+        /* --- MODALS --- */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 200; justify-content: center; align-items: center; }
+        .modal-box { background: #333; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; color: white; }
+        textarea, input { width: 100%; background: #222; border: 1px solid #555; color: white; padding: 10px; margin: 10px 0; border-radius: 5px; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="app-grid">
     
-    <div class="players-bar" id="playersBar">
+    <div class="area-players" id="playersBar">
         </div>
 
-    <div class="board-area">
-        <div class="puzzle-wrap" id="board"></div>
+    <div class="area-wheel" id="wheelContainer">
+        <div class="pointer"></div>
+        <canvas id="wheelCanvas"></canvas>
     </div>
 
-    <div class="mid-section" id="mobileMidSection">
-        <div class="wheel-box" id="wheelBoxMobile">
-            <div class="pointer"></div>
-            <canvas id="wheelCanvas"></canvas>
-        </div>
-        <div class="info-panel">
-            <div class="status-msg" id="msg">Benvenuto</div>
-            <div class="wheel-val" id="currentVal">-</div>
-        </div>
-    </div>
-
-    <div class="desktop-right" id="desktopRight">
+    <div class="right-panel-wrapper">
+        
+        <div class="area-board">
+            <div class="puzzle-wrap" id="board"></div>
         </div>
 
-    <div class="controls">
-        <div class="btn-row">
-            <button class="btn-spin" id="btnSpin" onclick="spin()">GIRA</button>
-            <button class="btn-vowel" id="btnVowel" onclick="buyVowel()">VOCALE</button>
-            <button class="btn-solve" onclick="trySolve()">SOLUZIONE</button>
+        <div class="area-controls">
+            <div class="info-bar">
+                <span id="msg">Benvenuto</span> 
+                <span id="currentVal" class="info-val"></span>
+            </div>
+            
+            <div class="btn-row">
+                <button class="btn-spin" id="btnSpin" onclick="spin()">GIRA</button>
+                <button class="btn-vowel" id="btnVowel" onclick="buyVowel()">VOCALE</button>
+                <button class="btn-solve" onclick="trySolve()">SOLUZIONE</button>
+            </div>
+            
+            <div class="keyboard" id="keyboard"></div>
+            
+            <button onclick="openSettings()" style="background:transparent; color:#666; font-size:0.8rem; margin-top:5px; padding:5px;">⚙️ Opzioni / Nomi</button>
         </div>
-        <div class="keyboard" id="keyboard"></div>
-        <button onclick="openSettings()" style="background:transparent; color:#777; font-size:0.8rem; width:100%; margin-top:5px;">⚙️ Opzioni / Frasi</button>
     </div>
 </div>
 
 <div id="setupModal" class="modal" style="display: flex;">
-    <div class="modal-content">
-        <h3>Nuova Partita</h3>
-        <p>Inserisci i nomi dei giocatori (uno per riga):</p>
-        <textarea id="playerNamesInput" rows="4">GIOCATORE 1&#10;GIOCATORE 2&#10;GIOCATORE 3</textarea>
-        <button onclick="startGame()" style="background: #00e676; width: 100%;">INIZIA GIOCO</button>
+    <div class="modal-box">
+        <h3>Chi gioca?</h3>
+        <p style="font-size:0.9rem; color:#aaa;">Inserisci i nomi (uno per riga)</p>
+        <textarea id="playerNamesInput" rows="4">BUDO&#10;BABY&#10;FRANCY</textarea>
+        <button onclick="startGame()" style="background: #00e676; width: 100%; padding:12px;">INIZIA PARTITA</button>
     </div>
 </div>
 
 <div id="settingsModal" class="modal">
-    <div class="modal-content">
-        <h3>Frasi Personalizzate</h3>
+    <div class="modal-box">
+        <h3>Modifica Frasi</h3>
         <textarea id="phrasesInput" rows="5"></textarea>
-        <button onclick="savePhrases()" style="background: #00e676; width: 100%;">SALVA FRASI</button>
-        <button onclick="closeSettings()" style="background: #555; width: 100%; color: white; margin-top: 5px;">ANNULLA</button>
+        <button onclick="savePhrases()" style="background: #00e676; width: 100%; padding:10px;">SALVA</button>
+        <button onclick="closeSettings()" style="background: #444; width: 100%; padding:10px; margin-top:5px;">CHIUDI</button>
     </div>
 </div>
 
 <script>
-    // --- VARIABILI GLOBALI ---
-    let players = []; // Array di oggetti {name: "Mario", score: 0}
+    // --- STATO DEL GIOCO ---
+    let players = [];
     let currentPlayerIndex = 0;
-    
-    let phrases = ["ROMA CAPITALE", "PIZZA MARGHERITA", "DOLCE VITA"];
+    let phrases = ["ROMA CAPITALE", "PIZZA MARGHERITA", "DOLCE VITA", "FORO ROMANO", "ESTATE ITALIANA"];
     let currentPhrase = "";
-    
     let isSpinning = false;
     let waitingForConsonant = false;
-    let turnValue = 0; // Valore ottenuto dalla ruota
-    
-    // --- SETUP CANVAS ---
+    let turnValue = 0;
+
+    // --- CANVAS ---
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
     const segments = [
-        { label: "100", val: 100, color: "#f44336" },
-        { label: "500", val: 500, color: "#4CAF50" },
+        { label: "100", val: 100, color: "#f44336" }, // Rosso
+        { label: "500", val: 500, color: "#4CAF50" }, // Verde
         { label: "PERDI", val: -1, color: "#ffffff", text: "black" },
-        { label: "300", val: 300, color: "#2196F3" },
-        { label: "1000", val: 1000, color: "#E91E63" },
+        { label: "300", val: 300, color: "#2196F3" }, // Blu
+        { label: "1000", val: 1000, color: "#E91E63" }, // Rosa
         { label: "BANK", val: 0, color: "#000000", text: "white" },
-        { label: "200", val: 200, color: "#FF9800" },
-        { label: "JOLLY", val: 999, color: "#FFC107", text: "black" }
+        { label: "200", val: 200, color: "#FF9800" }, // Arancio
+        { label: "JOLLY", val: 999, color: "#FFC107", text: "black" } // Oro
     ];
     let angle = 0;
 
-    // --- INIZIALIZZAZIONE ---
+    // --- INIT ---
     function init() {
-        // Carica frasi salvate
         if(localStorage.getItem('my_phrases')) {
             phrases = JSON.parse(localStorage.getItem('my_phrases'));
         }
         
-        resizeWheel();
+        // Resize Canvas Intelligente
         window.addEventListener('resize', resizeWheel);
-        generateKeyboard();
+        setTimeout(resizeWheel, 100); // Ritardo per essere sicuri che il layout sia caricato
         
-        // Se su Desktop, sposta la ruota nel pannello di destra (hack layout)
-        if(window.innerWidth >= 768) {
-            const right = document.getElementById('desktopRight');
-            const wheelBox = document.getElementById('wheelBoxMobile');
-            const info = document.querySelector('.info-panel');
-            right.appendChild(wheelBox);
-            right.appendChild(info);
-        }
+        generateKeyboard();
     }
 
     function resizeWheel() {
-        const container = canvas.parentElement;
-        const size = Math.min(container.clientWidth, container.clientHeight);
-        canvas.width = size;
-        canvas.height = size;
-        drawWheel();
+        const container = document.getElementById('wheelContainer');
+        // Prende il lato più piccolo del contenitore per fare un cerchio perfetto
+        const size = Math.min(container.clientWidth, container.clientHeight) - 20; 
+        if(size > 0) {
+            canvas.width = size;
+            canvas.height = size;
+            drawWheel();
+        }
     }
 
-    // --- GESTIONE GIOCATORI ---
+    // --- LOGICA UTENTI ---
     function startGame() {
         const input = document.getElementById('playerNamesInput').value;
         const names = input.split('\n').map(n => n.trim()).filter(n => n.length > 0);
         
-        if (names.length === 0) {
-            alert("Inserisci almeno un nome!");
-            return;
-        }
+        if (names.length === 0) { alert("Inserisci almeno un nome!"); return; }
 
         players = names.map(n => ({ name: n.toUpperCase(), score: 0 }));
         currentPlayerIndex = 0;
         
         document.getElementById('setupModal').style.display = 'none';
-        
         renderPlayers();
         newRound();
+        resizeWheel(); // Forza resize dopo apertura
     }
 
     function renderPlayers() {
@@ -255,10 +277,7 @@
         players.forEach((p, i) => {
             const card = document.createElement('div');
             card.className = `player-card ${i === currentPlayerIndex ? 'active' : ''}`;
-            card.innerHTML = `
-                <div class="p-name">${p.name}</div>
-                <div class="p-score">${p.score} €</div>
-            `;
+            card.innerHTML = `<div class="p-name">${p.name}</div><div class="p-score">${p.score} €</div>`;
             bar.appendChild(card);
         });
     }
@@ -266,35 +285,26 @@
     function nextTurn() {
         waitingForConsonant = false;
         highlightKeyboard(false);
-        
-        // Passa al prossimo
         currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
         renderPlayers();
-        
-        const nextPlayerName = players[currentPlayerIndex].name;
-        message(`Tocca a ${nextPlayerName}. Gira la ruota!`);
+        message(`Tocca a ${players[currentPlayerIndex].name}`);
         enableSpin(true);
     }
 
-    // --- LOGICA DI GIOCO ---
+    // --- GAMEPLAY ---
     function newRound() {
         currentPhrase = phrases[Math.floor(Math.random() * phrases.length)].toUpperCase();
         waitingForConsonant = false;
         isSpinning = false;
         
-        // Resetta tastiera
+        // Reset Keys
         document.querySelectorAll('.key').forEach(k => {
-            k.disabled = false;
-            k.classList.remove('used');
-            k.classList.remove('active-hint');
-            k.style.background = "#444";
-            k.style.color = "white";
+            k.className = 'key'; k.disabled = false; k.style.background = "#444"; k.style.color="white";
         });
 
         drawBoard();
-        
-        const currP = players[currentPlayerIndex].name;
-        message(`Nuova frase! Tocca a ${currP}`);
+        renderPlayers();
+        message(`Nuovo Puzzle! Tocca a ${players[currentPlayerIndex].name}`);
         enableSpin(true);
         disableKeyboard(true);
     }
@@ -305,15 +315,18 @@
         enableSpin(false);
         disableKeyboard(true);
         message("La ruota gira...");
+        document.getElementById('currentVal').innerText = "";
 
         let velocity = Math.random() * 20 + 20;
         
         function animate() {
-            velocity *= 0.97;
+            velocity *= 0.97; // Attrito
             angle += velocity * 0.01;
             drawWheel();
-            if (velocity > 0.1) requestAnimationFrame(animate);
-            else {
+            
+            if (velocity > 0.1) {
+                requestAnimationFrame(animate);
+            } else {
                 isSpinning = false;
                 processResult();
             }
@@ -325,24 +338,24 @@
         const PI2 = Math.PI * 2;
         const normAngle = angle % PI2;
         const sliceArc = PI2 / segments.length;
-        // Calcolo indice: 0 è a destra
+        // Pointer a destra (0 rad)
         let index = Math.floor((PI2 - normAngle) / sliceArc) % segments.length;
         
         let res = segments[index];
         turnValue = res.val;
         
-        document.getElementById('currentVal').innerText = res.label;
+        document.getElementById('currentVal').innerText = `[ ${res.label} ]`;
 
-        if (turnValue === 0) { // Bancarotta
-            message("BANCAROTTA! Punteggio azzerato.");
+        if (turnValue === 0) {
+            message("BANCAROTTA!");
             players[currentPlayerIndex].score = 0;
             renderPlayers();
             setTimeout(nextTurn, 2000);
-        } else if (turnValue === -1) { // Perdi turno
+        } else if (turnValue === -1) {
             message("PERDI IL TURNO!");
             setTimeout(nextTurn, 2000);
         } else {
-            message(`Vale ${res.label}! Scegli una CONSONANTE.`);
+            message(`Vale ${res.label}! Scegli CONSONANTE`);
             waitingForConsonant = true;
             highlightKeyboard(true);
         }
@@ -350,55 +363,43 @@
 
     // --- INTERAZIONE ---
     function handleKey(char, btn) {
-        if(waitingForConsonant) {
-            // Fase post-spin
-            if(isVowel(char)) {
-                alert("Ora devi scegliere una consonante!");
-                return;
-            }
-            playLetter(char, btn, false);
-        }
+        if(!waitingForConsonant) return;
+        if(isVowel(char)) { alert("Solo consonanti ora!"); return; }
+        
+        playLetter(char, btn, false);
     }
 
     function buyVowel() {
-        // Controllo turno e soldi
-        if(isSpinning || waitingForConsonant) return; // Si può comprare solo PRIMA di girare o se si ha la mano (ma semplifichiamo: sempre attivo se è il tuo turno e non stai girando)
+        if(isSpinning) return;
+        if(players[currentPlayerIndex].score < 1000) { alert("Servono 1000€"); return; }
         
-        if (players[currentPlayerIndex].score < 1000) {
-            alert("Ti servono 1000€ per la vocale.");
-            return;
-        }
-
-        let char = prompt("Quale vocale? (A, E, I, O, U)").toUpperCase();
-        if(!char || !isVowel(char)) { alert("Non valida."); return; }
+        let char = prompt("Scegli Vocale (A,E,I,O,U):");
+        if(!char) return;
+        char = char.toUpperCase();
+        if(!isVowel(char)) { alert("Non è una vocale!"); return; }
         
-        // Verifica se già usata
         const btn = document.getElementById('key-'+char);
-        if(btn.disabled) { alert("Già chiamata."); return; }
-
+        if(btn.classList.contains('used')) { alert("Già chiamata"); return; }
+        
         players[currentPlayerIndex].score -= 1000;
         renderPlayers();
         playLetter(char, btn, true);
     }
 
-    function playLetter(char, btn, isBuyingVowel) {
-        btn.disabled = true;
+    function playLetter(char, btn, isVowelBuy) {
         btn.classList.add('used');
         btn.style.background = "#222";
 
         const boxes = document.querySelectorAll(`.letter[data-char="${char}"]`);
         
         if (boxes.length > 0) {
-            // Trovata
-            boxes.forEach(b => { b.classList.remove('hidden'); b.style.color = "black"; });
+            boxes.forEach(b => { b.classList.remove('hidden'); b.style.color="black"; });
             
-            if(!isBuyingVowel) {
+            if(!isVowelBuy) {
                 let val = (turnValue === 999) ? 500 : turnValue;
-                let gain = val * boxes.length;
-                players[currentPlayerIndex].score += gain;
+                players[currentPlayerIndex].score += (val * boxes.length);
                 renderPlayers();
-                message(`Trovate ${boxes.length}! Gira ancora.`);
-                // Resta allo stesso giocatore, deve girare di nuovo
+                message(`Bene! Gira ancora.`);
                 waitingForConsonant = false;
                 enableSpin(true);
                 highlightKeyboard(false);
@@ -407,27 +408,24 @@
             }
             checkWin();
         } else {
-            // Sbagliata
-            message(`La lettera ${char} non c'è.`);
+            message(`La ${char} non c'è.`);
+            playFailSound();
             setTimeout(nextTurn, 1500);
         }
     }
 
     function trySolve() {
-        let sol = prompt("Scrivi la soluzione:");
-        if (!sol) return;
+        let sol = prompt("Soluzione:");
+        if(!sol) return;
         if(sol.toUpperCase() === currentPhrase) {
             players[currentPlayerIndex].score += 2000;
-            renderPlayers();
-            // Rivela tutto
             document.querySelectorAll('.letter.hidden').forEach(l => {
-                l.classList.remove('hidden'); l.style.color = "black";
+                l.classList.remove('hidden'); l.style.color="black";
             });
+            renderPlayers();
             message(`VINCE ${players[currentPlayerIndex].name}!`);
-            
-            // Bottone nuova partita
             setTimeout(() => {
-                if(confirm("Vittoria! Iniziare nuova manche?")) newRound();
+                if(confirm("Vittoria! Nuova partita?")) newRound();
             }, 1000);
         } else {
             alert("Sbagliato!");
@@ -435,20 +433,20 @@
         }
     }
 
-    // --- HELPER UI ---
+    // --- UTILS ---
     function drawBoard() {
         const b = document.getElementById('board');
         b.innerHTML = '';
         currentPhrase.split(' ').forEach(word => {
             const wDiv = document.createElement('div');
-            wDiv.style.display="flex"; wDiv.style.margin="0 10px 5px 0";
+            wDiv.style.display="flex"; wDiv.style.margin="0 8px 8px 0";
             for(let c of word) {
                 const l = document.createElement('div');
                 l.className = 'letter hidden';
                 l.innerText = c;
                 l.dataset.char = c;
-                if(!/[A-Z]/.test(c)) { // Simboli
-                    l.classList.remove('hidden'); l.style.color="black"; l.style.background="transparent";
+                if(!/[A-Z]/.test(c)) { 
+                    l.className='letter empty'; l.style.background="transparent"; l.style.color="white"; l.innerText=c;
                 }
                 wDiv.appendChild(l);
             }
@@ -458,49 +456,15 @@
 
     function generateKeyboard() {
         const k = document.getElementById('keyboard');
-        const abc = "ABCDEFGHILMNOPQRSTUVZ";
         k.innerHTML = '';
-        for(let c of abc) {
-            const btn = document.createElement('button');
-            btn.className = 'key';
-            btn.innerText = c;
-            btn.id = 'key-'+c;
-            btn.onclick = () => handleKey(c, btn);
+        "ABCDEFGHILMNOPQRSTUVZ".split('').forEach(c => {
+            const btn = document.createElement('div');
+            btn.className = 'key'; btn.innerText = c; btn.id = 'key-'+c;
+            btn.onclick = () => { if(!btn.classList.contains('used')) handleKey(c, btn); };
             k.appendChild(btn);
-        }
-    }
-
-    function highlightKeyboard(on) {
-        document.querySelectorAll('.key').forEach(k => {
-            if(!k.classList.contains('used') && !isVowel(k.innerText)) {
-                k.disabled = !on;
-                if(on) { k.classList.add('active-hint'); k.style.color="black"; }
-                else { k.classList.remove('active-hint'); k.style.color="white"; k.style.background="#444"; }
-            } else {
-                k.disabled = true;
-            }
         });
     }
 
-    function enableSpin(on) {
-        document.getElementById('btnSpin').disabled = !on;
-        document.getElementById('btnVowel').disabled = !on; 
-    }
-    
-    function disableKeyboard(bool) {
-        document.querySelectorAll('.key').forEach(k => k.disabled = bool);
-    }
-    
-    function isVowel(c) { return ['A','E','I','O','U'].includes(c); }
-    
-    function checkWin() {
-        if(document.querySelectorAll('.letter.hidden').length === 0) {
-            message("PUZZLE RISOLTO!");
-            setTimeout(() => { if(confirm("Puzzle finito. Nuova manche?")) newRound(); }, 2000);
-        }
-    }
-
-    // --- CANVAS DRAW ---
     function drawWheel() {
         const r = canvas.width/2;
         const arc = (Math.PI*2)/segments.length;
@@ -517,26 +481,39 @@
         ctx.beginPath(); ctx.arc(r,r,r/6,0,Math.PI*2); ctx.fillStyle="white"; ctx.fill();
     }
 
-    // --- SETTINGS ---
-    function openSettings() {
-        document.getElementById('phrasesInput').value = phrases.join('\n');
-        document.getElementById('settingsModal').style.display = 'flex';
+    function highlightKeyboard(on) {
+        document.querySelectorAll('.key').forEach(k => {
+            if(k.classList.contains('used')) return;
+            if(isVowel(k.innerText)) { k.style.opacity = "0.3"; return; }
+            
+            if(on) { k.classList.add('active-hint'); }
+            else { k.classList.remove('active-hint'); }
+        });
     }
-    function savePhrases() {
-        const raw = document.getElementById('phrasesInput').value;
-        const p = raw.split('\n').map(x=>x.trim().toUpperCase()).filter(x=>x.length>0);
-        if(p.length>0) {
-            localStorage.setItem('my_phrases', JSON.stringify(p));
-            phrases = p;
-            alert("Frasi salvate! Saranno usate dalla prossima manche.");
-            closeSettings();
-        }
-    }
-    function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
 
-    // Start
+    function enableSpin(on) {
+        document.getElementById('btnSpin').disabled = !on;
+        document.getElementById('btnVowel').disabled = !on;
+    }
+    
+    function disableKeyboard(bool) {
+        // Graficamente gestito da opacity/classes
+    }
+    
+    function isVowel(c) { return ['A','E','I','O','U'].includes(c); }
+    function message(t) { document.getElementById('msg').innerText = t; }
+    function playFailSound() { /* Opzionale */ }
+    function checkWin() { if(document.querySelectorAll('.letter.hidden').length===0) setTimeout(()=>alert("Puzzle Completato!"),500); }
+
+    // Settings
+    function openSettings() { document.getElementById('phrasesInput').value = phrases.join('\n'); document.getElementById('settingsModal').style.display='flex'; }
+    function savePhrases() { 
+        const p = document.getElementById('phrasesInput').value.split('\n').map(x=>x.trim().toUpperCase()).filter(x=>x.length>0);
+        if(p.length>0) { phrases=p; localStorage.setItem('my_phrases',JSON.stringify(p)); closeSettings(); alert("Salvate!"); }
+    }
+    function closeSettings() { document.getElementById('settingsModal').style.display='none'; }
+
     init();
-
 </script>
 </body>
 </html>
