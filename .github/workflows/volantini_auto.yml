@@ -1,43 +1,43 @@
-name: Auto Volantini AI
+name: Auto Volantini Python
 
 on:
   push:
     paths:
-      - 'volantini/input/*.pdf' # Scatta solo se tocchi questa sottocartella
+      - 'volantini/input/*.pdf' # Scatta quando carichi un PDF
 
 permissions:
   contents: write
 
 jobs:
-  ai-process:
+  python-process:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./volantini # FONDAMENTALE: Lavora nella sottocartella
+        working-directory: ./volantini # Lavora nella cartella corretta
 
     steps:
       - name: 📥 Scarica Repository
         uses: actions/checkout@v3
 
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v3
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
         with:
-          node-version: '18'
+          python-version: '3.10' 
 
       - name: 📦 Installa Dipendenze
-        run: npm install
+        run: |
+          pip install -r requirements.txt
 
-      - name: 🤖 Esegui AI Processor
+      - name: 🤖 Esegui Script Python
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node scripts/processor.js
+        run: python scripts/processor.py
 
-      - name: 💾 Salva JSON
+      - name: 💾 Salva JSON su GitHub
         run: |
-          git config --global user.name "VolantiniBot"
+          git config --global user.name "PythonBot"
           git config --global user.email "bot@github.com"
-          # Torna alla root per fare il git add
-          cd ..
+          cd .. 
           git add volantini/output/offerte.json
-          git commit -m "Aggiornamento offerte JSON [skip ci]" || echo "Nessuna modifica"
+          git commit -m "Offerte estratte con Python [skip ci]" || echo "Nessuna modifica"
           git push
