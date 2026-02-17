@@ -1,9 +1,0 @@
-{
-  "name": "app-volantini",
-  "version": "1.0.0",
-  "description": "Processor AI Diretto",
-  "main": "scripts/processor.js",
-  "dependencies": {
-    "node-fetch": "^2.6.1"
-  }
-}
