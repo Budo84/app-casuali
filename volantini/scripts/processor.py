@@ -1,132 +1,102 @@
 import os
+import time
 import json
 import glob
-import time
 import google.generativeai as genai
-from google.api_core import exceptions
 
-# CONFIGURAZIONE PERCORSI
+# --- CONFIGURAZIONE ---
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INPUT_DIR = os.path.join(BASE_DIR, 'input')
 OUTPUT_FILE = os.path.join(BASE_DIR, 'output', 'offerte.json')
 
-# Lista di modelli da provare in ordine di priorità
-MODELS_TO_TRY = [
-    "gemini-1.5-flash-latest",
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-001",
-    "gemini-1.5-flash-002",
-    "gemini-1.5-pro-latest"
-]
-
-# CONFIGURAZIONE API
 api_key = os.environ.get("GEMINI_API_KEY")
-
 if not api_key:
-    print("❌ ERRORE: Manca la GEMINI_API_KEY nei Secrets di GitHub!")
+    print("❌ ERRORE: Manca la GEMINI_API_KEY!")
     exit(1)
 
 genai.configure(api_key=api_key)
 
 def main():
-    # 1. Cerca il file PDF
-    if not os.path.exists(INPUT_DIR):
-        os.makedirs(INPUT_DIR)
-    
+    # 1. TROVA IL PDF
     pdf_files = glob.glob(os.path.join(INPUT_DIR, "*.pdf"))
-    
     if not pdf_files:
-        print("⚠️ Nessun PDF trovato nella cartella input.")
+        print("⚠️ Nessun PDF trovato.")
         return
 
     pdf_path = pdf_files[0]
-    print(f"📄 Elaborazione file: {os.path.basename(pdf_path)}")
+    print(f"📄 Trovato file: {os.path.basename(pdf_path)}")
 
-    # 2. Carica il file su Gemini
+    # 2. CARICA IL FILE SU GOOGLE (Visione AI)
     print("☁️ Caricamento file su Google AI...")
     try:
-        sample_file = genai.upload_file(path=pdf_path, display_name="Volantino")
-        print(f"✅ File caricato: {sample_file.uri}")
-        
-        # Attendi che il file sia processato (Active)
-        while sample_file.state.name == "PROCESSING":
-            print("⏳ Elaborazione file lato Google...")
-            time.sleep(2)
-            sample_file = genai.get_file(sample_file.name)
-            
-        if sample_file.state.name == "FAILED":
-            raise ValueError("Stato file: FAILED")
-            
+        myfile = genai.upload_file(pdf_path)
+        print(f"✅ Upload completato: {myfile.name}")
     except Exception as e:
         print(f"❌ Errore upload: {e}")
         exit(1)
 
-    # 3. Tentativi con diversi modelli
-    json_result = None
+    # 3. ATTENDI L'ELABORAZIONE (Cruciale per i PDF!)
+    print("⏳ Attesa elaborazione file...")
+    while myfile.state.name == "PROCESSING":
+        time.sleep(2)
+        myfile = genai.get_file(myfile.name)
+
+    if myfile.state.name == "FAILED":
+        print("❌ L'elaborazione del file da parte di Google è fallita.")
+        exit(1)
     
+    print("✅ File pronto per l'analisi.")
+
+    # 4. CHIEDI A GEMINI (Il Prompt Esatto)
+    # Usiamo il modello Flash perché è veloce ed economico, ma vede bene come il Pro
+    model = genai.GenerativeModel("gemini-1.5-flash")
+
     prompt = """
-    Sei un estrattore dati per supermercati. Analizza questo file PDF.
-    Estrai un elenco JSON con: prodotto, prezzo (numero), unita.
+    Analizza questo volantino come un esperto di dati.
+    Estrai un array JSON contenente le offerte presenti.
+    
+    Struttura richiesta per ogni offerta:
+    {
+        "prodotto": "Nome completo marca e prodotto",
+        "dettagli": "Grammatura o descrizione (es. 500g, 1.5L)",
+        "prezzo": 0.00,
+        "offerta_speciale": "Eventuale testo come '1+1 gratis' o 'Sconto 30%'"
+    }
+
     Regole:
-    - Ignora indirizzi, orari e numeri di telefono.
-    - Se trovi prodotti vicini ai prezzi, uniscili (es. "Pasta" + "Barilla" -> "Pasta Barilla").
-    - Rispondi SOLO JSON valido, senza markdown.
+    - Ignora indirizzi dei negozi e orari di apertura.
+    - Se il prezzo è "1,49", convertilo in numero 1.49.
+    - Se ci sono offerte "1+1", scrivilo nel campo "offerta_speciale".
+    - Rispondi SOLO con il JSON puro.
     """
 
-    for model_name in MODELS_TO_TRY:
-        print(f"🔄 Tento con il modello: {model_name}...")
-        try:
-            model = genai.GenerativeModel(model_name)
-            response = model.generate_content([sample_file, prompt])
-            
-            # Se siamo qui, ha funzionato
-            json_result = response.text
-            print(f"✅ Successo con {model_name}!")
-            break 
-            
-        except exceptions.NotFound:
-            print(f"⚠️ Modello {model_name} non trovato (404). Provo il prossimo...")
-        except Exception as e:
-            print(f"⚠️ Errore con {model_name}: {str(e)}")
-
-    # 4. Gestione Risultato
-    if not json_result:
-        print("❌ TUTTI I MODELLI HANNO FALLITO.")
-        # Pulizia
-        try:
-            genai.delete_file(sample_file.name)
-        except:
-            pass
-        exit(1)
-
+    print("🤖 Generazione JSON in corso...")
     try:
-        # Pulizia stringa JSON
-        clean_json = json_result.replace("```json", "").replace("```", "").strip()
+        result = model.generate_content([myfile, prompt])
         
-        # Verifica validità
-        json.loads(clean_json)
-
+        # Pulizia testo (toglie eventuali ```json)
+        json_text = result.text.replace("```json", "").replace("```", "").strip()
+        
+        # Validazione
+        parsed_json = json.loads(json_text)
+        
         # Salvataggio
-        output_dir = os.path.dirname(OUTPUT_FILE)
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-
+        os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-            f.write(clean_json)
+            json.dump(parsed_json, f, indent=2, ensure_ascii=False)
             
-        print("💾 File offerte.json salvato correttamente.")
+        print("💾 OTTIMO! File offerte.json salvato con successo.")
 
     except Exception as e:
-        print(f"❌ Errore nel salvataggio JSON: {e}")
-        print(f"Raw output: {json_result}")
+        print(f"❌ Errore durante l'analisi: {e}")
+        # Stampa l'output grezzo per debug se fallisce il parsing
+        if 'result' in locals():
+            print("Output grezzo:", result.text)
         exit(1)
     finally:
-        # Pulizia file remoto
-        try:
-            genai.delete_file(sample_file.name)
-            print("🧹 File remoto eliminato.")
-        except:
-            pass
+        # Pulizia: cancella il file dai server Google per privacy
+        genai.delete_file(myfile.name)
+        print("🧹 File temporaneo remoto eliminato.")
 
 if __name__ == "__main__":
     main()
