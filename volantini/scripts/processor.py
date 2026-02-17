@@ -1,8 +1,8 @@
 import os
 import json
 import glob
+import base64
 import requests
-from pypdf import PdfReader
 
 # --- CONFIGURAZIONE ---
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -10,77 +10,75 @@ INPUT_DIR = os.path.join(BASE_DIR, 'input')
 OUTPUT_FILE = os.path.join(BASE_DIR, 'output', 'offerte.json')
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
+# LISTA DI RISERVA: Se il primo non va, prova gli altri
+MODELS = [
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-latest",
+    "gemini-1.5-pro",
+    "gemini-1.5-pro-latest",
+    "gemini-1.0-pro-vision-latest" # Vecchio ma solido per le immagini
+]
+
 if not API_KEY:
     print("❌ ERRORE: Manca la GEMINI_API_KEY!")
     exit(1)
 
-def extract_text_from_pdf(pdf_path):
-    """Estrae il testo puro dal PDF usando pypdf"""
-    print("📖 Estrazione testo dal PDF in locale...")
-    try:
-        reader = PdfReader(pdf_path)
-        text = ""
-        for page in reader.pages:
-            text += page.extract_text() + "\n"
-        return text
-    except Exception as e:
-        print(f"❌ Errore lettura PDF: {e}")
-        return None
+def encode_pdf_to_base64(pdf_path):
+    """Converte il PDF in una stringa Base64 per inviarlo via web"""
+    with open(pdf_path, "rb") as f:
+        return base64.b64encode(f.read()).decode('utf-8')
 
-def call_gemini_text(text_content):
-    """Chiama Gemini passando SOLO il testo (niente file upload)"""
+def call_gemini_vision(model_name, base64_data):
+    """Chiama l'API REST direttamente (senza libreria Google)"""
     
-    # URL diretto API v1beta (più stabile per il testo)
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={API_KEY}"
     
-    # Costruiamo il JSON a mano per avere controllo totale
     payload = {
         "contents": [{
-            "parts": [{
-                "text": f"""
-                Analizza il seguente testo estratto da un volantino supermercato.
-                Estrai un array JSON con le offerte.
-                Struttura: {{"prodotto": "Nome e Marca", "prezzo": 1.99, "dettagli": "peso/info"}}
-                
-                Regole:
-                1. Cerca di ripulire i nomi dei prodotti (es. togli codici strani).
-                2. Unisci il prezzo al prodotto corretto.
-                3. Rispondi SOLO JSON.
-                
-                TESTO VOLANTINO:
-                {text_content[:30000]} 
-                """ 
-                # Limitiamo a 30k caratteri per sicurezza, bastano per un volantino
-            }]
+            "parts": [
+                {
+                    "text": """
+                    Sei un assistente AI specializzato in data entry.
+                    Analizza le immagini di questo PDF (volantino offerte).
+                    Estrai un array JSON con i prodotti.
+                    
+                    Struttura JSON richiesta:
+                    [
+                      {"prodotto": "Nome Marca", "prezzo": 1.99, "dettagli": "kg/pz"}
+                    ]
+
+                    Regole:
+                    1. Cerca i prezzi grandi e associali al testo vicino.
+                    2. Unisci nome e marca.
+                    3. Ignora indirizzi e orari.
+                    4. Rispondi SOLO con il JSON valido.
+                    """
+                },
+                {
+                    "inline_data": {
+                        "mime_type": "application/pdf",
+                        "data": base64_data
+                    }
+                }
+            ]
         }]
     }
 
-    print("📡 Invio testo a Google Gemini...")
-    response = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
-    
-    if response.status_code != 200:
-        print(f"⚠️ Errore API ({response.status_code}): {response.text}")
-        # Tenta fallback su modello Pro se Flash fallisce
-        if response.status_code == 404:
-             return call_gemini_fallback(text_content)
-        return None
+    print(f"📡 Tentativo connessione a: {model_name}...")
+    try:
+        response = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
         
-    return response.json()
-
-def call_gemini_fallback(text_content):
-    """Tentativo di riserva con Gemini Pro"""
-    print("🔄 Provo con il modello gemini-1.0-pro (Fallback)...")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key={API_KEY}"
-    
-    payload = {
-        "contents": [{"parts": [{"text": f"Estrai JSON offerte da questo testo: {text_content[:15000]}"}]}]
-    }
-    
-    response = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"❌ Anche il fallback ha fallito: {response.text}")
+        if response.status_code == 200:
+            return response.json()
+        elif response.status_code == 404:
+            print(f"⚠️ Modello {model_name} non trovato (404).")
+            return None
+        else:
+            print(f"⚠️ Errore HTTP {response.status_code}: {response.text}")
+            return None
+            
+    except Exception as e:
+        print(f"❌ Errore di connessione: {e}")
         return None
 
 def main():
@@ -93,26 +91,33 @@ def main():
     pdf_path = pdf_files[0]
     print(f"📄 File trovato: {os.path.basename(pdf_path)}")
 
-    # 2. Estrai Testo Locale (Nessun upload a Google)
-    raw_text = extract_text_from_pdf(pdf_path)
-    
-    if not raw_text or len(raw_text.strip()) < 50:
-        print("❌ Il PDF sembra non contenere testo leggibile (forse è solo immagini?).")
-        print("   Questa strategia richiede PDF con testo selezionabile.")
-        exit(1)
-        
-    print(f"✅ Testo estratto: {len(raw_text)} caratteri.")
-
-    # 3. Chiama AI
-    result = call_gemini_text(raw_text)
-
-    if not result or 'candidates' not in result:
-        print("❌ Nessun dato ricevuto dall'AI.")
-        exit(1)
-
-    # 4. Salva JSON
+    # 2. Prepara il file (Base64)
     try:
-        content_text = result['candidates'][0]['content']['parts'][0]['text']
+        base64_data = encode_pdf_to_base64(pdf_path)
+        print(f"📦 PDF codificato ({len(base64_data)} bytes).")
+    except Exception as e:
+        print(f"❌ Errore lettura file: {e}")
+        exit(1)
+
+    final_result = None
+
+    # 3. Loop tentativi modelli
+    for model in MODELS:
+        result = call_gemini_vision(model, base64_data)
+        if result and 'candidates' in result:
+            final_result = result
+            print(f"✅ SUCCESSO con il modello: {model}!")
+            break # Usciamo dal loop appena uno funziona
+        else:
+            print("🔄 Passo al prossimo modello...")
+
+    # 4. Gestione Risultato
+    if not final_result:
+        print("❌ TUTTI I MODELLI HANNO FALLITO.")
+        exit(1)
+
+    try:
+        content_text = final_result['candidates'][0]['content']['parts'][0]['text']
         clean_json = content_text.replace("```json", "").replace("```", "").strip()
         
         # Validazione
@@ -122,10 +127,12 @@ def main():
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             json.dump(parsed, f, indent=2, ensure_ascii=False)
             
-        print("💾 OTTIMO! File offerte.json salvato.")
+        print("💾 File offerte.json salvato correttamente.")
 
     except Exception as e:
-        print(f"❌ Errore parsing/salvataggio: {e}")
+        print(f"❌ Errore salvataggio JSON: {e}")
+        # Stampa raw per debug
+        print(content_text)
         exit(1)
 
 if __name__ == "__main__":
