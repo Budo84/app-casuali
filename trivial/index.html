@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Il Trivial della Parrocchia 🧠</title>
+    <title>Il Trivial della Parrocchia 🧠 - Edizione Maxi</title>
     <style>
         :root {
             --primary: #ffcc00;
@@ -47,6 +47,7 @@
             background: white;
             flex-grow: 1;
             max-width: 400px;
+            font-weight: bold;
         }
         .btn-random {
             background-color: var(--btn-random);
@@ -142,17 +143,17 @@
 
     <header>
         <h1>🧠 Il Trivial della Parrocchia</h1>
-        <p>100 Domande per sfidare tavoli e generazioni!</p>
+        <p>Edizione Maxi: 200 Domande!</p>
     </header>
 
     <div class="controls">
         <select id="categoryFilter" onchange="filterQuestions()">
-            <option value="Tutte">Tutte le Categorie (100 Domande)</option>
-            <option value="Cucina & Polenta">🍝 Cucina & Polenta (20)</option>
-            <option value="Storia & Geografia">🌍 Storia & Geografia (20)</option>
-            <option value="Scienze & Natura">🔬 Scienze & Natura (20)</option>
-            <option value="Cultura & Religione">🎨 Cultura & Religione (20)</option>
-            <option value="Spettacolo & Sport">⚽ Spettacolo & Sport (20)</option>
+            <option value="Tutte">Tutte le Categorie (200 Domande)</option>
+            <option value="Cucina & Polenta">🍝 Cucina & Polenta (40)</option>
+            <option value="Storia & Geografia">🌍 Storia & Geografia (40)</option>
+            <option value="Scienze & Natura">🔬 Scienze & Natura (40)</option>
+            <option value="Cultura & Religione">🎨 Cultura & Religione (40)</option>
+            <option value="Spettacolo & Sport">⚽ Spettacolo & Sport (40)</option>
         </select>
         <button class="btn-random" onclick="drawRandom()">🎲 Estrai a Sorte</button>
     </div>
@@ -172,9 +173,9 @@
     </div>
 
     <script>
-        // Database di 100 Domande
+        // Database di 200 Domande (40 per categoria)
         const questions = [
-            // CUCINA E POLENTA (20)
+            // CUCINA E POLENTA (40)
             { q: "Di quale cereale è fatta la classica polenta gialla?", a: "Mais (o Granoturco)", c: "Cucina & Polenta" },
             { q: "Di che materiale è fatto tradizionalmente il paiolo per la polenta?", a: "Rame", c: "Cucina & Polenta" },
             { q: "Come si chiama la polenta scura tipica della Valtellina?", a: "Polenta Taragna (fatta con grano saraceno)", c: "Cucina & Polenta" },
@@ -195,8 +196,28 @@
             { q: "Quale tubero è fondamentale per preparare gli gnocchi?", a: "La Patata", c: "Cucina & Polenta" },
             { q: "Come si chiama l'attrezzo di legno per mescolare la polenta?", a: "Cannella (o tarello/bastone)", c: "Cucina & Polenta" },
             { q: "Quale fungo pregiato si cerca con i cani nei boschi di Alba?", a: "Il Tartufo (bianco)", c: "Cucina & Polenta" },
+            { q: "Che formaggio si fonde tradizionalmente sulla polenta valdostana?", a: "La Fontina", c: "Cucina & Polenta" },
+            { q: "Qual è l'ingrediente principale del castagnaccio?", a: "Farina di castagne", c: "Cucina & Polenta" },
+            { q: "Come si chiama il pregiato bovino piemontese famoso per la carne cruda battuta al coltello?", a: "Fassona", c: "Cucina & Polenta" },
+            { q: "Cosa si usa solitamente per sfumare il risotto prima di aggiungere il brodo?", a: "Vino bianco", c: "Cucina & Polenta" },
+            { q: "Di che animale è la carne per l'arrosticino abruzzese?", a: "Pecora (o castrato)", c: "Cucina & Polenta" },
+            { q: "Quale verdura ripiena caratterizza i famosi tortelli di Mantova?", a: "La Zucca", c: "Cucina & Polenta" },
+            { q: "Che pesce è in realtà il baccalà?", a: "Merluzzo (sotto sale)", c: "Cucina & Polenta" },
+            { q: "Quale formaggio fila dentro un tipico supplì romano 'al telefono'?", a: "La Mozzarella", c: "Cucina & Polenta" },
+            { q: "Come si chiama la pentola di terra cotta ideale per cuocere sughi e stufati a fuoco lento?", a: "Teame di coccio / Pignatta", c: "Cucina & Polenta" },
+            { q: "Quale verdura è l'ingrediente principale della 'Parmigiana'?", a: "La Melanzana", c: "Cucina & Polenta" },
+            { q: "Come si chiama la pasta tipica ligure a forma di piccole spirali avvolte, perfetta col pesto?", a: "Le Trofie", c: "Cucina & Polenta" },
+            { q: "Qual è il fungo dal cappello marrone e gambo bianco molto amato nei risotti?", a: "Il Porcino", c: "Cucina & Polenta" },
+            { q: "Quale famoso dolce siciliano ha un guscio fritto a forma di tubo ripieno di ricotta?", a: "Il Cannolo", c: "Cucina & Polenta" },
+            { q: "Con quale uccello da cortile si fa il brodo migliore per i tortellini in Emilia?", a: "Il Cappone", c: "Cucina & Polenta" },
+            { q: "Che tipo di carne è, di solito, la Bresaola della Valtellina?", a: "Manzo (carne bovina)", c: "Cucina & Polenta" },
+            { q: "Quale prezioso condimento liquido si ottiene dalla spremitura delle olive?", a: "Olio d'oliva (extravergine)", c: "Cucina & Polenta" },
+            { q: "Quale erba aromatica, infilata nell'arrosto o sulle patate, è immancabile nei pranzi della domenica?", a: "Il Rosmarino", c: "Cucina & Polenta" },
+            { q: "In quale regione italiana viene prodotto e imbottigliato il vino Chianti?", a: "Toscana", c: "Cucina & Polenta" },
+            { q: "Quale frutto rosso di bosco ha un nome che fa rima con 'Campone'?", a: "Il Lampone", c: "Cucina & Polenta" },
+            { q: "Quale famoso formaggio svizzero è noto per avere 'i buchi'?", a: "L'Emmentaler (Emmental)", c: "Cucina & Polenta" },
 
-            // STORIA E GEOGRAFIA (20)
+            // STORIA E GEOGRAFIA (40)
             { q: "Qual è la capitale dell'Italia?", a: "Roma", c: "Storia & Geografia" },
             { q: "In che anno Cristoforo Colombo ha scoperto l'America?", a: "1492", c: "Storia & Geografia" },
             { q: "Quali sono i tre colori della bandiera francese?", a: "Blu, Bianco e Rosso", c: "Storia & Geografia" },
@@ -217,8 +238,28 @@
             { q: "Qual è la regione più a sud d'Italia (escluse le isole)?", a: "La Calabria", c: "Storia & Geografia" },
             { q: "Chi ha unificato l'Italia con la spedizione dei Mille?", a: "Giuseppe Garibaldi", c: "Storia & Geografia" },
             { q: "Quale stretto separa la Sicilia dalla Calabria?", a: "Lo Stretto di Messina", c: "Storia & Geografia" },
+            { q: "Qual è la capitale della Spagna?", a: "Madrid", c: "Storia & Geografia" },
+            { q: "Quale mare bagna la costa orientale dell'Italia (da Venezia al Salento)?", a: "Mare Adriatico", c: "Storia & Geografia" },
+            { q: "Quale genio italiano ha affrescato la volta della Cappella Sistina?", a: "Michelangelo Buonarroti", c: "Storia & Geografia" },
+            { q: "Quale navigatore italiano ha dato il suo nome al continente Americano?", a: "Amerigo Vespucci", c: "Storia & Geografia" },
+            { q: "Quale città italiana è famosa nel mondo per le gondole e i canali?", a: "Venezia", c: "Storia & Geografia" },
+            { q: "Qual è il monte più alto d'Italia e d'Europa (situato al confine con la Francia)?", a: "Il Monte Bianco", c: "Storia & Geografia" },
+            { q: "Chi fu l'imperatore romano che, secondo la leggenda, suonava la lira mentre Roma bruciava?", a: "Nerone", c: "Storia & Geografia" },
+            { q: "In quale regione italiana si trova la città di Matera, celebre per i 'Sassi'?", a: "Basilicata", c: "Storia & Geografia" },
+            { q: "Qual è il fiume che attraversa la città di Londra?", a: "Il Tamigi", c: "Storia & Geografia" },
+            { q: "Come si chiamavano i sovrani dell'antico Egitto?", a: "I Faraoni", c: "Storia & Geografia" },
+            { q: "Qual è lo Stato indipendente più piccolo del mondo per estensione?", a: "La Città del Vaticano", c: "Storia & Geografia" },
+            { q: "Quale eroe della mitologia greca era invulnerabile ovunque tranne che nel tallone?", a: "Achille", c: "Storia & Geografia" },
+            { q: "In quale isola italiana si trova il vulcano Etna?", a: "In Sicilia", c: "Storia & Geografia" },
+            { q: "In quale metropoli statunitense si trova la Statua della Libertà?", a: "New York", c: "Storia & Geografia" },
+            { q: "Come si chiamava la ragazzina ebrea che scrisse un celebre diario nascosta ad Amsterdam?", a: "Anna Frank", c: "Storia & Geografia" },
+            { q: "In quale paese asiatico si trova la muraglia più lunga del mondo?", a: "In Cina", c: "Storia & Geografia" },
+            { q: "Di quale regione italiana è capoluogo la città di Ancona?", a: "Delle Marche", c: "Storia & Geografia" },
+            { q: "Quale imperatore francese fu definitivamente sconfitto a Waterloo?", a: "Napoleone Bonaparte", c: "Storia & Geografia" },
+            { q: "Quale continente è noto in tutto il mondo per essere la terra dei canguri?", a: "L'Oceania (o Australia)", c: "Storia & Geografia" },
+            { q: "Qual è il lago più grande d'Italia?", a: "Il Lago di Garda", c: "Storia & Geografia" },
 
-            // SCIENZE E NATURA (20)
+            // SCIENZE E NATURA (40)
             { q: "Quanti sono i colori dell'arcobaleno?", a: "7", c: "Scienze & Natura" },
             { q: "Qual è il pianeta più vicino al Sole?", a: "Mercurio", c: "Scienze & Natura" },
             { q: "Come si chiama il satellite naturale della Terra?", a: "La Luna", c: "Scienze & Natura" },
@@ -239,8 +280,28 @@
             { q: "Quale organo pompa il sangue nel nostro corpo?", a: "Il Cuore", c: "Scienze & Natura" },
             { q: "Che animale è la tarantola?", a: "Un Ragno", c: "Scienze & Natura" },
             { q: "Qual è l'animale dal collo più lungo?", a: "La Giraffa", c: "Scienze & Natura" },
+            { q: "Quale pianeta del Sistema Solare è famoso per i suoi grandi anelli visibili?", a: "Saturno", c: "Scienze & Natura" },
+            { q: "Come si chiama il passaggio dell'acqua dallo stato liquido a quello solido (ghiaccio)?", a: "Solidificazione (o Congelamento)", c: "Scienze & Natura" },
+            { q: "Quale piccolo insetto (nella sua fase di bruco) produce la pregiata seta?", a: "Il Baco da seta", c: "Scienze & Natura" },
+            { q: "Come si chiamano i denti appuntiti che i mammiferi carnivori usano per strappare il cibo?", a: "I Canini", c: "Scienze & Natura" },
+            { q: "Quale strumento ottico si usa per ingrandire e osservare le stelle e i pianeti?", a: "Il Telescopio", c: "Scienze & Natura" },
+            { q: "Quale gas, più leggero dell'aria, si usa per far volare in alto i palloncini delle feste?", a: "L'Elio", c: "Scienze & Natura" },
+            { q: "Quale rettile è famoso per la sua capacità di cambiare colore e mimetizzarsi?", a: "Il Camaleonte", c: "Scienze & Natura" },
+            { q: "Quali sono i tre stati principali della materia?", a: "Solido, Liquido e Gassoso", c: "Scienze & Natura" },
+            { q: "Quale grande corpo celeste si trova esattamente al centro del nostro sistema solare?", a: "Il Sole", c: "Scienze & Natura" },
+            { q: "Quale bellissimo fiore giallo ha la caratteristica di orientarsi sempre verso la luce solare?", a: "Il Girasole", c: "Scienze & Natura" },
+            { q: "Quale rapace notturno è tradizionalmente considerato il simbolo della saggezza?", a: "Il Gufo (o la Civetta)", c: "Scienze & Natura" },
+            { q: "Quale metallo era presente all'interno dei vecchi termometri domestici per misurare la febbre?", a: "Il Mercurio", c: "Scienze & Natura" },
+            { q: "Quanti polmoni possiede normalmente un essere umano?", a: "Due", c: "Scienze & Natura" },
+            { q: "Come si chiama la forza invisibile che ci tiene attaccati con i piedi per terra?", a: "La forza di Gravità", c: "Scienze & Natura" },
+            { q: "In quale stagione dell'anno la maggior parte degli alberi perde le foglie?", a: "In Autunno", c: "Scienze & Natura" },
+            { q: "Quale abile roditore semi-acquatico costruisce grandi dighe di rami nei fiumi?", a: "Il Castoro", c: "Scienze & Natura" },
+            { q: "Quale dei 5 sensi usiamo per percepire i profumi e gli odori?", a: "L'Olfatto", c: "Scienze & Natura" },
+            { q: "Quale simpatico animaletto spinoso si chiude 'a palla' quando è spaventato?", a: "Il Riccio", c: "Scienze & Natura" },
+            { q: "Quale prezioso metallo di colore giallo è simbolo di ricchezza e usato per le fedi nuziali?", a: "L'Oro", c: "Scienze & Natura" },
+            { q: "Quale gigantesco mammifero marino comunica con i propri simili usando lunghi 'canti'?", a: "La Balena (o la Megattera)", c: "Scienze & Natura" },
 
-            // CULTURA E RELIGIONE (20)
+            // CULTURA E RELIGIONE (40)
             { q: "Qual è il primo libro della Bibbia?", a: "La Genesi", c: "Cultura & Religione" },
             { q: "Quanti erano gli Apostoli di Gesù?", a: "12", c: "Cultura & Religione" },
             { q: "Chi ha dipinto la Gioconda?", a: "Leonardo da Vinci", c: "Cultura & Religione" },
@@ -260,9 +321,29 @@
             { q: "Cosa divise Mosè per far passare il suo popolo?", a: "Il Mar Rosso", c: "Cultura & Religione" },
             { q: "Quale fiume fa da sfondo al battesimo di Gesù?", a: "Il fiume Giordano", c: "Cultura & Religione" },
             { q: "In quale fiaba la protagonista perde una scarpetta di cristallo?", a: "Cenerentola", c: "Cultura & Religione" },
-            { q: "Come si chiama l'attuale Papa?", a: "Papa Francesco (Jorge Mario Bergoglio)", c: "Cultura & Religione" },
+            { q: "Come si chiama l'attuale Papa?", a: "Papa Francesco", c: "Cultura & Religione" },
+            { q: "Chi fu l'apostolo che, secondo i Vangeli, tradì Gesù per trenta monete d'argento?", a: "Giuda Iscariota", c: "Cultura & Religione" },
+            { q: "Come si chiamava la sposa di San Giuseppe e madre di Gesù?", a: "Maria", c: "Cultura & Religione" },
+            { q: "Come si chiama il celebre campanile toscano noto in tutto il mondo per essere 'storto'?", a: "La Torre di Pisa", c: "Cultura & Religione" },
+            { q: "Quale grande scrittore italiano è l'autore del romanzo 'I Promessi Sposi'?", a: "Alessandro Manzoni", c: "Cultura & Religione" },
+            { q: "Verso quale città santa i fedeli musulmani si recano in pellegrinaggio almeno una volta nella vita?", a: "La Mecca", c: "Cultura & Religione" },
+            { q: "Come si chiama il Santo Patrono della città di Napoli, famoso per il 'miracolo del sangue'?", a: "San Gennaro", c: "Cultura & Religione" },
+            { q: "Quale Arcangelo si presentò a Maria per annunciarle la nascita di Gesù?", a: "L'Arcangelo Gabriele", c: "Cultura & Religione" },
+            { q: "Qual è la festività cristiana più importante dell'anno in cui si celebra la Resurrezione?", a: "La Pasqua", c: "Cultura & Religione" },
+            { q: "Quanti erano i Re Magi giunti dall'Oriente per adorare il bambin Gesù?", a: "Tre (Gaspare, Melchiorre, Baldassarre)", c: "Cultura & Religione" },
+            { q: "Quale semplice arma usò il giovane pastore Davide per abbattere il gigante Golia?", a: "Una fionda", c: "Cultura & Religione" },
+            { q: "Quale tormentato e geniale pittore olandese dipinse una celebre serie di quadri raffiguranti dei Girasoli?", a: "Vincent van Gogh", c: "Cultura & Religione" },
+            { q: "Quanti sono i Comandamenti consegnati da Dio a Mosè sul Monte Sinai?", a: "Dieci", c: "Cultura & Religione" },
+            { q: "Quale strumento musicale a corde suonava abilmente il re Davide per calmare lo spirito di Saul?", a: "L'Arpa (o la Cetra)", c: "Cultura & Religione" },
+            { q: "Quale Santa di origine albanese, premio Nobel per la pace, ha dedicato la vita ai poveri di Calcutta?", a: "Madre Teresa (di Calcutta)", c: "Cultura & Religione" },
+            { q: "Secondo il libro della Genesi, come si chiamava il primo uomo creato da Dio?", a: "Adamo", c: "Cultura & Religione" },
+            { q: "Quale festività festosa e colorata si celebra in piazza prima dell'inizio della Quaresima (Mercoledì delle Ceneri)?", a: "Il Carnevale", c: "Cultura & Religione" },
+            { q: "Sulle acque di quale fiume egiziano fu abbandonato in una cesta Mosè neonato?", a: "Il fiume Nilo", c: "Cultura & Religione" },
+            { q: "In quale piccola cittadina della Galilea visse Gesù per la maggior parte della sua vita 'nascosta'?", a: "Nazaret", c: "Cultura & Religione" },
+            { q: "Come si chiama l'edificio religioso o il complesso in cui vivono i monaci dediti alla preghiera?", a: "Il Monastero (o L'Abbazia)", c: "Cultura & Religione" },
+            { q: "Quale scrittore toscano ha inventato la storia de 'Le Avventure di Pinocchio'?", a: "Carlo Collodi", c: "Cultura & Religione" },
 
-            // SPETTACOLO E SPORT (20)
+            // SPETTACOLO E SPORT (40)
             { q: "Di che colore è la maglia della nazionale italiana di calcio?", a: "Azzurra", c: "Spettacolo & Sport" },
             { q: "Quanti erano i nani di Biancaneve?", a: "7", c: "Spettacolo & Sport" },
             { q: "Quale sport pratica Jannik Sinner?", a: "Tennis", c: "Spettacolo & Sport" },
@@ -282,7 +363,27 @@
             { q: "Come si chiama l'idraulico baffuto dei videogiochi Nintendo?", a: "Super Mario", c: "Spettacolo & Sport" },
             { q: "In che sport si usano i guantoni ed esiste il KO?", a: "Pugilato (Boxe)", c: "Spettacolo & Sport" },
             { q: "Quale gatto rincorre perennemente il topo Jerry?", a: "Tom", c: "Spettacolo & Sport" },
-            { q: "Quale nazione ha vinto i Mondiali di calcio nel 2006?", a: "L'Italia", c: "Spettacolo & Sport" }
+            { q: "Quale nazione ha vinto i Mondiali di calcio nel 2006?", a: "L'Italia", c: "Spettacolo & Sport" },
+            { q: "In quale sport di squadra si 'schiaccia' la palla oltre una rete alta per fare punto?", a: "Pallavolo (Volley)", c: "Spettacolo & Sport" },
+            { q: "Come si chiama il simpatico e ingenuo pupazzo di neve parlante nel film Disney 'Frozen'?", a: "Olaf", c: "Spettacolo & Sport" },
+            { q: "Quale celebre e inimitabile attore comico napoletano pronunciava la frase 'E io pago!'?", a: "Totò", c: "Spettacolo & Sport" },
+            { q: "Come si chiama la corsa a tappe in bicicletta più famosa che si svolge in Francia a luglio?", a: "Il Tour de France", c: "Spettacolo & Sport" },
+            { q: "Quale cantante italiano ha portato al successo in tutto il mondo il brano 'Nel blu dipinto di blu'?", a: "Domenico Modugno", c: "Spettacolo & Sport" },
+            { q: "Come si chiama il supereroe della Marvel in grado di arrampicarsi sui muri e lanciare ragnatele?", a: "Spider-Man (L'Uomo Ragno)", c: "Spettacolo & Sport" },
+            { q: "Qual è lo sport invernale in cui si scivola sulla neve ai piedi indossando due lunghi attrezzi paralleli?", a: "Lo Sci", c: "Spettacolo & Sport" },
+            { q: "Di che specie è Nemo, il piccolo pesce arancione e bianco protagonista dell'omonimo film Pixar?", a: "Un pesce pagliaccio", c: "Spettacolo & Sport" },
+            { q: "In quale storico gioco da tavolo i giocatori possono comprare proprietà, costruire case e alberghi come 'Parco della Vittoria'?", a: "Monopoly", c: "Spettacolo & Sport" },
+            { q: "Quale blasonata squadra di calcio italiana indossa storicamente una maglietta a strisce verticali bianconere?", a: "La Juventus", c: "Spettacolo & Sport" },
+            { q: "Quale noto presentatore televisivo, famoso per il suo naso importante, ha condotto il Festival di Sanremo per cinque anni consecutivi dal 2020 al 2024?", a: "Amadeus", c: "Spettacolo & Sport" },
+            { q: "Insieme alla batteria e al basso, qual è lo strumento musicale principe di ogni rock band?", a: "La Chitarra (Elettrica)", c: "Spettacolo & Sport" },
+            { q: "Quale leggenda argentina del calcio era soprannominata 'El Pibe de Oro'?", a: "Diego Armando Maradona", c: "Spettacolo & Sport" },
+            { q: "Come si chiama il pennuto rosso, logorroico e brontolone, alleato del cattivo Jafar nel film 'Aladdin'?", a: "Iago", c: "Spettacolo & Sport" },
+            { q: "In quale popolare sport di squadra americano i giocatori indossano un guantone gigante per afferrare una pallina di cuoio bianco cucito di rosso?", a: "Baseball", c: "Spettacolo & Sport" },
+            { q: "Come si chiama la durissima gara di corsa su strada la cui distanza ufficiale è di poco più di quarantadue chilometri?", a: "La Maratona", c: "Spettacolo & Sport" },
+            { q: "Come si chiama la pallida, affascinante e tetra matriarca della famiglia Addams, sempre vestita di nero?", a: "Morticia (Addams)", c: "Spettacolo & Sport" },
+            { q: "In quale sport olimpico si gareggia dividendo le sfide negli stili rana, delfino (o farfalla), dorso e stile libero?", a: "Il Nuoto", c: "Spettacolo & Sport" },
+            { q: "Come si chiama la primissima scopa volante da corsa, velocissima, regalata a Harry Potter nel suo primo anno di scuola?", a: "La Nimbus 2000", c: "Spettacolo & Sport" },
+            { q: "Quale famoso e magrissimo comico siciliano formava, dagli anni '60 in poi, un duo inseparabile con l'amico e collega Ciccio Ingrassia?", a: "Franco (Franchi)", c: "Spettacolo & Sport" }
         ];
 
         // Mappa i colori per le categorie
@@ -303,7 +404,6 @@
             list.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'question-card';
-                // La struttura ora è sicura, il bottone agisce direttamente sul div successivo
                 card.innerHTML = `
                     <div class="badge ${getCategoryClass(item.c)}">${item.c}</div>
                     <div class="question-text">${index + 1}. ${item.q}</div>
@@ -314,9 +414,9 @@
             });
         }
 
-        // Rivela o nasconde la risposta senza bisogno di ID (Metodo infallibile)
+        // Rivela o nasconde la risposta
         function toggleAnswer(btnElement) {
-            const answerDiv = btnElement.nextElementSibling; // Prende il div subito dopo il bottone
+            const answerDiv = btnElement.nextElementSibling;
             if (answerDiv.style.display === "none" || answerDiv.style.display === "") {
                 answerDiv.style.display = "block";
             } else {
@@ -329,17 +429,15 @@
             const selectedCategory = document.getElementById('categoryFilter').value;
             
             if (selectedCategory === "Tutte") {
-                renderQuestions(questions); // Mostra tutte le 100 domande
+                renderQuestions(questions);
             } else {
-                // Filtra solo quelle che corrispondono esattamente alla scelta
                 const filtered = questions.filter(q => q.c === selectedCategory);
                 renderQuestions(filtered);
             }
         }
 
-        // Estrazione Casuale tramite Finestra Modale
+        // Estrazione Casuale
         function drawRandom() {
-            // Estrae sempre da TUTTE le domande, indipendentemente dal filtro attivo
             const randomIndex = Math.floor(Math.random() * questions.length);
             const q = questions[randomIndex];
             
@@ -347,12 +445,12 @@
             document.getElementById('modalBadge').innerText = q.c;
             document.getElementById('modalQuestion').innerText = q.q;
             document.getElementById('modalAnswer').innerText = "Risposta: " + q.a;
-            document.getElementById('modalAnswer').style.display = 'none'; // Nasconde la risposta
+            document.getElementById('modalAnswer').style.display = 'none';
             
-            document.getElementById('randomModal').style.display = 'flex'; // Mostra la finestra
+            document.getElementById('randomModal').style.display = 'flex';
         }
 
-        // Avvia l'app non appena la pagina viene aperta
+        // Avvia l'app al caricamento
         renderQuestions(questions);
     </script>
 </body>
