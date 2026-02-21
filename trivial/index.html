@@ -130,10 +130,11 @@
             max-width: 500px; text-align: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .modal-content h2 { margin-top: 0; color: var(--btn-reveal); }
+        .modal-content h2 { margin-top: 0; color: #222; font-size: 1.5em; }
         .modal-close {
             margin-top: 20px; padding: 10px 20px;
             background: #333; color: white; border: none; border-radius: 5px; cursor: pointer;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -163,10 +164,10 @@
         <div class="modal-content">
             <div class="badge" id="modalBadge">Categoria</div>
             <h2 id="modalQuestion">La domanda apparirà qui</h2>
-            <button class="btn-reveal" onclick="document.getElementById('modalAnswer').style.display='block'">Rivela Risposta</button>
-            <div id="modalAnswer" class="answer-box" style="margin-top:15px;">Risposta</div>
+            <button class="btn-reveal" style="margin-top:15px;" onclick="document.getElementById('modalAnswer').style.display='block'">Rivela Risposta</button>
+            <div id="modalAnswer" class="answer-box">Risposta</div>
             <br>
-            <button class="modal-close" onclick="document.getElementById('randomModal').style.display='none'">Chiudi</button>
+            <button class="modal-close" onclick="document.getElementById('randomModal').style.display='none'">Chiudi X</button>
         </div>
     </div>
 
@@ -284,76 +285,75 @@
             { q: "Quale nazione ha vinto i Mondiali di calcio nel 2006?", a: "L'Italia", c: "Spettacolo & Sport" }
         ];
 
-        // Mappa i colori
+        // Mappa i colori per le categorie
         function getCategoryClass(category) {
-            if (category.includes("Cucina")) return "cat-cucina";
-            if (category.includes("Storia")) return "cat-storia";
-            if (category.includes("Scienze")) return "cat-scienze";
-            if (category.includes("Cultura")) return "cat-cultura";
-            return "cat-sport";
+            if (category === "Cucina & Polenta") return "cat-cucina";
+            if (category === "Storia & Geografia") return "cat-storia";
+            if (category === "Scienze & Natura") return "cat-scienze";
+            if (category === "Cultura & Religione") return "cat-cultura";
+            if (category === "Spettacolo & Sport") return "cat-sport";
+            return "";
         }
 
-        // Rivela una risposta specifica
-        function toggleAnswer(index) {
-            const ansBox = document.getElementById(`ans-${index}`);
-            if (ansBox.style.display === "none" || ansBox.style.display === "") {
-                ansBox.style.display = "block";
-            } else {
-                ansBox.style.display = "none";
-            }
-        }
-
-        // Renderizza la lista
+        // Funzione per generare e mostrare la lista delle domande
         function renderQuestions(list) {
             const container = document.getElementById('quizContainer');
-            container.innerHTML = ''; 
+            container.innerHTML = ''; // Svuota la pagina prima di ricaricare
             
             list.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'question-card';
+                // La struttura ora è sicura, il bottone agisce direttamente sul div successivo
                 card.innerHTML = `
                     <div class="badge ${getCategoryClass(item.c)}">${item.c}</div>
                     <div class="question-text">${index + 1}. ${item.q}</div>
-                    <button class="btn-reveal" onclick="toggleAnswer(${index})">Rivela Risposta</button>
-                    <div id="ans-${index}" class="answer-box">Risposta: ${item.a}</div>
+                    <button class="btn-reveal" onclick="toggleAnswer(this)">Rivela Risposta</button>
+                    <div class="answer-box">Risposta: ${item.a}</div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // Filtra le categorie
-        function filterQuestions() {
-            const cat = document.getElementById('categoryFilter').value;
-            const filtered = (cat === "Tutte") ? questions : questions.filter(q => q.c.includes(cat.split(" ")[1])); 
-            // piccolo trucco per far matchare la stringa della tendina con la categoria reale
-            
-            let finalFilter = questions;
-            if (cat !== "Tutte") {
-                finalFilter = questions.filter(q => q.c === cat.substring(3, cat.length - 5)); 
+        // Rivela o nasconde la risposta senza bisogno di ID (Metodo infallibile)
+        function toggleAnswer(btnElement) {
+            const answerDiv = btnElement.nextElementSibling; // Prende il div subito dopo il bottone
+            if (answerDiv.style.display === "none" || answerDiv.style.display === "") {
+                answerDiv.style.display = "block";
+            } else {
+                answerDiv.style.display = "none";
             }
-            // fix per far combaciare perfettamente:
-            if(cat.includes("Cucina")) finalFilter = questions.filter(q => q.c === "Cucina & Polenta");
-            if(cat.includes("Storia")) finalFilter = questions.filter(q => q.c === "Storia & Geografia");
-            if(cat.includes("Scienze")) finalFilter = questions.filter(q => q.c === "Scienze & Natura");
-            if(cat.includes("Cultura")) finalFilter = questions.filter(q => q.c === "Cultura & Religione");
-            if(cat.includes("Spettacolo")) finalFilter = questions.filter(q => q.c === "Spettacolo & Sport");
-
-            renderQuestions(finalFilter);
         }
 
-        // Estrazione Casuale
+        // Filtra le categorie dal menu a tendina
+        function filterQuestions() {
+            const selectedCategory = document.getElementById('categoryFilter').value;
+            
+            if (selectedCategory === "Tutte") {
+                renderQuestions(questions); // Mostra tutte le 100 domande
+            } else {
+                // Filtra solo quelle che corrispondono esattamente alla scelta
+                const filtered = questions.filter(q => q.c === selectedCategory);
+                renderQuestions(filtered);
+            }
+        }
+
+        // Estrazione Casuale tramite Finestra Modale
         function drawRandom() {
+            // Estrae sempre da TUTTE le domande, indipendentemente dal filtro attivo
             const randomIndex = Math.floor(Math.random() * questions.length);
             const q = questions[randomIndex];
             
             document.getElementById('modalBadge').className = `badge ${getCategoryClass(q.c)}`;
             document.getElementById('modalBadge').innerText = q.c;
             document.getElementById('modalQuestion').innerText = q.q;
-            document.getElementById('modalAnswer').innerText = q.a;
-            document.getElementById('modalAnswer').style.display = 'none'; // Nascondi risposta all'inizio
+            document.getElementById('modalAnswer').innerText = "Risposta: " + q.a;
+            document.getElementById('modalAnswer').style.display = 'none'; // Nasconde la risposta
             
-            document.getElementById('randomModal').style.display = 'flex';
+            document.getElementById('randomModal').style.display = 'flex'; // Mostra la finestra
         }
 
-        // Avvio
-        window.onload = () => render
+        // Avvia l'app non appena la pagina viene aperta
+        renderQuestions(questions);
+    </script>
+</body>
+</html>
