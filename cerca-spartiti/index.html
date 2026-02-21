@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerca Spartiti & Accordi PDF</title>
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --primary: #0288d1; --primary-dark: #01579b; --bg: #f0f4f8; --white: #ffffff; --text: #333; --border: #cfd8dc; }
+        * { box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .container { max-width: 800px; width: 100%; margin-top: 20px; }
+        
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: var(--primary-dark); margin: 0 0 10px 0; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2rem; }
+        .header p { color: #546e7a; margin: 0; font-size: 1.1rem; }
+        
+        .card { background: var(--white); border-radius: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); padding: 30px; margin-bottom: 20px; border: 1px solid var(--border); }
+        
+        /* INPUT RICERCA */
+        .search-container { position: relative; margin-bottom: 20px; }
+        .search-container .material-icons-round { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #90a4ae; font-size: 28px; }
+        input[type="text"] { width: 100%; padding: 18px 20px 18px 55px; border: 2px solid #b0bec5; border-radius: 12px; font-size: 1.2rem; outline: none; transition: 0.3s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(2, 136, 209, 0.1); }
+        
+        /* FILTRI RAPIDI */
+        .quick-tags { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; -webkit-overflow-scrolling: touch; }
+        .tag { background: #e1f5fe; color: var(--primary-dark); padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; cursor: pointer; border: 1px solid #81d4fa; white-space: nowrap; transition: 0.2s; }
+        .tag:hover { background: #b3e5fc; }
+
+        /* PULSANTI AZIONE */
+        .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        
+        button { padding: 15px; border: none; border-radius: 10px; font-weight: bold; font-size: 1.05rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(2px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        button .material-icons-round { font-size: 32px; }
+        
+        .btn-pdf { background: #d32f2f; color: white; }
+        .btn-pdf:hover { background: #b71c1c; }
+        
+        .btn-web { background: var(--primary); color: white; }
+        .btn-web:hover { background: var(--primary-dark); }
+        
+        .btn-yt { background: #212121; color: white; }
+        .btn-yt:hover { background: #000000; }
+
+        .instructions { background: #fff8e1; border-left: 4px solid #ffb300; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 0.9rem; color: #555; }
+
+        @media (max-width: 600px) {
+            .card { padding: 20px; }
+            input[type="text"] { font-size: 1.1rem; padding: 15px 15px 15px 50px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><span class="material-icons-round">picture_as_pdf</span> Trova Spartiti</h1>
+        <p>Motore di ricerca ottimizzato per canti liturgici</p>
+    </div>
+
+    <div class="card">
+        <div class="search-container">
+            <span class="material-icons-round">search</span>
+            <input type="text" id="songName" placeholder="Es. Pane del cielo..." onkeypress="handleEnter(event)">
+        </div>
+
+        <div class="quick-tags" id="tagContainer">
+            <span class="tag" onclick="addTag('RnS')">+ RnS</span>
+            <span class="tag" onclick="addTag('Gen Rosso')">+ Gen Rosso</span>
+            <span class="tag" onclick="addTag('Marco Frisina')">+ Frisina</span>
+            <span class="tag" onclick="addTag('Gen Verde')">+ Gen Verde</span>
+            <span class="tag" onclick="addTag('Taizé')">+ Taizé</span>
+        </div>
+
+        <div class="action-grid">
+            <button class="btn-pdf" onclick="searchPDF()">
+                <span class="material-icons-round">picture_as_pdf</span>
+                Solo Spartiti PDF
+            </button>
+            
+            <button class="btn-web" onclick="searchChords()">
+                <span class="material-icons-round">queue_music</span>
+                Testo e Accordi Web
+            </button>
+            
+            <button class="btn-yt" onclick="searchYouTube()">
+                <span class="material-icons-round">play_circle</span>
+                Ascolta (YouTube)
+            </button>
+        </div>
+        
+        <div class="instructions">
+            <strong>💡 Come funziona:</strong> Questo strumento usa parametri avanzati per forzare Google a mostrare <b>esclusivamente file .pdf</b> che contengono il titolo che hai cercato insieme alle parole "accordi" o "spartito". 
+        </div>
+    </div>
+</div>
+
+<script>
+    // Aggiunge rapidamente l'autore al testo di ricerca
+    function addTag(tag) {
+        const input = document.getElementById('songName');
+        const currentVal = input.value.trim();
+        // Evita di aggiungere lo stesso tag due volte
+        if (!currentVal.toLowerCase().includes(tag.toLowerCase())) {
+            input.value = currentVal ? `${currentVal} ${tag}` : tag;
+        }
+        input.focus();
+    }
+
+    // Permette di cercare premendo "Invio" sulla tastiera
+    function handleEnter(e) {
+        if (e.key === 'Enter') {
+            searchPDF();
+        }
+    }
+
+    // Ottiene il testo e controlla che non sia vuoto
+    function getQuery() {
+        const query = document.getElementById('songName').value.trim();
+        if (!query) {
+            alert("Inserisci il titolo di un canto prima di cercare!");
+            return null;
+        }
+        return query;
+    }
+
+    // 1. RICERCA ESCLUSIVA PDF (Il cuore dello script)
+    function searchPDF() {
+        const song = getQuery();
+        if (!song) return;
+
+        // Costruisce una Google Dork potente:
+        // intitle:"nome canzone" -> cerca il nome nel titolo della pagina/file
+        // (accordi OR spartito OR partitura OR chords) -> deve contenere almeno una di queste parole
+        // filetype:pdf -> FORZA Google a restituire solo file scaricabili in PDF
+        
+        const googleDork = `intitle:"${song}" (accordi OR spartito OR partitura) filetype:pdf`;
+        const url = `https://www.google.com/search?q=${encodeURIComponent(googleDork)}`;
+        
+        window.open(url, '_blank');
+    }
+
+    // 2. RICERCA SITI WEB NORMALI CON ACCORDI
+    function searchChords() {
+        const song = getQuery();
+        if (!song) return;
+
+        // Ricerca web normale, dà priorità a siti noti come animanimale, cantoeprego, ecc.
+        const query = `"${song}" accordi canto liturgico`;
+        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        
+        window.open(url, '_blank');
+    }
+
+    // 3. RICERCA YOUTUBE
+    function searchYouTube() {
+        const song = getQuery();
+        if (!song) return;
+
+        const query = `${song} canto liturgico coro`;
+        const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+        
+        window.open(url, '_blank');
+    }
+</script>
+
+</body>
+</html>
