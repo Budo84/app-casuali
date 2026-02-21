@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Trivial della Parrocchia 🧠</title>
+    <style>
+        :root {
+            --primary: #ffcc00;
+            --secondary: #e6b800;
+            --dark: #333;
+            --light: #fff9e6;
+            --btn-reveal: #d9534f;
+            --btn-random: #5cb85c;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--primary);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--secondary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 2.5em; color: #222; }
+        p { margin: 5px 0 0 0; font-weight: bold; color: #555; }
+        
+        .controls {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        select {
+            padding: 12px;
+            font-size: 1.1em;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background: white;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+        .btn-random {
+            background-color: var(--btn-random);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .btn-random:hover { background-color: #4cae4c; }
+        
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto 50px auto;
+            padding: 0 15px;
+        }
+        .question-card {
+            background: white;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 6px solid var(--primary);
+        }
+        .question-text {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: #eee;
+        }
+        .answer-box {
+            display: none;
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 15px;
+            border: 1px solid #d6e9c6;
+        }
+        .btn-reveal {
+            background-color: var(--btn-reveal);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-reveal:hover { background-color: #c9302c; }
+
+        /* Colori Categorie */
+        .cat-cucina { background-color: #ffebcc; color: #cc6600; }
+        .cat-storia { background-color: #cce5ff; color: #004085; }
+        .cat-scienze { background-color: #d4edda; color: #155724; }
+        .cat-cultura { background-color: #e2e3e5; color: #383d41; }
+        .cat-sport { background-color: #f8d7da; color: #721c24; }
+        
+        /* Modale per domanda casuale */
+        #randomModal {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 15px;
+            max-width: 500px; text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .modal-content h2 { margin-top: 0; color: var(--btn-reveal); }
+        .modal-close {
+            margin-top: 20px; padding: 10px 20px;
+            background: #333; color: white; border: none; border-radius: 5px; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🧠 Il Trivial della Parrocchia</h1>
+        <p>100 Domande per sfidare tavoli e generazioni!</p>
+    </header>
+
+    <div class="controls">
+        <select id="categoryFilter" onchange="filterQuestions()">
+            <option value="Tutte">Tutte le Categorie (100 Domande)</option>
+            <option value="Cucina & Polenta">🍝 Cucina & Polenta (20)</option>
+            <option value="Storia & Geografia">🌍 Storia & Geografia (20)</option>
+            <option value="Scienze & Natura">🔬 Scienze & Natura (20)</option>
+            <option value="Cultura & Religione">🎨 Cultura & Religione (20)</option>
+            <option value="Spettacolo & Sport">⚽ Spettacolo & Sport (20)</option>
+        </select>
+        <button class="btn-random" onclick="drawRandom()">🎲 Estrai a Sorte</button>
+    </div>
+
+    <div class="quiz-container" id="quizContainer">
+        </div>
+
+    <div id="randomModal">
+        <div class="modal-content">
+            <div class="badge" id="modalBadge">Categoria</div>
+            <h2 id="modalQuestion">La domanda apparirà qui</h2>
+            <button class="btn-reveal" onclick="document.getElementById('modalAnswer').style.display='block'">Rivela Risposta</button>
+            <div id="modalAnswer" class="answer-box" style="margin-top:15px;">Risposta</div>
+            <br>
+            <button class="modal-close" onclick="document.getElementById('randomModal').style.display='none'">Chiudi</button>
+        </div>
+    </div>
+
+    <script>
+        // Database di 100 Domande
+        const questions = [
+            // CUCINA E POLENTA (20)
+            { q: "Di quale cereale è fatta la classica polenta gialla?", a: "Mais (o Granoturco)", c: "Cucina & Polenta" },
+            { q: "Di che materiale è fatto tradizionalmente il paiolo per la polenta?", a: "Rame", c: "Cucina & Polenta" },
+            { q: "Come si chiama la polenta scura tipica della Valtellina?", a: "Polenta Taragna (fatta con grano saraceno)", c: "Cucina & Polenta" },
+            { q: "Qual è l'ingrediente principale del pesto alla genovese?", a: "Il Basilico", c: "Cucina & Polenta" },
+            { q: "Che formaggio si usa per fare il vero Tiramisù?", a: "Il Mascarpone", c: "Cucina & Polenta" },
+            { q: "Quale spezia dà il colore giallo al risotto alla milanese?", a: "Lo Zafferano", c: "Cucina & Polenta" },
+            { q: "In quale regione italiana è nata la pizza Margherita?", a: "Campania (Napoli)", c: "Cucina & Polenta" },
+            { q: "Quale tipo di carne si usa per il ragù alla bolognese tradizionale?", a: "Carne bovina (manzo) e pancetta di maiale", c: "Cucina & Polenta" },
+            { q: "Con cosa si fa il vero guanciale usato per la carbonara?", a: "Con la guancia del maiale", c: "Cucina & Polenta" },
+            { q: "Quale dolce natalizio è originario di Verona?", a: "Il Pandoro", c: "Cucina & Polenta" },
+            { q: "Come si chiama il pane tipico sardo, sottile e croccante?", a: "Pane Carasau", c: "Cucina & Polenta" },
+            { q: "Quale frutto è il protagonista dello strudel trentino?", a: "La Mela", c: "Cucina & Polenta" },
+            { q: "Cos'è la 'Bagna Cauda' piemontese?", a: "Una salsa calda a base di aglio, acciughe e olio", c: "Cucina & Polenta" },
+            { q: "Quale famoso liquore campano è fatto con i limoni?", a: "Il Limoncello", c: "Cucina & Polenta" },
+            { q: "Che pasta si usa tradizionalmente con le cime di rapa in Puglia?", a: "Le Orecchiette", c: "Cucina & Polenta" },
+            { q: "Da quale animale proviene il latte per la vera mozzarella campana?", a: "Dalla Bufala", c: "Cucina & Polenta" },
+            { q: "Qual è il formato di pasta tipico di Amatrice?", a: "I Bucatini", c: "Cucina & Polenta" },
+            { q: "Quale tubero è fondamentale per preparare gli gnocchi?", a: "La Patata", c: "Cucina & Polenta" },
+            { q: "Come si chiama l'attrezzo di legno per mescolare la polenta?", a: "Cannella (o tarello/bastone)", c: "Cucina & Polenta" },
+            { q: "Quale fungo pregiato si cerca con i cani nei boschi di Alba?", a: "Il Tartufo (bianco)", c: "Cucina & Polenta" },
+
+            // STORIA E GEOGRAFIA (20)
+            { q: "Qual è la capitale dell'Italia?", a: "Roma", c: "Storia & Geografia" },
+            { q: "In che anno Cristoforo Colombo ha scoperto l'America?", a: "1492", c: "Storia & Geografia" },
+            { q: "Quali sono i tre colori della bandiera francese?", a: "Blu, Bianco e Rosso", c: "Storia & Geografia" },
+            { q: "Come si chiamava il primo re di Roma?", a: "Romolo", c: "Storia & Geografia" },
+            { q: "Qual è il monte più alto del mondo?", a: "L'Everest", c: "Storia & Geografia" },
+            { q: "Qual è il fiume che attraversa Firenze?", a: "L'Arno", c: "Storia & Geografia" },
+            { q: "Quante sono le regioni italiane?", a: "20", c: "Storia & Geografia" },
+            { q: "Qual è l'isola più grande del mondo?", a: "La Groenlandia", c: "Storia & Geografia" },
+            { q: "Chi era il presidente del Sudafrica simbolo della lotta all'apartheid?", a: "Nelson Mandela", c: "Storia & Geografia" },
+            { q: "Quale vulcano distrusse Pompei ed Ercolano?", a: "Il Vesuvio", c: "Storia & Geografia" },
+            { q: "Come si chiamava la moneta italiana prima dell'Euro?", a: "La Lira", c: "Storia & Geografia" },
+            { q: "Qual è il deserto più grande del mondo (esclusi i poli)?", a: "Il Sahara", c: "Storia & Geografia" },
+            { q: "In quale città si trova la Torre Eiffel?", a: "Parigi", c: "Storia & Geografia" },
+            { q: "Qual è l'oceano più esteso della Terra?", a: "L'Oceano Pacifico", c: "Storia & Geografia" },
+            { q: "Chi fu il primo Presidente della Repubblica Italiana?", a: "Enrico De Nicola", c: "Storia & Geografia" },
+            { q: "Quale muro fu abbattuto a Berlino nel 1989?", a: "Il Muro di Berlino", c: "Storia & Geografia" },
+            { q: "In quale nazione si trovano le piramidi di Giza?", a: "Egitto", c: "Storia & Geografia" },
+            { q: "Qual è la regione più a sud d'Italia (escluse le isole)?", a: "La Calabria", c: "Storia & Geografia" },
+            { q: "Chi ha unificato l'Italia con la spedizione dei Mille?", a: "Giuseppe Garibaldi", c: "Storia & Geografia" },
+            { q: "Quale stretto separa la Sicilia dalla Calabria?", a: "Lo Stretto di Messina", c: "Storia & Geografia" },
+
+            // SCIENZE E NATURA (20)
+            { q: "Quanti sono i colori dell'arcobaleno?", a: "7", c: "Scienze & Natura" },
+            { q: "Qual è il pianeta più vicino al Sole?", a: "Mercurio", c: "Scienze & Natura" },
+            { q: "Come si chiama il satellite naturale della Terra?", a: "La Luna", c: "Scienze & Natura" },
+            { q: "Qual è l'animale più grande del pianeta?", a: "La Balenottera Azzurra", c: "Scienze & Natura" },
+            { q: "Quante zampe ha un ragno?", a: "8", c: "Scienze & Natura" },
+            { q: "A quanti gradi centigradi bolle l'acqua?", a: "100°C", c: "Scienze & Natura" },
+            { q: "Quale gas respiriamo per vivere?", a: "Ossigeno", c: "Scienze & Natura" },
+            { q: "Come si chiamano gli animali che mangiano sia carne che vegetali?", a: "Onnivori", c: "Scienze & Natura" },
+            { q: "Qual è l'osso più lungo del corpo umano?", a: "Il Femore", c: "Scienze & Natura" },
+            { q: "Quanti cuori ha un polpo?", a: "3", c: "Scienze & Natura" },
+            { q: "Come si chiama il processo con cui le piante producono ossigeno?", a: "Fotosintesi clorofilliana", c: "Scienze & Natura" },
+            { q: "Quale uccello non vola ma è un ottimo nuotatore antartico?", a: "Il Pinguino", c: "Scienze & Natura" },
+            { q: "Da quale insetto viene prodotto il miele?", a: "Dalle Api", c: "Scienze & Natura" },
+            { q: "Qual è il mammifero terrestre più veloce?", a: "Il Ghepardo", c: "Scienze & Natura" },
+            { q: "Cosa studia un paleontologo?", a: "I fossili e i dinosauri", c: "Scienze & Natura" },
+            { q: "Come si chiama la stella attorno a cui gira la Terra?", a: "Il Sole", c: "Scienze & Natura" },
+            { q: "Di cosa è composta principalmente una nuvola?", a: "Goccioline d'acqua (o cristalli di ghiaccio)", c: "Scienze & Natura" },
+            { q: "Quale organo pompa il sangue nel nostro corpo?", a: "Il Cuore", c: "Scienze & Natura" },
+            { q: "Che animale è la tarantola?", a: "Un Ragno", c: "Scienze & Natura" },
+            { q: "Qual è l'animale dal collo più lungo?", a: "La Giraffa", c: "Scienze & Natura" },
+
+            // CULTURA E RELIGIONE (20)
+            { q: "Qual è il primo libro della Bibbia?", a: "La Genesi", c: "Cultura & Religione" },
+            { q: "Quanti erano gli Apostoli di Gesù?", a: "12", c: "Cultura & Religione" },
+            { q: "Chi ha dipinto la Gioconda?", a: "Leonardo da Vinci", c: "Cultura & Religione" },
+            { q: "Come si chiama lo Stato in cui vive il Papa?", a: "Città del Vaticano", c: "Cultura & Religione" },
+            { q: "Quale animale portò un ramoscello d'ulivo a Noè?", a: "La Colomba", c: "Cultura & Religione" },
+            { q: "In quale città è nato Gesù?", a: "Betlemme", c: "Cultura & Religione" },
+            { q: "Chi ha scritto la Divina Commedia?", a: "Dante Alighieri", c: "Cultura & Religione" },
+            { q: "Quale santo si festeggia il 14 Febbraio?", a: "San Valentino", c: "Cultura & Religione" },
+            { q: "Quanti sono i Vangeli canonici?", a: "4 (Matteo, Marco, Luca, Giovanni)", c: "Cultura & Religione" },
+            { q: "Che animale era il burattino parlante amico di Pinocchio?", a: "Un Grillo (il Grillo Parlante)", c: "Cultura & Religione" },
+            { q: "In che lingua è stato originariamente scritto il Nuovo Testamento?", a: "Greco", c: "Cultura & Religione" },
+            { q: "Chi scolpì il famoso David di Firenze?", a: "Michelangelo Buonarroti", c: "Cultura & Religione" },
+            { q: "Qual è la preghiera che Gesù ha insegnato ai suoi discepoli?", a: "Il Padre Nostro", c: "Cultura & Religione" },
+            { q: "Come si chiama il periodo di 40 giorni prima di Pasqua?", a: "Quaresima", c: "Cultura & Religione" },
+            { q: "Quale famoso anfiteatro si trova a Roma?", a: "Il Colosseo", c: "Cultura & Religione" },
+            { q: "Chi è il patrono d'Italia insieme a Santa Caterina da Siena?", a: "San Francesco d'Assisi", c: "Cultura & Religione" },
+            { q: "Cosa divise Mosè per far passare il suo popolo?", a: "Il Mar Rosso", c: "Cultura & Religione" },
+            { q: "Quale fiume fa da sfondo al battesimo di Gesù?", a: "Il fiume Giordano", c: "Cultura & Religione" },
+            { q: "In quale fiaba la protagonista perde una scarpetta di cristallo?", a: "Cenerentola", c: "Cultura & Religione" },
+            { q: "Come si chiama l'attuale Papa?", a: "Papa Francesco (Jorge Mario Bergoglio)", c: "Cultura & Religione" },
+
+            // SPETTACOLO E SPORT (20)
+            { q: "Di che colore è la maglia della nazionale italiana di calcio?", a: "Azzurra", c: "Spettacolo & Sport" },
+            { q: "Quanti erano i nani di Biancaneve?", a: "7", c: "Spettacolo & Sport" },
+            { q: "Quale sport pratica Jannik Sinner?", a: "Tennis", c: "Spettacolo & Sport" },
+            { q: "Come si chiama il maghetto con la cicatrice a forma di saetta?", a: "Harry Potter", c: "Spettacolo & Sport" },
+            { q: "In che sport si usa il pallone ovale e si fa 'meta'?", a: "Rugby", c: "Spettacolo & Sport" },
+            { q: "Chi è la famosa fidanzata di Topolino?", a: "Minnie", c: "Spettacolo & Sport" },
+            { q: "Quanti giocatori ci sono in una squadra di calcio in campo?", a: "11", c: "Spettacolo & Sport" },
+            { q: "Qual è l'auto da corsa italiana famosa per il colore rosso?", a: "La Ferrari", c: "Spettacolo & Sport" },
+            { q: "Come si chiama l'orco verde dei cartoni animati amico di Ciuchino?", a: "Shrek", c: "Spettacolo & Sport" },
+            { q: "In quale città italiana si svolge il famoso Festival della Canzone?", a: "Sanremo", c: "Spettacolo & Sport" },
+            { q: "Come si chiama il trofeo vinto da chi arriva primo al Giro d'Italia?", a: "Maglia Rosa", c: "Spettacolo & Sport" },
+            { q: "Chi è il supereroe miliardario che indossa un'armatura rossa e oro?", a: "Iron Man", c: "Spettacolo & Sport" },
+            { q: "In quale sport si fanno i canestri?", a: "Pallacanestro (Basket)", c: "Spettacolo & Sport" },
+            { q: "Come si chiama il leoncino protagonista de 'Il Re Leone'?", a: "Simba", c: "Spettacolo & Sport" },
+            { q: "Quale squadra di calcio gioca nello stadio 'Diego Armando Maradona'?", a: "Il Napoli", c: "Spettacolo & Sport" },
+            { q: "Chi presenta storicamente il quiz televisivo 'Caduta Libera' e 'Passaparola'?", a: "Gerry Scotti", c: "Spettacolo & Sport" },
+            { q: "Come si chiama l'idraulico baffuto dei videogiochi Nintendo?", a: "Super Mario", c: "Spettacolo & Sport" },
+            { q: "In che sport si usano i guantoni ed esiste il KO?", a: "Pugilato (Boxe)", c: "Spettacolo & Sport" },
+            { q: "Quale gatto rincorre perennemente il topo Jerry?", a: "Tom", c: "Spettacolo & Sport" },
+            { q: "Quale nazione ha vinto i Mondiali di calcio nel 2006?", a: "L'Italia", c: "Spettacolo & Sport" }
+        ];
+
+        // Mappa i colori
+        function getCategoryClass(category) {
+            if (category.includes("Cucina")) return "cat-cucina";
+            if (category.includes("Storia")) return "cat-storia";
+            if (category.includes("Scienze")) return "cat-scienze";
+            if (category.includes("Cultura")) return "cat-cultura";
+            return "cat-sport";
+        }
+
+        // Rivela una risposta specifica
+        function toggleAnswer(index) {
+            const ansBox = document.getElementById(`ans-${index}`);
+            if (ansBox.style.display === "none" || ansBox.style.display === "") {
+                ansBox.style.display = "block";
+            } else {
+                ansBox.style.display = "none";
+            }
+        }
+
+        // Renderizza la lista
+        function renderQuestions(list) {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = ''; 
+            
+            list.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="badge ${getCategoryClass(item.c)}">${item.c}</div>
+                    <div class="question-text">${index + 1}. ${item.q}</div>
+                    <button class="btn-reveal" onclick="toggleAnswer(${index})">Rivela Risposta</button>
+                    <div id="ans-${index}" class="answer-box">Risposta: ${item.a}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Filtra le categorie
+        function filterQuestions() {
+            const cat = document.getElementById('categoryFilter').value;
+            const filtered = (cat === "Tutte") ? questions : questions.filter(q => q.c.includes(cat.split(" ")[1])); 
+            // piccolo trucco per far matchare la stringa della tendina con la categoria reale
+            
+            let finalFilter = questions;
+            if (cat !== "Tutte") {
+                finalFilter = questions.filter(q => q.c === cat.substring(3, cat.length - 5)); 
+            }
+            // fix per far combaciare perfettamente:
+            if(cat.includes("Cucina")) finalFilter = questions.filter(q => q.c === "Cucina & Polenta");
+            if(cat.includes("Storia")) finalFilter = questions.filter(q => q.c === "Storia & Geografia");
+            if(cat.includes("Scienze")) finalFilter = questions.filter(q => q.c === "Scienze & Natura");
+            if(cat.includes("Cultura")) finalFilter = questions.filter(q => q.c === "Cultura & Religione");
+            if(cat.includes("Spettacolo")) finalFilter = questions.filter(q => q.c === "Spettacolo & Sport");
+
+            renderQuestions(finalFilter);
+        }
+
+        // Estrazione Casuale
+        function drawRandom() {
+            const randomIndex = Math.floor(Math.random() * questions.length);
+            const q = questions[randomIndex];
+            
+            document.getElementById('modalBadge').className = `badge ${getCategoryClass(q.c)}`;
+            document.getElementById('modalBadge').innerText = q.c;
+            document.getElementById('modalQuestion').innerText = q.q;
+            document.getElementById('modalAnswer').innerText = q.a;
+            document.getElementById('modalAnswer').style.display = 'none'; // Nascondi risposta all'inizio
+            
+            document.getElementById('randomModal').style.display = 'flex';
+        }
+
+        // Avvio
+        window.onload = () => render
