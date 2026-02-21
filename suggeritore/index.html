@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggeritore Canti A.I.</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #4a148c; --bg: #f3f4f6; --white: #ffffff; --text: #333; --border: #e2e8f0; }
+        * { box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .container { max-width: 1000px; width: 100%; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: var(--primary); margin: 0 0 5px 0; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        .card { background: var(--white); border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .card h2 { margin-top: 0; color: #555; font-size: 1.2rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
+        
+        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        input[type="date"], input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; }
+        button { padding: 10px 18px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; font-size: 0.95rem; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: white; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-small { padding: 6px 12px; font-size: 0.85rem; }
+        
+        textarea { width: 100%; height: 100px; border: 1px solid #ccc; border-radius: 8px; padding: 10px; resize: vertical; margin-top: 10px; }
+        
+        /* GRIGLIA SUGGERIMENTI */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; }
+        .suggestion-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; }
+        .suggestion-box h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom:5px; }
+        
+        .song-match { background: white; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;}
+        .song-info { flex: 1; }
+        .song-title { font-weight: bold; font-size: 1rem; display: block; color: #1e293b; }
+        .song-reason { font-size: 0.75rem; color: #16a34a; font-weight: 500; }
+        
+        /* SEZIONE AGGIUNGI / ONLINE */
+        .add-online-box { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc; }
+        .add-online-box input { width: 100%; margin-bottom: 5px; padding: 8px; font-size: 0.9rem; }
+        
+        /* SCALETTA FINALE */
+        .scaletta-item { display: flex; justify-content: space-between; padding: 10px; background: #eef2ff; border-radius: 6px; margin-bottom: 8px; border: 1px solid #c7d2fe; }
+        .scaletta-item b { width: 100px; color: var(--primary); }
+        
+        #loader { display: none; text-align: center; color: var(--primary); font-weight: bold; margin: 20px 0; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><span class="material-icons-round">psychology</span> Suggeritore con Auto-Apprendimento</h1>
+        <p>Scarica le letture, scegli i canti e insegna all'algoritmo i tuoi nuovi inserimenti.</p>
+    </div>
+
+    <div class="card">
+        <h2>1. Estrai Temi del Giorno</h2>
+        <div class="controls">
+            <input type="date" id="dataMessa">
+            <button class="btn-primary" onclick="scaricaEAnalizza()">
+                <span class="material-icons-round">download</span> Scarica e Analizza
+            </button>
+        </div>
+        <div id="loader">Estrazione e calcolo in corso... <span class="material-icons-round" style="animation: spin 1s linear infinite;">refresh</span></div>
+        <div id="temiTrovati" style="margin-top:15px; font-weight:bold; color:#e65100;"></div>
+        <textarea id="testoLetture" style="display:none;" placeholder="Testo vangelo..."></textarea>
+    </div>
+
+    <div class="card" id="sezioneScaletta" style="display:none; border-color: var(--primary);">
+        <h2>2. La tua Scaletta <button class="btn-primary btn-small" onclick="salvaMessaEImpara()">💾 Salva e Insegna all'App</button></h2>
+        <div id="listaScaletta">
+            <div class="scaletta-item"><b>Ingresso:</b> <span id="sc-Ingresso">...</span></div>
+            <div class="scaletta-item"><b>Offertorio:</b> <span id="sc-Offertorio">...</span></div>
+            <div class="scaletta-item"><b>Comunione:</b> <span id="sc-Comunione">...</span></div>
+            <div class="scaletta-item"><b>Finale:</b> <span id="sc-Finale">...</span></div>
+        </div>
+    </div>
+
+    <div class="card" id="sezioneSuggerimenti" style="display:none;">
+        <h2>3. Suggerimenti dall'Archivio (Scegli o Cerca Online)</h2>
+        <div class="grid">
+            <div class="suggestion-box">
+                <h3>Ingresso</h3>
+                <div id="sug-Ingresso"></div>
+                <div class="add-online-box">
+                    <button class="btn-outline btn-small" style="width:100%; margin-bottom:5px;" onclick="cercaSuYouTube('Ingresso')">🔍 Cerca su YouTube</button>
+                    <input type="text" id="nuovo-Ingresso" placeholder="Titolo nuovo canto trovato...">
+                    <button class="btn-primary btn-small" style="width:100%;" onclick="aggiungiNuovoCanto('Ingresso')">➕ Impara e Scegli</button>
+                </div>
+            </div>
+            
+            <div class="suggestion-box">
+                <h3>Offertorio</h3>
+                <div id="sug-Offertorio"></div>
+                <div class="add-online-box">
+                    <button class="btn-outline btn-small" style="width:100%; margin-bottom:5px;" onclick="cercaSuYouTube('Offertorio')">🔍 Cerca su YouTube</button>
+                    <input type="text" id="nuovo-Offertorio" placeholder="Titolo nuovo canto trovato...">
+                    <button class="btn-primary btn-small" style="width:100%;" onclick="aggiungiNuovoCanto('Offertorio')">➕ Impara e Scegli</button>
+                </div>
+            </div>
+
+            <div class="suggestion-box">
+                <h3>Comunione</h3>
+                <div id="sug-Comunione"></div>
+                <div class="add-online-box">
+                    <button class="btn-outline btn-small" style="width:100%; margin-bottom:5px;" onclick="cercaSuYouTube('Comunione')">🔍 Cerca su YouTube</button>
+                    <input type="text" id="nuovo-Comunione" placeholder="Titolo nuovo canto trovato...">
+                    <button class="btn-primary btn-small" style="width:100%;" onclick="aggiungiNuovoCanto('Comunione')">➕ Impara e Scegli</button>
+                </div>
+            </div>
+
+            <div class="suggestion-box">
+                <h3>Finale</h3>
+                <div id="sug-Finale"></div>
+                <div class="add-online-box">
+                    <button class="btn-outline btn-small" style="width:100%; margin-bottom:5px;" onclick="cercaSuYouTube('Finale')">🔍 Cerca su YouTube</button>
+                    <input type="text" id="nuovo-Finale" placeholder="Titolo nuovo canto trovato...">
+                    <button class="btn-primary btn-small" style="width:100%;" onclick="aggiungiNuovoCanto('Finale')">➕ Impara e Scegli</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Gestione Database Apprendimento</h2>
+        <p style="font-size:0.9rem; color:#666;">Il sistema ha unito il database di base con i canti che gli hai insegnato tu.</p>
+        <button class="btn-outline" onclick="esportaDatabaseAggiornato()">
+            <span class="material-icons-round">file_download</span> Scarica canti.json Aggiornato (Per GitHub)
+        </button>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('dataMessa').valueAsDate = new Date();
+
+    // -------------------------------------------------------------------------
+    // 1. INIZIALIZZAZIONE DATABASE (Unione Base + Imparati)
+    // -------------------------------------------------------------------------
+    // Questo è il database base di partenza.
+    let cantiBase = [
+        { titolo: "Acclamate al Signore", parte: "Ingresso", keywords: ["gioia", "terra", "cantate", "roccia", "salvezza"] },
+        { titolo: "Pane di vita nuova", parte: "Comunione", keywords: ["pane", "vita", "sangue", "corpo", "pasqua"] },
+        { titolo: "Servo per amore", parte: "Offertorio", keywords: ["servire", "amare", "lavare", "piedi", "poveri"] },
+        { titolo: "Su ali d'aquila", parte: "Finale", keywords: ["aquila", "fiducia", "protezione", "salvezza"] }
+    ];
+
+    // Carica il database remoto (Se hai un file su github sostituisci URL_GITHUB)
+    // Se fallisce (CORS o non esiste) usa il cantiBase.
+    let cantiDB = [];
+    let cantiImparati = JSON.parse(localStorage.getItem('cantiImparati')) || [];
+    let temiCorrenti = []; // I temi estratti dalla messa odierna
+    let scalettaSelezionata = { Ingresso: null, Offertorio: null, Comunione: null, Finale: null };
+
+    // Vocabolario di concetti chiave da cercare nel Vangelo
+    const vocabolarioTemi = ["pane", "vino", "luce", "pastore", "pecore", "acqua", "spirito", "fuoco", "croce", "sangue", "risurrezione", "misericordia", "pace", "gioia", "servire", "amore", "via", "verità", "vita", "vigna", "seme", "re", "gloria", "maria"];
+
+    window.onload = () => {
+        // Uniamo il DB base con quelli che l'utente ha aggiunto localmente
+        cantiDB = [...cantiBase, ...cantiImparati];
+    };
+
+    // -------------------------------------------------------------------------
+    // 2. SCARICA E ANALIZZA LE LETTURE
+    // -------------------------------------------------------------------------
+    async function scaricaEAnalizza() {
+        const dStr = document.getElementById('dataMessa').value;
+        const d = new Date(dStr);
+        document.getElementById('loader').style.display = 'block';
+
+        const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://www.lachiesa.it/calendario/Detailed/${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.shtml`)}`;
+        
+        try {
+            const res = await fetch(url);
+            const json = await res.json();
+            const testoPulito = new DOMParser().parseFromString(json.contents,"text/html").body.innerText.replace(/\s+/g,' ');
+            
+            document.getElementById('testoLetture').value = testoPulito;
+            document.getElementById('loader').style.display = 'none';
+            
+            calcolaTemi(testoPulito);
+        } catch (e) {
+            document.getElementById('loader').style.display = 'none';
+            alert("Errore download. Incolla il testo a mano nel riquadro nascosto (rimuovi 'display:none' dal codice).");
+        }
+    }
+
+    function calcolaTemi(testo) {
+        testo = testo.toLowerCase();
+        let conteggio = [];
+        
+        vocabolarioTemi.forEach(parola => {
+            const occorrenze = (testo.match(new RegExp(`\\b${parola}\\b`, 'gi')) || []).length;
+            if(occorrenze > 0) conteggio.push({ parola, count: occorrenze });
+        });
+
+        conteggio.sort((a,b) => b.count - a.count);
+        temiCorrenti = conteggio.slice(0, 4).map(t => t.parola); // Prendi i top 4 temi
+
+        document.getElementById('temiTrovati').innerText = temiCorrenti.length > 0 ? "Temi rilevati: " + temiCorrenti.join(", ").toUpperCase() : "Nessun tema specifico rilevato.";
+        
+        document.getElementById('sezioneScaletta').style.display = 'block';
+        calcolaSuggerimenti();
+    }
+
+    // -------------------------------------------------------------------------
+    // 3. CALCOLO SUGGERIMENTI
+    // -------------------------------------------------------------------------
+    function calcolaSuggerimenti() {
+        // Aggiorna il DB in caso di nuovi inserimenti
+        cantiDB = [...cantiBase, ...cantiImparati];
+        const parti = ["Ingresso", "Offertorio", "Comunione", "Finale"];
+
+        parti.forEach(parte => {
+            let candidati = cantiDB.filter(c => c.parte === parte);
+            
+            candidati.forEach(canto => {
+                canto.score = 0;
+                canto.match = [];
+                canto.keywords.forEach(kw => {
+                    if(temiCorrenti.includes(kw.toLowerCase())) {
+                        canto.score += 10;
+                        canto.match.push(kw);
+                    }
+                });
+            });
+
+            candidati.sort((a,b) => b.score - a.score);
+            let top3 = candidati.slice(0, 3);
+            
+            const cont = document.getElementById(`sug-${parte}`);
+            cont.innerHTML = "";
+            
+            top3.forEach(canto => {
+                const motivo = canto.score > 0 ? `Affinità: ${canto.match.join(', ')}` : "Consigliato";
+                cont.innerHTML += `
+                    <div class="song-match">
+                        <div class="song-info">
+                            <span class="song-title">${canto.titolo}</span>
+                            <span class="song-reason">${motivo}</span>
+                        </div>
+                        <button class="btn-primary btn-small" onclick="selezionaCanto('${parte}', '${canto.titolo.replace(/'/g, "\\'")}')">Scegli</button>
+                    </div>
+                `;
+            });
+        });
+
+        document.getElementById('sezioneSuggerimenti').style.display = 'block';
+    }
+
+    // -------------------------------------------------------------------------
+    // 4. SCELTA E APPRENDIMENTO NUOVI CANTI ONLINE
+    // -------------------------------------------------------------------------
+    function selezionaCanto(parte, titolo) {
+        scalettaSelezionata[parte] = titolo;
+        document.getElementById(`sc-${parte}`).innerText = titolo;
+    }
+
+    function cercaSuYouTube(parte) {
+        const query = encodeURIComponent(`canto liturgico chiesa ${parte} ${temiCorrenti.join(" ")}`);
+        window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
+    }
+
+    function aggiungiNuovoCanto(parte) {
+        const inputEl = document.getElementById(`nuovo-${parte}`);
+        const titolo = inputEl.value.trim();
+        if(!titolo) return alert("Inserisci un titolo prima!");
+
+        // Crea il nuovo canto e INSEGNA all'app le parole chiave attuali
+        const nuovoCanto = {
+            titolo: titolo,
+            parte: parte,
+            keywords: [...temiCorrenti] // Associa i temi del Vangelo di oggi a questo canto!
+        };
+
+        cantiImparati.push(nuovoCanto);
+        localStorage.setItem('cantiImparati', JSON.stringify(cantiImparati));
+        
+        inputEl.value = "";
+        alert(`"${titolo}" imparato! Inserito nei suggerimenti futuri per i temi: ${temiCorrenti.join(", ")}`);
+        
+        // Lo seleziona subito in scaletta
+        selezionaCanto(parte, titolo);
+        calcolaSuggerimenti(); // Ricalcola per mostrarlo
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. SALVATAGGIO SCALETTA ED ESPORTAZIONE
+    // -------------------------------------------------------------------------
+    function salvaMessaEImpara() {
+        if(!scalettaSelezionata.Ingresso && !scalettaSelezionata.Comunione) return alert("Scegli almeno un canto!");
+        
+        // Logica di rafforzamento (Machine Learning base)
+        // Quando salvi una scaletta, l'algoritmo aggiunge le parole chiave attuali 
+        // ai canti che hai scelto, rendendoli ancora più forti in futuro.
+        Object.keys(scalettaSelezionata).forEach(parte => {
+            const titoloScelto = scalettaSelezionata[parte];
+            if(titoloScelto) {
+                let cantoTrovato = cantiImparati.find(c => c.titolo === titoloScelto);
+                if(cantoTrovato) {
+                    temiCorrenti.forEach(tema => {
+                        if(!cantoTrovato.keywords.includes(tema)) cantoTrovato.keywords.push(tema);
+                    });
+                }
+            }
+        });
+
+        localStorage.setItem('cantiImparati', JSON.stringify(cantiImparati));
+        alert("Scaletta Salvata! L'algoritmo ha imparato le tue scelte basate su queste letture.");
+    }
+
+    function esportaDatabaseAggiornato() {
+        const fullDB = [...cantiBase, ...cantiImparati];
+        
+        // Rimuove eventuali doppioni in base al titolo
+        const uniqueDB = Array.from(new Map(fullDB.map(item => [item.titolo, item])).values());
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(uniqueDB, null, 2));
+        const anchor = document.createElement('a');
+        anchor.setAttribute("href", dataStr);
+        anchor.setAttribute("download", "canti_intelligenza_aggiornati.json");
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+    }
+
+</script>
+</body>
+</html>
