@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Musichiere della Polenta 🥘</title>
+    <style>
+        :root {
+            --primary: #ffcc00;
+            --secondary: #e6b800;
+            --spotify: #1DB954;
+            --dark: #333;
+            --light: #fff9e6;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--primary);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--secondary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 2.5em; color: #222; }
+        p { margin: 5px 0 0 0; font-weight: bold; color: #555; }
+        
+        .controls {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 12px;
+            font-size: 1.1em;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        select {
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .playlist {
+            max-width: 800px;
+            margin: 0 auto 50px auto;
+            padding: 0 15px;
+        }
+        .song-card {
+            background: white;
+            margin-bottom: 12px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--primary);
+            transition: transform 0.1s;
+        }
+        .song-card:hover { transform: scale(1.02); }
+        .song-info { flex-grow: 1; }
+        .song-title { font-size: 1.2em; font-weight: bold; margin-bottom: 4px; }
+        .song-artist { color: #666; font-size: 0.9em; }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-top: 5px;
+            background: #eee;
+        }
+        .btn-play {
+            background-color: var(--spotify);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(29, 185, 84, 0.4);
+        }
+        .btn-play:hover { background-color: #1ed760; }
+        
+        /* Colori Categorie */
+        .cat-nonni { background-color: #ffcccc; color: #cc0000; }
+        .cat-genitori { background-color: #cce5ff; color: #004085; }
+        .cat-ragazzi { background-color: #d4edda; color: #155724; }
+        .cat-cartoni { background-color: #fff3cd; color: #856404; }
+        .cat-jolly { background-color: #e2e3e5; color: #383d41; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🥘 Il Musichiere della Polenta</h1>
+        <p>100 Hit pronte per far esplodere la sala!</p>
+    </header>
+
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="Cerca una canzone o un artista..." onkeyup="filterSongs()">
+        <select id="categoryFilter" onchange="filterSongs()">
+            <option value="Tutte">Tutte le Categorie</option>
+            <option value="Nonni (Anni '60-'70)">Nonni (Anni '60-'70)</option>
+            <option value="Genitori (Anni '80-'90)">Genitori (Anni '80-'90)</option>
+            <option value="Ragazzi (Hit Moderne)">Ragazzi (Hit Moderne)</option>
+            <option value="Cartoni Animati">Cartoni Animati</option>
+            <option value="Jolly & Balli di Gruppo">Jolly & Balli di Gruppo</option>
+        </select>
+    </div>
+
+    <div class="playlist" id="playlistContainer">
+        </div>
+
+    <script>
+        // Database di 100 canzoni divise per target
+        const songs = [
+            // NONNI (Anni '60-'70) - 20 Canzoni
+            { title: "Azzurro", artist: "Adriano Celentano", category: "Nonni (Anni '60-'70)" },
+            { title: "Nel blu dipinto di blu", artist: "Domenico Modugno", category: "Nonni (Anni '60-'70)" },
+            { title: "Fatti mandare dalla mamma", artist: "Gianni Morandi", category: "Nonni (Anni '60-'70)" },
+            { title: "O Sole Mio", artist: "Luciano Pavarotti", category: "Nonni (Anni '60-'70)" },
+            { title: "La Bamba", artist: "Ritchie Valens", category: "Nonni (Anni '60-'70)" },
+            { title: "Sapore di sale", artist: "Gino Paoli", category: "Nonni (Anni '60-'70)" },
+            { title: "Il ragazzo della via Gluck", artist: "Adriano Celentano", category: "Nonni (Anni '60-'70)" },
+            { title: "Cuore matto", artist: "Little Tony", category: "Nonni (Anni '60-'70)" },
+            { title: "Marina", artist: "Rocco Granata", category: "Nonni (Anni '60-'70)" },
+            { title: "Rose rosse", artist: "Massimo Ranieri", category: "Nonni (Anni '60-'70)" },
+            { title: "Una rotonda sul mare", artist: "Fred Bongusto", category: "Nonni (Anni '60-'70)" },
+            { title: "Quando quando quando", artist: "Tony Renis", category: "Nonni (Anni '60-'70)" },
+            { title: "Tintarella di luna", artist: "Mina", category: "Nonni (Anni '60-'70)" },
+            { title: "Stessa spiaggia stesso mare", artist: "Piero Focaccia", category: "Nonni (Anni '60-'70)" },
+            { title: "Il mondo", artist: "Jimmy Fontana", category: "Nonni (Anni '60-'70)" },
+            { title: "Zingara", artist: "Iva Zanicchi", category: "Nonni (Anni '60-'70)" },
+            { title: "Andavo a 100 all'ora", artist: "Gianni Morandi", category: "Nonni (Anni '60-'70)" },
+            { title: "Nessuno mi può giudicare", artist: "Caterina Caselli", category: "Nonni (Anni '60-'70)" },
+            { title: "La fisarmonica", artist: "Gianni Morandi", category: "Nonni (Anni '60-'70)" },
+            { title: "Diana", artist: "Paul Anka", category: "Nonni (Anni '60-'70)" },
+
+            // GENITORI (Anni '80-'90) - 20 Canzoni
+            { title: "Sarà perché ti amo", artist: "Ricchi e Poveri", category: "Genitori (Anni '80-'90)" },
+            { title: "Hanno ucciso l'Uomo Ragno", artist: "883", category: "Genitori (Anni '80-'90)" },
+            { title: "Gianna", artist: "Rino Gaetano", category: "Genitori (Anni '80-'90)" },
+            { title: "Gloria", artist: "Umberto Tozzi", category: "Genitori (Anni '80-'90)" },
+            { title: "Tanti Auguri", artist: "Raffaella Carrà", category: "Genitori (Anni '80-'90)" },
+            { title: "Certe Notti", artist: "Ligabue", category: "Genitori (Anni '80-'90)" },
+            { title: "Albachiara", artist: "Vasco Rossi", category: "Genitori (Anni '80-'90)" },
+            { title: "Un'estate italiana", artist: "Bennato Nannini", category: "Genitori (Anni '80-'90)" },
+            { title: "50 Special", artist: "Lùnapop", category: "Genitori (Anni '80-'90)" },
+            { title: "L'ombelico del mondo", artist: "Jovanotti", category: "Genitori (Anni '80-'90)" },
+            { title: "Boys (Summertime Love)", artist: "Sabrina Salerno", category: "Genitori (Anni '80-'90)" },
+            { title: "Vamos a la playa", artist: "Righeira", category: "Genitori (Anni '80-'90)" },
+            { title: "Nord Sud Ovest Est", artist: "883", category: "Genitori (Anni '80-'90)" },
+            { title: "Mamma Maria", artist: "Ricchi e Poveri", category: "Genitori (Anni '80-'90)" },
+            { title: "Pedro", artist: "Raffaella Carrà", category: "Genitori (Anni '80-'90)" },
+            { title: "Baila (Sexy Thing)", artist: "Zucchero", category: "Genitori (Anni '80-'90)" },
+            { title: "Ti amo", artist: "Umberto Tozzi", category: "Genitori (Anni '80-'90)" },
+            { title: "Salirò", artist: "Daniele Silvestri", category: "Genitori (Anni '80-'90)" },
+            { title: "Y.M.C.A.", artist: "Village People", category: "Genitori (Anni '80-'90)" },
+            { title: "Freed from Desire", artist: "Gala", category: "Genitori (Anni '80-'90)" },
+
+            // RAGAZZI (Hit Moderne) - 20 Canzoni
+            { title: "Sinceramente", artist: "Annalisa", category: "Ragazzi (Hit Moderne)" },
+            { title: "Tuta Gold", artist: "Mahmood", category: "Ragazzi (Hit Moderne)" },
+            { title: "Giovani Wannabe", artist: "Pinguini Tattici Nucleari", category: "Ragazzi (Hit Moderne)" },
+            { title: "Supereroi", artist: "Mr. Rain", category: "Ragazzi (Hit Moderne)" },
+            { title: "Brividi", artist: "Mahmood Blanco", category: "Ragazzi (Hit Moderne)" },
+            { title: "Italodisco", artist: "The Kolors", category: "Ragazzi (Hit Moderne)" },
+            { title: "Due Vite", artist: "Marco Mengoni", category: "Ragazzi (Hit Moderne)" },
+            { title: "Mon Amour", artist: "Annalisa", category: "Ragazzi (Hit Moderne)" },
+            { title: "Dove si balla", artist: "Dargen D'Amico", category: "Ragazzi (Hit Moderne)" },
+            { title: "Zitti e Buoni", artist: "Måneskin", category: "Ragazzi (Hit Moderne)" },
+            { title: "I p' me, tu p' te", artist: "Geolier", category: "Ragazzi (Hit Moderne)" },
+            { title: "La noia", artist: "Angelina Mango", category: "Ragazzi (Hit Moderne)" },
+            { title: "Rubami la Notte", artist: "Pinguini Tattici Nucleari", category: "Ragazzi (Hit Moderne)" },
+            { title: "Cenere", artist: "Lazza", category: "Ragazzi (Hit Moderne)" },
+            { title: "Farfalle", artist: "Sangiovanni", category: "Ragazzi (Hit Moderne)" },
+            { title: "Mille", artist: "Fedez Achille Lauro Orietta Berti", category: "Ragazzi (Hit Moderne)" },
+            { title: "Bellissima", artist: "Annalisa", category: "Ragazzi (Hit Moderne)" },
+            { title: "Pazza Musica", artist: "Marco Mengoni Elodie", category: "Ragazzi (Hit Moderne)" },
+            { title: "Dance The Night", artist: "Dua Lipa", category: "Ragazzi (Hit Moderne)" },
+            { title: "As It Was", artist: "Harry Styles", category: "Ragazzi (Hit Moderne)" },
+
+            // CARTONI ANIMATI - 20 Canzoni
+            { title: "Sigla Pokémon", artist: "Giorgio Vanni", category: "Cartoni Animati" },
+            { title: "I Puffi sanno", artist: "Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Heidi", artist: "Elisabetta Viviani", category: "Cartoni Animati" },
+            { title: "L'Uomo Tigre", artist: "Cavalieri del Re", category: "Cartoni Animati" },
+            { title: "Siamo fatti così", artist: "Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Dragon Ball", artist: "Giorgio Vanni", category: "Cartoni Animati" },
+            { title: "Il valzer del moscerino", artist: "Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Occhi di gatto", artist: "Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Kiss Me Licia", artist: "Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Mila e Shiro", artist: "Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Lady Oscar", artist: "Cavalieri del Re", category: "Cartoni Animati" },
+            { title: "Pollon combinaguai", artist: "Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Hakuna Matata", artist: "Il Re Leone", category: "Cartoni Animati" },
+            { title: "Let it go (All'alba sorgerò)", artist: "Frozen", category: "Cartoni Animati" },
+            { title: "In fondo al mar", artist: "La Sirenetta", category: "Cartoni Animati" },
+            { title: "Il mio amico Mac", artist: "Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Ufo Robot", artist: "Actarus", category: "Cartoni Animati" },
+            { title: "Doraemon", artist: "Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Rossana", artist: "Giorgio Vanni Cristina D'Avena", category: "Cartoni Animati" },
+            { title: "Naruto", artist: "Giorgio Vanni", category: "Cartoni Animati" },
+
+            // JOLLY & BALLI DI GRUPPO - 20 Canzoni
+            { title: "Resta qui con noi", artist: "Gen Rosso", category: "Jolly & Balli di Gruppo" },
+            { title: "Su ali d'aquila", artist: "Canto di Chiesa", category: "Jolly & Balli di Gruppo" },
+            { title: "Emmanuel", artist: "Inno GMG 2000", category: "Jolly & Balli di Gruppo" },
+            { title: "Il ballo del qua qua", artist: "Romina Power", category: "Jolly & Balli di Gruppo" },
+            { title: "Gioca Jouer", artist: "Claudio Cecchetto", category: "Jolly & Balli di Gruppo" },
+            { title: "Macarena", artist: "Los Del Rio", category: "Jolly & Balli di Gruppo" },
+            { title: "Asereje", artist: "Las Ketchup", category: "Jolly & Balli di Gruppo" },
+            { title: "Maracaibo", artist: "Lu Colombo", category: "Jolly & Balli di Gruppo" },
+            { title: "La Colita", artist: "Los Locos", category: "Jolly & Balli di Gruppo" },
+            { title: "Danza Kuduro", artist: "Don Omar", category: "Jolly & Balli di Gruppo" },
+            { title: "Waka Waka", artist: "Shakira", category: "Jolly & Balli di Gruppo" },
+            { title: "Despacito", artist: "Luis Fonsi", category: "Jolly & Balli di Gruppo" },
+            { title: "El Pam Pam", artist: "Cecilia Gayle", category: "Jolly & Balli di Gruppo" },
+            { title: "Il ballo di Simone", artist: "Giuliano e i Notturni", category: "Jolly & Balli di Gruppo" },
+            { title: "Tic Tic Tac", artist: "Los Locos", category: "Jolly & Balli di Gruppo" },
+            { title: "Mambo No. 5", artist: "Lou Bega", category: "Jolly & Balli di Gruppo" },
+            { title: "La Flaca", artist: "Jarabe De Palo", category: "Jolly & Balli di Gruppo" },
+            { title: "Andiamo a comandare", artist: "Fabio Rovazzi", category: "Jolly & Balli di Gruppo" },
+            { title: "Sofia", artist: "Alvaro Soler", category: "Jolly & Balli di Gruppo" },
+            { title: "Don Matteo Sigla", artist: "Pino Donaggio", category: "Jolly & Balli di Gruppo" }
+        ];
+
+        // Funzione per assegnare il colore in base alla categoria
+        function getCategoryClass(category) {
+            if (category.includes("Nonni")) return "cat-nonni";
+            if (category.includes("Genitori")) return "cat-genitori";
+            if (category.includes("Ragazzi")) return "cat-ragazzi";
+            if (category.includes("Cartoni")) return "cat-cartoni";
+            return "cat-jolly";
+        }
+
+        // Renderizza la lista delle canzoni
+        function renderSongs(songList) {
+            const container = document.getElementById('playlistContainer');
+            container.innerHTML = ''; // Svuota il contenitore
+            
+            songList.forEach((song, index) => {
+                // Crea il link di ricerca di Spotify (infallibile per evitare link rotti)
+                const searchQuery = encodeURIComponent(`${song.title} ${song.artist}`);
+                const spotifyLink = `https://open.spotify.com/search/${searchQuery}`;
+                
+                const card = document.createElement('div');
+                card.className = 'song-card';
+                card.innerHTML = `
+                    <div class="song-info">
+                        <div class="song-title">${index + 1}. ${song.title}</div>
+                        <div class="song-artist">🎤 ${song.artist}</div>
+                        <div class="badge ${getCategoryClass(song.category)}">${song.category}</div>
+                    </div>
+                    <a href="${spotifyLink}" target="_blank" class="btn-play">
+                        ▶ Play
+                    </a>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Filtra le canzoni con la barra di ricerca o la tendina
+        function filterSongs() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            
+            const filtered = songs.filter(song => {
+                const matchesText = song.title.toLowerCase().includes(searchText) || song.artist.toLowerCase().includes(searchText);
+                const matchesCategory = categoryFilter === "Tutte" || song.category === categoryFilter;
+                return matchesText && matchesCategory;
+            });
+            
+            renderSongs(filtered);
+        }
+
+        // Inizializza l'app al caricamento
+        window.onload = () => renderSongs(songs);
+    </script>
+</body>
+</html>
