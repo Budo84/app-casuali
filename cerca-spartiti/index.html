@@ -44,15 +44,19 @@
         
         .btn-web { background: var(--primary); color: white; }
         .btn-web:hover { background: var(--primary-dark); }
+
+        .btn-text { background: #2e7d32; color: white; }
+        .btn-text:hover { background: #1b5e20; }
         
         .btn-yt { background: #212121; color: white; }
         .btn-yt:hover { background: #000000; }
 
-        .instructions { background: #fff8e1; border-left: 4px solid #ffb300; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 0.9rem; color: #555; }
+        .instructions { background: #fff8e1; border-left: 4px solid #ffb300; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 0.9rem; color: #555; line-height: 1.5; }
 
         @media (max-width: 600px) {
             .card { padding: 20px; }
             input[type="text"] { font-size: 1.1rem; padding: 15px 15px 15px 50px; }
+            .action-grid { grid-template-columns: 1fr 1fr; } /* Griglia 2x2 su mobile */
         }
     </style>
 </head>
@@ -60,8 +64,8 @@
 
 <div class="container">
     <div class="header">
-        <h1><span class="material-icons-round">picture_as_pdf</span> Trova Spartiti</h1>
-        <p>Motore di ricerca ottimizzato per canti liturgici</p>
+        <h1><span class="material-icons-round">picture_as_pdf</span> Trova Spartiti & Testi</h1>
+        <p>Motore di ricerca ottimizzato per i canti liturgici</p>
     </div>
 
     <div class="card">
@@ -86,7 +90,12 @@
             
             <button class="btn-web" onclick="searchChords()">
                 <span class="material-icons-round">queue_music</span>
-                Testo e Accordi Web
+                Testo e Accordi
+            </button>
+
+            <button class="btn-text" onclick="searchTextOnly()">
+                <span class="material-icons-round">format_align_left</span>
+                Solo Testo
             </button>
             
             <button class="btn-yt" onclick="searchYouTube()">
@@ -96,7 +105,9 @@
         </div>
         
         <div class="instructions">
-            <strong>💡 Come funziona:</strong> Questo strumento usa parametri avanzati per forzare Google a mostrare <b>esclusivamente file .pdf</b> che contengono il titolo che hai cercato insieme alle parole "accordi" o "spartito". 
+            <strong>💡 Come funzionano i pulsanti:</strong><br>
+            • <b>Solo Spartiti PDF:</b> Forza Google a cercare solo veri file scaricabili in formato .pdf.<br>
+            • <b>Solo Testo:</b> Esclude appositamente le pagine con accordi o partiture, ideale se ti servono solo le parole da copiare.
         </div>
     </div>
 </div>
@@ -113,7 +124,7 @@
         input.focus();
     }
 
-    // Permette di cercare premendo "Invio" sulla tastiera
+    // Permette di cercare premendo "Invio" sulla tastiera (Apre i PDF di default)
     function handleEnter(e) {
         if (e.key === 'Enter') {
             searchPDF();
@@ -130,35 +141,42 @@
         return query;
     }
 
-    // 1. RICERCA ESCLUSIVA PDF (Il cuore dello script)
+    // 1. RICERCA ESCLUSIVA PDF
     function searchPDF() {
         const song = getQuery();
         if (!song) return;
 
-        // Costruisce una Google Dork potente:
-        // intitle:"nome canzone" -> cerca il nome nel titolo della pagina/file
-        // (accordi OR spartito OR partitura OR chords) -> deve contenere almeno una di queste parole
-        // filetype:pdf -> FORZA Google a restituire solo file scaricabili in PDF
-        
-        const googleDork = `intitle:"${song}" (accordi OR spartito OR partitura) filetype:pdf`;
+        // intitle:"nome canzone" (accordi OR spartito...) filetype:pdf
+        const googleDork = `intitle:"${song}" (accordi OR spartito OR partitura OR testo) filetype:pdf`;
         const url = `https://www.google.com/search?q=${encodeURIComponent(googleDork)}`;
         
         window.open(url, '_blank');
     }
 
-    // 2. RICERCA SITI WEB NORMALI CON ACCORDI
+    // 2. RICERCA SITI WEB CON ACCORDI E TESTO
     function searchChords() {
         const song = getQuery();
         if (!song) return;
 
-        // Ricerca web normale, dà priorità a siti noti come animanimale, cantoeprego, ecc.
         const query = `"${song}" accordi canto liturgico`;
         const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
         
         window.open(url, '_blank');
     }
 
-    // 3. RICERCA YOUTUBE
+    // 3. RICERCA SOLO TESTO (NUOVA FUNZIONE)
+    function searchTextOnly() {
+        const song = getQuery();
+        if (!song) return;
+
+        // Usa il meno (-) per dire a Google di rimuovere i risultati che contengono la parola "accordi" o "spartito"
+        const query = `"${song}" testo canto liturgico -accordi -spartito -chords`;
+        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        
+        window.open(url, '_blank');
+    }
+
+    // 4. RICERCA YOUTUBE
     function searchYouTube() {
         const song = getQuery();
         if (!song) return;
