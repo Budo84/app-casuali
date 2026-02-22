@@ -27,7 +27,11 @@
         .btn-outline { background: white; border: 1px solid var(--primary); color: var(--primary); }
         .btn-small { padding: 6px 12px; font-size: 0.85rem; }
         
-        textarea { width: 100%; height: 100px; border: 1px solid #ccc; border-radius: 8px; padding: 10px; resize: vertical; margin-top: 10px; font-size: 0.9rem; }
+        /* BOX LETTURE DIVISE */
+        .lettura-box { margin-top: 15px; }
+        .lettura-box label { display: block; font-size: 0.85rem; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
+        .lettura-box textarea { width: 100%; height: 80px; border: 1px solid #ccc; border-radius: 8px; padding: 10px; resize: vertical; font-size: 0.9rem; line-height: 1.4; }
+        .lettura-box textarea.vangelo { height: 120px; border: 2px solid var(--primary); }
         
         /* GRIGLIA SUGGERIMENTI */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
@@ -66,12 +70,34 @@
         <div class="controls">
             <input type="date" id="dataMessa">
             <button class="btn-primary" onclick="scaricaEAnalizza()">
-                <span class="material-icons-round">download</span> Scarica e Analizza
+                <span class="material-icons-round">download</span> Scarica Letture
+            </button>
+            <button class="btn-outline" onclick="analizzaManuale()">
+                <span class="material-icons-round">sync</span> Ricalcola da Testo
             </button>
         </div>
+        
         <div id="loader">Estrazione letture e calcolo A.I. in corso... <span class="material-icons-round" style="animation: spin 1s linear infinite;">refresh</span></div>
         <div id="temiTrovati" style="margin-top:15px; font-weight:bold; color:#e65100;"></div>
-        <textarea id="testoLetture" style="display:none;" placeholder="Testo vangelo..."></textarea>
+        
+        <div id="boxLetture" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+            <div class="lettura-box">
+                <label>I Lettura</label>
+                <textarea id="r1" placeholder="Testo della Prima Lettura..."></textarea>
+            </div>
+            <div class="lettura-box">
+                <label>Salmo Responsoriale</label>
+                <textarea id="rps" style="height:60px;" placeholder="Testo del Salmo..."></textarea>
+            </div>
+            <div class="lettura-box">
+                <label>II Lettura</label>
+                <textarea id="r2" placeholder="Testo della Seconda Lettura..."></textarea>
+            </div>
+            <div class="lettura-box">
+                <label>Vangelo (Analisi Principale)</label>
+                <textarea id="rg" class="vangelo" placeholder="Testo del Vangelo..."></textarea>
+            </div>
+        </div>
     </div>
 
     <div class="card" id="sezioneScaletta" style="display:none; border-color: var(--primary); border-width: 2px;">
@@ -87,7 +113,6 @@
     <div class="card" id="sezioneSuggerimenti" style="display:none;">
         <h2>3. Suggerimenti dall'Archivio (Top 5 per pertinenza)</h2>
         <div class="grid">
-            
             <div class="suggestion-box">
                 <h3>Ingresso</h3>
                 <div id="sug-Ingresso"></div>
@@ -141,7 +166,6 @@
 </div>
 
 <script>
-    // Imposta la data odierna all'avvio
     document.getElementById('dataMessa').valueAsDate = new Date();
 
     // -------------------------------------------------------------------------
@@ -295,23 +319,20 @@
         { titolo: "Oggi ti chiamo Maria", autore: "Tradizionale", parte: "Finale", keywords: ["oggi", "chiamo", "maria", "madre", "speranza", "cielo"] }
     ];
 
-    // Array Dinamici
     let cantiDB = [];
     let cantiImparati = JSON.parse(localStorage.getItem('cantiImparati')) || [];
     let temiCorrenti = []; 
     let scalettaSelezionata = { Ingresso: null, Offertorio: null, Comunione: null, Finale: null };
 
-    // Vocabolario Estratto Dinamicamente da tutto il database!
-    // In questo modo, qualsiasi keyword tu metta nei canti, verrà cercata.
+    // Vocabolario Estratto Dinamicamente
     const vocabolarioTemi = [...new Set(cantiBase.flatMap(c => c.keywords))];
 
-    // Caricamento Iniziale
     window.onload = () => {
         cantiDB = [...cantiBase, ...cantiImparati];
     };
 
     // -------------------------------------------------------------------------
-    // 2. SCARICA E ANALIZZA LE LETTURE DAL SITO DELLA CHIESA
+    // 2. SCARICA E DIVIDI LE LETTURE
     // -------------------------------------------------------------------------
     async function scaricaEAnalizza() {
         const dStr = document.getElementById('dataMessa').value;
@@ -320,53 +341,72 @@
         document.getElementById('loader').style.display = 'block';
         document.getElementById('sezioneScaletta').style.display = 'none';
         document.getElementById('sezioneSuggerimenti').style.display = 'none';
+        document.getElementById('boxLetture').style.display = 'none';
 
         const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://www.lachiesa.it/calendario/Detailed/${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.shtml`)}`;
         
         try {
             const res = await fetch(url);
             const json = await res.json();
-            const testoPulito = new DOMParser().parseFromString(json.contents,"text/html").body.innerText.replace(/\s+/g,' ');
+            const t = new DOMParser().parseFromString(json.contents,"text/html").body.innerText.replace(/\s+/g,' ');
             
-            // Trova solo il Vangelo e dintorni per un'analisi più mirata
-            let inizio = testoPulito.toLowerCase().indexOf("dal vangelo");
-            if(inizio === -1) inizio = testoPulito.toLowerCase().indexOf("prima lettura");
-            if(inizio === -1) inizio = 0;
+            // Parser Fuzzy Diviso in 4
+            const find = (startKeys, endKeys) => {
+                let s = -1;
+                for (let w of startKeys) {
+                    let i = t.toLowerCase().indexOf(w.toLowerCase());
+                    if (i > -1) { s = i + w.length; break; }
+                }
+                if (s < 0) return "";
+                let e = -1;
+                for (let w of endKeys) {
+                    let i = t.toLowerCase().indexOf(w.toLowerCase(), s);
+                    if (i > -1) { e = i; break; }
+                }
+                return e < 0 ? "" : t.substring(s, e).trim();
+            };
 
-            let fine = testoPulito.toLowerCase().indexOf("preghiera sulle offerte");
-            if(fine === -1) fine = testoPulito.length;
-
-            const testoEstratto = testoPulito.substring(inizio, fine).trim();
+            document.getElementById('r1').value = find(["Prima Lettura", "Dagli Atti", "1a Lettura"], ["Salmo", "Salmo Responsoriale"]);
+            document.getElementById('rps').value = find(["Salmo Responsoriale", "Salmo"], ["Seconda Lettura", "Vangelo", "2a Lettura"]);
+            document.getElementById('r2').value = find(["Seconda Lettura", "2a Lettura"], ["Vangelo", "Canto al Vangelo"]);
+            document.getElementById('rg').value = find(["Dal Vangelo", "Vangelo"], ["PREGHIERA", "Sulle Offerte"]);
             
-            document.getElementById('testoLetture').value = testoEstratto;
             document.getElementById('loader').style.display = 'none';
+            document.getElementById('boxLetture').style.display = 'block';
             
-            calcolaTemi(testoEstratto);
+            // Lancia in automatico l'analisi dopo aver popolato i box
+            analizzaManuale();
 
         } catch (e) {
             document.getElementById('loader').style.display = 'none';
-            alert("Errore scaricamento automatico. Incolla il testo del Vangelo nel box e continua.");
-            document.getElementById('testoLetture').style.display = 'block';
+            alert("Letture non trovate per questa data. Puoi incollarle manualmente nei box apparsi e cliccare su 'Ricalcola da Testo'.");
+            document.getElementById('boxLetture').style.display = 'block';
         }
     }
 
     // -------------------------------------------------------------------------
-    // 3. CALCOLO DEI TEMI PRESENTI
+    // 3. CALCOLA TEMI UNENDO I 4 RIQUADRI
     // -------------------------------------------------------------------------
-    function calcolaTemi(testo) {
-        testo = testo.toLowerCase();
+    function analizzaManuale() {
+        // Prende il testo da tutti i 4 riquadri per un'analisi globale della Liturgia della Parola
+        let testo1 = document.getElementById('r1').value;
+        let testoPs = document.getElementById('rps').value;
+        let testo2 = document.getElementById('r2').value;
+        let testoG = document.getElementById('rg').value;
+        
+        let testoTotale = `${testo1} ${testoPs} ${testo2} ${testoG}`.trim().toLowerCase();
+        
+        if(!testoTotale) return alert("Nessun testo da analizzare. Assicurati che i riquadri non siano vuoti.");
+
         let conteggio = [];
         
-        // Ponderazione parole chiave nel testo delle letture
         vocabolarioTemi.forEach(parola => {
             const regex = new RegExp(`\\b${parola}\\b`, 'gi');
-            const occorrenze = (testo.match(regex) || []).length;
+            const occorrenze = (testoTotale.match(regex) || []).length;
             if(occorrenze > 0) conteggio.push({ parola, count: occorrenze });
         });
 
         conteggio.sort((a,b) => b.count - a.count);
-        
-        // Prendi i 5 temi dominanti del Vangelo
         temiCorrenti = conteggio.slice(0, 5).map(t => t.parola); 
 
         document.getElementById('temiTrovati').innerText = temiCorrenti.length > 0 ? "Temi della Messa rilevati: " + temiCorrenti.join(", ").toUpperCase() : "Messa Generica / Nessun tema specifico rilevato.";
@@ -376,10 +416,9 @@
     }
 
     // -------------------------------------------------------------------------
-    // 4. GENERAZIONE 5 SUGGERIMENTI PER PARTE
+    // 4. GENERAZIONE SUGGERIMENTI
     // -------------------------------------------------------------------------
     function calcolaSuggerimenti() {
-        // Aggiorna unione base+imparati
         cantiDB = [...cantiBase, ...cantiImparati];
         const parti = ["Ingresso", "Offertorio", "Comunione", "Finale"];
 
@@ -397,10 +436,7 @@
                 });
             });
 
-            // Ordina per pertinenza
             candidati.sort((a,b) => b.score - a.score);
-            
-            // Estrai i TOP 5
             let top5 = candidati.slice(0, 5); 
             
             const cont = document.getElementById(`sug-${parte}`);
@@ -468,11 +504,9 @@
     function salvaMessaEImpara() {
         if(!scalettaSelezionata.Ingresso && !scalettaSelezionata.Comunione) return alert("Scegli almeno un canto prima di salvare!");
         
-        // Logica Machine Learning (Rafforza i legami)
         Object.keys(scalettaSelezionata).forEach(parte => {
             const titoloScelto = scalettaSelezionata[parte];
             if(titoloScelto) {
-                // Se era un canto che aveva già imparato in passato, aggiungi i temi di OGGI
                 let cantoTrovato = cantiImparati.find(c => c.titolo === titoloScelto);
                 if(cantoTrovato) {
                     temiCorrenti.forEach(tema => {
@@ -488,9 +522,8 @@
 
     function esportaDatabaseAggiornato() {
         const fullDB = [...cantiBase, ...cantiImparati];
-        
-        // Unifica eventuali doppioni mantenendo le keyword espanse
         const mappaUnici = new Map();
+        
         fullDB.forEach(canto => {
             if(mappaUnici.has(canto.titolo)) {
                 let esistente = mappaUnici.get(canto.titolo);
