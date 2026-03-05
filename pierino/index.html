@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎻 Pierino e il Lupo – Avventura Musicale</title>
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #1a3a2a;
+      --moss:   #2d5a3d;
+      --leaf:   #4a9e6b;
+      --gold:   #f4c842;
+      --amber:  #e8891a;
+      --sky:    #a8d8ea;
+      --cream:  #fdf6e3;
+      --red:    #d94f3b;
+      --purple: #7b4fa6;
+      --card-bg:#ffffff;
+      --shadow: rgba(0,0,0,.18);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--forest);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── Animated forest background ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 10% 20%, #2d5a3d55 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, #1a3a2a88 0%, transparent 50%),
+        linear-gradient(160deg, #0d2418 0%, #1a3a2a 40%, #0d2418 100%);
+      z-index: 0;
+    }
+
+    /* Stars / sparkles */
+    .sparkle {
+      position: fixed;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0;
+      animation: twinkle var(--d, 4s) var(--delay, 0s) infinite;
+      z-index: 0;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0; transform: scale(.5); }
+      50%      { opacity: .7; transform: scale(1); }
+    }
+
+    /* ── Page wrapper ── */
+    .page {
+      position: relative; z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .title-wrap {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--forest) 0%, var(--moss) 100%);
+      border: 3px solid var(--gold);
+      border-radius: 24px;
+      padding: 20px 36px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.45), 0 0 0 6px #1a3a2a;
+    }
+    h1 {
+      font-family: 'Luckiest Guy', cursive;
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-shadow: 3px 3px 0 var(--forest), 5px 5px 12px rgba(0,0,0,.5);
+      line-height: 1.1;
+    }
+    .subtitle {
+      color: var(--sky);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+
+    /* ── Section labels ── */
+    .section-label {
+      font-family: 'Luckiest Guy', cursive;
+      font-size: 1.25rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin: 28px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(to right, var(--gold)55, transparent);
+      border-radius: 2px;
+    }
+
+    /* ── YouTube player ── */
+    .player-box {
+      background: #000;
+      border: 3px solid var(--gold);
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16/9;
+      box-shadow: 0 8px 32px rgba(0,0,0,.6);
+    }
+    #yt-player {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: none;
+    }
+
+    /* ── Characters grid ── */
+    .chars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .char-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 14px 10px 12px;
+      text-align: center;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: transform .18s, border-color .18s, box-shadow .18s;
+      box-shadow: 0 4px 14px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .char-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--card-color, #fff);
+      opacity: .08;
+      pointer-events: none;
+    }
+    .char-card:hover {
+      transform: translateY(-5px) scale(1.04);
+      border-color: var(--card-color, var(--gold));
+      box-shadow: 0 10px 28px var(--shadow), 0 0 0 2px var(--card-color, var(--gold));
+    }
+    .char-card.active {
+      border-color: var(--card-color, var(--gold));
+      box-shadow: 0 0 0 3px var(--card-color, var(--gold)), 0 10px 24px rgba(0,0,0,.3);
+      transform: translateY(-3px);
+    }
+    .char-emoji {
+      font-size: 2.8rem;
+      display: block;
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+    .char-name {
+      font-weight: 800;
+      font-size: .95rem;
+      color: #1a2a1a;
+      margin-bottom: 3px;
+    }
+    .char-instrument {
+      font-size: .78rem;
+      font-weight: 600;
+      color: #555;
+    }
+    .char-action-tag {
+      display: none;
+    }
+
+    /* ── Stage ── */
+    .stage {
+      background: linear-gradient(160deg, var(--moss) 0%, #1a3a2a 100%);
+      border: 3px solid var(--leaf);
+      border-radius: 20px;
+      padding: 28px 20px;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 40px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .stage::before {
+      content: '🌲 🌳 🌲 🌳 🌲 🌳 🌲 🌳 🌲 🌳';
+      position: absolute;
+      bottom: 8px; left: 0; right: 0;
+      font-size: 1.6rem;
+      opacity: .3;
+      white-space: nowrap;
+      overflow: hidden;
+      letter-spacing: 4px;
+    }
+
+    #stage-emoji {
+      font-size: 5rem;
+      line-height: 1;
+      display: block;
+      margin-bottom: 10px;
+      transition: all .3s;
+    }
+    #stage-name {
+      font-family: 'Luckiest Guy', cursive;
+      font-size: 1.8rem;
+      color: var(--gold);
+      text-shadow: 2px 2px 6px rgba(0,0,0,.5);
+    }
+    #stage-instrument {
+      color: var(--sky);
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 4px 0 8px;
+    }
+    #stage-action {
+      background: var(--gold);
+      color: var(--forest);
+      font-weight: 800;
+      font-size: 1.1rem;
+      padding: 6px 18px;
+      border-radius: 30px;
+      margin-top: 8px;
+      display: inline-block;
+      box-shadow: 0 3px 10px rgba(0,0,0,.3);
+    }
+
+    /* ── Animations ── */
+    @keyframes saltella  { 0%,100%{transform:translateY(0) rotate(0)} 30%{transform:translateY(-28px) rotate(-5deg)} 60%{transform:translateY(-14px) rotate(3deg)} }
+    @keyframes vola      { 0%,100%{transform:translateY(0) rotate(0) scale(1)} 25%{transform:translateY(-22px) rotate(-12deg) scale(1.1)} 75%{transform:translateY(-18px) rotate(12deg) scale(1.1)} }
+    @keyframes dondola   { 0%,100%{transform:rotate(-18deg)} 50%{transform:rotate(18deg)} }
+    @keyframes felpato   { 0%,100%{transform:translateX(0) scaleX(1)} 40%{transform:translateX(18px) scaleX(1)} 80%{transform:translateX(-6px) scaleX(-1)} }
+    @keyframes brontola  { 0%,100%{transform:rotate(0) translateX(0)} 25%{transform:rotate(-6deg) translateX(-4px)} 75%{transform:rotate(6deg) translateX(4px)} }
+    @keyframes paura     { 0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 red)} 50%{transform:scale(1.35);filter:drop-shadow(0 0 18px #ff000088)} }
+
+    .anim-Pierino   { animation: saltella .55s infinite; }
+    .anim-Uccellino { animation: vola .85s infinite; }
+    .anim-Anatra    { animation: dondola 1s infinite; }
+    .anim-Gatto     { animation: felpato 2.2s infinite; }
+    .anim-Nonno     { animation: brontola 1.6s infinite; }
+    .anim-Lupo      { animation: paura 1.5s infinite; }
+    .anim-Marcia    { animation: saltella .4s infinite; }
+
+    /* ── Buttons ── */
+    .btns-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .btn {
+      font-family: 'Luckiest Guy', cursive;
+      font-size: 1rem;
+      letter-spacing: .5px;
+      padding: 11px 22px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 14px rgba(0,0,0,.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.35); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-random {
+      background: linear-gradient(135deg, var(--amber), var(--red));
+      color: #fff;
+      font-size: 1.1rem;
+    }
+    .btn-march {
+      background: linear-gradient(135deg, var(--gold), var(--amber));
+      color: var(--forest);
+      font-size: 1.1rem;
+    }
+
+    /* ── Timestamp note ── */
+    .ts-note {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #aaccb0;
+      font-size: .82rem;
+      line-height: 1.55;
+      margin-top: 10px;
+    }
+    .ts-note strong { color: var(--gold); }
+
+    /* ── Lesson phases ── */
+    .phases {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px;
+    }
+    .phase-card {
+      background: rgba(255,255,255,.07);
+      border: 1.5px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--cream);
+    }
+    .phase-card h3 {
+      font-family: 'Luckiest Guy', cursive;
+      color: var(--gold);
+      font-size: .95rem;
+      margin-bottom: 4px;
+    }
+    .phase-card p {
+      font-size: .8rem;
+      opacity: .82;
+      line-height: 1.4;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--forest); }
+    ::-webkit-scrollbar-thumb { background: var(--leaf); border-radius: 4px; }
+
+    /* ── Responsive ── */
+    @media(max-width:500px) {
+      .chars-grid { grid-template-columns: repeat(3, 1fr); }
+      #stage-emoji { font-size: 3.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  const positions = [[5,12],[15,85],[25,30],[40,5],[55,70],[65,20],[75,90],[85,45],[92,15],[10,55],[30,65],[50,35],[70,55],[90,75]];
+  positions.forEach(([l,t],i)=>{
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.cssText = `left:${l}%;top:${t}%;width:${3+Math.random()*4}px;height:${3+Math.random()*4}px;--d:${3+Math.random()*4}s;--delay:${Math.random()*4}s`;
+    document.body.appendChild(s);
+  });
+</script>
+
+<div class="page">
+
+  <header>
+    <div class="title-wrap">
+      <h1>🎻 Pierino e il Lupo 🐺</h1>
+      <div class="subtitle">Prokofiev · Avventura Musicale per Bambini</div>
+    </div>
+  </header>
+
+  <div class="section-label">🎬 Il Video</div>
+  <div class="player-box">
+    <div id="yt-player"></div>
+  </div>
+  <div class="ts-note">
+    💡 <strong>Nota sui minutaggi:</strong> I tempi impostati si basano sulla versione scelta da te. Se clicchi su un personaggio, il video salterà automaticamente al secondo esatto in cui inizia il suo strumento musicale.
+  </div>
+
+  <div class="section-label">🎭 I Personaggi</div>
+  <p style="color:#aaccb0;font-size:.9rem;margin-bottom:12px;">Clicca su un personaggio per vederlo sul palco e sentire il suo tema!</p>
+  <div class="chars-grid" id="chars-grid"></div>
+
+  <div class="section-label">🌲 Il Palco</div>
+  <div class="stage">
+    <span id="stage-emoji">🎭</span>
+    <div id="stage-name">Chi imitiamo?</div>
+    <div id="stage-instrument"></div>
+    <div id="stage-action">Aspettando la musica…</div>
+  </div>
+
+  <div class="btns-row">
+    <button class="btn btn-random" onclick="randomChar()">🎲 Personaggio a caso!</button>
+    <button class="btn btn-march" onclick="playMarch()">🥁 Marcia Trionfale!</button>
+  </div>
+
+  <div class="section-label">📋 Struttura della Lezione (45 min)</div>
+  <div class="phases">
+    <div class="phase-card">
+      <h3>① Intro · 10 min</h3>
+      <p>Presenta ogni strumento. Fai ascoltare il tema e chiedi: "Grande o piccolo? Vola o cammina pesante?"</p>
+    </div>
+    <div class="phase-card">
+      <h3>② Movimento · 15 min</h3>
+      <p>Spazio libero! Premi 🎲 per pescare un personaggio a caso. I bambini imitano il personaggio sul palco.</p>
+    </div>
+    <div class="phase-card">
+      <h3>③ Racconto · 15 min</h3>
+      <p>Narrate la storia con il video in sottofondo. Alzate la carta del personaggio quando lo sentite!</p>
+    </div>
+    <div class="phase-card">
+      <h3>④ Parata · 5 min</h3>
+      <p>Premi 🥁 per la Marcia Trionfale! In fila indiana verso lo zoo con il lupo catturato.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATI PERSONAGGI E MINUTAGGI
+// ─────────────────────────────────────────────
+const characters = [
+  { name:'Pierino',   emoji:'👦', instrument:'Archi 🎻',     color:'#e8891a', action:'Saltelliamo felici in giro!',       seconds: 135 },
+  { name:'Uccellino', emoji:'🐦', instrument:'Flauto 🎶',    color:'#4fc3f7', action:'Sbattiamo le ali in punta di piedi!', seconds: 17  },
+  { name:'Anatra',    emoji:'🦆', instrument:'Oboe 🎵',      color:'#81c784', action:'Dondoliamo come paperelle!',          seconds: 44  },
+  { name:'Gatto',     emoji:'🐈', instrument:'Clarinetto 🎷', color:'#ce93d8', action:'Camminiamo felpati e silenziosi…',   seconds: 69  },
+  { name:'Nonno',     emoji:'👴', instrument:'Fagotto 🪵',    color:'#a1887f', action:'Brontoliamo a schiena curva!',        seconds: 93  },
+  { name:'Lupo',      emoji:'🐺', instrument:'Corni 📯',      color:'#ef5350', action:'Faccia spaventosa, artigli fuori!',  seconds: 114 },
+];
+const MARCH_SECONDS = 1480; // ~24:40
+const VIDEO_ID = 'rlE7noThatg';
+
+// ─────────────────────────────────────────────
+// CARICAMENTO SICURO YOUTUBE IFRAME API
+// ─────────────────────────────────────────────
+let player;
+
+// Inietta lo script di YouTube in modo asincrono
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// Funzione chiamata automaticamente da YouTube quando le API sono pronte
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('yt-player', {
+    videoId: VIDEO_ID,
+    playerVars: { 
+      'rel': 0, 
+      'modestbranding': 1, 
+      'fs': 1 
+    }
+  });
+}
+
+function seekAndPlay(seconds) {
+  // Controlla che il player sia caricato e pronto
+  if (player && typeof player.seekTo === 'function') {
+    player.seekTo(seconds, true);
+    player.playVideo();
+  } else {
+    alert("Il video si sta ancora caricando, aspetta un secondo!");
+  }
+}
+
+// ─────────────────────────────────────────────
+// GENERAZIONE GRIGLIA PERSONAGGI
+// ─────────────────────────────────────────────
+const grid = document.getElementById('chars-grid');
+characters.forEach(c => {
+  const card = document.createElement('div');
+  card.className = 'char-card';
+  card.id = 'card-' + c.name;
+  card.style.setProperty('--card-color', c.color);
+  card.innerHTML = `
+    <span class="char-emoji">${c.emoji}</span>
+    <div class="char-name">${c.name}</div>
+    <div class="char-instrument">${c.instrument}</div>
+  `;
+  card.onclick = () => showOnStage(c);
+  grid.appendChild(card);
+});
+
+// ─────────────────────────────────────────────
+// MOSTRA SUL PALCO E AVVIA MUSICA
+// ─────────────────────────────────────────────
+let activeCard = null;
+function showOnStage(c) {
+  // Aggiorna il palco visivo
+  const emoji = document.getElementById('stage-emoji');
+  emoji.className = '';
+  emoji.textContent = c.emoji;
+  void emoji.offsetWidth; // trucchetto per riavviare l'animazione
+  emoji.className = 'anim-' + c.name;
+
+  document.getElementById('stage-name').textContent = c.name;
+  document.getElementById('stage-instrument').textContent = c.instrument;
+  document.getElementById('stage-action').textContent = c.action;
+
+  // Evidenzia la card premuta
+  if (activeCard) activeCard.classList.remove('active');
+  activeCard = document.getElementById('card-' + c.name);
+  if (activeCard) activeCard.classList.add('active');
+
+  // Manda avanti il video e riproduci
+  seekAndPlay(c.seconds);
+}
+
+// ─────────────────────────────────────────────
+// ROULETTE PERSONAGGIO CASUALE
+// ─────────────────────────────────────────────
+function randomChar() {
+  const emoji = document.getElementById('stage-emoji');
+  emoji.className = '';
+  document.getElementById('stage-name').textContent = '…';
+  document.getElementById('stage-instrument').textContent = '';
+  document.getElementById('stage-action').textContent = '🎲 Rullo di tamburi!';
+  if (activeCard) { activeCard.classList.remove('active'); activeCard = null; }
+
+  let count = 0;
+  const interval = setInterval(() => {
+    const r = characters[Math.floor(Math.random() * characters.length)];
+    emoji.textContent = r.emoji;
+    count++;
+    if (count > 14) {
+      clearInterval(interval);
+      const final = characters[Math.floor(Math.random() * characters.length)];
+      showOnStage(final);
+    }
+  }, 90);
+}
+
+// ─────────────────────────────────────────────
+// MARCIA TRIONFALE
+// ─────────────────────────────────────────────
+function playMarch() {
+  const emoji = document.getElementById('stage-emoji');
+  emoji.className = '';
+  emoji.textContent = '🎺';
+  void emoji.offsetWidth;
+  emoji.className = 'anim-Marcia';
+  document.getElementById('stage-name').textContent = 'Marcia Trionfale!';
+  document.getElementById('stage-instrument').textContent = 'Tutta l\'orchestra 🎼';
+  document.getElementById('stage-action').textContent = 'In fila verso lo zoo! 🦁🐺🏆';
+  if (activeCard) { activeCard.classList.remove('active'); activeCard = null; }
+  seekAndPlay(MARCH_SECONDS);
+}
+</script>
+
+</body>
+</html>
