@@ -5,42 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APP-CASUALI</title>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #333; color: white; margin: 0; }
-        h1 { margin-bottom: 30px; }
-        .btn {
-            background: white; color: #333; text-decoration: none;
-            padding: 20px 40px; margin: 10px; border-radius: 10px;
-            font-size: 1.2rem; font-weight: bold; width: 200px; text-align: center;
-            display: block; box-shadow: 0 4px 0 #ccc; transition: transform 0.1s;
+        body { 
+            font-family: sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            /* Uso min-height invece di height per evitare che i bottoni escano dallo schermo su display piccoli */
+            min-height: 100vh; 
+            background: #333; 
+            color: white; 
+            margin: 0; 
+            padding: 20px;
+            box-sizing: border-box;
         }
-        .btn:active { transform: translateY(4px); box-shadow: none; }
-        .btn-pizza { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-		.btn-familymenu { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-		.btn-ruotadellafortuna { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-		.btn-volantini { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-		.btn-check-laboratorio { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-		.btn-sarabanda { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-		.btn-trivial { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-		.btn-suggeritore { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-		.btn-cerca-spartiti { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-		.btn-cerca-pierino { background: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
+        
+        h1 { 
+            margin-bottom: 30px; 
+            text-align: center;
+        }
+
+        /* --- NUOVO CONTENITORE PER I BOTTONI --- */
+        .bottoni-container {
+            display: flex;
+            flex-wrap: wrap; /* Permette ai bottoni di andare a capo se non c'è spazio */
+            justify-content: center; /* Centra i bottoni orizzontalmente */
+            gap: 20px; /* Sostituisce il margin dei singoli bottoni, creando spazio uniforme */
+            max-width: 900px; /* Limita la larghezza massima per fare un bell'effetto "blocco" */
+        }
+
+        .btn {
+            background: white; 
+            color: #333; 
+            text-decoration: none;
+            padding: 20px 20px; /* Ridotto un po' il padding laterale per uniformità */
+            border-radius: 10px;
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            width: 200px; 
+            text-align: center;
+            display: block; 
+            box-shadow: 0 4px 0 #ccc; 
+            transition: transform 0.1s;
+        }
+
+        .btn:active { 
+            transform: translateY(4px); 
+            box-shadow: none; 
+        }
+
+        /* Colori dei bottoni */
+        .btn-rosso { 
+            background: #e74c3c; 
+            color: white; 
+            box-shadow: 0 4px 0 #c0392b; 
+        }
     </style>
 </head>
 <body>
 
     <h1>APP-CASUALI</h1>
 
-    <a href="pizza/index.html" class="btn btn-pizza">🍕 Pizze</a>
-	<a href="spesa/index.html" class="btn btn-pizza">👨‍👩‍👧‍👦 FamilyMenu</a>
-	<a href="ruotafortuna/index.html" class="btn btn-pizza">🔴 RuotadellaFortuna</a>
-	<a href="volantini/index.html" class="btn btn-pizza">📕 Volantini</a>
-	<a href="check-lab/index.html" class="btn btn-pizza">💻 Laboratorio</a>
-	<a href="sarabanda/index.html" class="btn btn-pizza">🎧 Sarabanda</a>
-	<a href="trivial/index.html" class="btn btn-pizza">🎲 Trivial</a>
-	<a href="suggeritore/index.html" class="btn btn-pizza">🔎 Suggeritore</a>
-	<a href="cerca-spartiti/index.html" class="btn btn-pizza">🔎 Cerca-Spartiti</a>
-	<a href="pierino/index.html" class="btn btn-pizza">🎻 Pierino</a>
-
+    <div class="bottoni-container">
+        <a href="pizza/index.html" class="btn btn-rosso">🍕 Pizze</a>
+        <a href="spesa/index.html" class="btn btn-rosso">👨‍👩‍👧‍👦 FamilyMenu</a>
+        <a href="ruotafortuna/index.html" class="btn btn-rosso">🔴 Ruota Fortuna</a>
+        <a href="volantini/index.html" class="btn btn-rosso">📕 Volantini</a>
+        <a href="check-lab/index.html" class="btn btn-rosso">💻 Laboratorio</a>
+        <a href="sarabanda/index.html" class="btn btn-rosso">🎧 Sarabanda</a>
+        <a href="trivial/index.html" class="btn btn-rosso">🎲 Trivial</a>
+        <a href="suggeritore/index.html" class="btn btn-rosso">🔎 Suggeritore</a>
+        <a href="cerca-spartiti/index.html" class="btn btn-rosso">🎼 Spartiti</a>
+        <a href="pierino/index.html" class="btn btn-rosso">🎻 Pierino</a>
+    </div>
 
 </body>
 </html>
