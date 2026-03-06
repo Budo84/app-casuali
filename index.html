@@ -10,42 +10,62 @@
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            /* Uso min-height invece di height per evitare che i bottoni escano dallo schermo su display piccoli */
             min-height: 100vh; 
-            background: #333; 
             color: white; 
             margin: 0; 
             padding: 20px;
             box-sizing: border-box;
+
+            /* Sfondo generale scuro con immagine */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
         }
         
         h1 { 
             margin-bottom: 30px; 
             text-align: center;
+            font-size: 3rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5); 
         }
 
-        /* --- NUOVO CONTENITORE PER I BOTTONI --- */
         .bottoni-container {
             display: flex;
-            flex-wrap: wrap; /* Permette ai bottoni di andare a capo se non c'è spazio */
-            justify-content: center; /* Centra i bottoni orizzontalmente */
-            gap: 20px; /* Sostituisce il margin dei singoli bottoni, creando spazio uniforme */
-            max-width: 900px; /* Limita la larghezza massima per fare un bell'effetto "blocco" */
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 20px; 
+            max-width: 900px; 
+            
+            /* Effetto vetro */
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
+        /* --- STILE BASE DEL BOTTONE CON VARIABILI --- */
         .btn {
-            background: white; 
-            color: #333; 
+            background: var(--bg-color); /* Usa la variabile del colore sfondo */
+            color: white; 
             text-decoration: none;
-            padding: 20px 20px; /* Ridotto un po' il padding laterale per uniformità */
+            padding: 20px 20px; 
             border-radius: 10px;
             font-size: 1.2rem; 
             font-weight: bold; 
             width: 200px; 
             text-align: center;
             display: block; 
-            box-shadow: 0 4px 0 #ccc; 
-            transition: transform 0.1s;
+            box-shadow: 0 4px 0 var(--shadow-color); /* Usa la variabile del colore ombra */
+            transition: all 0.2s ease; 
+        }
+
+        .btn:hover {
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 0 var(--shadow-color); /* L'ombra cresce e mantiene il suo colore! */
         }
 
         .btn:active { 
@@ -53,12 +73,18 @@
             box-shadow: none; 
         }
 
-        /* Colori dei bottoni */
-        .btn-rosso { 
-            background: #e74c3c; 
-            color: white; 
-            box-shadow: 0 4px 0 #c0392b; 
-        }
+        /* --- COLORI SPECIFICI PER OGNI BOTTONE --- */
+        .btn-pizza { --bg-color: #e67e22; --shadow-color: #d35400; }         /* Arancione pomodoro/crosta */
+        .btn-family { --bg-color: #2ecc71; --shadow-color: #27ae60; }        /* Verde rassicurante/casa */
+        .btn-ruota { --bg-color: #9b59b6; --shadow-color: #8e44ad; }         /* Viola casinò/gioco */
+        .btn-volantini { --bg-color: #3498db; --shadow-color: #2980b9; }     /* Azzurro carta/informativo */
+        .btn-lab { --bg-color: #34495e; --shadow-color: #2c3e50; }           /* Blu scuro tecnologico */
+        .btn-sarabanda { --bg-color: #fd79a8; --shadow-color: #e84393; }     /* Rosa fluo musicale/pop */
+        .btn-trivial { --bg-color: #1abc9c; --shadow-color: #16a085; }       /* Verde acqua da tavolo da gioco */
+        .btn-suggeritore { --bg-color: #f39c12; --shadow-color: #e67e22; }   /* Giallo/Arancio "evidenziatore" */
+        .btn-spartiti { --bg-color: #636e72; --shadow-color: #2d3436; }      /* Grigio scuro per la musica su carta */
+        .btn-pierino { --bg-color: #d35400; --shadow-color: #a04000; }       /* Marroncino legno violino */
+
     </style>
 </head>
 <body>
@@ -66,16 +92,16 @@
     <h1>APP-CASUALI</h1>
 
     <div class="bottoni-container">
-        <a href="pizza/index.html" class="btn btn-rosso">🍕 Pizze</a>
-        <a href="spesa/index.html" class="btn btn-rosso">👨‍👩‍👧‍👦 FamilyMenu</a>
-        <a href="ruotafortuna/index.html" class="btn btn-rosso">🔴 Ruota Fortuna</a>
-        <a href="volantini/index.html" class="btn btn-rosso">📕 Volantini</a>
-        <a href="check-lab/index.html" class="btn btn-rosso">💻 Laboratorio</a>
-        <a href="sarabanda/index.html" class="btn btn-rosso">🎧 Sarabanda</a>
-        <a href="trivial/index.html" class="btn btn-rosso">🎲 Trivial</a>
-        <a href="suggeritore/index.html" class="btn btn-rosso">🔎 Suggeritore</a>
-        <a href="cerca-spartiti/index.html" class="btn btn-rosso">🎼 Spartiti</a>
-        <a href="pierino/index.html" class="btn btn-rosso">🎻 Pierino</a>
+        <a href="pizza/index.html" class="btn btn-pizza">🍕 Pizze</a>
+        <a href="spesa/index.html" class="btn btn-family">👨‍👩‍👧‍👦 FamilyMenu</a>
+        <a href="ruotafortuna/index.html" class="btn btn-ruota">🔴 Ruota Fortuna</a>
+        <a href="volantini/index.html" class="btn btn-volantini">📕 Volantini</a>
+        <a href="check-lab/index.html" class="btn btn-lab">💻 Laboratorio</a>
+        <a href="sarabanda/index.html" class="btn btn-sarabanda">🎧 Sarabanda</a>
+        <a href="trivial/index.html" class="btn btn-trivial">🎲 Trivial</a>
+        <a href="suggeritore/index.html" class="btn btn-suggeritore">🔎 Suggeritore</a>
+        <a href="cerca-spartiti/index.html" class="btn btn-spartiti">🎼 Spartiti</a>
+        <a href="pierino/index.html" class="btn btn-pierino">🎻 Pierino</a>
     </div>
 
 </body>
