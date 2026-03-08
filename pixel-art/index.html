@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    
+    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pixel Art">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23667eea' width='100' height='100'/><path fill='white' d='M20,20h15v15h-15z M40,20h15v15h-15z M60,20h15v15h-15z M20,40h15v15h-15z M40,40h15v15h-15z M60,40h15v15h-15z M20,60h15v15h-15z M40,60h15v15h-15z M60,60h15v15h-15z'/></svg>">
+
+    <title>Pixel Art PWA + Undo</title>
+    <style>
+        /* --- STILI CSS (Quasi invariati) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
+        html, body { position: fixed; overflow: hidden; height: 100%; width: 100%; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100%; padding: 20px; padding-top: env(safe-area-inset-top, 20px); padding-bottom: env(safe-area-inset-bottom, 20px); padding-left: env(safe-area-inset-left, 20px); padding-right: env(safe-area-inset-right, 20px); }
+        .container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; height: 100%; max-height: 100%; overflow: hidden; }
+        .sidebar { width: 320px; padding: 30px; background: #f8f9fa; border-radius: 20px 0 0 20px; overflow-y: auto; overflow-x: hidden; flex-shrink: 0; -webkit-overflow-scrolling: touch; }
+        .main-content { flex: 1; padding: 30px; display: flex; flex-direction: column; overflow: hidden; height: 100%; }
+        h1 { text-align: center; color: #667eea; margin-bottom: 20px; font-size: 2em; }
+        .controls { display: flex; flex-direction: column; gap: 25px; padding-bottom: 30px; }
+        .control-group { display: flex; flex-direction: column; gap: 10px; }
+        .control-group label { font-size: 0.95em; color: #555; font-weight: 600; margin-bottom: 5px; }
+        .control-group > label:first-child { font-size: 1.05em; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
+        .color-picker-container { display: flex; flex-direction: column; gap: 15px; }
+        input[type="color"] { width: 100%; height: 60px; border: 3px solid #667eea; border-radius: 10px; cursor: pointer; }
+        .color-presets { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+        .color-preset { width: 100%; aspect-ratio: 1; border-radius: 5px; cursor: pointer; border: 2px solid #ddd; transition: transform 0.2s; -webkit-tap-highlight-color: transparent; }
+        .color-preset.active { border: 3px solid #667eea; box-shadow: 0 0 10px rgba(102, 126, 234, 0.5); }
+        button { padding: 12px 20px; border: none; border-radius: 8px; font-size: 0.95em; cursor: pointer; transition: all 0.3s; font-weight: 600; width: 100%; -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3); }
+        button:active { transform: scale(0.98); }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #e74c3c; color: white; }
+        .btn-danger { background: #c0392b; color: white; margin-top: 5px; }
+        /* Stile per i pulsanti disabilitati (quando non si può annullare/ripristinare) */
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        
+        /* Stile per la riga dei pulsanti Undo/Redo */
+        .undo-redo-row { display: flex; gap: 10px; }
+        .btn-undo { flex: 1; background: #34495e; color: white; font-size: 1.2em; padding: 8px; }
+
+        .btn-tool { background: #ecf0f1; color: #2c3e50; padding: 12px 20px; text-align: left; }
+        .btn-tool.active { background: #667eea; color: white; }
+        input[type="number"], select { padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; width: 100%; }
+        .canvas-container { flex: 1; display: flex; justify-content: center; align-items: flex-start; gap: 20px; overflow: auto; padding: 20px; -webkit-overflow-scrolling: touch; height: 100%; }
+        .canvas-wrapper { position: relative; display: flex; justify-content: center; align-items: center; max-width: 100%; max-height: 100%; }
+        .reference-image { max-width: 400px; max-height: 600px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); }
+        .watermark-image { position: absolute; top: 1px; left: 1px; pointer-events: none; opacity: 0.3; border-radius: 5px; max-width: calc(100% - 2px); max-height: calc(100% - 2px); }
+        .reference-controls { display: flex; flex-direction: column; gap: 10px; }
+        input[type="file"] { display: none; }
+        .file-upload-label { padding: 12px 20px; background: #27ae60; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; text-align: center; transition: all 0.3s; width: 100%; -webkit-tap-highlight-color: rgba(39, 174, 96, 0.3); }
+        input[type="range"] { width: 100%; height: 30px; -webkit-appearance: none; appearance: none; background: transparent; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #667eea; cursor: pointer; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 8px; background: #ddd; border-radius: 4px; }
+        .tools { display: flex; flex-direction: column; gap: 8px; }
+        .action-buttons { display: flex; flex-direction: column; gap: 10px; }
+        #pixelCanvas { display: inline-grid; gap: 1px; background: #e0e0e0; padding: 1px; border-radius: 5px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); touch-action: none; -webkit-user-select: none; user-select: none; max-width: 100%; max-height: 100%; object-fit: contain; }
+        .pixel { background: white; touch-action: none; -webkit-tap-highlight-color: transparent; }
+        @media (max-width: 900px) { .container { flex-direction: column; max-width: 100%; height: auto; max-height: none; overflow: visible; } html, body { position: static; overflow: auto; height: auto; } .sidebar { width: 100%; border-radius: 20px 20px 0 0; max-height: 40vh; overflow-y: auto; } .main-content { padding: 20px; height: 60vh; } .canvas-container { padding: 10px; align-items: center; } }
+        @media (max-width: 768px) { body { padding: 10px; } .container { border-radius: 15px; } .sidebar { padding: 20px; border-radius: 15px 15px 0 0; } .main-content { padding: 15px; } h1 { font-size: 1.5em; margin-bottom: 15px; } .canvas-container { flex-direction: column; padding: 10px; } .reference-image { max-width: 100%; max-height: 300px; } .color-presets { gap: 6px; } button, .btn-tool, input[type="number"], select, .file-upload-label { min-height: 48px; } input[type="color"] { height: 50px; min-height: 50px; } }
+        @media (max-width: 480px) { .sidebar { padding: 15px; } .main-content { padding: 10px; } h1 { font-size: 1.3em; } .color-presets { grid-template-columns: repeat(5, 1fr); gap: 5px; } }
+        @media (hover: none) and (pointer: coarse) { .pixel:hover { opacity: 1; } button:hover:not(:disabled), .btn-tool:hover, .btn-primary:hover, .btn-secondary:hover, .btn-danger:hover, .file-upload-label:hover, .color-preset:hover { transform: none; box-shadow: none; } button:active:not(:disabled), .btn-tool:active, .file-upload-label:active { transform: scale(0.95); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>🎨 Pixel Art</h1>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Strumenti</label>
+                    <div class="tools">
+                        <button class="btn-tool active" onclick="setTool('draw')" id="drawBtn">✏️ Disegna</button>
+                        <button class="btn-tool" onclick="setTool('erase')" id="eraseBtn">🧹 Cancella</button>
+                        <button class="btn-tool" onclick="setTool('fill')" id="fillBtn">🪣 Riempi</button>
+                        <button class="btn-tool" onclick="setTool('picker')" id="pickerBtn">💧 Contagocce</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Colore</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="colorPicker" value="#000000">
+                        <div class="color-presets">
+                            <div class="color-preset active" style="background: #000000;" onclick="setColor('#000000')"></div>
+                            <div class="color-preset" style="background: #ffffff; border-color: #999;" onclick="setColor('#ffffff')"></div>
+                            <div class="color-preset" style="background: #ff0000;" onclick="setColor('#ff0000')"></div>
+                            <div class="color-preset" style="background: #00ff00;" onclick="setColor('#00ff00')"></div>
+                            <div class="color-preset" style="background: #0000ff;" onclick="setColor('#0000ff')"></div>
+                            <div class="color-preset" style="background: #ffff00;" onclick="setColor('#ffff00')"></div>
+                            <div class="color-preset" style="background: #00ffff;" onclick="setColor('#00ffff')"></div>
+                            <div class="color-preset" style="background: #ff00ff;" onclick="setColor('#ff00ff')"></div>
+                            <div class="color-preset" style="background: #ff8c00;" onclick="setColor('#ff8c00')"></div>
+                            <div class="color-preset" style="background: #8b4513;" onclick="setColor('#8b4513')"></div>
+                            <div class="color-preset" style="background: #808080;" onclick="setColor('#808080')"></div>
+                            <div class="color-preset" style="background: #ffb6c1;" onclick="setColor('#ffb6c1')"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Dimensione Griglia</label>
+                    <input type="number" id="gridSize" value="32" min="8" max="64" step="8" onchange="createGrid()">
+                    <button class="btn-primary" onclick="createGrid()">Crea Griglia</button>
+                </div>
+                <div class="control-group">
+                    <label>Immagine di Riferimento</label>
+                    <div class="reference-controls">
+                        <label for="imageUpload" class="file-upload-label">📷 Carica Immagine</label>
+                        <input type="file" id="imageUpload" accept="image/*">
+                        <select id="referenceMode" onchange="updateReferenceMode()">
+                            <option value="none">Nessuna</option>
+                            <option value="side">Affiancata</option>
+                            <option value="watermark">Filigrana</option>
+                        </select>
+                        <div id="opacityControl" style="display: none;">
+                            <label style="font-size: 0.85em;">Opacità: <span id="opacityValue">30</span>%</label>
+                            <input type="range" id="opacitySlider" min="10" max="80" value="30" oninput="updateOpacity()">
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Azioni</label>
+                    <div class="action-buttons">
+                        <div class="undo-redo-row">
+                            <button class="btn-undo" id="undoBtn" onclick="undo()" disabled>↩️ Annulla</button>
+                            <button class="btn-undo" id="redoBtn" onclick="redo()" disabled>↪️ Ripristina</button>
+                        </div>
+                        <button class="btn-secondary" onclick="clearCanvas()">🗑️ Cancella Disegno</button>
+                        <button class="btn-danger" onclick="resetApp()">🔄 Ricomincia tutto</button>
+                        <button class="btn-primary" onclick="downloadArt()">💾 Salva PNG</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="canvas-container">
+                <div id="referenceImageContainer" style="display: none;">
+                    <img id="referenceImage" class="reference-image" alt="Riferimento">
+                </div>
+                <div class="canvas-wrapper">
+                    <div id="pixelCanvas"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentColor='#000000', currentTool='draw', isDrawing=false, gridSize=32, referenceImageData=null; const STORAGE_KEY='pixelArtData_v4_undo';
+        // --- NUOVE VARIABILI PER UNDO/REDO ---
+        let undoStack = [];
+        let redoStack = [];
+        
+        const colorPicker=document.getElementById('colorPicker'), pixelCanvas=document.getElementById('pixelCanvas'), imageUpload=document.getElementById('imageUpload'), referenceImage=document.getElementById('referenceImage'), referenceImageContainer=document.getElementById('referenceImageContainer'), referenceMode=document.getElementById('referenceMode'), gridSizeInput=document.getElementById('gridSize');
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+
+        function saveToBrowser() {
+            const colors = Array.from(document.querySelectorAll('.pixel')).map(p => p.style.background || 'white');
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ colors, size: gridSize }));
+            updateUndoRedoButtons();
+        }
+        function loadFromBrowser() {
+            try { const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            if (data && data.size) { gridSize = data.size; gridSizeInput.value = data.size; return data.colors; }} catch(e){} return null;
+        }
+
+        // --- NUOVE FUNZIONI UNDO/REDO ---
+
+        // Cattura lo stato attuale PRIMA di una modifica
+        function saveStateForUndo() {
+            const currentColors = Array.from(document.querySelectorAll('.pixel')).map(p => p.style.background || 'white');
+            undoStack.push(currentColors);
+            // Limita la memoria a 50 passi indietro per evitare problemi di performance
+            if (undoStack.length > 50) undoStack.shift();
+            // Svuota la pila redo perché abbiamo intrapreso una nuova strada
+            redoStack = [];
+            updateUndoRedoButtons();
+        }
+
+        function undo() {
+            if (undoStack.length === 0) return;
+            // Salva lo stato attuale nel redo stack
+            const currentColors = Array.from(document.querySelectorAll('.pixel')).map(p => p.style.background || 'white');
+            redoStack.push(currentColors);
+            // Recupera l'ultimo stato
+            const previousColors = undoStack.pop();
+            applyState(previousColors);
+        }
+
+        function redo() {
+            if (redoStack.length === 0) return;
+            // Salva lo stato attuale nell'undo stack
+            const currentColors = Array.from(document.querySelectorAll('.pixel')).map(p => p.style.background || 'white');
+            undoStack.push(currentColors);
+            // Recupera lo stato successivo
+            const nextColors = redoStack.pop();
+            applyState(nextColors);
+        }
+
+        // Applica un array di colori alla griglia e salva
+        function applyState(colors) {
+            const pixels = document.querySelectorAll('.pixel');
+            pixels.forEach((p, i) => {
+                p.style.background = colors[i] || 'white';
+            });
+            saveToBrowser();
+        }
+
+        // Aggiorna lo stato visivo dei pulsanti
+        function updateUndoRedoButtons() {
+            undoBtn.disabled = undoStack.length === 0;
+            redoBtn.disabled = redoStack.length === 0;
+        }
+
+        // Scorciatoie da tastiera (Ctrl+Z, Ctrl+Y / Cmd+Z, Cmd+Shift+Z)
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z' && !e.shiftKey) {
+                    e.preventDefault(); undo();
+                } else if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) {
+                    e.preventDefault(); redo();
+                }
+            }
+        });
+
+
+        colorPicker.addEventListener('change',e=>{currentColor=e.target.value;updateActiveColorPreset(e.target.value);});
+        imageUpload.addEventListener('change',e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=ev=>{referenceImageData=ev.target.result;referenceImage.src=referenceImageData;if(referenceMode.value==='none')referenceMode.value='side';updateReferenceMode();};r.readAsDataURL(f);}});
+        function updateActiveColorPreset(c){document.querySelectorAll('.color-preset').forEach(p=>{p.classList.remove('active');if(rgbToHex(p.style.background)===rgbToHex(c))p.classList.add('active');});}
+
+        function createGrid(initialColors=null) {
+            const newSize=parseInt(gridSizeInput.value);
+            let colorsToApply=initialColors;
+            // Se cambiamo dimensione, resettiamo gli stack di undo/redo per sicurezza
+            if (gridSize !== newSize) { undoStack = []; redoStack = []; updateUndoRedoButtons(); }
+
+            if(!initialColors&&gridSize===newSize){const cp=document.querySelectorAll('.pixel');if(cp.length>0)colorsToApply=Array.from(cp).map(p=>p.style.background||'white');}
+            gridSize=newSize; pixelCanvas.innerHTML='';
+            const isMob=window.innerWidth<=900;
+            const maxS=Math.min(document.querySelector('.canvas-container').clientWidth-40,document.querySelector('.canvas-container').clientHeight-40,isMob?500:700);
+            const pSize=Math.floor(maxS/gridSize);
+            pixelCanvas.style.gridTemplateColumns=`repeat(${gridSize},${pSize}px)`;pixelCanvas.style.gridTemplateRows=`repeat(${gridSize},${pSize}px)`;
+            for(let i=0;i<gridSize*gridSize;i++){
+                const p=document.createElement('div');p.className='pixel';p.dataset.index=i;
+                if(colorsToApply&&colorsToApply[i])p.style.background=colorsToApply[i];
+                p.addEventListener('mousedown',e=>{e.preventDefault();isDrawing=true;handlePixelClick(p);});
+                p.addEventListener('mouseenter',()=>{if(isDrawing)handlePixelClick(p);});
+                p.addEventListener('touchstart',e=>{e.preventDefault();isDrawing=true;handlePixelClick(p);});
+                p.addEventListener('touchmove',e=>{e.preventDefault();if(isDrawing){const t=e.touches[0];const el=document.elementFromPoint(t.clientX,t.clientY);if(el&&el.classList.contains('pixel'))handlePixelClick(el);}});
+                pixelCanvas.appendChild(p);
+            }
+            ['mouseup','touchend'].forEach(evt=>document.addEventListener(evt,()=>isDrawing=false));
+            if(referenceMode.value==='watermark'&&referenceImageData)setTimeout(()=>{const ew=document.querySelector('.watermark-image');if(ew)ew.remove();addWatermark();},100);
+            if(!initialColors)saveToBrowser();
+            updateUndoRedoButtons();
+        }
+
+        function handlePixelClick(p){
+            let ch=false;
+            if(currentTool==='draw'){
+                // Salva stato PRIMA di disegnare
+                saveStateForUndo();
+                p.style.background=currentColor;ch=true;
+            }
+            else if(currentTool==='erase'){
+                // Salva stato PRIMA di cancellare
+                saveStateForUndo();
+                p.style.background='white';ch=true;
+            }
+            else if(currentTool==='fill'){
+                // floodFill gestisce il salvataggio internamente
+                floodFill(p);ch=true;
+            }
+            else if(currentTool==='picker'){const pc=p.style.background||'white';setColor(rgbToHex(pc));setTool('draw');}
+            if(ch)saveToBrowser();
+        }
+
+        function floodFill(startP){
+            const tColor=startP.style.background||'white',fColor=currentColor;
+            if(rgbToHex(tColor)===rgbToHex(fColor))return;
+            
+            // Salva stato PRIMA di riempire
+            saveStateForUndo();
+
+            const pixels=Array.from(document.querySelectorAll('.pixel')),visited=new Set(),queue=[parseInt(startP.dataset.index)];
+            let filled=false;
+            while(queue.length){
+                const idx=queue.shift();if(visited.has(idx))continue;
+                const p=pixels[idx];if(rgbToHex(p.style.background||'white')!==rgbToHex(tColor))continue;
+                visited.add(idx);p.style.background=fColor;filled=true;
+                const r=Math.floor(idx/gridSize),c=idx%gridSize;
+                if(c>0)queue.push(idx-1);if(c<gridSize-1)queue.push(idx+1);if(r>0)queue.push(idx-gridSize);if(r<gridSize-1)queue.push(idx+gridSize);
+            }
+            if(filled)saveToBrowser();
+        }
+
+        function clearCanvas(){
+            if(confirm('Vuoi cancellare solo il disegno? La griglia e le impostazioni rimarranno.')){
+                // Salva stato PRIMA di pulire tutto
+                saveStateForUndo();
+                document.querySelectorAll('.pixel').forEach(p=>p.style.background='white');saveToBrowser();
+            }
+        }
+
+        function resetApp() {
+            if (confirm('ATTENZIONE: Questo cancellerà TUTTO: disegno, dimensione griglia e immagini di riferimento. Sei sicuro di voler ricominciare da zero?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                currentColor = '#000000'; currentTool = 'draw'; gridSize = 32; referenceImageData = null;
+                undoStack = []; redoStack = []; // Resetta stack
+                colorPicker.value = currentColor; gridSizeInput.value = gridSize;
+                updateActiveColorPreset(currentColor); setTool('draw');
+                referenceMode.value = 'none'; updateReferenceMode(); imageUpload.value = '';
+                createGrid(null);
+            }
+        }
+
+        function updateReferenceMode(){const m=referenceMode.value,oc=document.getElementById('opacityControl'),ew=document.querySelector('.watermark-image');if(ew)ew.remove();if(m==='none'||!referenceImageData){referenceImageContainer.style.display='none';oc.style.display='none';}else if(m==='side'){referenceImageContainer.style.display='block';oc.style.display='none';}else if(m==='watermark'){referenceImageContainer.style.display='none';oc.style.display='block';addWatermark();}}
+        function addWatermark(){const cw=document.querySelector('.canvas-wrapper'),wm=document.createElement('img');wm.src=referenceImageData;wm.className='watermark-image';const cr=pixelCanvas.getBoundingClientRect();wm.style.width=cr.clientWidth+'px';wm.style.height=cr.clientHeight+'px';wm.style.opacity=document.getElementById('opacitySlider').value/100;cw.insertBefore(wm,pixelCanvas);}
+        function updateOpacity(){const v=document.getElementById('opacitySlider').value;document.getElementById('opacityValue').textContent=v;const wm=document.querySelector('.watermark-image');if(wm)wm.style.opacity=v/100;}
+        function setColor(c){currentColor=c;colorPicker.value=c;updateActiveColorPreset(c);}
+        function setTool(t){currentTool=t;document.querySelectorAll('.btn-tool').forEach(b=>b.classList.remove('active'));document.getElementById(t==='picker'?'pickerBtn':t+'Btn').classList.add('active');}
+        function rgbToHex(c){if(!c||c==='white'||c==='transparent')return '#ffffff';if(c.startsWith('#'))return c.toLowerCase();const rgb=c.match(/\d+/g);return rgb?'#'+rgb.map(x=>parseInt(x).toString(16).padStart(2,'0')).join(''):'#ffffff';}
+        function downloadArt(){const c=document.createElement('canvas'),ctx=c.getContext('2d'),s=10;c.width=c.height=gridSize*s;document.querySelectorAll('.pixel').forEach((p,i)=>{const r=Math.floor(i/gridSize),co=i%gridSize;ctx.fillStyle=rgbToHex(p.style.background);ctx.fillRect(co*s,r*s,s,s);});c.toBlob(b=>{if(b){const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`pixel-art-${Date.now()}.png`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);}},'image/png');}
+        
+        let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>createGrid(null),400);});
+        createGrid(loadFromBrowser());
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => console.log('Service Worker registrato:', registration.scope))
+                    .catch(error => console.log('Service Worker fallito:', error));
+            });
+        }
+    </script>
+</body>
+</html>
