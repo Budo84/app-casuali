@@ -10,7 +10,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen p-8 flex flex-col items-center">
 
-    <div class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-lg">
+    <div class="w-full max-w-3xl bg-white p-8 rounded-xl shadow-lg" id="main-card">
         <h1 class="text-3xl font-bold mb-6 text-blue-600 text-center">Convertitore Markdown</h1>
         
         <div class="mb-6 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50">
@@ -20,54 +20,87 @@
 
         <p id="status" class="text-sm text-center text-gray-500 mb-6">Nessun file caricato.</p>
 
-        <div id="azioni" class="hidden flex flex-col gap-3">
-            <p class="text-center font-semibold text-gray-700">2. Scegli il formato di destinazione:</p>
-            <button onclick="scaricaHTML()" class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 transition">Scarica .HTML</button>
-            <button onclick="scaricaDOCX()" class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition">Scarica .DOCX (Word)</button>
-            <button onclick="window.print()" class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition">Stampa come .PDF</button>
+        <div id="azioni" class="hidden flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
+            <button id="btnAnteprima" onclick="toggleAnteprima()" class="bg-purple-500 text-white px-4 py-2 rounded shadow hover:bg-purple-600 transition font-semibold w-full sm:w-auto">Mostra Anteprima</button>
+            <button onclick="scaricaHTML()" class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 transition w-full sm:w-auto">Scarica .HTML</button>
+            <button onclick="scaricaDOCX()" class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition w-full sm:w-auto">Scarica .DOCX</button>
+            <button onclick="window.print()" class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition w-full sm:w-auto">Stampa .PDF</button>
         </div>
+
+        <div id="preview-container" class="hidden mt-8 p-8 bg-white border border-gray-200 rounded shadow-inner prose max-w-none w-full">
+            </div>
     </div>
 
-    <div id="hidden-html-content" class="hidden prose"></div>
+    <div id="hidden-html-content" class="hidden prose max-w-none"></div>
 
-    <script>
+<script>
         let fileContent = "";
+        let nomeFileBase = "documento"; // Variabile per memorizzare il nome del file
+        
         const fileInput = document.getElementById('fileInput');
         const hiddenHtml = document.getElementById('hidden-html-content');
         const azioniDiv = document.getElementById('azioni');
         const statusP = document.getElementById('status');
+        const previewContainer = document.getElementById('preview-container');
+        const btnAnteprima = document.getElementById('btnAnteprima');
 
         // Legge il file caricato
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
+            // Salva il nome del file originale togliendo l'estensione (es. da "testo.md" a "testo")
+            nomeFileBase = file.name.replace(/\.[^/.]+$/, "");
+
             const reader = new FileReader();
             reader.onload = function(evento) {
                 fileContent = evento.target.result;
-                // Converte il Markdown in HTML e lo salva nel div nascosto
-                hiddenHtml.innerHTML = marked.parse(fileContent);
+                
+                // Converte il Markdown in HTML e lo salva nei contenitori
+                const htmlGenerato = marked.parse(fileContent);
+                hiddenHtml.innerHTML = htmlGenerato;
+                previewContainer.innerHTML = htmlGenerato;
+                
                 statusP.innerText = `✅ File "${file.name}" caricato e pronto.`;
                 azioniDiv.classList.remove('hidden'); // Mostra i bottoni
+                
+                // Se si carica un nuovo file, nascondi l'anteprima di default
+                if (!previewContainer.classList.contains('hidden')) {
+                    toggleAnteprima();
+                }
             };
             reader.readAsText(file);
         });
 
-        // Funzione per scaricare l'HTML
+        // Mostra o nasconde l'anteprima
+        function toggleAnteprima() {
+            if (previewContainer.classList.contains('hidden')) {
+                previewContainer.classList.remove('hidden');
+                btnAnteprima.innerText = "Chiudi Anteprima";
+                btnAnteprima.classList.replace('bg-purple-500', 'bg-gray-500');
+                btnAnteprima.classList.replace('hover:bg-purple-600', 'hover:bg-gray-600');
+            } else {
+                previewContainer.classList.add('hidden');
+                btnAnteprima.innerText = "Mostra Anteprima";
+                btnAnteprima.classList.replace('bg-gray-500', 'bg-purple-500');
+                btnAnteprima.classList.replace('hover:bg-gray-600', 'hover:bg-purple-600');
+            }
+        }
+
+        // Scarica HTML usando il nome originale
         function scaricaHTML() {
             const blob = new Blob([hiddenHtml.innerHTML], { type: 'text/html' });
-            creaLinkDownload(blob, 'convertito.html');
+            creaLinkDownload(blob, `${nomeFileBase}.html`);
         }
 
-        // Funzione per scaricare il DOCX
+        // Scarica DOCX usando il nome originale
         function scaricaDOCX() {
-            // Usa html-docx-js per trasformare l'HTML generato in un file Word
             const htmlString = `<!DOCTYPE html><html><body>${hiddenHtml.innerHTML}</body></html>`;
             const converted = htmlDocx.asBlob(htmlString);
-            creaLinkDownload(converted, 'convertito.docx');
+            creaLinkDownload(converted, `${nomeFileBase}.docx`);
         }
 
-        // Helper per generare il download automatico
+        // Helper download
         function creaLinkDownload(blob, nomeFile) {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -81,10 +114,11 @@
     </script>
 
     <style>
-        /* Regole per la stampa PDF: nasconde tutta la UI e stampa solo il contenuto convertito */
+        /* Nasconde tutta l'interfaccia utente durante la stampa in PDF, lasciando solo il documento */
         @media print {
-            body { background: white; }
-            .max-w-2xl, #azioni, #fileInput { display: none !important; }
+            body { background: white; padding: 0; }
+            #main-card { box-shadow: none; border: none; padding: 0; }
+            h1, #fileInput, .border-dashed, #status, #azioni, label, #preview-container { display: none !important; }
             #hidden-html-content { display: block !important; }
         }
     </style>
