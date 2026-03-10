@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertitore Markdown Multi-Formato</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-8 flex flex-col items-center">
+
+    <div class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-blue-600 text-center">Convertitore Markdown</h1>
+        
+        <div class="mb-6 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50">
+            <label class="block text-gray-700 font-semibold mb-2">1. Carica un file Markdown (.md)</label>
+            <input type="file" id="fileInput" accept=".md,.txt" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"/>
+        </div>
+
+        <p id="status" class="text-sm text-center text-gray-500 mb-6">Nessun file caricato.</p>
+
+        <div id="azioni" class="hidden flex flex-col gap-3">
+            <p class="text-center font-semibold text-gray-700">2. Scegli il formato di destinazione:</p>
+            <button onclick="scaricaHTML()" class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 transition">Scarica .HTML</button>
+            <button onclick="scaricaDOCX()" class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition">Scarica .DOCX (Word)</button>
+            <button onclick="window.print()" class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition">Stampa come .PDF</button>
+        </div>
+    </div>
+
+    <div id="hidden-html-content" class="hidden prose"></div>
+
+    <script>
+        let fileContent = "";
+        const fileInput = document.getElementById('fileInput');
+        const hiddenHtml = document.getElementById('hidden-html-content');
+        const azioniDiv = document.getElementById('azioni');
+        const statusP = document.getElementById('status');
+
+        // Legge il file caricato
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evento) {
+                fileContent = evento.target.result;
+                // Converte il Markdown in HTML e lo salva nel div nascosto
+                hiddenHtml.innerHTML = marked.parse(fileContent);
+                statusP.innerText = `✅ File "${file.name}" caricato e pronto.`;
+                azioniDiv.classList.remove('hidden'); // Mostra i bottoni
+            };
+            reader.readAsText(file);
+        });
+
+        // Funzione per scaricare l'HTML
+        function scaricaHTML() {
+            const blob = new Blob([hiddenHtml.innerHTML], { type: 'text/html' });
+            creaLinkDownload(blob, 'convertito.html');
+        }
+
+        // Funzione per scaricare il DOCX
+        function scaricaDOCX() {
+            // Usa html-docx-js per trasformare l'HTML generato in un file Word
+            const htmlString = `<!DOCTYPE html><html><body>${hiddenHtml.innerHTML}</body></html>`;
+            const converted = htmlDocx.asBlob(htmlString);
+            creaLinkDownload(converted, 'convertito.docx');
+        }
+
+        // Helper per generare il download automatico
+        function creaLinkDownload(blob, nomeFile) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = nomeFile;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+
+    <style>
+        /* Regole per la stampa PDF: nasconde tutta la UI e stampa solo il contenuto convertito */
+        @media print {
+            body { background: white; }
+            .max-w-2xl, #azioni, #fileInput { display: none !important; }
+            #hidden-html-content { display: block !important; }
+        }
+    </style>
+</body>
+</html>
