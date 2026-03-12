@@ -20,7 +20,6 @@
             line-height: 1.6;
             color: #000;
             background: white;
-            /* Rimosso il padding da qui: i margini li gestisce il motore PDF riga 168 */
         }
 
         .pdf-source h1 { font-size: 26pt; margin-bottom: 8mm; color: #111; border-bottom: 2px solid #eee; padding-bottom: 3mm;}
@@ -32,7 +31,9 @@
         .pdf-source pre code { background-color: transparent; padding: 0; }
         .pdf-source blockquote { border-left: 4px solid #ccc; padding-left: 5mm; color: #555; margin-left: 0; margin-right: 0; font-style: italic;}
         .pdf-source ul, .pdf-source ol { margin-left: 5mm; margin-bottom: 5mm; }
-        .pdf-source img { max-width: 100%; height: auto; margin-bottom: 5mm; border-radius: 4px;}
+        
+        /* Gestione Immagini */
+        .pdf-source img { max-width: 100%; height: auto; margin-bottom: 5mm; border-radius: 4px; display: block; }
 
         /* Regole anti-taglio */
         .pdf-source h1, .pdf-source h2, .pdf-source h3 { page-break-after: avoid; break-after: avoid; }
@@ -50,10 +51,10 @@
         
         <div class="mb-6 p-6 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition relative">
             <label for="fileInput" class="cursor-pointer block w-full">
-                <span class="block text-gray-700 font-semibold mb-4 text-lg">1. Clicca qui o trascina i file Markdown (.md)</span>
-                <input type="file" id="fileInput" accept=".md,.txt" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-800 hover:file:bg-blue-200 cursor-pointer mx-auto max-w-md"/>
+                <span class="block text-gray-800 font-bold mb-2 text-lg">1. Trascina qui i tuoi file Markdown (.md) e le tue Immagini</span>
+                <span class="block text-gray-600 mb-4 text-sm">Seleziona sia il testo che le foto contemporaneamente per collegarli</span>
+                <input type="file" id="fileInput" accept=".md,.txt,image/*" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-800 hover:file:bg-blue-200 cursor-pointer mx-auto max-w-md"/>
             </label>
-            <p class="text-sm text-gray-500 mt-4">Puoi selezionare più file contemporaneamente</p>
         </div>
 
         <p id="status" class="text-sm text-center text-gray-600 font-medium mb-6 bg-gray-100 py-2 rounded">Nessun file caricato.</p>
@@ -62,13 +63,11 @@
 
         <div id="azioni-globali" class="hidden flex flex-col mt-8 pt-6 border-t border-gray-200 bg-gray-50 p-6 rounded-lg">
             <h3 class="text-center font-bold text-gray-800 mb-5 text-xl">2. Esportazione di Gruppo</h3>
-            
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                 <button onclick="scaricaTuttiHTML()" class="bg-green-600 text-white px-5 py-3 rounded-lg shadow hover:bg-green-700 transition font-semibold">📦 Tutti in .HTML (ZIP)</button>
                 <button onclick="scaricaTuttiDOCX()" class="bg-blue-600 text-white px-5 py-3 rounded-lg shadow hover:bg-blue-700 transition font-semibold">📦 Tutti in .DOCX (ZIP)</button>
                 <button onclick="scaricaTuttiPDF()" class="bg-red-600 text-white px-5 py-3 rounded-lg shadow hover:bg-red-700 transition font-semibold">🗂️ Tutti in .PDF (Separati)</button>
             </div>
-            
             <div class="flex justify-center border-t border-gray-200 pt-4 mt-2">
                 <button onclick="stampaTuttiPDF()" class="bg-gray-800 text-white px-6 py-2.5 rounded-lg shadow hover:bg-gray-950 transition font-bold w-full sm:w-auto">
                     🖨️ Unisci tutti in un unico grande .PDF
@@ -90,6 +89,7 @@
 
     <script>
         let filesData = []; 
+        let uploadedImages = {}; // Dizionario per salvare in memoria le immagini locali
         
         const fileInput = document.getElementById('fileInput');
         const fileListDiv = document.getElementById('file-list');
@@ -100,18 +100,50 @@
         const previewTitle = document.getElementById('preview-title');
         const hiddenPrintContent = document.getElementById('hidden-print-content');
 
-        marked.use({ breaks: true, gfm: true });
+        // Configurazione del Renderer di Marked per intercettare le immagini
+        const renderer = {
+            image(href, title, text) {
+                // Estrae solo il nome del file dall'indirizzo (es. "cartella/foto.jpg" -> "foto.jpg")
+                const fileName = href.split('/').pop();
+                
+                // Se l'immagine fa parte di quelle caricate dall'utente, sostituisce il link con quello in memoria
+                if (uploadedImages[fileName]) {
+                    href = uploadedImages[fileName];
+                }
+                
+                return `<img src="${href}" alt="${text || ''}" title="${title || ''}" />`;
+            }
+        };
+
+        marked.use({ renderer, breaks: true, gfm: true });
 
         fileInput.addEventListener('change', async function(e) {
             const files = e.target.files;
             if (files.length === 0) return;
 
-            statusP.innerText = `⏳ Elaborazione di ${files.length} file...`;
+            statusP.innerText = `⏳ Lettura dei file in corso...`;
             filesData = []; 
+            uploadedImages = {}; // Resetta le immagini caricate in precedenza
             chiudiAnteprima();
 
+            let mdFiles = [];
+            let imageCount = 0;
+
+            // Divide i file Markdown dalle Immagini
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
+                if (file.type.startsWith('image/')) {
+                    // Trasforma l'immagine in un URL temporaneo nel browser
+                    uploadedImages[file.name] = URL.createObjectURL(file);
+                    imageCount++;
+                } else if (file.name.endsWith('.md') || file.name.endsWith('.txt')) {
+                    mdFiles.push(file);
+                }
+            }
+
+            // Elabora solo i file di testo, sapendo che ora il renderer sostituirà le immagini
+            for (let i = 0; i < mdFiles.length; i++) {
+                const file = mdFiles[i];
                 const baseName = file.name.replace(/\.[^/.]+$/, "");
                 const text = await file.text(); 
                 const htmlContent = marked.parse(text);
@@ -119,11 +151,16 @@
                 filesData.push({ nomeOriginale: file.name, nomeBase: baseName, html: htmlContent });
             }
 
-            statusP.innerText = `✅ ${filesData.length} file pronti per la conversione.`;
-            statusP.classList.replace('bg-gray-100', 'bg-green-100');
-            statusP.classList.add('text-green-800');
-            generaListaFile();
-            azioniGlobali.classList.remove('hidden');
+            if (filesData.length > 0) {
+                statusP.innerText = `✅ ${filesData.length} documenti pronti. (${imageCount} immagini collegate).`;
+                statusP.classList.replace('bg-gray-100', 'bg-green-100');
+                statusP.classList.add('text-green-800');
+                generaListaFile();
+                azioniGlobali.classList.remove('hidden');
+            } else if (imageCount > 0) {
+                statusP.innerText = `⚠️ Hai caricato solo immagini, per favore carica anche i file Markdown (.md).`;
+                statusP.classList.replace('bg-green-100', 'bg-yellow-100');
+            }
         });
 
         function generaListaFile() {
@@ -131,9 +168,7 @@
             filesData.forEach((dati, indice) => {
                 fileListDiv.innerHTML += `
                     <div class="flex flex-col lg:flex-row justify-between items-center p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition">
-                        <span class="font-semibold text-gray-800 mb-3 lg:mb-0 break-all w-full lg:w-1/3">
-                            📄 ${dati.nomeOriginale}
-                        </span>
+                        <span class="font-semibold text-gray-800 mb-3 lg:mb-0 break-all w-full lg:w-1/3">📄 ${dati.nomeOriginale}</span>
                         <div class="flex gap-2 flex-wrap justify-center lg:justify-end w-full lg:w-2/3">
                             <button onclick="mostraAnteprima(${indice})" class="bg-purple-50 text-purple-700 px-3 py-1.5 rounded hover:bg-purple-100 font-medium text-sm">👁️ Anteprima</button>
                             <button onclick="scaricaHTML(${indice})" class="bg-green-50 text-green-700 px-3 py-1.5 rounded hover:bg-green-100 font-medium text-sm">⬇️ HTML</button>
@@ -145,14 +180,13 @@
             });
         }
 
-        // OPZIONI PDF: È QUI LA MAGIA DEI MARGINI
         function getPdfOptions(filename) {
             return {
-                // margin: [Superiore, Destro, Inferiore, Sinistro] in millimetri
                 margin: [20, 20, 20, 20], 
                 filename: filename,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false }, // Scale 2 per bilanciare qualità e velocità
+                // html2canvas si occuperà di caricare le immagini con useCORS
+                html2canvas: { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } 
             };
@@ -177,7 +211,7 @@
 
         function scaricaHTML(indice) {
             const file = filesData[indice];
-            const htmlCompleto = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${file.nomeBase}</title><style>body{font-family:sans-serif;line-height:1.6;max-width:800px;margin:2rem auto;padding:0 1rem;}</style></head><body>${file.html}</body></html>`;
+            const htmlCompleto = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${file.nomeBase}</title><style>body{font-family:sans-serif;line-height:1.6;max-width:800px;margin:2rem auto;padding:0 1rem;} img{max-width:100%;height:auto;}</style></head><body>${file.html}</body></html>`;
             const blob = new Blob([htmlCompleto], { type: 'text/html' });
             saveAs(blob, `${file.nomeBase}.html`);
         }
@@ -189,27 +223,48 @@
             saveAs(converted, `${file.nomeBase}.docx`);
         }
 
-        function scaricaPDFSingolo(indice) {
+        // Aspetta che tutte le immagini in un elemento HTML siano caricate (cruciale per PDF e DOCX)
+        async function attendiCaricamentoImmagini(container) {
+            const imgs = Array.from(container.querySelectorAll('img'));
+            const promises = imgs.map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise((resolve) => {
+                    img.onload = resolve;
+                    img.onerror = resolve; // Procedi comunque se l'immagine fallisce
+                });
+            });
+            await Promise.all(promises);
+        }
+
+        async function scaricaPDFSingolo(indice) {
             const file = filesData[indice];
             const notify = document.getElementById('status');
-            notify.innerText = `⏳ Generazione PDF per "${file.nomeBase}"...`;
+            notify.innerText = `⏳ Caricamento immagini e generazione PDF per "${file.nomeBase}"...`;
             notify.classList.replace('bg-green-100', 'bg-yellow-100');
             notify.classList.replace('text-green-800', 'text-yellow-800');
             
             const element = prepareElementForPdf(file.html);
+            
+            // Appendiamo temporaneamente l'elemento per forzare il browser a renderizzare le immagini
+            element.style.position = 'absolute';
+            element.style.left = '-9999px';
+            document.body.appendChild(element);
+            
+            await attendiCaricamentoImmagini(element);
 
             html2pdf().set(getPdfOptions(`${file.nomeBase}.pdf`)).from(element).save()
                 .then(() => {
                     notify.innerText = `✅ PDF scaricato!`;
                     notify.classList.replace('bg-yellow-100', 'bg-green-100');
                     notify.classList.replace('text-yellow-800', 'text-green-800');
+                    document.body.removeChild(element); // Pulizia
                 });
         }
 
         async function scaricaTuttiHTML() {
             const zip = new JSZip();
             filesData.forEach(file => { 
-                const htmlCompleto = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${file.nomeBase}</title><style>body{font-family:sans-serif;line-height:1.6;max-width:800px;margin:2rem auto;padding:0 1rem;}</style></head><body>${file.html}</body></html>`;
+                const htmlCompleto = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${file.nomeBase}</title><style>body{font-family:sans-serif;line-height:1.6;max-width:800px;margin:2rem auto;padding:0 1rem;} img{max-width:100%;height:auto;}</style></head><body>${file.html}</body></html>`;
                 zip.file(`${file.nomeBase}.html`, htmlCompleto); 
             });
             const content = await zip.generateAsync({type:"blob"});
@@ -229,7 +284,7 @@
 
         async function scaricaTuttiPDF() {
             const notify = document.getElementById('status');
-            notify.innerText = "⏳ Generazione in corso. I PDF verranno scaricati uno ad uno, attendere...";
+            notify.innerText = "⏳ Generazione in corso. Attendi...";
             notify.classList.replace('bg-green-100', 'bg-yellow-100');
             
             const worker = html2pdf(); 
@@ -237,15 +292,23 @@
                 const file = filesData[i];
                 notify.innerText = `⏳ Generazione PDF (${i+1}/${filesData.length}): ${file.nomeBase}...`;
                 const element = prepareElementForPdf(file.html);
+                
+                element.style.position = 'absolute';
+                element.style.left = '-9999px';
+                document.body.appendChild(element);
+                await attendiCaricamentoImmagini(element);
+
                 await worker.set(getPdfOptions(`${file.nomeBase}.pdf`)).from(element).save();
+                document.body.removeChild(element);
             }
-            notify.innerText = `✅ Completato! Scaricati ${filesData.length} PDF singoli.`;
+            notify.innerText = `✅ Completato! Scaricati ${filesData.length} PDF.`;
             notify.classList.replace('bg-yellow-100', 'bg-green-100');
         }
 
-        function stampaTuttiPDF() {
+        async function stampaTuttiPDF() {
             const htmlUnito = filesData.map(file => `<div>${file.html}</div>`).join('<div style="page-break-after: always; break-after: always;"></div>');
             hiddenPrintContent.innerHTML = htmlUnito;
+            await attendiCaricamentoImmagini(hiddenPrintContent);
             window.print();
         }
     </script>
