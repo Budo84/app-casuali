@@ -20,20 +20,21 @@
             line-height: 1.6;
             color: #000;
             background: white;
-            padding: 20mm; 
+            /* Rimosso il padding da qui: i margini li gestisce il motore PDF riga 168 */
         }
 
-        .pdf-source h1 { font-size: 28pt; margin-bottom: 1cm; color: #111; border-bottom: 2px solid #eee; padding-bottom: 5mm;}
-        .pdf-source h2 { font-size: 20pt; margin-top: 1cm; margin-bottom: 5mm; color: #333; border-bottom: 1px solid #eee;}
-        .pdf-source h3 { font-size: 16pt; margin-top: 8mm; color: #444;}
+        .pdf-source h1 { font-size: 26pt; margin-bottom: 8mm; color: #111; border-bottom: 2px solid #eee; padding-bottom: 3mm;}
+        .pdf-source h2 { font-size: 18pt; margin-top: 8mm; margin-bottom: 4mm; color: #333; border-bottom: 1px solid #eee;}
+        .pdf-source h3 { font-size: 14pt; margin-top: 6mm; color: #444;}
         .pdf-source p { margin-bottom: 4mm; text-align: justify; widows: 3; orphans: 3; }
         .pdf-source code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: monospace; font-size: 10pt;}
-        .pdf-source pre { background-color: #f4f4f4; padding: 1rem; border-radius: 5px; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #ddd;}
+        .pdf-source pre { background-color: #f4f4f4; padding: 5mm; border-radius: 5px; overflow-x: auto; margin-bottom: 5mm; border: 1px solid #ddd;}
         .pdf-source pre code { background-color: transparent; padding: 0; }
-        .pdf-source blockquote { border-left: 4px solid #ccc; padding-left: 1rem; color: #555; margin-left: 0; margin-right: 0; font-style: italic;}
-        .pdf-source ul, .pdf-source ol { margin-left: 1rem; margin-bottom: 1rem; }
-        .pdf-source img { max-width: 100%; height: auto; margin-bottom: 1rem; border-radius: 4px;}
+        .pdf-source blockquote { border-left: 4px solid #ccc; padding-left: 5mm; color: #555; margin-left: 0; margin-right: 0; font-style: italic;}
+        .pdf-source ul, .pdf-source ol { margin-left: 5mm; margin-bottom: 5mm; }
+        .pdf-source img { max-width: 100%; height: auto; margin-bottom: 5mm; border-radius: 4px;}
 
+        /* Regole anti-taglio */
         .pdf-source h1, .pdf-source h2, .pdf-source h3 { page-break-after: avoid; break-after: avoid; }
         .pdf-source p, .pdf-source ul, .pdf-source ol { page-break-inside: auto; }
         .pdf-source pre, .pdf-source blockquote, .pdf-source img, .pdf-source table, .pdf-source li { 
@@ -99,13 +100,8 @@
         const previewTitle = document.getElementById('preview-title');
         const hiddenPrintContent = document.getElementById('hidden-print-content');
 
-        // Configurazione corretta per le nuove versioni di marked.js
-        marked.use({
-            breaks: true,
-            gfm: true
-        });
+        marked.use({ breaks: true, gfm: true });
 
-        // Legge i file caricati
         fileInput.addEventListener('change', async function(e) {
             const files = e.target.files;
             if (files.length === 0) return;
@@ -120,11 +116,7 @@
                 const text = await file.text(); 
                 const htmlContent = marked.parse(text);
                 
-                filesData.push({
-                    nomeOriginale: file.name,
-                    nomeBase: baseName,
-                    html: htmlContent
-                });
+                filesData.push({ nomeOriginale: file.name, nomeBase: baseName, html: htmlContent });
             }
 
             statusP.innerText = `✅ ${filesData.length} file pronti per la conversione.`;
@@ -153,12 +145,14 @@
             });
         }
 
+        // OPZIONI PDF: È QUI LA MAGIA DEI MARGINI
         function getPdfOptions(filename) {
             return {
-                margin: [0, 0, 0, 0],
+                // margin: [Superiore, Destro, Inferiore, Sinistro] in millimetri
+                margin: [20, 20, 20, 20], 
                 filename: filename,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3, useCORS: true, logging: false },
+                html2canvas: { scale: 2, useCORS: true, logging: false }, // Scale 2 per bilanciare qualità e velocità
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } 
             };
@@ -263,7 +257,6 @@
             #hidden-print-content { 
                 display: block !important; 
                 width: 100%; 
-                padding: 20mm; 
                 font-family: Georgia, serif;
                 font-size: 12pt;
             }
