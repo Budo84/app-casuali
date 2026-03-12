@@ -3,101 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convertitore Markdown Multi-Formato</title>
+    <title>Convertitore Markdown Multi-Documento</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-8 flex flex-col items-center">
 
-    <div class="w-full max-w-3xl bg-white p-8 rounded-xl shadow-lg" id="main-card">
-        <h1 class="text-3xl font-bold mb-6 text-blue-600 text-center">Convertitore Markdown</h1>
+    <div class="w-full max-w-4xl bg-white p-8 rounded-xl shadow-lg" id="main-card">
+        <h1 class="text-3xl font-bold mb-6 text-blue-600 text-center">Convertitore Markdown Multi-Documento</h1>
         
         <div class="mb-6 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50">
-            <label class="block text-gray-700 font-semibold mb-2">1. Carica un file Markdown (.md)</label>
-            <input type="file" id="fileInput" accept=".md,.txt" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"/>
+            <label class="block text-gray-700 font-semibold mb-2">1. Carica uno o più file Markdown (.md)</label>
+            <input type="file" id="fileInput" accept=".md,.txt" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"/>
         </div>
 
         <p id="status" class="text-sm text-center text-gray-500 mb-6">Nessun file caricato.</p>
 
-        <div id="azioni" class="hidden flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
-            <button id="btnAnteprima" onclick="toggleAnteprima()" class="bg-purple-500 text-white px-4 py-2 rounded shadow hover:bg-purple-600 transition font-semibold w-full sm:w-auto">Mostra Anteprima</button>
-            <button onclick="scaricaHTML()" class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 transition w-full sm:w-auto">Scarica .HTML</button>
-            <button onclick="scaricaDOCX()" class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition w-full sm:w-auto">Scarica .DOCX</button>
-            <button onclick="window.print()" class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition w-full sm:w-auto">Stampa .PDF</button>
+        <div id="file-list" class="w-full mb-6 flex flex-col gap-2"></div>
+
+        <div id="azioni-globali" class="hidden flex justify-center mt-6 pt-6 border-t border-gray-200">
+            <button onclick="stampaTuttiPDF()" class="bg-red-500 text-white px-6 py-3 rounded-lg shadow hover:bg-red-600 transition font-bold text-lg w-full sm:w-auto">
+                🖨️ Stampa tutti uniti in .PDF
+            </button>
         </div>
 
-        <div id="preview-container" class="hidden mt-8 p-8 bg-white border border-gray-200 rounded shadow-inner prose max-w-none w-full">
+        <div id="preview-wrapper" class="hidden mt-8">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="font-bold text-xl text-gray-700" id="preview-title">Anteprima</h2>
+                <button onclick="chiudiAnteprima()" class="text-red-500 hover:text-red-700 font-bold">Chiudi ✖</button>
             </div>
+            <div id="preview-container" class="p-8 bg-white border border-gray-200 rounded shadow-inner prose max-w-none w-full">
+                </div>
+        </div>
     </div>
 
-    <div id="hidden-html-content" class="hidden prose max-w-none"></div>
+    <div id="hidden-print-content" class="hidden prose max-w-none"></div>
 
-<script>
-        let fileContent = "";
-        let nomeFileBase = "documento"; // Variabile per memorizzare il nome del file
+    <script>
+        let filesData = []; // Array per memorizzare tutti i file
         
         const fileInput = document.getElementById('fileInput');
-        const hiddenHtml = document.getElementById('hidden-html-content');
-        const azioniDiv = document.getElementById('azioni');
+        const fileListDiv = document.getElementById('file-list');
+        const azioniGlobali = document.getElementById('azioni-globali');
         const statusP = document.getElementById('status');
+        const previewWrapper = document.getElementById('preview-wrapper');
         const previewContainer = document.getElementById('preview-container');
-        const btnAnteprima = document.getElementById('btnAnteprima');
+        const previewTitle = document.getElementById('preview-title');
+        const hiddenPrintContent = document.getElementById('hidden-print-content');
 
-        // Legge il file caricato
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        // Legge i file caricati
+        fileInput.addEventListener('change', async function(e) {
+            const files = e.target.files;
+            if (files.length === 0) return;
 
-            // Salva il nome del file originale togliendo l'estensione (es. da "testo.md" a "testo")
-            nomeFileBase = file.name.replace(/\.[^/.]+$/, "");
+            statusP.innerText = `⏳ Elaborazione di ${files.length} file in corso...`;
+            filesData = []; // Resetta i dati precedenti
+            chiudiAnteprima();
 
-            const reader = new FileReader();
-            reader.onload = function(evento) {
-                fileContent = evento.target.result;
+            // Legge ogni file uno per uno
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const baseName = file.name.replace(/\.[^/.]+$/, "");
+                const text = await file.text(); // API moderna per leggere file come testo
+                const htmlContent = marked.parse(text);
                 
-                // Converte il Markdown in HTML e lo salva nei contenitori
-                const htmlGenerato = marked.parse(fileContent);
-                hiddenHtml.innerHTML = htmlGenerato;
-                previewContainer.innerHTML = htmlGenerato;
-                
-                statusP.innerText = `✅ File "${file.name}" caricato e pronto.`;
-                azioniDiv.classList.remove('hidden'); // Mostra i bottoni
-                
-                // Se si carica un nuovo file, nascondi l'anteprima di default
-                if (!previewContainer.classList.contains('hidden')) {
-                    toggleAnteprima();
-                }
-            };
-            reader.readAsText(file);
+                filesData.push({
+                    nomeOriginale: file.name,
+                    nomeBase: baseName,
+                    html: htmlContent
+                });
+            }
+
+            statusP.innerText = `✅ ${filesData.length} file caricati e pronti.`;
+            generaListaFile();
+            azioniGlobali.classList.remove('hidden');
         });
 
-        // Mostra o nasconde l'anteprima
-        function toggleAnteprima() {
-            if (previewContainer.classList.contains('hidden')) {
-                previewContainer.classList.remove('hidden');
-                btnAnteprima.innerText = "Chiudi Anteprima";
-                btnAnteprima.classList.replace('bg-purple-500', 'bg-gray-500');
-                btnAnteprima.classList.replace('hover:bg-purple-600', 'hover:bg-gray-600');
-            } else {
-                previewContainer.classList.add('hidden');
-                btnAnteprima.innerText = "Mostra Anteprima";
-                btnAnteprima.classList.replace('bg-gray-500', 'bg-purple-500');
-                btnAnteprima.classList.replace('hover:bg-gray-600', 'hover:bg-purple-600');
-            }
+        // Crea l'interfaccia con i bottoni per ogni file
+        function generaListaFile() {
+            fileListDiv.innerHTML = '';
+            filesData.forEach((dati, indice) => {
+                fileListDiv.innerHTML += `
+                    <div class="flex flex-col sm:flex-row justify-between items-center p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
+                        <span class="font-semibold text-gray-700 mb-3 sm:mb-0 break-all">${dati.nomeOriginale}</span>
+                        <div class="flex gap-2 flex-wrap justify-center">
+                            <button onclick="mostraAnteprima(${indice})" class="bg-purple-500 text-white px-3 py-1.5 rounded shadow hover:bg-purple-600 transition text-sm">👁️ Anteprima</button>
+                            <button onclick="scaricaHTML(${indice})" class="bg-green-500 text-white px-3 py-1.5 rounded shadow hover:bg-green-600 transition text-sm">⬇️ .HTML</button>
+                            <button onclick="scaricaDOCX(${indice})" class="bg-blue-500 text-white px-3 py-1.5 rounded shadow hover:bg-blue-600 transition text-sm">⬇️ .DOCX</button>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        // Scarica HTML usando il nome originale
-        function scaricaHTML() {
-            const blob = new Blob([hiddenHtml.innerHTML], { type: 'text/html' });
-            creaLinkDownload(blob, `${nomeFileBase}.html`);
+        // Funzioni per l'Anteprima
+        function mostraAnteprima(indice) {
+            const file = filesData[indice];
+            previewTitle.innerText = `Anteprima: ${file.nomeOriginale}`;
+            previewContainer.innerHTML = file.html;
+            previewWrapper.classList.remove('hidden');
+            // Scrolla verso l'anteprima
+            previewWrapper.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Scarica DOCX usando il nome originale
-        function scaricaDOCX() {
-            const htmlString = `<!DOCTYPE html><html><body>${hiddenHtml.innerHTML}</body></html>`;
+        function chiudiAnteprima() {
+            previewWrapper.classList.add('hidden');
+        }
+
+        // Scarica singolo HTML
+        function scaricaHTML(indice) {
+            const file = filesData[indice];
+            const blob = new Blob([file.html], { type: 'text/html' });
+            creaLinkDownload(blob, `${file.nomeBase}.html`);
+        }
+
+        // Scarica singolo DOCX
+        function scaricaDOCX(indice) {
+            const file = filesData[indice];
+            const htmlString = `<!DOCTYPE html><html><body>${file.html}</body></html>`;
             const converted = htmlDocx.asBlob(htmlString);
-            creaLinkDownload(converted, `${nomeFileBase}.docx`);
+            creaLinkDownload(converted, `${file.nomeBase}.docx`);
+        }
+
+        // Stampa tutti i documenti in un unico PDF
+        function stampaTuttiPDF() {
+            // Unisce tutti gli HTML mettendo un'interruzione di pagina tra l'uno e l'altro
+            const htmlUnito = filesData.map(file => `<div>${file.html}</div>`).join('<div style="page-break-after: always;"></div>');
+            hiddenPrintContent.innerHTML = htmlUnito;
+            window.print();
         }
 
         // Helper download
@@ -114,12 +148,11 @@
     </script>
 
     <style>
-        /* Nasconde tutta l'interfaccia utente durante la stampa in PDF, lasciando solo il documento */
+        /* Nasconde l'interfaccia utente durante la stampa in PDF */
         @media print {
             body { background: white; padding: 0; }
-            #main-card { box-shadow: none; border: none; padding: 0; }
-            h1, #fileInput, .border-dashed, #status, #azioni, label, #preview-container { display: none !important; }
-            #hidden-html-content { display: block !important; }
+            #main-card { display: none !important; }
+            #hidden-print-content { display: block !important; width: 100%; }
         }
     </style>
 </body>
