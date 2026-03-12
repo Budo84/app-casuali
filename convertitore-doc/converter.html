@@ -8,23 +8,19 @@
     <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* Setup base per Tailwind Typography */
         .prose { max-width: none; }
 
-        /* REGOLAZIONI TIPOGRAFICHE PER LA STAMPA PDF (Intercettate da html2pdf) */
         .pdf-source {
-            font-family: 'Georgia', Times, serif; /* Font serif più leggibile su carta */
+            font-family: 'Georgia', Times, serif; 
             font-size: 12pt;
             line-height: 1.6;
             color: #000;
             background: white;
-            padding: 20mm; /* Margini interni del documento */
+            padding: 20mm; 
         }
 
         .pdf-source h1 { font-size: 28pt; margin-bottom: 1cm; color: #111; border-bottom: 2px solid #eee; padding-bottom: 5mm;}
@@ -38,14 +34,11 @@
         .pdf-source ul, .pdf-source ol { margin-left: 1rem; margin-bottom: 1rem; }
         .pdf-source img { max-width: 100%; height: auto; margin-bottom: 1rem; border-radius: 4px;}
 
-        /* REGOLE DI IMPAGINAZIONE (PAGE BREAKS) CORRETTE */
-        .pdf-source h1, .pdf-source h2, .pdf-source h3 { page-break-after: avoid; break-after: avoid; } /* Evita titoli orfani a fine pagina */
+        .pdf-source h1, .pdf-source h2, .pdf-source h3 { page-break-after: avoid; break-after: avoid; }
         .pdf-source p, .pdf-source ul, .pdf-source ol { page-break-inside: auto; }
         .pdf-source pre, .pdf-source blockquote, .pdf-source img, .pdf-source table, .pdf-source li { 
-            page-break-inside: avoid; break-inside: avoid; /* Non tagliare mai questi elementi a metà */
+            page-break-inside: avoid; break-inside: avoid;
         }
-
-        /* Classe speciale per forzare un salto pagina se l'utente lo desidera nel Markdown usando <div class="page-break"></div> */
         .page-break { page-break-before: always; break-before: always; }
     </style>
 </head>
@@ -54,10 +47,12 @@
     <div class="w-full max-w-5xl bg-white p-6 md:p-8 rounded-xl shadow-lg" id="main-card">
         <h1 class="text-3xl font-bold mb-6 text-blue-700 text-center">Convertitore Markdown Professionale</h1>
         
-        <div class="mb-6 p-6 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer" onclick="document.getElementById('fileInput').click()">
-            <label class="block text-gray-700 font-semibold mb-2 cursor-pointer">1. Carica file Markdown (.md)</label>
-            <input type="file" id="fileInput" accept=".md,.txt" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-800 hover:file:bg-blue-200 cursor-pointer"/>
-            <p class="text-xs text-gray-500 mt-2">Puoi selezionare più file contemporaneamente</p>
+        <div class="mb-6 p-6 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition relative">
+            <label for="fileInput" class="cursor-pointer block w-full">
+                <span class="block text-gray-700 font-semibold mb-4 text-lg">1. Clicca qui o trascina i file Markdown (.md)</span>
+                <input type="file" id="fileInput" accept=".md,.txt" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-800 hover:file:bg-blue-200 cursor-pointer mx-auto max-w-md"/>
+            </label>
+            <p class="text-sm text-gray-500 mt-4">Puoi selezionare più file contemporaneamente</p>
         </div>
 
         <p id="status" class="text-sm text-center text-gray-600 font-medium mb-6 bg-gray-100 py-2 rounded">Nessun file caricato.</p>
@@ -65,16 +60,16 @@
         <div id="file-list" class="w-full mb-6 flex flex-col gap-3"></div>
 
         <div id="azioni-globali" class="hidden flex flex-col mt-8 pt-6 border-t border-gray-200 bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-center font-bold text-gray-800 mb-5 text-xl">2. Esportazione di Gruppo (Tutti i file caricati)</h3>
+            <h3 class="text-center font-bold text-gray-800 mb-5 text-xl">2. Esportazione di Gruppo</h3>
             
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                <button onclick="scaricaTuttiHTML()" class="bg-green-600 text-white px-5 py-3 rounded-lg shadow hover:bg-green-700 transition font-semibold flex items-center justify-center gap-2">📦 Tutti in .HTML (ZIP)</button>
-                <button onclick="scaricaTuttiDOCX()" class="bg-blue-600 text-white px-5 py-3 rounded-lg shadow hover:bg-blue-700 transition font-semibold flex items-center justify-center gap-2">📦 Tutti in .DOCX (ZIP)</button>
-                <button onclick="scaricaTuttiPDF()" class="bg-red-600 text-white px-5 py-3 rounded-lg shadow hover:bg-red-700 transition font-semibold flex items-center justify-center gap-2">🗂️ Tutti in .PDF (Separati)</button>
+                <button onclick="scaricaTuttiHTML()" class="bg-green-600 text-white px-5 py-3 rounded-lg shadow hover:bg-green-700 transition font-semibold">📦 Tutti in .HTML (ZIP)</button>
+                <button onclick="scaricaTuttiDOCX()" class="bg-blue-600 text-white px-5 py-3 rounded-lg shadow hover:bg-blue-700 transition font-semibold">📦 Tutti in .DOCX (ZIP)</button>
+                <button onclick="scaricaTuttiPDF()" class="bg-red-600 text-white px-5 py-3 rounded-lg shadow hover:bg-red-700 transition font-semibold">🗂️ Tutti in .PDF (Separati)</button>
             </div>
             
             <div class="flex justify-center border-t border-gray-200 pt-4 mt-2">
-                <button onclick="stampaTuttiPDF()" class="bg-gray-800 text-white px-6 py-2.5 rounded-lg shadow hover:bg-gray-950 transition font-bold w-full sm:w-auto flex items-center justify-center gap-2">
+                <button onclick="stampaTuttiPDF()" class="bg-gray-800 text-white px-6 py-2.5 rounded-lg shadow hover:bg-gray-950 transition font-bold w-full sm:w-auto">
                     🖨️ Unisci tutti in un unico grande .PDF
                 </button>
             </div>
@@ -86,7 +81,7 @@
                 <button onclick="chiudiAnteprima()" class="text-red-600 hover:text-red-800 font-bold bg-red-100 px-4 py-1.5 rounded-lg transition">Chiudi ✖</button>
             </div>
             <div id="preview-container" class="p-4 md:p-8 bg-white border border-gray-300 rounded-lg shadow-inner prose prose-blue max-w-none w-full overflow-x-auto">
-                </div>
+            </div>
         </div>
     </div>
 
@@ -104,11 +99,10 @@
         const previewTitle = document.getElementById('preview-title');
         const hiddenPrintContent = document.getElementById('hidden-print-content');
 
-        // Configurazione globale del Markdown (marked.js)
-        marked.setOptions({
-            breaks: true, // Converte i ritorni a capo semplici in <br>
-            headerIds: true,
-            gfm: true // GitHub Flavored Markdown
+        // Configurazione corretta per le nuove versioni di marked.js
+        marked.use({
+            breaks: true,
+            gfm: true
         });
 
         // Legge i file caricati
@@ -140,18 +134,16 @@
             azioniGlobali.classList.remove('hidden');
         });
 
-        // Genera la lista dei file con bottoni individuali
         function generaListaFile() {
             fileListDiv.innerHTML = '';
             filesData.forEach((dati, indice) => {
                 fileListDiv.innerHTML += `
                     <div class="flex flex-col lg:flex-row justify-between items-center p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition">
-                        <span class="font-semibold text-gray-800 mb-3 lg:mb-0 break-all w-full lg:w-1/3 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            ${dati.nomeOriginale}
+                        <span class="font-semibold text-gray-800 mb-3 lg:mb-0 break-all w-full lg:w-1/3">
+                            📄 ${dati.nomeOriginale}
                         </span>
                         <div class="flex gap-2 flex-wrap justify-center lg:justify-end w-full lg:w-2/3">
-                            <button onclick="mostraAnteprima(${indice})" class="bg-purple-50 text-purple-700 px-3 py-1.5 rounded hover:bg-purple-100 font-medium text-sm flex items-center gap-1">👁️ Anteprima</button>
+                            <button onclick="mostraAnteprima(${indice})" class="bg-purple-50 text-purple-700 px-3 py-1.5 rounded hover:bg-purple-100 font-medium text-sm">👁️ Anteprima</button>
                             <button onclick="scaricaHTML(${indice})" class="bg-green-50 text-green-700 px-3 py-1.5 rounded hover:bg-green-100 font-medium text-sm">⬇️ HTML</button>
                             <button onclick="scaricaDOCX(${indice})" class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded hover:bg-blue-100 font-medium text-sm">⬇️ DOCX</button>
                             <button onclick="scaricaPDFSingolo(${indice})" class="bg-red-50 text-red-700 px-3 py-1.5 rounded hover:bg-red-100 font-medium text-sm font-bold">⬇️ PDF PRO</button>
@@ -161,37 +153,28 @@
             });
         }
 
-        /* --- CONFIGURAZIONE CORE HTML2PDF (LA CHIAVE PER UN'OTTIMA IMPAGINAZIONE) --- */
         function getPdfOptions(filename) {
             return {
-                margin: [0, 0, 0, 0], // Margini gestiti via CSS (.pdf-source) per maggior precisione
+                margin: [0, 0, 0, 0],
                 filename: filename,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 3, // Aumenta la risoluzione (testo più nitido)
-                    letterRendering: true,
-                    useCORS: true,
-                    logging: false
-                },
+                html2canvas: { scale: 3, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                // Modalità "avoid-all" è CRUCIALE: evita di tagliare elementi a metà tra le pagine
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } 
             };
         }
 
-        // Prepara un elemento HTML temporaneo stilizzato appositamente per il motore PDF
         function prepareElementForPdf(htmlContent) {
             const element = document.createElement('div');
-            element.className = 'pdf-source prose prose-blue'; // Applica lo stile tipografico definito nel <style> in alto
+            element.className = 'pdf-source prose prose-blue'; 
             element.innerHTML = htmlContent;
             return element;
         }
 
-        /* --- FUNZIONI SINGOLE --- */
         function mostraAnteprima(indice) {
             const file = filesData[indice];
             previewTitle.innerText = `Anteprima: ${file.nomeOriginale}`;
-            previewContainer.innerHTML = file.html; // Anteprima web usa Tailwind standard
+            previewContainer.innerHTML = file.html;
             previewWrapper.classList.remove('hidden');
             previewWrapper.scrollIntoView({ behavior: 'smooth' });
         }
@@ -207,40 +190,28 @@
 
         function scaricaDOCX(indice) {
             const file = filesData[indice];
-            // Fix codifica per DOCX
             const htmlString = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${file.html}</body></html>`;
             const converted = htmlDocx.asBlob(htmlString);
             saveAs(converted, `${file.nomeBase}.docx`);
         }
 
-        // GENERAZIONE PDF SINGOLO MIGLIORATA
         function scaricaPDFSingolo(indice) {
             const file = filesData[indice];
             const notify = document.getElementById('status');
-            notify.innerText = `⏳ Generazione PDF di alta qualità per "${file.nomeBase}"...`;
+            notify.innerText = `⏳ Generazione PDF per "${file.nomeBase}"...`;
             notify.classList.replace('bg-green-100', 'bg-yellow-100');
             notify.classList.replace('text-green-800', 'text-yellow-800');
             
-            // 1. Crea l'elemento temporaneo con lo stile tipografico PDF
             const element = prepareElementForPdf(file.html);
 
-            // 2. Avvia la conversione con le opzioni avanzate
-            html2pdf()
-                .set(getPdfOptions(`${file.nomeBase}.pdf`))
-                .from(element)
-                .save()
+            html2pdf().set(getPdfOptions(`${file.nomeBase}.pdf`)).from(element).save()
                 .then(() => {
-                    notify.innerText = `✅ PDF "${file.nomeBase}.pdf" scaricato con successo.`;
+                    notify.innerText = `✅ PDF scaricato!`;
                     notify.classList.replace('bg-yellow-100', 'bg-green-100');
                     notify.classList.replace('text-yellow-800', 'text-green-800');
-                })
-                .catch(err => {
-                    console.error(err);
-                    notify.innerText = `❌ Errore durante la generazione del PDF.`;
                 });
         }
 
-        /* --- FUNZIONI DI GRUPPO --- */
         async function scaricaTuttiHTML() {
             const zip = new JSZip();
             filesData.forEach(file => { 
@@ -262,33 +233,23 @@
             saveAs(content, "Tutti_i_file_DOCX.zip");
         }
 
-        // GENERAZIONE PDF DI GRUPPO SEPARATI MIGLIORATA
         async function scaricaTuttiPDF() {
             const notify = document.getElementById('status');
-            notify.innerText = "⏳ Avvio generazione sequenziale dei PDF. Non chiudere la pagina...";
+            notify.innerText = "⏳ Generazione in corso. I PDF verranno scaricati uno ad uno, attendere...";
             notify.classList.replace('bg-green-100', 'bg-yellow-100');
             
-            const worker = html2pdf(); // Riutilizza il worker per efficienza
-            
+            const worker = html2pdf(); 
             for (let i = 0; i < filesData.length; i++) {
                 const file = filesData[i];
                 notify.innerText = `⏳ Generazione PDF (${i+1}/${filesData.length}): ${file.nomeBase}...`;
-                
                 const element = prepareElementForPdf(file.html);
-                
-                // Esegue in sequenza e attende la fine di ogni download
-                await worker
-                    .set(getPdfOptions(`${file.nomeBase}.pdf`))
-                    .from(element)
-                    .save();
+                await worker.set(getPdfOptions(`${file.nomeBase}.pdf`)).from(element).save();
             }
             notify.innerText = `✅ Completato! Scaricati ${filesData.length} PDF singoli.`;
             notify.classList.replace('bg-yellow-100', 'bg-green-100');
         }
 
-        // STAMPA UNIFICATA (Usa il motore di stampa del browser, utile come alternativa)
         function stampaTuttiPDF() {
-            // Unisce tutto con interruzioni di pagina CSS standard
             const htmlUnito = filesData.map(file => `<div>${file.html}</div>`).join('<div style="page-break-after: always; break-after: always;"></div>');
             hiddenPrintContent.innerHTML = htmlUnito;
             window.print();
@@ -296,10 +257,9 @@
     </script>
 
     <style>
-        /* Regole per la stampa unificata del browser (window.print) */
         @media print {
             body { background: white; padding: 0; margin: 0; }
-            #main-card { display: none !important; box-shadow: none; border: none; padding: 0; }
+            #main-card { display: none !important; }
             #hidden-print-content { 
                 display: block !important; 
                 width: 100%; 
