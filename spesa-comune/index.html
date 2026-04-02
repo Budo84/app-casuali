@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Spesa Condivisa</title>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --bg: #f9f9f9;
+            --text: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background: #e9ecef;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: var(--bg);
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        h2 {
+            font-size: 1.2em;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .row:last-child { border-bottom: none; }
+        .crossed {
+            text-decoration: line-through;
+            color: #888;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex: 1;
+            margin-right: 10px;
+        }
+        input[type="number"] { max-width: 100px; }
+        button {
+            padding: 8px 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background: #45a049; }
+        .btn-danger {
+            background: #f44336;
+            padding: 5px 10px;
+        }
+        .btn-danger:hover { background: #e53935; }
+        .input-group { display: flex; margin-top: 15px; }
+        .credit { color: #2e7d32; }
+        .debt { color: #d32f2f; }
+        .summary-box {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Spesa Condivisa 🛒</h1>
+
+    <div class="section">
+        <h2>1. Lista della Spesa</h2>
+        <div id="shopping-list">
+            </div>
+        <div class="input-group">
+            <input type="text" id="new-item" placeholder="Es. Pane, Latte, Pasta...">
+            <button onclick="addItem()">Aggiungi</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Chi ha speso e quanto?</h2>
+        <div id="families-list">
+            </div>
+        <div class="input-group">
+            <input type="text" id="new-family" placeholder="Nome della famiglia/persona">
+            <button onclick="addFamily()">Aggiungi</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>3. Divisione Spese</h2>
+        <button style="width: 100%; font-size: 1.1em; padding: 12px;" onclick="calculateTotals()">Calcola i Conti 🧮</button>
+        <div id="summary-results"></div>
+    </div>
+</div>
+
+<script>
+    // Dati in memoria
+    let items = [];
+    let families = [];
+
+    // --- LOGICA LISTA DELLA SPESA ---
+    function renderList() {
+        const list = document.getElementById('shopping-list');
+        list.innerHTML = '';
+        items.forEach((item, index) => {
+            list.innerHTML += `
+                <div class="row">
+                    <label style="cursor: pointer; display: flex; align-items: center;">
+                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleItem(${index})" style="margin-right: 10px; transform: scale(1.2);">
+                        <span class="${item.checked ? 'crossed' : ''}">${item.name}</span>
+                    </label>
+                    <button class="btn-danger" onclick="removeItem(${index})">X</button>
+                </div>
+            `;
+        });
+    }
+
+    function addItem() {
+        const input = document.getElementById('new-item');
+        if (input.value.trim() !== '') {
+            items.push({ name: input.value.trim(), checked: false });
+            input.value = '';
+            renderList();
+        }
+    }
+
+    function toggleItem(index) {
+        items[index].checked = !items[index].checked;
+        renderList();
+    }
+
+    function removeItem(index) {
+        items.splice(index, 1);
+        renderList();
+    }
+
+    // --- LOGICA FAMIGLIE E SPESE ---
+    function renderFamilies() {
+        const list = document.getElementById('families-list');
+        list.innerHTML = '';
+        families.forEach((fam, index) => {
+            list.innerHTML += `
+                <div class="row">
+                    <strong>${fam.name}</strong>
+                    <div>
+                        € <input type="number" step="0.01" min="0" value="${fam.spent}" onchange="updateSpent(${index}, this.value)" placeholder="0.00">
+                        <button class="btn-danger" onclick="removeFamily(${index})">X</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function addFamily() {
+        const input = document.getElementById('new-family');
+        if (input.value.trim() !== '') {
+            families.push({ name: input.value.trim(), spent: 0 });
+            input.value = '';
+            renderFamilies();
+        }
+    }
+
+    function updateSpent(index, amount) {
+        families[index].spent = parseFloat(amount) || 0;
+    }
+
+    function removeFamily(index) {
+        families.splice(index, 1);
+        renderFamilies();
+    }
+
+    // --- LOGICA CALCOLI (IL CUORE DEL PROGRAMMA) ---
+    function calculateTotals() {
+        const resultsDiv = document.getElementById('summary-results');
+        
+        if (families.length === 0) {
+            resultsDiv.innerHTML = '<p class="debt">Aggiungi almeno una famiglia per fare i conti!</p>';
+            return;
+        }
+
+        // 1. Calcola il totale speso
+        let totalSpent = families.reduce((sum, fam) => sum + fam.spent, 0);
+        
+        // 2. Calcola quanto dovrebbe pagare ogni famiglia
+        let quota = totalSpent / families.length;
+
+        let html = `
+            <div class="summary-box">
+                <p><strong>Spesa Totale:</strong> €${totalSpent.toFixed(2)}</p>
+                <p><strong>Quota divisa per famiglia:</strong> €${quota.toFixed(2)}</p>
+                <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
+                <h3>Chi deve a chi:</h3>
+        `;
+
+        // 3. Calcola il bilancio di ognuno (Credito o Debito)
+        families.forEach(fam => {
+            let balance = fam.spent - quota;
+            
+            html += `<p style="margin-bottom: 10px;"><strong>${fam.name}</strong> ha pagato €${fam.spent.toFixed(2)}.<br>`;
+            
+            if (balance > 0) {
+                html += `<span class="credit">→ Essendo la quota di €${quota.toFixed(2)}, deve <strong>riprendere €${balance.toFixed(2)}</strong>.</span></p>`;
+            } else if (balance < 0) {
+                html += `<span class="debt">→ Essendo la quota di €${quota.toFixed(2)}, deve <strong>versare €${Math.abs(balance).toFixed(2)}</strong>.</span></p>`;
+            } else {
+                html += `<span style="color: #666;">→ È perfettamente in pari!</span></p>`;
+            }
+        });
+
+        html += `</div>`;
+        resultsDiv.innerHTML = html;
+    }
+
+    // Permetti di aggiungere col tasto Invio
+    document.getElementById("new-item").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") addItem();
+    });
+    document.getElementById("new-family").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") addFamily();
+    });
+</script>
+
+</body>
+</html>
