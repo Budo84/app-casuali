@@ -55,12 +55,18 @@
             text-decoration: line-through;
             color: #888;
         }
-        input[type="text"], input[type="number"] {
+        /* Aggiunto textarea al CSS */
+        input[type="text"], input[type="number"], textarea {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
             flex: 1;
             margin-right: 10px;
+            font-family: inherit;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 40px;
         }
         input[type="number"] { max-width: 100px; }
         button {
@@ -71,6 +77,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+            height: 100%;
         }
         button:hover { background: #45a049; }
         .btn-danger {
@@ -78,7 +85,7 @@
             padding: 5px 10px;
         }
         .btn-danger:hover { background: #e53935; }
-        .input-group { display: flex; margin-top: 15px; }
+        .input-group { display: flex; align-items: flex-start; margin-top: 15px; }
         .credit { color: #2e7d32; }
         .debt { color: #d32f2f; }
         .summary-box {
@@ -99,9 +106,10 @@
         <div id="shopping-list">
             </div>
         <div class="input-group">
-            <input type="text" id="new-item" placeholder="Es. Pane, Latte, Pasta...">
-            <button onclick="addItem()">Aggiungi</button>
+            <textarea id="new-item" rows="2" placeholder="Scrivi o incolla qui la tua lista..."></textarea>
+            <button onclick="addItem()" style="padding: 12px;">Aggiungi</button>
         </div>
+        <small style="color: #666; margin-top: 5px; display: block;">Puoi separare i prodotti con una virgola oppure <strong>incollare una lista con gli elementi uno sotto l'altro</strong>.</small>
     </div>
 
     <div class="section">
@@ -133,20 +141,33 @@
         items.forEach((item, index) => {
             list.innerHTML += `
                 <div class="row">
-                    <label style="cursor: pointer; display: flex; align-items: center;">
-                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleItem(${index})" style="margin-right: 10px; transform: scale(1.2);">
+                    <label style="cursor: pointer; display: flex; align-items: center; width: 100%; word-break: break-word;">
+                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleItem(${index})" style="margin-right: 10px; transform: scale(1.2); flex-shrink: 0;">
                         <span class="${item.checked ? 'crossed' : ''}">${item.name}</span>
                     </label>
-                    <button class="btn-danger" onclick="removeItem(${index})">X</button>
+                    <button class="btn-danger" style="margin-left: 10px;" onclick="removeItem(${index})">X</button>
                 </div>
             `;
         });
     }
 
+    // FUNZIONE AGGIORNATA PER VIRGOLE E A CAPO
     function addItem() {
         const input = document.getElementById('new-item');
-        if (input.value.trim() !== '') {
-            items.push({ name: input.value.trim(), checked: false });
+        const value = input.value;
+        
+        if (value.trim() !== '') {
+            // Divido il testo ogni volta che c'è una virgola (,) OPPURE un ritorno a capo (\n)
+            const newItemsArray = value.split(/[,\n]+/);
+            
+            newItemsArray.forEach(itemName => {
+                const cleanName = itemName.trim();
+                // Aggiungo solo se la riga non è vuota
+                if (cleanName !== '') {
+                    items.push({ name: cleanName, checked: false });
+                }
+            });
+            
             input.value = '';
             renderList();
         }
@@ -170,7 +191,7 @@
             list.innerHTML += `
                 <div class="row">
                     <strong>${fam.name}</strong>
-                    <div>
+                    <div style="display: flex; align-items: center;">
                         € <input type="number" step="0.01" min="0" value="${fam.spent}" onchange="updateSpent(${index}, this.value)" placeholder="0.00">
                         <button class="btn-danger" onclick="removeFamily(${index})">X</button>
                     </div>
@@ -197,7 +218,7 @@
         renderFamilies();
     }
 
-    // --- LOGICA CALCOLI (IL CUORE DEL PROGRAMMA) ---
+    // --- LOGICA CALCOLI ---
     function calculateTotals() {
         const resultsDiv = document.getElementById('summary-results');
         
@@ -206,10 +227,7 @@
             return;
         }
 
-        // 1. Calcola il totale speso
         let totalSpent = families.reduce((sum, fam) => sum + fam.spent, 0);
-        
-        // 2. Calcola quanto dovrebbe pagare ogni famiglia
         let quota = totalSpent / families.length;
 
         let html = `
@@ -220,7 +238,6 @@
                 <h3>Chi deve a chi:</h3>
         `;
 
-        // 3. Calcola il bilancio di ognuno (Credito o Debito)
         families.forEach(fam => {
             let balance = fam.spent - quota;
             
@@ -239,10 +256,15 @@
         resultsDiv.innerHTML = html;
     }
 
-    // Permetti di aggiungere col tasto Invio
+    // Gestione tasto Invio
+    // Nella textarea, "Invio" aggiunge l'elemento. "Shift + Invio" permette di andare a capo manualmente.
     document.getElementById("new-item").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") addItem();
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault(); // Evita di andare a capo graficamente nel riquadro
+            addItem();
+        }
     });
+    
     document.getElementById("new-family").addEventListener("keypress", function(event) {
         if (event.key === "Enter") addFamily();
     });
