@@ -55,7 +55,6 @@
             text-decoration: line-through;
             color: #888;
         }
-        /* Aggiunto textarea al CSS */
         input[type="text"], input[type="number"], textarea {
             padding: 8px;
             border: 1px solid #ccc;
@@ -88,6 +87,13 @@
         .input-group { display: flex; align-items: flex-start; margin-top: 15px; }
         .credit { color: #2e7d32; }
         .debt { color: #d32f2f; }
+        .transfer-box {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #ff9800;
+        }
         .summary-box {
             background: #e8f5e9;
             padding: 15px;
@@ -103,8 +109,7 @@
 
     <div class="section">
         <h2>1. Lista della Spesa</h2>
-        <div id="shopping-list">
-            </div>
+        <div id="shopping-list"></div>
         <div class="input-group">
             <textarea id="new-item" rows="2" placeholder="Scrivi o incolla qui la tua lista..."></textarea>
             <button onclick="addItem()" style="padding: 12px;">Aggiungi</button>
@@ -114,8 +119,7 @@
 
     <div class="section">
         <h2>2. Chi ha speso e quanto?</h2>
-        <div id="families-list">
-            </div>
+        <div id="families-list"></div>
         <div class="input-group">
             <input type="text" id="new-family" placeholder="Nome della famiglia/persona">
             <button onclick="addFamily()">Aggiungi</button>
@@ -130,7 +134,6 @@
 </div>
 
 <script>
-    // Dati in memoria
     let items = [];
     let families = [];
 
@@ -151,23 +154,18 @@
         });
     }
 
-    // FUNZIONE AGGIORNATA PER VIRGOLE E A CAPO
     function addItem() {
         const input = document.getElementById('new-item');
         const value = input.value;
         
         if (value.trim() !== '') {
-            // Divido il testo ogni volta che c'è una virgola (,) OPPURE un ritorno a capo (\n)
             const newItemsArray = value.split(/[,\n]+/);
-            
             newItemsArray.forEach(itemName => {
                 const cleanName = itemName.trim();
-                // Aggiungo solo se la riga non è vuota
                 if (cleanName !== '') {
                     items.push({ name: cleanName, checked: false });
                 }
             });
-            
             input.value = '';
             renderList();
         }
@@ -235,32 +233,72 @@
                 <p><strong>Spesa Totale:</strong> €${totalSpent.toFixed(2)}</p>
                 <p><strong>Quota divisa per famiglia:</strong> €${quota.toFixed(2)}</p>
                 <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
-                <h3>Chi deve a chi:</h3>
+                <h3>Bilancio di ognuno:</h3>
         `;
+
+        // Array per gestire i pagamenti tra le persone
+        let debtors = [];
+        let creditors = [];
 
         families.forEach(fam => {
             let balance = fam.spent - quota;
             
             html += `<p style="margin-bottom: 10px;"><strong>${fam.name}</strong> ha pagato €${fam.spent.toFixed(2)}.<br>`;
             
-            if (balance > 0) {
-                html += `<span class="credit">→ Essendo la quota di €${quota.toFixed(2)}, deve <strong>riprendere €${balance.toFixed(2)}</strong>.</span></p>`;
-            } else if (balance < 0) {
-                html += `<span class="debt">→ Essendo la quota di €${quota.toFixed(2)}, deve <strong>versare €${Math.abs(balance).toFixed(2)}</strong>.</span></p>`;
+            if (balance > 0.01) {
+                html += `<span class="credit">→ Deve riprendere €${balance.toFixed(2)}</span></p>`;
+                creditors.push({ name: fam.name, amount: balance });
+            } else if (balance < -0.01) {
+                html += `<span class="debt">→ Deve versare €${Math.abs(balance).toFixed(2)}</span></p>`;
+                debtors.push({ name: fam.name, amount: Math.abs(balance) });
             } else {
                 html += `<span style="color: #666;">→ È perfettamente in pari!</span></p>`;
             }
         });
 
         html += `</div>`;
+
+        // CALCOLO DI CHI DEVE PAGARE CHI
+        if (debtors.length > 0 && creditors.length > 0) {
+            html += `
+                <div class="transfer-box">
+                    <h3 style="margin-top: 0; color: #e65100;">💸 Come saldare i conti:</h3>
+                    <ul style="padding-left: 20px; margin-bottom: 0;">
+            `;
+
+            let i = 0; // Indice per i debitori
+            let j = 0; // Indice per i creditori
+
+            while (i < debtors.length && j < creditors.length) {
+                let debtor = debtors[i];
+                let creditor = creditors[j];
+
+                // Trova l'importo minimo tra il debito e il credito
+                let amount = Math.min(debtor.amount, creditor.amount);
+
+                if (amount > 0.01) {
+                    html += `<li><strong>${debtor.name}</strong> deve dare <strong>€${amount.toFixed(2)}</strong> a <strong>${creditor.name}</strong></li>`;
+                }
+
+                // Sottrai l'importo pagato dai bilanci
+                debtor.amount -= amount;
+                creditor.amount -= amount;
+
+                // Se il debitore ha pagato tutto, passa al prossimo
+                if (debtor.amount < 0.01) i++;
+                // Se il creditore ha ricevuto tutto, passa al prossimo
+                if (creditor.amount < 0.01) j++;
+            }
+
+            html += `</ul></div>`;
+        }
+
         resultsDiv.innerHTML = html;
     }
 
-    // Gestione tasto Invio
-    // Nella textarea, "Invio" aggiunge l'elemento. "Shift + Invio" permette di andare a capo manualmente.
     document.getElementById("new-item").addEventListener("keypress", function(event) {
         if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault(); // Evita di andare a capo graficamente nel riquadro
+            event.preventDefault();
             addItem();
         }
     });
