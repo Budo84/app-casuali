@@ -100,6 +100,16 @@
             border-radius: 8px;
             margin-top: 15px;
         }
+        .btn-whatsapp {
+            background: #25D366;
+            width: 100%;
+            font-size: 1.1em;
+            padding: 12px;
+            margin-top: 15px;
+        }
+        .btn-whatsapp:hover {
+            background: #128C7E;
+        }
     </style>
 </head>
 <body>
@@ -136,6 +146,7 @@
 <script>
     let items = [];
     let families = [];
+    let whatsappText = ""; // Salveremo qui il testo per WhatsApp
 
     // --- LOGICA LISTA DELLA SPESA ---
     function renderList() {
@@ -228,6 +239,12 @@
         let totalSpent = families.reduce((sum, fam) => sum + fam.spent, 0);
         let quota = totalSpent / families.length;
 
+        // Inizio a preparare sia l'HTML (per lo schermo) sia il Testo (per WhatsApp)
+        whatsappText = "🛒 *RESOCONTO SPESA CONDIVISA* 🛒\n\n";
+        whatsappText += `💰 *Spesa Totale:* €${totalSpent.toFixed(2)}\n`;
+        whatsappText += `🎯 *Quota a famiglia:* €${quota.toFixed(2)}\n\n`;
+        whatsappText += `📊 *BILANCIO:*\n`;
+
         let html = `
             <div class="summary-box">
                 <p><strong>Spesa Totale:</strong> €${totalSpent.toFixed(2)}</p>
@@ -236,7 +253,6 @@
                 <h3>Bilancio di ognuno:</h3>
         `;
 
-        // Array per gestire i pagamenti tra le persone
         let debtors = [];
         let creditors = [];
 
@@ -244,15 +260,19 @@
             let balance = fam.spent - quota;
             
             html += `<p style="margin-bottom: 10px;"><strong>${fam.name}</strong> ha pagato €${fam.spent.toFixed(2)}.<br>`;
+            whatsappText += `- *${fam.name}* ha pagato €${fam.spent.toFixed(2)} `;
             
             if (balance > 0.01) {
                 html += `<span class="credit">→ Deve riprendere €${balance.toFixed(2)}</span></p>`;
+                whatsappText += `(Deve riprendere €${balance.toFixed(2)})\n`;
                 creditors.push({ name: fam.name, amount: balance });
             } else if (balance < -0.01) {
                 html += `<span class="debt">→ Deve versare €${Math.abs(balance).toFixed(2)}</span></p>`;
+                whatsappText += `(Deve versare €${Math.abs(balance).toFixed(2)})\n`;
                 debtors.push({ name: fam.name, amount: Math.abs(balance) });
             } else {
                 html += `<span style="color: #666;">→ È perfettamente in pari!</span></p>`;
+                whatsappText += `(È in pari!)\n`;
             }
         });
 
@@ -265,35 +285,44 @@
                     <h3 style="margin-top: 0; color: #e65100;">💸 Come saldare i conti:</h3>
                     <ul style="padding-left: 20px; margin-bottom: 0;">
             `;
+            
+            whatsappText += `\n💸 *COME SALDARE I CONTI:*\n`;
 
-            let i = 0; // Indice per i debitori
-            let j = 0; // Indice per i creditori
+            let i = 0; 
+            let j = 0; 
 
             while (i < debtors.length && j < creditors.length) {
                 let debtor = debtors[i];
                 let creditor = creditors[j];
 
-                // Trova l'importo minimo tra il debito e il credito
                 let amount = Math.min(debtor.amount, creditor.amount);
 
                 if (amount > 0.01) {
                     html += `<li><strong>${debtor.name}</strong> deve dare <strong>€${amount.toFixed(2)}</strong> a <strong>${creditor.name}</strong></li>`;
+                    whatsappText += `👉 *${debtor.name}* deve dare *€${amount.toFixed(2)}* a *${creditor.name}*\n`;
                 }
 
-                // Sottrai l'importo pagato dai bilanci
                 debtor.amount -= amount;
                 creditor.amount -= amount;
 
-                // Se il debitore ha pagato tutto, passa al prossimo
                 if (debtor.amount < 0.01) i++;
-                // Se il creditore ha ricevuto tutto, passa al prossimo
                 if (creditor.amount < 0.01) j++;
             }
 
             html += `</ul></div>`;
         }
 
+        // Aggiungo il pulsante WhatsApp all'HTML
+        html += `<button class="btn-whatsapp" onclick="shareOnWhatsApp()">Invia su WhatsApp 💬</button>`;
+
         resultsDiv.innerHTML = html;
+    }
+
+    // Funzione per inviare il messaggio
+    function shareOnWhatsApp() {
+        // encodeURIComponent trasforma gli spazi e i "a capo" in modo che WhatsApp li legga correttamente
+        const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappText)}`;
+        window.open(url, '_blank');
     }
 
     document.getElementById("new-item").addEventListener("keypress", function(event) {
