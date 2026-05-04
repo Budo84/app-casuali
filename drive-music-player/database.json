@@ -5,7 +5,7 @@
         "artista": "Pink Floyd",
         "album": "The Wall",
         "audioDriveId": "14 - Comfortably Numb",
-        "coverDriveId": "INSERISCI_QUI_ID_DELLA_FOTO_ALBUM"
+        "coverDriveId": "labirinto"
     },
     {
         "id": 2,
@@ -13,6 +13,6 @@
         "artista": "Eagles",
         "album": "Hotel California",
         "audioDriveId": "01 - Hotel California",
-        "coverDriveId": "INSERISCI_QUI_ID_DELLA_FOTO_ALBUM"
+        "coverDriveId": "labirinto"
     }
 ]
