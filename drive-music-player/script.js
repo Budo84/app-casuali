@@ -27,85 +27,76 @@ function handleAuthClick() {
     tokenClient.requestAccessToken();
 }
 
-// Funzione per scaricare la lista dei file MP3 dalla tua cartella
+// Funzione per leggere il tuo file JSON locale invece di cercare su Drive
 async function recuperaBrani() {
-    // URL delle API di Google Drive per cercare file mp3 in una cartella specifica
-    const url = `https://www.googleapis.com/drive/v3/files?q='${FOLDER_ID}'+in+parents+and+mimeType='audio/mpeg'&fields=files(id,name)`;
-
     try {
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
+        // Scarica il file database.json dalla tua stessa repository GitHub
+        const response = await fetch('./database.json');
+        const canzoni = await response.json();
         
-        const data = await response.json();
-        mostraPlaylist(data.files);
+        mostraPlaylist(canzoni);
     } catch (error) {
-        console.error('Errore nel recupero dei file:', error);
-        alert("C'è stato un errore nel caricamento dei file.");
+        console.error('Errore nel caricamento del database:', error);
+        alert("Impossibile caricare la lista delle canzoni dal JSON.");
     }
 }
 
-// Funzione per creare la lista cliccabile sullo schermo
-function mostraPlaylist(files) {
+// Funzione aggiornata per mostrare Artista e Titolo dal JSON
+function mostraPlaylist(canzoni) {
     const playlist = document.getElementById('playlist');
-    playlist.innerHTML = ''; // Svuota la lista
+    playlist.innerHTML = ''; 
     
-    if (!files || files.length === 0) {
-        playlist.innerHTML = '<li>Nessun file MP3 trovato in questa cartella.</li>';
-        return;
-    }
-
-    files.forEach(file => {
+    canzoni.forEach(brano => {
         const li = document.createElement('li');
-        li.textContent = file.name.replace('.mp3', ''); // Rimuove .mp3 dal nome visibile
+        // Ora possiamo mostrare i dati formattati bene!
+        li.innerHTML = `<strong>${brano.titolo}</strong> <br> <small>${brano.artista} - ${brano.album}</small>`;
         
-        // Quando clicchi su un brano, fallo partire
-        li.onclick = () => riproduciBrano(file.id, file.name);
+        // Passiamo tutto l'oggetto brano alla funzione di riproduzione
+        li.onclick = () => riproduciBrano(brano);
         
         playlist.appendChild(li);
     });
 }
 
-// Funzione AGGIORNATA per caricare il brano in modo sicuro
-async function riproduciBrano(fileId, fileName) {
+// Funzione aggiornata per riprodurre audio E mostrare la copertina
+async function riproduciBrano(brano) {
     const playerContainer = document.getElementById('player-container');
     const audioPlayer = document.getElementById('audio-player');
     const nowPlaying = document.getElementById('now-playing');
+    const albumCover = document.getElementById('album-cover');
 
-    // Mostra il player e un messaggio di caricamento
     playerContainer.style.display = 'block';
-    nowPlaying.textContent = `⏳ Caricamento: ${fileName.replace('.mp3', '')}...`;
-
-    // URL per scaricare il file
-    const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+    nowPlaying.textContent = `⏳ Caricamento: ${brano.titolo}...`;
 
     try {
-        // Usiamo fetch per scaricare il file passando il token nell'intestazione (il modo più sicuro)
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error("Impossibile accedere al file audio.");
+        // 1. CARICA LA COPERTINA (se esiste l'ID)
+        if (brano.coverDriveId) {
+            // Per le immagini possiamo usare un link diretto senza token se il file su Drive 
+            // è impostato su "Chiunque abbia il link", altrimenti usiamo il metodo sicuro:
+            const coverUrl = `https://www.googleapis.com/drive/v3/files/${brano.coverDriveId}?alt=media`;
+            const coverResponse = await fetch(coverUrl, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+            const coverBlob = await coverResponse.blob();
+            albumCover.src = URL.createObjectURL(coverBlob);
+            albumCover.style.display = 'block';
+        } else {
+            albumCover.style.display = 'none'; // Nascondi se non c'è copertina
         }
 
-        // Trasformiamo la risposta in un "Blob" (Binary Large Object)
-        const blob = await response.blob();
+        // 2. CARICA L'AUDIO
+        const audioUrl = `https://www.googleapis.com/drive/v3/files/${brano.audioDriveId}?alt=media`;
+        const audioResponse = await fetch(audioUrl, { headers: { 'Authorization': `Bearer ${accessToken}` } });
         
-        // Creiamo un URL temporaneo locale per il nostro file
-        const objectUrl = URL.createObjectURL(blob);
-
-        // Assegna l'URL temporaneo al player e fai play
-        audioPlayer.src = objectUrl;
-        nowPlaying.textContent = `▶ In riproduzione: ${fileName.replace('.mp3', '')}`;
+        if (!audioResponse.ok) throw new Error("Impossibile accedere all'audio.");
+        
+        const audioBlob = await audioResponse.blob();
+        audioPlayer.src = URL.createObjectURL(audioBlob);
+        
+        nowPlaying.textContent = `▶ ${brano.artista} - ${brano.titolo}`;
         audioPlayer.play();
 
     } catch (error) {
         console.error('Errore durante la riproduzione:', error);
-        nowPlaying.textContent = `❌ Errore: impossibile riprodurre il brano.`;
+        nowPlaying.textContent = `❌ Errore di riproduzione.`;
     }
+}
 }
