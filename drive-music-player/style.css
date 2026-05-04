@@ -52,20 +52,68 @@ button:hover {
     margin-top: 10px;
 }
 
+/* ALLARGA IL CONTENITORE: Trova la classe .container all'inizio del tuo CSS e cambiala così: */
+.container {
+    width: 100%;
+    max-width: 900px; /* Prima era 500px, ora lo facciamo più largo per la griglia */
+    background-color: #181818;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+/* --- NUOVO STILE GRIGLIA SPOTIFY (da incollare in fondo al file) --- */
+
 #playlist {
-    list-style-type: none;
+    display: grid;
+    /* Crea colonne che si adattano in automatico: larghe minimo 160px */
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 24px;
     padding: 0;
+    list-style: none;
+    margin-top: 30px;
 }
 
-#playlist li {
-    background-color: #282828;
-    margin-bottom: 8px;
-    padding: 12px;
-    border-radius: 5px;
+.song-card {
+    background-color: #181818; /* Sfondo scuro per mimetizzarsi */
+    padding: 16px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.3s ease;
+    text-align: left;
 }
 
-#playlist li:hover {
-    background-color: #3e3e3e;
+/* Effetto hover di Spotify (si schiarisce leggermente quando passi col mouse) */
+.song-card:hover {
+    background-color: #282828; 
+}
+
+.song-cover {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Mantiene la copertina perfettamente quadrata */
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5); /* Ombra morbida sotto la copertina */
+}
+
+.song-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    /* Taglia il testo troppo lungo coi puntini di sospensione */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.song-artist {
+    font-size: 14px;
+    font-weight: 500;
+    color: #a7a7a7; /* Grigio tipico di Spotify */
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
