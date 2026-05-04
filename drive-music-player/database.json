@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "titolo": "Comfortably Numb",
+        "artista": "Pink Floyd",
+        "album": "The Wall",
+        "audioDriveId": "14 - Comfortably Numb",
+        "coverDriveId": "INSERISCI_QUI_ID_DELLA_FOTO_ALBUM"
+    },
+    {
+        "id": 2,
+        "titolo": "Hotel California",
+        "artista": "Eagles",
+        "album": "Hotel California",
+        "audioDriveId": "01 - Hotel California",
+        "coverDriveId": "INSERISCI_QUI_ID_DELLA_FOTO_ALBUM"
+    }
+]
