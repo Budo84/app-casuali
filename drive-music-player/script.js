@@ -41,17 +41,30 @@ async function recuperaBrani() {
     }
 }
 
-// Funzione aggiornata per mostrare Artista e Titolo dal JSON
+// Funzione AGGIORNATA per creare la griglia stile Spotify
 function mostraPlaylist(canzoni) {
     const playlist = document.getElementById('playlist');
     playlist.innerHTML = ''; 
     
     canzoni.forEach(brano => {
         const li = document.createElement('li');
-        // Ora possiamo mostrare i dati formattati bene!
-        li.innerHTML = `<strong>${brano.titolo}</strong> <br> <small>${brano.artista} - ${brano.album}</small>`;
+        li.className = 'song-card'; // Assegniamo la classe CSS della card
         
-        // Passiamo tutto l'oggetto brano alla funzione di riproduzione
+        // Se c'è un ID copertina, crea l'indirizzo con il token per vederla.
+        // Altrimenti usa un'immagine grigia di rimpiazzo.
+        let coverSrc = 'https://via.placeholder.com/150/282828/FFFFFF?text=🎵'; 
+        if (brano.coverDriveId) {
+            coverSrc = `https://www.googleapis.com/drive/v3/files/${brano.coverDriveId}?alt=media&access_token=${accessToken}`;
+        }
+
+        // Costruiamo la struttura interna della card
+        li.innerHTML = `
+            <img src="${coverSrc}" class="song-cover" alt="Copertina">
+            <p class="song-title">${brano.titolo}</p>
+            <p class="song-artist">${brano.artista}</p>
+        `;
+        
+        // Passiamo tutto l'oggetto brano alla funzione di riproduzione al click
         li.onclick = () => riproduciBrano(brano);
         
         playlist.appendChild(li);
