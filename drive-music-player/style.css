@@ -140,3 +140,23 @@ button:hover {
     background-color: #1db954;
     color: white;
 }
+
+.search-container {
+    margin: 20px 0;
+}
+
+#search-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 20px;
+    border: none;
+    background-color: #282828;
+    color: white;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#search-input:focus {
+    border: 1px solid #1db954;
+}
