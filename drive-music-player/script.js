@@ -68,22 +68,44 @@ function mostraPlaylist(files) {
     });
 }
 
-// Funzione per caricare il brano nel lettore audio e farlo partire
-function riproduciBrano(fileId, fileName) {
+// Funzione AGGIORNATA per caricare il brano in modo sicuro
+async function riproduciBrano(fileId, fileName) {
     const playerContainer = document.getElementById('player-container');
     const audioPlayer = document.getElementById('audio-player');
     const nowPlaying = document.getElementById('now-playing');
 
-    // Mostra il player se era nascosto
+    // Mostra il player e un messaggio di caricamento
     playerContainer.style.display = 'block';
-    
-    // Aggiorna il titolo
-    nowPlaying.textContent = `In riproduzione: ${fileName.replace('.mp3', '')}`;
+    nowPlaying.textContent = `⏳ Caricamento: ${fileName.replace('.mp3', '')}...`;
 
-    // Crea l'URL per riprodurre il file passando il token di accesso
-    const streamUrl = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&access_token=${accessToken}`;
-    
-    // Assegna l'URL al player e fai play
-    audioPlayer.src = streamUrl;
-    audioPlayer.play();
+    // URL per scaricare il file
+    const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+
+    try {
+        // Usiamo fetch per scaricare il file passando il token nell'intestazione (il modo più sicuro)
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Impossibile accedere al file audio.");
+        }
+
+        // Trasformiamo la risposta in un "Blob" (Binary Large Object)
+        const blob = await response.blob();
+        
+        // Creiamo un URL temporaneo locale per il nostro file
+        const objectUrl = URL.createObjectURL(blob);
+
+        // Assegna l'URL temporaneo al player e fai play
+        audioPlayer.src = objectUrl;
+        nowPlaying.textContent = `▶ In riproduzione: ${fileName.replace('.mp3', '')}`;
+        audioPlayer.play();
+
+    } catch (error) {
+        console.error('Errore durante la riproduzione:', error);
+        nowPlaying.textContent = `❌ Errore: impossibile riprodurre il brano.`;
+    }
 }
