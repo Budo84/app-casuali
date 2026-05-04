@@ -16,12 +16,18 @@
         <button id="login-btn" onclick="handleAuthClick()">Accedi con Google</button>
 
         <!-- Player Audio (inizialmente nascosto) -->
-        <!-- Player Audio (inizialmente nascosto) -->
+<!-- Player Audio -->
         <div id="player-container" style="display: none;">
-            <!-- NUOVO: Immagine di copertina -->
             <img id="album-cover" src="" alt="Copertina Album" style="width: 150px; height: 150px; border-radius: 10px; margin-bottom: 15px; display: none; margin-left: auto; margin-right: auto;">
             
             <h3 id="now-playing">Seleziona un brano...</h3>
+            
+            <!-- NUOVO: Controlli per saltare brano -->
+            <div class="player-controls">
+                <button onclick="playPrevious()">⏮ Prec</button>
+                <button onclick="playNext()">Succ ⏭</button>
+            </div>
+
             <audio id="audio-player" controls controlsList="nodownload">
                 Il tuo browser non supporta l'elemento audio.
             </audio>
