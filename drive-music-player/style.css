@@ -117,3 +117,26 @@ button:hover {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* Stile per i nuovi pulsanti Avanti/Indietro */
+.player-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.player-controls button {
+    width: auto;
+    padding: 8px 16px;
+    margin-bottom: 0;
+    background-color: transparent;
+    border: 2px solid #1db954;
+    color: #1db954;
+    border-radius: 20px;
+}
+
+.player-controls button:hover {
+    background-color: #1db954;
+    color: white;
+}
