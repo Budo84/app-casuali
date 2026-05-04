@@ -99,4 +99,3 @@ async function riproduciBrano(brano) {
         nowPlaying.textContent = `❌ Errore di riproduzione.`;
     }
 }
-}
