@@ -41,34 +41,54 @@ async function recuperaBrani() {
     }
 }
 
-// Funzione AGGIORNATA per creare la griglia stile Spotify
+// Funzione AGGIORNATA per creare la griglia e avviare il download delle copertine
 function mostraPlaylist(canzoni) {
     const playlist = document.getElementById('playlist');
     playlist.innerHTML = ''; 
     
     canzoni.forEach(brano => {
         const li = document.createElement('li');
-        li.className = 'song-card'; // Assegniamo la classe CSS della card
+        li.className = 'song-card';
         
-        // Se c'è un ID copertina, crea l'indirizzo con il token per vederla.
-        // Altrimenti usa un'immagine grigia di rimpiazzo.
-        let coverSrc = 'https://via.placeholder.com/150/282828/FFFFFF?text=🎵'; 
-        if (brano.coverDriveId) {
-            coverSrc = `https://www.googleapis.com/drive/v3/files/${brano.coverDriveId}?alt=media&access_token=${accessToken}`;
-        }
+        // Assegniamo un ID univoco all'immagine per poterla aggiornare dopo
+        const imgId = `cover-${brano.id}`;
 
-        // Costruiamo la struttura interna della card
+        // Creiamo la card con un'immagine segnaposto provvisoria
         li.innerHTML = `
-            <img src="${coverSrc}" class="song-cover" alt="Copertina">
+            <img id="${imgId}" src="https://via.placeholder.com/150/282828/FFFFFF?text=🎵" class="song-cover" alt="Copertina">
             <p class="song-title">${brano.titolo}</p>
             <p class="song-artist">${brano.artista}</p>
         `;
         
-        // Passiamo tutto l'oggetto brano alla funzione di riproduzione al click
+        // Al click parte la canzone
         li.onclick = () => riproduciBrano(brano);
-        
         playlist.appendChild(li);
+
+        // Se il brano ha un ID per la copertina, avviamo il download sicuro
+        if (brano.coverDriveId) {
+            caricaCopertina(brano.coverDriveId, imgId);
+        }
     });
+}
+
+// NUOVA FUNZIONE: Scarica l'immagine in modo sicuro e l'assegna alla card
+async function caricaCopertina(fileId, imgId) {
+    try {
+        const coverUrl = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+        
+        // Scarichiamo l'immagine passando l'autorizzazione in modo sicuro
+        const response = await fetch(coverUrl, { 
+            headers: { 'Authorization': `Bearer ${accessToken}` } 
+        });
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            // Troviamo l'immagine nella griglia e sostituiamo il segnaposto con la copertina vera
+            document.getElementById(imgId).src = URL.createObjectURL(blob);
+        }
+    } catch (error) {
+        console.error('Errore nel caricamento della copertina:', error);
+    }
 }
 
 // Funzione aggiornata per riprodurre audio E mostrare la copertina
