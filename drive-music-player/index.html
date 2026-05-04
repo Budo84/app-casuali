@@ -16,7 +16,7 @@
         <button id="login-btn" onclick="handleAuthClick()">Accedi con Google</button>
 
         <!-- Player Audio (inizialmente nascosto) -->
-<!-- Player Audio -->
+        <!-- Player Audio -->
         <div id="player-container" style="display: none;">
             <img id="album-cover" src="" alt="Copertina Album" style="width: 150px; height: 150px; border-radius: 10px; margin-bottom: 15px; display: none; margin-left: auto; margin-right: auto;">
             
@@ -32,7 +32,12 @@
                 Il tuo browser non supporta l'elemento audio.
             </audio>
         </div>
-
+        
+          <!-- Ricerca brani -->
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Cerca artista o brano..." oninput="filtraBrani()">
+        </div>
+        
         <!-- Lista dei brani -->
         <ul id="playlist"></ul>
     </div>
