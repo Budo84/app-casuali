@@ -27,48 +27,62 @@ function handleAuthClick() {
     tokenClient.requestAccessToken();
 }
 
-// Funzione per leggere il tuo file JSON locale invece di cercare su Drive
+// NUOVE VARIABILI GLOBALI PER LA PLAYLIST
+let playlistAttuale = [];
+let indiceBranoCorrente = -1;
+
+// Aggiungiamo un "ascoltatore" al player audio: quando finisce un brano, passa al prossimo!
+document.getElementById('audio-player').addEventListener('ended', playNext);
+
 async function recuperaBrani() {
     try {
-        // Scarica il file database.json dalla tua stessa repository GitHub
         const response = await fetch('./database.json');
-        const canzoni = await response.json();
-        
-        mostraPlaylist(canzoni);
+        // Salviamo la lista nella nostra variabile globale
+        playlistAttuale = await response.json(); 
+        mostraPlaylist(playlistAttuale);
     } catch (error) {
         console.error('Errore nel caricamento del database:', error);
         alert("Impossibile caricare la lista delle canzoni dal JSON.");
     }
 }
 
-// Funzione AGGIORNATA per creare la griglia e avviare il download delle copertine
 function mostraPlaylist(canzoni) {
     const playlist = document.getElementById('playlist');
     playlist.innerHTML = ''; 
     
-    canzoni.forEach(brano => {
+    // NOTA: Ora usiamo anche 'index' per sapere la posizione del brano nella lista
+    canzoni.forEach((brano, index) => {
         const li = document.createElement('li');
         li.className = 'song-card';
         
-        // Assegniamo un ID univoco all'immagine per poterla aggiornare dopo
         const imgId = `cover-${brano.id}`;
-
-        // Creiamo la card con un'immagine segnaposto provvisoria
         li.innerHTML = `
             <img id="${imgId}" src="https://via.placeholder.com/150/282828/FFFFFF?text=🎵" class="song-cover" alt="Copertina">
             <p class="song-title">${brano.titolo}</p>
             <p class="song-artist">${brano.artista}</p>
         `;
         
-        // Al click parte la canzone
-        li.onclick = () => riproduciBrano(brano);
+        // Quando clicchi, passi l'INDICE (0, 1, 2...) invece di tutto il brano
+        li.onclick = () => riproduciBrano(index);
         playlist.appendChild(li);
 
-        // Se il brano ha un ID per la copertina, avviamo il download sicuro
         if (brano.coverDriveId) {
             caricaCopertina(brano.coverDriveId, imgId);
         }
     });
+}
+
+
+
+// NUOVA FUNZIONE: Brano precedente
+function playPrevious() {
+    if (indiceBranoCorrente > 0) {
+        // Se non siamo al primo brano, vai a quello prima
+        riproduciBrano(indiceBranoCorrente - 1);
+    } else {
+        // Se siamo al primo, vai all'ultimo della lista
+        riproduciBrano(playlistAttuale.length - 1);
+    }
 }
 
 // NUOVA FUNZIONE: Scarica l'immagine in modo sicuro e l'assegna alla card
@@ -91,8 +105,11 @@ async function caricaCopertina(fileId, imgId) {
     }
 }
 
-// Funzione aggiornata per riprodurre audio E mostrare la copertina
-async function riproduciBrano(brano) {
+// Funzione aggiornata per ricevere l'indice invece del brano
+async function riproduciBrano(indice) {
+    indiceBranoCorrente = indice; // Aggiorniamo la memoria su quale brano stiamo ascoltando
+    const brano = playlistAttuale[indice]; // Peschiamo il brano dalla lista globale
+
     const playerContainer = document.getElementById('player-container');
     const audioPlayer = document.getElementById('audio-player');
     const nowPlaying = document.getElementById('now-playing');
@@ -102,20 +119,16 @@ async function riproduciBrano(brano) {
     nowPlaying.textContent = `⏳ Caricamento: ${brano.titolo}...`;
 
     try {
-        // 1. CARICA LA COPERTINA (se esiste l'ID)
         if (brano.coverDriveId) {
-            // Per le immagini possiamo usare un link diretto senza token se il file su Drive 
-            // è impostato su "Chiunque abbia il link", altrimenti usiamo il metodo sicuro:
             const coverUrl = `https://www.googleapis.com/drive/v3/files/${brano.coverDriveId}?alt=media`;
             const coverResponse = await fetch(coverUrl, { headers: { 'Authorization': `Bearer ${accessToken}` } });
             const coverBlob = await coverResponse.blob();
             albumCover.src = URL.createObjectURL(coverBlob);
             albumCover.style.display = 'block';
         } else {
-            albumCover.style.display = 'none'; // Nascondi se non c'è copertina
+            albumCover.style.display = 'none';
         }
 
-        // 2. CARICA L'AUDIO
         const audioUrl = `https://www.googleapis.com/drive/v3/files/${brano.audioDriveId}?alt=media`;
         const audioResponse = await fetch(audioUrl, { headers: { 'Authorization': `Bearer ${accessToken}` } });
         
@@ -130,5 +143,16 @@ async function riproduciBrano(brano) {
     } catch (error) {
         console.error('Errore durante la riproduzione:', error);
         nowPlaying.textContent = `❌ Errore di riproduzione.`;
+    }
+}
+
+// NUOVA FUNZIONE: Brano successivo
+function playNext() {
+    if (indiceBranoCorrente < playlistAttuale.length - 1) {
+        // Se non siamo all'ultimo brano, vai al prossimo
+        riproduciBrano(indiceBranoCorrente + 1);
+    } else {
+        // Se siamo all'ultimo, ricomincia dal primo!
+        riproduciBrano(0);
     }
 }
