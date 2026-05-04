@@ -156,3 +156,12 @@ function playNext() {
         riproduciBrano(0);
     }
 }
+
+function filtraBrani() {
+    const query = document.getElementById('search-input').value.toLowerCase();
+    const braniFiltrati = playlistAttuale.filter(brano => 
+        brano.titolo.toLowerCase().includes(query) || 
+        brano.artista.toLowerCase().includes(query)
+    );
+    mostraPlaylist(braniFiltrati);
+}
