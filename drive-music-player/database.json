@@ -4,15 +4,15 @@
         "titolo": "Comfortably Numb",
         "artista": "Pink Floyd",
         "album": "The Wall",
-        "audioDriveId": "https://drive.google.com/file/d/1gWtTJ5_D46qXqbBIyDe8S8ehMgyAqSe-/view?usp=drive_link",
-        "coverDriveId": "https://drive.google.com/file/d/1jLDoSZBhGFY5EbOVZ7-Su0c7rVpEzxXR/view?usp=drive_link"
+        "audioDriveId": "1gWtTJ5_D46qXqbBIyDe8S8ehMgyAqSe-",
+        "coverDriveId": "1jLDoSZBhGFY5EbOVZ7-Su0c7rVpEzxXR"
     },
     {
         "id": 2,
         "titolo": "Hotel California",
         "artista": "Eagles",
         "album": "Hotel California",
-        "audioDriveId": "https://drive.google.com/file/d/1D6DGrbMRT29tM2knCtn1iQN4kSN5d4pj/view?usp=drive_link",
-        "coverDriveId": "https://drive.google.com/file/d/1jLDoSZBhGFY5EbOVZ7-Su0c7rVpEzxXR/view?usp=drive_link"
+        "audioDriveId": "1D6DGrbMRT29tM2knCtn1iQN4kSN5d4pj",
+        "coverDriveId": "1jLDoSZBhGFY5EbOVZ7-Su0c7rVpEzxXR"
     }
 ]
