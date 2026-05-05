@@ -442,7 +442,67 @@
         function removeSub(sId) { db.substitutions = db.substitutions.filter(s => s.id !== sId); updateUI(); loadAbsentTeacherLessons(); }
         
         // Import Data JSON
-        function importExcel() { /* Stessa logica di importazione della V8 */ alert("Funzione di Import Excel attiva. Assicurati che i fogli siano nominati 'Materie', 'Classi' e 'Docenti'."); }
+        function importExcel() {
+            const fileInput = document.getElementById('excel-file');
+            const file = fileInput.files[0];
+            if (!file) return alert("Seleziona prima un file Excel.");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    let countStats = { mat: 0, cls: 0, prof: 0 };
+
+                    // 1. Lettura Foglio Materie
+                    if(workbook.Sheets['Materie']) {
+                        XLSX.utils.sheet_to_json(workbook.Sheets['Materie']).forEach(row => {
+                            if(row.Materia && !db.subjects.find(s => s.name.toLowerCase() === row.Materia.toString().toLowerCase())) {
+                                db.subjects.push({ id: "s_" + Date.now() + Math.random().toString(36).substring(2,7), name: row.Materia.toString() }); 
+                                countStats.mat++;
+                            }
+                        });
+                    }
+
+                    // 2. Lettura Foglio Classi
+                    if(workbook.Sheets['Classi']) {
+                        XLSX.utils.sheet_to_json(workbook.Sheets['Classi']).forEach(row => {
+                            if(row.Ordine && row.Classe) {
+                                const levelMatch = db.levels.find(l => l.name.toLowerCase() === row.Ordine.toString().toLowerCase());
+                                if(levelMatch && !db.classes.find(c => c.name === row.Classe.toString() && c.levelId === levelMatch.id)) {
+                                    db.classes.push({ id: "c_" + Date.now() + Math.random().toString(36).substring(2,7), levelId: levelMatch.id, name: row.Classe.toString() }); 
+                                    countStats.cls++;
+                                }
+                            }
+                        });
+                    }
+
+                    // 3. Lettura Foglio Docenti
+                    if(workbook.Sheets['Docenti']) {
+                        XLSX.utils.sheet_to_json(workbook.Sheets['Docenti']).forEach(row => {
+                            if(row.Docente && !db.teachers.find(t => t.name.toLowerCase() === row.Docente.toString().toLowerCase())) {
+                                db.teachers.push({ 
+                                    id: "t_" + Date.now() + Math.random().toString(36).substring(2,7), 
+                                    name: row.Docente.toString(), 
+                                    dayOff: row.GiornoLibero ? row.GiornoLibero.toString() : "Nessuno", 
+                                    maxHours: row.Ore ? parseInt(row.Ore) : 18, 
+                                    assignments: [] 
+                                }); 
+                                countStats.prof++;
+                            }
+                        });
+                    }
+                    
+                    updateUI(); 
+                    fileInput.value = ''; // Resetta il campo file
+                    alert(`Importazione completata con successo!\nAggiunti:\n- ${countStats.mat} Materie\n- ${countStats.cls} Classi\n- ${countStats.prof} Docenti`);
+                } catch(err) { 
+                    alert("Errore durante la lettura. Assicurati che i fogli siano nominati esattamente 'Materie', 'Classi' e 'Docenti'."); 
+                    console.error(err);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
         function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"})); a.download="orario_completo.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
         function clearDB() { if(confirm("⚠ Azzerare tutto?")) { localStorage.removeItem('school_db_v9'); db=JSON.parse(JSON.stringify(defaultDB)); currentTeacherId=null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
 
