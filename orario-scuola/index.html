@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Orario Scolastico Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; background-color: #f4f4f9; }
+        h1, h2, h3 { color: #333; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .full-width { grid-column: span 2; }
+        button { padding: 10px 15px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #004494; }
+        input, select { padding: 8px; margin-right: 10px; margin-bottom: 15px; width: calc(100% - 20px); border: 1px solid #ccc; border-radius: 4px;}
+        .inline-group { display: flex; gap: 10px; }
+        .inline-group input, .inline-group select { width: auto; flex-grow: 1; }
+        #output { background: #2d2d2d; color: #a6e22e; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+        .error { color: #dc3545; font-weight: bold; margin-top: -10px; margin-bottom: 10px; display: block;}
+        .success { color: #28a745; font-weight: bold; margin-top: -10px; margin-bottom: 10px; display: block;}
+    </style>
+</head>
+<body>
+
+    <h1>Gestione Orario Scolastico</h1>
+
+    <div class="grid-container">
+        
+        <!-- INSERIMENTO ANAGRAFICHE -->
+        <div class="section">
+            <h3>Aggiungi Insegnante</h3>
+            <div class="inline-group">
+                <input type="text" id="new-teacher-name" placeholder="Nome (es. Mario Rossi)">
+                <select id="new-teacher-dayoff">
+                    <option value="Nessuno">Nessun giorno libero</option>
+                    <option value="Lunedì">Lunedì</option>
+                    <option value="Martedì">Martedì</option>
+                    <option value="Mercoledì">Mercoledì</option>
+                    <option value="Giovedì">Giovedì</option>
+                    <option value="Venerdì">Venerdì</option>
+                    <option value="Sabato">Sabato</option>
+                </select>
+            </div>
+            <button onclick="addTeacher()">Salva Insegnante</button>
+        </div>
+
+        <div class="section">
+            <h3>Aggiungi Classe</h3>
+            <input type="text" id="new-class-name" placeholder="Nome (es. 1A, 3B, 5C)">
+            <button onclick="addClass()">Salva Classe</button>
+        </div>
+
+        <!-- ASSEGNAZIONE LEZIONI -->
+        <div class="section full-width">
+            <h3>Assegna Lezione all'Orario</h3>
+            <span id="msg-lesson"></span>
+            <div class="inline-group">
+                <select id="sel-class"><option>Caricamento classi...</option></select>
+                <select id="sel-teacher"><option>Caricamento docenti...</option></select>
+                <select id="sel-timeslot"><option>Caricamento orari...</option></select>
+            </div>
+            <button onclick="addLesson()">Inserisci nel Tabellone</button>
+        </div>
+
+        <!-- DATABASE -->
+        <div class="section full-width">
+            <h3>Database JSON Attuale</h3>
+            <button onclick="clearDB()" style="background: #dc3545; margin-bottom: 10px;">Resetta Tutto</button>
+            <pre id="output"></pre>
+        </div>
+    </div>
+
+    <script>
+        // 1. Dati Iniziali (Ora vuoti per le anagrafiche, pre-impostiamo solo le ore della settimana)
+        const defaultDB = {
+            teachers: [],
+            classes: [],
+            timeslots: [
+                { id: "ts1", day: "Lunedì", hour: "1° Ora" }, { id: "ts2", day: "Lunedì", hour: "2° Ora" },
+                { id: "ts3", day: "Martedì", hour: "1° Ora" }, { id: "ts4", day: "Martedì", hour: "2° Ora" }
+                // Qui puoi aggiungere dinamicamente tutti gli slot della settimana
+            ],
+            lessons: []
+        };
+
+        let db = JSON.parse(localStorage.getItem('school_db')) || defaultDB;
+
+        // 2. Aggiorna UI e LocalStorage
+        function updateUI() {
+            localStorage.setItem('school_db', JSON.stringify(db));
+            document.getElementById('output').textContent = JSON.stringify(db, null, 2);
+            renderDropdowns();
+        }
+
+        // 3. Popola i menu a tendina con i dati inseriti
+        function renderDropdowns() {
+            const classSel = document.getElementById('sel-class');
+            const teacherSel = document.getElementById('sel-teacher');
+            const timeslotSel = document.getElementById('sel-timeslot');
+
+            classSel.innerHTML = db.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            teacherSel.innerHTML = db.teachers.map(t => `<option value="${t.id}">${t.name} (Giorno Libero: ${t.dayOff})</option>`).join('');
+            timeslotSel.innerHTML = db.timeslots.map(ts => `<option value="${ts.id}">${ts.day} - ${ts.hour}</option>`).join('');
+        }
+
+        // 4. Inserimento Anagrafiche
+        function addTeacher() {
+            const name = document.getElementById('new-teacher-name').value.trim();
+            const dayOff = document.getElementById('new-teacher-dayoff').value;
+            if(!name) return alert("Inserisci il nome dell'insegnante");
+            
+            db.teachers.push({ id: "t_" + Date.now(), name, dayOff });
+            document.getElementById('new-teacher-name').value = '';
+            updateUI();
+        }
+
+        function addClass() {
+            const name = document.getElementById('new-class-name').value.trim();
+            if(!name) return alert("Inserisci il nome della classe");
+            
+            db.classes.push({ id: "c_" + Date.now(), name });
+            document.getElementById('new-class-name').value = '';
+            updateUI();
+        }
+
+        // 5. Controlli Logici
+        function isTeacherBusy(teacherId, timeslotId) {
+            return db.lessons.some(l => l.teacherId === teacherId && l.timeslotId === timeslotId);
+        }
+
+        function isClassBusy(classId, timeslotId) {
+            return db.lessons.some(l => l.classId === classId && l.timeslotId === timeslotId);
+        }
+
+        function isTeacherOnDayOff(teacherId, timeslotId) {
+            const teacher = db.teachers.find(t => t.id === teacherId);
+            const timeslot = db.timeslots.find(ts => ts.id === timeslotId);
+            return teacher.dayOff === timeslot.day; // Ritorna true se il giorno della lezione è uguale al giorno libero
+        }
+
+        // 6. Assegnazione Lezione
+        function addLesson() {
+            const classId = document.getElementById('sel-class').value;
+            const teacherId = document.getElementById('sel-teacher').value;
+            const timeslotId = document.getElementById('sel-timeslot').value;
+            const msgEl = document.getElementById('msg-lesson');
+
+            if (!classId || !teacherId || !timeslotId) {
+                return alert("Devi prima inserire almeno una classe, un insegnante e avere orari disponibili.");
+            }
+
+            // Validazioni
+            msgEl.className = "error";
+            if (isTeacherOnDayOff(teacherId, timeslotId)) {
+                return msgEl.textContent = "Operazione annullata: Il docente è nel suo giorno libero!";
+            }
+            if (isTeacherBusy(teacherId, timeslotId)) {
+                return msgEl.textContent = "Operazione annullata: L'insegnante ha già un'altra classe in quest'ora!";
+            }
+            if (isClassBusy(classId, timeslotId)) {
+                return msgEl.textContent = "Operazione annullata: La classe ha già un'altra materia in quest'ora!";
+            }
+
+            // Salvataggio
+            db.lessons.push({ id: "l_" + Date.now(), classId, teacherId, timeslotId });
+            msgEl.className = "success";
+            msgEl.textContent = "Lezione assegnata correttamente!";
+            updateUI();
+        }
+
+        function clearDB() {
+            if(confirm("Sei sicuro di voler cancellare tutto il database?")) {
+                localStorage.removeItem('school_db');
+                db = JSON.parse(JSON.stringify(defaultDB));
+                document.getElementById('msg-lesson').textContent = '';
+                updateUI();
+            }
+        }
+
+        // Avvio
+        updateUI();
+    </script>
+</body>
+</html>
