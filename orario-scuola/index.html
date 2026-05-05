@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orario Scolastico Completo V9 - Stampe Mirate</title>
+    <title>Orario Scolastico Completo V10 - Tabellone Interattivo</title>
     <!-- Libreria SheetJS per leggere e scrivere file Excel nel browser -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -28,7 +28,6 @@
         button.primary { background: #3b82f6; }
         button.warning { background: #f59e0b; color: white; }
         button.excel-btn { background: #217346; color: white; border: 1px solid #1e6b40; margin-top: 5px; width: 100%;}
-        button.excel-btn:hover { background: #1e6b40; }
         
         .assign-row { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #eee; }
         .assign-row:hover { background: #f8fafc; }
@@ -41,17 +40,29 @@
         .timetable-composer th { background: #3b82f6; color: white; }
         .timetable-composer td select { margin: 0; width: 100%; font-size: 13px; padding: 6px; border-color: #3b82f6; background: #eff6ff; font-weight: bold;}
         .slot-break { background-color: #fef08a !important; font-style: italic; }
+        
+        .badge { display: inline-block; background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-top:4px;}
+        
+        /* Modifiche Interattive */
+        .cell-interactive { cursor: pointer; transition: 0.2s; background: #f8fafc; }
+        .cell-interactive:hover { background: #e2e8f0; border-color: #3b82f6; transform: scale(1.02); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .sub-active { border: 2px solid #ef4444 !important; background: #fee2e2 !important; }
+
+        /* Stile Finestra Modale */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 400px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
-    <h1>Gestione Orario & Export Excel</h1>
+    <h1>Gestione Orario & Modifiche Live</h1>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('tab-config')">1. Materie e Classi</button>
-        <button class="tab-btn primary" onclick="openTab('tab-teachers')">2. Docenti & Assegnazioni</button>
-        <button class="tab-btn" onclick="openTab('tab-compose')">3. Componi Tabellone</button>
-        <button class="tab-btn warning" onclick="openTab('tab-subs')">4. Supplenze</button>
+        <button class="tab-btn active" onclick="openTab('tab-config')">1. Dati Base</button>
+        <button class="tab-btn primary" onclick="openTab('tab-teachers')">2. Assegnazioni</button>
+        <button class="tab-btn" onclick="openTab('tab-compose')">3. Componi Orario</button>
+        <button class="tab-btn warning" onclick="openTab('tab-subs')">4. Assenze Rapide</button>
+        <button class="tab-btn" style="background:#8b5cf6; color:white;" onclick="openTab('tab-interactive')">5. Tabellone Interattivo</button>
         <button class="tab-btn" onclick="openTab('tab-db')" style="margin-left: auto; background: #64748b; color:white;">Stampe & Dati</button>
     </div>
 
@@ -86,7 +97,7 @@
         <div id="assignment-workspace" class="card" style="display:none; margin-top:20px; border-left: 4px solid #3b82f6;">
             <div class="card-header">Classi in cui insegna: <span id="assign-teacher-name" style="color:#3b82f6;"></span></div>
             <div id="class-flags-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background:#fff;"></div>
-            <button class="primary" style="margin-top: 15px;" onclick="saveTeacherAssignments()">💾 Salva Assegnazioni Docente</button><span id="assign-msg" style="margin-left: 10px; color: green;"></span>
+            <button class="primary" style="margin-top: 15px;" onclick="saveTeacherAssignments()">💾 Salva Assegnazioni</button><span id="assign-msg" style="margin-left: 10px; color: green;"></span>
         </div>
     </div>
 
@@ -97,9 +108,9 @@
         <div id="composer-grid-container" style="margin-top:20px;"></div>
     </div>
 
-    <!-- TAB 4: SUPPLENZE -->
+    <!-- TAB 4: SUPPLENZE RAPIDE -->
     <div id="tab-subs" class="tab-content">
-        <h2>Gestione Supplenze</h2>
+        <h2>Ricerca per Docente Assente</h2>
         <div class="card grid-2">
             <div><label>Docente Assente:</label><select id="sub-absent-teacher" onchange="loadAbsentTeacherLessons()"></select></div>
             <div><label>Giorno Assenza:</label><select id="sub-day" onchange="loadAbsentTeacherLessons()"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
@@ -107,56 +118,47 @@
         <div id="sub-lessons-area" style="margin-top:20px;"></div>
     </div>
 
-    <!-- TAB 5: STAMPE E DATI -->
+    <!-- TAB 5: TABELLONE INTERATTIVO (NOVITA') -->
+    <div id="tab-interactive" class="tab-content">
+        <h2>Tabellone Generale Interattivo</h2>
+        <p>Seleziona un ordine di scuola per visualizzare il tabellone completo. <b>Clicca su qualsiasi casella colorata</b> per gestire le sostituzioni direttamente dalla griglia.</p>
+        <div class="card" style="background:#f5f3ff;">
+            <label style="font-weight:bold; color:#5b21b6;">Filtra per Ordine:</label>
+            <select id="interactive-level-select" onchange="renderInteractiveTimetable()" style="max-width: 300px; border-color:#8b5cf6;"></select>
+        </div>
+        <div id="interactive-grid-container" style="margin-top:20px;"></div>
+    </div>
+
+    <!-- MODALE PER TABELLONE INTERATTIVO -->
+    <div id="cell-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:#1e40af; border-bottom:1px solid #ccc; padding-bottom:10px;">Gestione Lezione</h3>
+            <div id="modal-cell-info" style="font-size:15px; margin-bottom:15px; line-height:1.5;"></div>
+            <div id="modal-sub-area" style="background:#f8fafc; padding:15px; border-radius:6px; border:1px solid #e2e8f0;"></div>
+            <button style="margin-top:20px; width:100%; background:#64748b;" onclick="closeCellModal()">Chiudi Finestra</button>
+        </div>
+    </div>
+
+    <!-- TAB 6: STAMPE E DATI -->
     <div id="tab-db" class="tab-content">
         <h2>Centro Stampe ed Esportazioni Excel</h2>
-        
         <div class="grid-3" style="margin-bottom: 30px;">
-            <!-- EXPORT PER ORDINE -->
-            <div class="card" style="border-top: 4px solid #217346;">
-                <h3>📑 Tabellone per Ordine</h3>
-                <p style="font-size:13px; color:#666;">Tutte le classi di un grado.</p>
-                <select id="export-level-select"></select>
-                <button onclick="exportExcelByLevel()" class="excel-btn">Esporta Ordine</button>
-            </div>
-
-            <!-- EXPORT PER CLASSE -->
-            <div class="card" style="border-top: 4px solid #1e40af;">
-                <h3>🏫 Orario Singola Classe</h3>
-                <p style="font-size:13px; color:#666;">Da appendere in aula.</p>
-                <select id="export-class-select"></select>
-                <button onclick="exportExcelByClass()" class="excel-btn" style="background:#1e40af; border-color:#1e3a8a;">Esporta Classe</button>
-            </div>
-
-            <!-- EXPORT PER DOCENTE -->
-            <div class="card" style="border-top: 4px solid #b45309;">
-                <h3>👨‍🏫 Orario Singolo Docente</h3>
-                <p style="font-size:13px; color:#666;">Orario personale del Prof.</p>
-                <select id="export-teacher-select"></select>
-                <button onclick="exportExcelByTeacher()" class="excel-btn" style="background:#b45309; border-color:#92400e;">Esporta Docente</button>
-            </div>
+            <div class="card" style="border-top: 4px solid #217346;"><h3>📑 Tabellone per Ordine</h3><select id="export-level-select"></select><button onclick="exportExcelByLevel()" class="excel-btn">Esporta Ordine</button></div>
+            <div class="card" style="border-top: 4px solid #1e40af;"><h3>🏫 Orario Singola Classe</h3><select id="export-class-select"></select><button onclick="exportExcelByClass()" class="excel-btn" style="background:#1e40af; border-color:#1e3a8a;">Esporta Classe</button></div>
+            <div class="card" style="border-top: 4px solid #b45309;"><h3>👨‍🏫 Orario Singolo Docente</h3><select id="export-teacher-select"></select><button onclick="exportExcelByTeacher()" class="excel-btn" style="background:#b45309; border-color:#92400e;">Esporta Docente</button></div>
         </div>
-
         <hr style="margin: 30px 0; border: 1px solid #e2e8f0;">
-        
         <div class="grid-2">
-            <div class="card">
-                <div class="card-header">📥 Importa da Excel</div>
-                <input type="file" id="excel-file" accept=".xlsx, .xls" style="border: 1px solid #ccc; padding: 5px; width: 100%;">
-                <button onclick="importExcel()" style="background: #10b981; width: 100%;">Carica Dati</button>
-            </div>
-            <div class="card">
-                <div class="card-header">💾 Backup e Reset</div>
-                <button onclick="exportJSON()" class="primary" style="width: 100%; margin-bottom:10px;">Scarica Backup (JSON)</button>
-                <button class="danger" onclick="clearDB()" style="width: 100%;">⚠ Resetta Tutto</button>
-            </div>
+            <div class="card"><div class="card-header">📥 Importa da Excel</div><input type="file" id="excel-file" accept=".xlsx, .xls" style="border: 1px solid #ccc; padding: 5px; width: 100%;"><button onclick="importExcel()" style="background: #10b981; width: 100%;">Carica Dati</button></div>
+            <div class="card"><div class="card-header">💾 Backup e Reset</div><button onclick="exportJSON()" class="primary" style="width: 100%; margin-bottom:10px;">Scarica Backup (JSON)</button><button class="danger" onclick="clearDB()" style="width: 100%;">⚠ Resetta Tutto</button></div>
         </div>
     </div>
 
     <script>
         const defaultDB = { levels: [{ id: "lvl_inf", name: "Infanzia" }, { id: "lvl_prim", name: "Primaria" }, { id: "lvl_sec", name: "Secondaria" }], subjects: [], classes: [], timeslots: [], teachers: [], lessons: [], substitutions: [] };
-        let db = JSON.parse(localStorage.getItem('school_db_v9')) || defaultDB;
+        let db = JSON.parse(localStorage.getItem('school_db_v10')) || defaultDB;
         let currentTeacherId = null;
+        let currentInteractiveLessonId = null;
 
         function openTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -167,12 +169,13 @@
         }
 
         function updateUI() {
-            localStorage.setItem('school_db_v9', JSON.stringify(db));
+            localStorage.setItem('school_db_v10', JSON.stringify(db));
             
             const levelOpts = db.levels.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
             document.getElementById('c-level').innerHTML = levelOpts;
             document.getElementById('ts-level').innerHTML = levelOpts;
             document.getElementById('export-level-select').innerHTML = `<option value="">-- Seleziona Ordine --</option>` + levelOpts;
+            document.getElementById('interactive-level-select').innerHTML = `<option value="">-- Seleziona Ordine --</option>` + levelOpts;
 
             const teacherOpts = `<option value="">-- Seleziona Docente --</option>` + db.teachers.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
             document.getElementById('teacher-selector').innerHTML = teacherOpts;
@@ -184,16 +187,193 @@
             document.getElementById('export-class-select').innerHTML = classOpts;
 
             if(currentTeacherId) document.getElementById('teacher-selector').value = currentTeacherId;
+            renderInteractiveTimetable(); // Aggiorna se la scheda è aperta
         }
 
         // ==========================================
-        // NUOVI MOTORI DI ESPORTAZIONE EXCEL MIRATA
+        // TABELLONE INTERATTIVO (SCHEDA 5)
         // ==========================================
+        function renderInteractiveTimetable() {
+            const levelId = document.getElementById('interactive-level-select').value;
+            const container = document.getElementById('interactive-grid-container');
+            if(!levelId) { container.innerHTML = ''; return; }
 
-        // 1. ESPORTA PER ORDINE (es. Solo Primaria)
+            const levelClasses = db.classes.filter(c => c.levelId === levelId);
+            if(levelClasses.length === 0) return container.innerHTML = "<p>Nessuna classe presente.</p>";
+
+            let html = '';
+            const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
+
+            days.forEach(day => {
+                const daySlots = db.timeslots.filter(ts => ts.levelId === levelId && ts.day === day).sort((a,b)=>a.start.localeCompare(b.start));
+                if(daySlots.length === 0) return;
+
+                html += `<h3 style="color:#5b21b6;">${day}</h3><table class="timetable-composer"><tr><th style="width:120px; background:#8b5cf6;">Orario</th>`;
+                levelClasses.forEach(c => html += `<th style="background:#8b5cf6;">${c.name}</th>`);
+                html += `</tr>`;
+
+                daySlots.forEach(slot => {
+                    let cssClass = slot.type === 'break' ? 'slot-break' : '';
+                    html += `<tr><td class="${cssClass}"><b>${slot.start}-${slot.end}</b><br><small>${slot.type.toUpperCase()}</small></td>`;
+
+                    levelClasses.forEach(cls => {
+                        if (slot.type !== 'lesson') {
+                            html += `<td class="${cssClass}"></td>`;
+                        } else {
+                            const lesson = db.lessons.find(l => l.classId === cls.id && l.timeslotId === slot.id);
+                            if (lesson) {
+                                const teacher = db.teachers.find(t => t.id === lesson.teacherId);
+                                const subject = db.subjects.find(s => s.id === lesson.subjectId);
+                                const sub = db.substitutions.find(s => s.lessonId === lesson.id);
+
+                                if(sub) {
+                                    const subT = db.teachers.find(t => t.id === sub.subTeacherId);
+                                    html += `<td class="cell-interactive sub-active" onclick="openCellModal('${lesson.id}')">
+                                        <span style="color:#dc2626; font-size:11px; font-weight:bold;">[SOSTITUZIONE]</span><br>
+                                        <del>${teacher.name}</del><br>
+                                        <b>${subT.name}</b><br>
+                                        <span class="badge">${subject.name}</span>
+                                    </td>`;
+                                } else {
+                                    html += `<td class="cell-interactive" onclick="openCellModal('${lesson.id}')" title="Clicca per modificare">
+                                        <b>${teacher.name}</b><br>
+                                        <span class="badge">${subject.name}</span>
+                                    </td>`;
+                                }
+                            } else {
+                                html += `<td style="color:#ccc;">Vuoto</td>`;
+                            }
+                        }
+                    });
+                    html += `</tr>`;
+                });
+                html += `</table>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // Funzioni Finestra Modale
+        function openCellModal(lessonId) {
+            currentInteractiveLessonId = lessonId;
+            const lesson = db.lessons.find(l => l.id === lessonId);
+            const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId);
+            const cls = db.classes.find(c => c.id === lesson.classId);
+            const subj = db.subjects.find(s => s.id === lesson.subjectId);
+            const titolare = db.teachers.find(t => t.id === lesson.teacherId);
+
+            document.getElementById('modal-cell-info').innerHTML = `
+                <b>Classe:</b> ${cls.name}<br>
+                <b>Orario:</b> ${slot.day} ${slot.start} - ${slot.end}<br>
+                <b>Materia:</b> ${subj.name}<br>
+                <b>Prof. Titolare:</b> ${titolare.name}
+            `;
+
+            const activeSub = db.substitutions.find(s => s.lessonId === lessonId);
+            const subArea = document.getElementById('modal-sub-area');
+
+            if (activeSub) {
+                const subTeacher = db.teachers.find(t => t.id === activeSub.subTeacherId);
+                subArea.innerHTML = `
+                    <div style="background:#fee2e2; padding:10px; border-radius:4px; border: 1px solid #ef4444;">
+                        <b style="color:#dc2626;">⚠ Supplenza Attiva</b><br>
+                        Sostituto attuale: <b>${subTeacher.name}</b>
+                        <button class="danger" style="margin-top:15px; width:100%;" onclick="removeInteractiveSub('${activeSub.id}')">Annulla Supplenza (Ripristina Titolare)</button>
+                    </div>
+                `;
+            } else {
+                // Cerca disponibili
+                const availableSubs = db.teachers.filter(t => {
+                    if(t.id === titolare.id || t.dayOff === slot.day) return false;
+                    const busy = db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) ||
+                                 db.substitutions.some(sub => sub.subTeacherId === t.id && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id);
+                    return !busy;
+                });
+
+                if (availableSubs.length > 0) {
+                    subArea.innerHTML = `
+                        <label><b>Seleziona Sostituto Libero:</b></label>
+                        <p style="font-size:12px; color:#666; margin-top:2px;">La lista mostra solo i docenti liberi in questa precisa fascia oraria.</p>
+                        <select id="modal-sub-select" style="width:100%; margin-top:5px; padding:8px;">
+                            ${availableSubs.map(t=>`<option value="${t.id}">${t.name}</option>`).join('')}
+                        </select>
+                        <button class="warning" style="margin-top:15px; width:100%; font-size:15px;" onclick="saveInteractiveSub()">Conferma Sostituzione</button>
+                    `;
+                } else {
+                    subArea.innerHTML = `<p style="color:#dc2626; font-weight:bold; margin:0;">Nessun docente libero in questa fascia oraria!</p>`;
+                }
+            }
+
+            document.getElementById('cell-modal').style.display = 'flex';
+        }
+
+        function closeCellModal() {
+            document.getElementById('cell-modal').style.display = 'none';
+            currentInteractiveLessonId = null;
+        }
+
+        function saveInteractiveSub() {
+            const subId = document.getElementById('modal-sub-select').value;
+            db.substitutions.push({ id: "sub_" + Date.now(), lessonId: currentInteractiveLessonId, subTeacherId: subId });
+            updateUI();
+            closeCellModal();
+        }
+
+        function removeInteractiveSub(subId) {
+            db.substitutions = db.substitutions.filter(s => s.id !== subId);
+            updateUI();
+            closeCellModal();
+        }
+
+
+        // ==========================================
+        // EXCEL IMPORT E MOTORI STAMPA (SCHEDA 6)
+        // ==========================================
+        function importExcel() {
+            const fileInput = document.getElementById('excel-file');
+            const file = fileInput.files[0];
+            if (!file) return alert("Seleziona prima un file Excel.");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    let countStats = { mat: 0, cls: 0, prof: 0 };
+
+                    if(workbook.Sheets['Materie']) {
+                        XLSX.utils.sheet_to_json(workbook.Sheets['Materie']).forEach(row => {
+                            if(row.Materia && !db.subjects.find(s => s.name.toLowerCase() === row.Materia.toString().toLowerCase())) {
+                                db.subjects.push({ id: "s_" + Date.now() + Math.random().toString(36).substring(2,7), name: row.Materia.toString() }); countStats.mat++;
+                            }
+                        });
+                    }
+                    if(workbook.Sheets['Classi']) {
+                        XLSX.utils.sheet_to_json(workbook.Sheets['Classi']).forEach(row => {
+                            if(row.Ordine && row.Classe) {
+                                const levelMatch = db.levels.find(l => l.name.toLowerCase() === row.Ordine.toString().toLowerCase());
+                                if(levelMatch && !db.classes.find(c => c.name === row.Classe.toString() && c.levelId === levelMatch.id)) {
+                                    db.classes.push({ id: "c_" + Date.now() + Math.random().toString(36).substring(2,7), levelId: levelMatch.id, name: row.Classe.toString() }); countStats.cls++;
+                                }
+                            }
+                        });
+                    }
+                    if(workbook.Sheets['Docenti']) {
+                        XLSX.utils.sheet_to_json(workbook.Sheets['Docenti']).forEach(row => {
+                            if(row.Docente && !db.teachers.find(t => t.name.toLowerCase() === row.Docente.toString().toLowerCase())) {
+                                db.teachers.push({ id: "t_" + Date.now() + Math.random().toString(36).substring(2,7), name: row.Docente.toString(), dayOff: row.GiornoLibero ? row.GiornoLibero.toString() : "Nessuno", maxHours: row.Ore ? parseInt(row.Ore) : 18, assignments: [] }); countStats.prof++;
+                            }
+                        });
+                    }
+                    updateUI(); fileInput.value = ''; alert(`Importazione completata con successo!\nAggiunti:\n- ${countStats.mat} Materie\n- ${countStats.cls} Classi\n- ${countStats.prof} Docenti`);
+                } catch(err) { alert("Errore durante la lettura. Assicurati che i fogli siano nominati esattamente 'Materie', 'Classi' e 'Docenti'."); }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // ESPORTAZIONE EXCEL (Codice ripreso dalla V9)
         function exportExcelByLevel() {
             const levelId = document.getElementById('export-level-select').value;
-            if(!levelId) return alert("Seleziona un Ordine di Scuola");
+            if(!levelId) return alert("Seleziona un Ordine");
             const level = db.levels.find(l => l.id === levelId);
             const levelClasses = db.classes.filter(c => c.levelId === levelId);
             if(levelClasses.length === 0) return alert("Nessuna classe trovata in questo ordine.");
@@ -209,131 +389,93 @@
                 daySlots.forEach(slot => {
                     let row = [day, `${slot.start} - ${slot.end}`];
                     levelClasses.forEach(cls => {
-                        if (slot.type !== 'lesson') {
-                            row.push(slot.type.toUpperCase());
-                        } else {
+                        if (slot.type !== 'lesson') row.push(slot.type.toUpperCase());
+                        else {
                             const lesson = db.lessons.find(l => l.classId === cls.id && l.timeslotId === slot.id);
                             if (lesson) {
                                 const teacher = db.teachers.find(t => t.id === lesson.teacherId);
                                 const subject = db.subjects.find(s => s.id === lesson.subjectId);
                                 const sub = db.substitutions.find(s => s.lessonId === lesson.id);
                                 row.push(sub ? `[SOST] ${db.teachers.find(t=>t.id===sub.subTeacherId).name}` : `${teacher.name} (${subject.name})`);
-                            } else {
-                                row.push("");
-                            }
+                            } else row.push("");
                         }
                     });
                     excelData.push(row);
                 });
             });
-
             generateExcelFile(excelData, `Tabellone_${level.name.replace(/ /g,"_")}`);
         }
 
-        // 2. ESPORTA ORARIO SINGOLA CLASSE
         function exportExcelByClass() {
             const classId = document.getElementById('export-class-select').value;
             if(!classId) return alert("Seleziona una classe");
             const cls = db.classes.find(c => c.id === classId);
-            
             let excelData = [["Giorno", "Fascia Oraria", "Materia", "Docente"]];
             const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
             const classSlots = db.timeslots.filter(ts => ts.levelId === cls.levelId);
-
             days.forEach(day => {
                 const daySlots = classSlots.filter(ts => ts.day === day).sort((a,b)=>a.start.localeCompare(b.start));
                 daySlots.forEach(slot => {
                     let row = [day, `${slot.start} - ${slot.end}`];
-                    if (slot.type !== 'lesson') {
-                        row.push(slot.type.toUpperCase(), "---");
-                    } else {
+                    if (slot.type !== 'lesson') row.push(slot.type.toUpperCase(), "---");
+                    else {
                         const lesson = db.lessons.find(l => l.classId === cls.id && l.timeslotId === slot.id);
                         if (lesson) {
                             const teacher = db.teachers.find(t => t.id === lesson.teacherId);
                             const subject = db.subjects.find(s => s.id === lesson.subjectId);
                             const sub = db.substitutions.find(s => s.lessonId === lesson.id);
-                            if(sub) {
-                                row.push(subject.name, `[SOST] ${db.teachers.find(t=>t.id===sub.subTeacherId).name} (sostituisce ${teacher.name})`);
-                            } else {
-                                row.push(subject.name, teacher.name);
-                            }
-                        } else {
-                            row.push("---", "---");
-                        }
+                            if(sub) row.push(subject.name, `[SOST] ${db.teachers.find(t=>t.id===sub.subTeacherId).name} (sostituisce ${teacher.name})`);
+                            else row.push(subject.name, teacher.name);
+                        } else row.push("---", "---");
                     }
                     excelData.push(row);
                 });
             });
-
             generateExcelFile(excelData, `Orario_Classe_${cls.name}`);
         }
 
-        // 3. ESPORTA ORARIO PERSONALE DOCENTE
         function exportExcelByTeacher() {
             const teacherId = document.getElementById('export-teacher-select').value;
             if(!teacherId) return alert("Seleziona un docente");
             const teacher = db.teachers.find(t => t.id === teacherId);
-            
             let excelData = [["Giorno", "Fascia Oraria", "Classe", "Materia", "Note"]];
             const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
-
-            // Troviamo tutte le lezioni (titolari e supplenze) di questo docente
             const myLessons = db.lessons.filter(l => l.teacherId === teacherId);
             const mySubs = db.substitutions.filter(s => s.subTeacherId === teacherId);
-
             days.forEach(day => {
-                // Prendi tutti gli slot esistenti in quel giorno
                 const allSlots = db.timeslots.filter(ts => ts.day === day).sort((a,b)=>a.start.localeCompare(b.start));
-                
                 allSlots.forEach(slot => {
-                    let rowAdded = false;
-                    
-                    // Cerca se ha una lezione titolare in questo slot
                     const l = myLessons.find(x => x.timeslotId === slot.id);
                     if(l) {
                         const cls = db.classes.find(c => c.id === l.classId);
                         const subj = db.subjects.find(s => s.id === l.subjectId);
-                        // Controllo se sono stato sostituito
                         const isSubbed = db.substitutions.find(s => s.lessonId === l.id);
-                        if(isSubbed) {
-                            excelData.push([day, `${slot.start} - ${slot.end}`, cls.name, subj.name, `⚠ SOSTITUITO DA: ${db.teachers.find(t=>t.id===isSubbed.subTeacherId).name}`]);
-                        } else {
-                            excelData.push([day, `${slot.start} - ${slot.end}`, cls.name, subj.name, "Titolare"]);
-                        }
-                        rowAdded = true;
+                        if(isSubbed) excelData.push([day, `${slot.start} - ${slot.end}`, cls.name, subj.name, `⚠ SOSTITUITO DA: ${db.teachers.find(t=>t.id===isSubbed.subTeacherId).name}`]);
+                        else excelData.push([day, `${slot.start} - ${slot.end}`, cls.name, subj.name, "Titolare"]);
                     }
-
-                    // Cerca se ha una supplenza in questo slot
                     const s = mySubs.find(sub => db.lessons.find(lex=>lex.id===sub.lessonId).timeslotId === slot.id);
                     if(s) {
                         const subbedLesson = db.lessons.find(lex=>lex.id===s.lessonId);
                         const cls = db.classes.find(c => c.id === subbedLesson.classId);
                         const subj = db.subjects.find(sbj => sbj.id === subbedLesson.subjectId);
                         excelData.push([day, `${slot.start} - ${slot.end}`, cls.name, subj.name, "🟢 SUPPLENZA"]);
-                        rowAdded = true;
                     }
                 });
             });
-
             if(excelData.length === 1) return alert("Il docente non ha lezioni assegnate.");
             generateExcelFile(excelData, `Orario_Prof_${teacher.name.replace(/ /g,"_")}`);
         }
 
-        // Funzione utility per scrivere il file Excel materialmente
         function generateExcelFile(aoaData, filename) {
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet(aoaData);
-            
-            // Imposta larghezza colonne base
-            const colWidths = [{wch: 12}, {wch: 15}, {wch: 20}, {wch: 25}, {wch: 25}];
-            ws['!cols'] = colWidths;
-
+            ws['!cols'] = [{wch: 12}, {wch: 15}, {wch: 20}, {wch: 25}, {wch: 25}];
             XLSX.utils.book_append_sheet(wb, ws, "Orario");
             XLSX.writeFile(wb, `${filename}.xlsx`);
         }
 
         // ==========================================
-        // ALTRE FUNZIONI (GIA' PRESENTI)
+        // ALTRE FUNZIONI ESISTENTI
         // ==========================================
         function addSubject() { const n = document.getElementById('s-name').value.trim(); if(n) { db.subjects.push({id:"s_"+Date.now(), name:n}); document.getElementById('s-name').value=''; updateUI(); } }
         function addClass() { const n = document.getElementById('c-name').value.trim(); if(n) { db.classes.push({id:"c_"+Date.now(), levelId:document.getElementById('c-level').value, name:n}); document.getElementById('c-name').value=''; updateUI(); } }
@@ -437,74 +579,11 @@
             });
             area.innerHTML = html;
         }
-        
         function assignSub(lId) { db.substitutions.push({ id: "sub_" + Date.now(), lessonId: lId, subTeacherId: document.getElementById(`sub-${lId}`).value }); updateUI(); loadAbsentTeacherLessons(); }
         function removeSub(sId) { db.substitutions = db.substitutions.filter(s => s.id !== sId); updateUI(); loadAbsentTeacherLessons(); }
-        
-        // Import Data JSON
-        function importExcel() {
-            const fileInput = document.getElementById('excel-file');
-            const file = fileInput.files[0];
-            if (!file) return alert("Seleziona prima un file Excel.");
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    let countStats = { mat: 0, cls: 0, prof: 0 };
-
-                    // 1. Lettura Foglio Materie
-                    if(workbook.Sheets['Materie']) {
-                        XLSX.utils.sheet_to_json(workbook.Sheets['Materie']).forEach(row => {
-                            if(row.Materia && !db.subjects.find(s => s.name.toLowerCase() === row.Materia.toString().toLowerCase())) {
-                                db.subjects.push({ id: "s_" + Date.now() + Math.random().toString(36).substring(2,7), name: row.Materia.toString() }); 
-                                countStats.mat++;
-                            }
-                        });
-                    }
-
-                    // 2. Lettura Foglio Classi
-                    if(workbook.Sheets['Classi']) {
-                        XLSX.utils.sheet_to_json(workbook.Sheets['Classi']).forEach(row => {
-                            if(row.Ordine && row.Classe) {
-                                const levelMatch = db.levels.find(l => l.name.toLowerCase() === row.Ordine.toString().toLowerCase());
-                                if(levelMatch && !db.classes.find(c => c.name === row.Classe.toString() && c.levelId === levelMatch.id)) {
-                                    db.classes.push({ id: "c_" + Date.now() + Math.random().toString(36).substring(2,7), levelId: levelMatch.id, name: row.Classe.toString() }); 
-                                    countStats.cls++;
-                                }
-                            }
-                        });
-                    }
-
-                    // 3. Lettura Foglio Docenti
-                    if(workbook.Sheets['Docenti']) {
-                        XLSX.utils.sheet_to_json(workbook.Sheets['Docenti']).forEach(row => {
-                            if(row.Docente && !db.teachers.find(t => t.name.toLowerCase() === row.Docente.toString().toLowerCase())) {
-                                db.teachers.push({ 
-                                    id: "t_" + Date.now() + Math.random().toString(36).substring(2,7), 
-                                    name: row.Docente.toString(), 
-                                    dayOff: row.GiornoLibero ? row.GiornoLibero.toString() : "Nessuno", 
-                                    maxHours: row.Ore ? parseInt(row.Ore) : 18, 
-                                    assignments: [] 
-                                }); 
-                                countStats.prof++;
-                            }
-                        });
-                    }
-                    
-                    updateUI(); 
-                    fileInput.value = ''; // Resetta il campo file
-                    alert(`Importazione completata con successo!\nAggiunti:\n- ${countStats.mat} Materie\n- ${countStats.cls} Classi\n- ${countStats.prof} Docenti`);
-                } catch(err) { 
-                    alert("Errore durante la lettura. Assicurati che i fogli siano nominati esattamente 'Materie', 'Classi' e 'Docenti'."); 
-                    console.error(err);
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
         function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"})); a.download="orario_completo.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
-        function clearDB() { if(confirm("⚠ Azzerare tutto?")) { localStorage.removeItem('school_db_v9'); db=JSON.parse(JSON.stringify(defaultDB)); currentTeacherId=null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
+        function clearDB() { if(confirm("⚠ Azzerare tutto?")) { localStorage.removeItem('school_db_v10'); db=JSON.parse(JSON.stringify(defaultDB)); currentTeacherId=null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
 
         updateUI();
     </script>
