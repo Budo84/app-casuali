@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orario Scolastico Completo V6 - Composizione Intelligente</title>
+    <title>Orario Scolastico Completo V7 - Excel Import</title>
+    <!-- Libreria SheetJS per leggere i file Excel nel browser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f4f6f9; color: #333; }
         h1, h2, h3 { color: #2c3e50; }
@@ -26,53 +28,54 @@
         button.primary { background: #3b82f6; }
         button.warning { background: #f59e0b; color: white; }
         
-        /* Lista Assegnazioni con Flag */
         .assign-row { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #eee; }
         .assign-row:hover { background: #f8fafc; }
         .assign-row input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; margin: 0; }
         .assign-row select { margin: 0; width: auto; flex-grow: 1; padding: 6px; }
         .assign-row label { width: 150px; font-weight: bold; cursor: pointer; }
 
-        /* Griglia Compositore Tabellone */
         .timetable-composer { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .timetable-composer th, .timetable-composer td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; }
         .timetable-composer th { background: #3b82f6; color: white; }
         .timetable-composer td select { margin: 0; width: 100%; font-size: 13px; padding: 6px; border-color: #3b82f6; background: #eff6ff; font-weight: bold;}
         .slot-break { background-color: #fef08a !important; font-style: italic; }
         
-        .badge { display: inline-block; background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-top:4px;}
-        .sub-active { border: 2px solid #ef4444 !important; background: #fee2e2 !important; }
+        .excel-guide { background: #f8fafc; border-left: 4px solid #10b981; padding: 15px; margin-bottom: 20px; font-size: 14px; }
+        .excel-guide table { width: auto; min-width: 300px; margin-top: 10px; background: white; }
+        .excel-guide th { background: #10b981; color: white; padding: 5px 10px; }
+        .excel-guide td { padding: 5px 10px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
 
-    <h1>Gestione Orario (Flusso Professionale)</h1>
+    <h1>Gestione Orario & Import Excel</h1>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="openTab('tab-config')">1. Materie e Classi</button>
         <button class="tab-btn primary" onclick="openTab('tab-teachers')">2. Docenti & Assegnazioni</button>
         <button class="tab-btn" onclick="openTab('tab-compose')">3. Componi Tabellone</button>
         <button class="tab-btn warning" onclick="openTab('tab-subs')">4. Supplenze</button>
-        <button class="tab-btn" onclick="openTab('tab-db')" style="margin-left: auto; background: #64748b; color:white;">Backup JSON</button>
+        <button class="tab-btn" onclick="openTab('tab-db')" style="margin-left: auto; background: #64748b; color:white;">Dati & Excel</button>
     </div>
 
-    <!-- TAB 1: MATERIE, CLASSI, ORARI -->
+    <!-- TAB 1: MATERIE E CLASSI -->
     <div id="tab-config" class="tab-content active">
         <h2>Passo 1: Dati Base</h2>
+        <p>Inserisci manualmente o usa la scheda "Dati & Excel" per importare la lista completa.</p>
         <div class="grid-3">
             <div class="card">
-                <div class="card-header">1. Aggiungi Materia</div>
+                <div class="card-header">Aggiungi Materia</div>
                 <input type="text" id="s-name" placeholder="es. Matematica, Lettere">
                 <button onclick="addSubject()">Salva Materia</button>
             </div>
             <div class="card">
-                <div class="card-header">2. Aggiungi Classe</div>
+                <div class="card-header">Aggiungi Classe</div>
                 <label>Ordine:</label><select id="c-level"></select>
                 <input type="text" id="c-name" placeholder="es. 1A">
                 <button onclick="addClass()">Salva Classe</button>
             </div>
             <div class="card" style="grid-column: span 3;">
-                <div class="card-header">3. Generatore Fasce Orarie</div>
+                <div class="card-header">Generatore Fasce Orarie (Manuale)</div>
                 <div style="display: flex; gap: 15px;">
                     <div style="flex: 1;"><label>Ordine:</label><select id="ts-level"></select></div>
                     <div style="flex: 1;"><label>Giorno:</label><select id="ts-day"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
@@ -84,12 +87,12 @@
         </div>
     </div>
 
-    <!-- TAB 2: DOCENTI E ASSEGNAZIONI (I FLAG) -->
+    <!-- TAB 2: DOCENTI E ASSEGNAZIONI -->
     <div id="tab-teachers" class="tab-content">
         <h2>Passo 2: Associa i Docenti alle Classi</h2>
         <div class="grid-2">
             <div class="card">
-                <div class="card-header">Aggiungi Docente</div>
+                <div class="card-header">Aggiungi Docente Singolo</div>
                 <input type="text" id="t-name" placeholder="Nome Docente">
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1;"><label>Giorno Libero:</label><select id="t-dayoff"><option value="Nessuno">Nessuno</option><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
@@ -107,9 +110,7 @@
         <div id="assignment-workspace" class="card" style="display:none; margin-top:20px; border-left: 4px solid #3b82f6;">
             <div class="card-header">Classi in cui insegna: <span id="assign-teacher-name" style="color:#3b82f6;"></span></div>
             <p>Metti il flag (spunta) sulle classi in cui questo docente insegna e seleziona la materia.</p>
-            <div id="class-flags-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 4px; background:#fff;">
-                <!-- Generato via JS -->
-            </div>
+            <div id="class-flags-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 4px; background:#fff;"></div>
             <button class="primary" style="margin-top: 15px;" onclick="saveTeacherAssignments()">💾 Salva Assegnazioni Docente</button>
             <span id="assign-msg" style="margin-left: 10px; font-weight: bold; color: green;"></span>
         </div>
@@ -118,16 +119,11 @@
     <!-- TAB 3: COMPOSIZIONE TABELLONE -->
     <div id="tab-compose" class="tab-content">
         <h2>Passo 3: Riempi il Tabellone Orario</h2>
-        <p>Seleziona una classe. Nelle tendine troverai <b>solo i docenti a cui hai messo il flag</b> per questa classe nel Passo 2.</p>
-        
         <div class="card" style="background:#eff6ff;">
             <label style="font-weight:bold;">Seleziona Classe da compilare:</label>
             <select id="compose-class-select" onchange="renderComposerGrid()" style="max-width: 300px;"></select>
         </div>
-
-        <div id="composer-grid-container" style="margin-top:20px;">
-            <!-- Tabellone generato via JS -->
-        </div>
+        <div id="composer-grid-container" style="margin-top:20px;"></div>
     </div>
 
     <!-- TAB 4: SUPPLENZE -->
@@ -135,35 +131,47 @@
         <h2>Gestione Supplenze</h2>
         <div class="card grid-2">
             <div><label>Docente Assente:</label><select id="sub-absent-teacher" onchange="loadAbsentTeacherLessons()"></select></div>
-            <div><label>Giorno Assenza:</label><select id="sub-day" onchange="loadAbsentTeacherLessons()">
-                <option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option>
-            </select></div>
+            <div><label>Giorno Assenza:</label><select id="sub-day" onchange="loadAbsentTeacherLessons()"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
         </div>
         <div id="sub-lessons-area" style="margin-top:20px;"></div>
     </div>
 
-    <!-- TAB 5: DB -->
+    <!-- TAB 5: DB & EXCEL -->
     <div id="tab-db" class="tab-content">
-        <h2>Database JSON</h2>
-        <button onclick="exportJSON()" class="primary">📥 Esporta File JSON</button>
+        <h2>Gestione Dati & Importazione Excel</h2>
+        
+        <div class="card" style="margin-bottom: 20px;">
+            <h3>Importa da Excel (.xlsx)</h3>
+            
+            <div class="excel-guide">
+                <b>Regole per il file Excel:</b> Deve contenere 3 Fogli chiamati esattamente così:<br>
+                <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                    <table><tr><th colspan="1">Foglio: Materie</th></tr><tr><td><b>Materia</b></td></tr><tr><td>Matematica</td></tr></table>
+                    <table><tr><th colspan="2">Foglio: Classi</th></tr><tr><td><b>Ordine</b></td><td><b>Classe</b></td></tr><tr><td>Primaria</td><td>1A</td></tr></table>
+                    <table><tr><th colspan="3">Foglio: Docenti</th></tr><tr><td><b>Docente</b></td><td><b>GiornoLibero</b></td><td><b>Ore</b></td></tr><tr><td>Mario Rossi</td><td>Lunedì</td><td>18</td></tr></table>
+                </div>
+            </div>
+
+            <input type="file" id="excel-file" accept=".xlsx, .xls" style="border: 1px solid #ccc; padding: 5px; width: auto;">
+            <button onclick="importExcel()" style="background: #10b981;">Carica Dati Excel</button>
+        </div>
+
+        <button onclick="exportJSON()" class="primary">📥 Scarica Backup JSON</button>
         <button class="danger" onclick="clearDB()" style="margin-left:10px;">⚠ Resetta Tutto</button>
         <pre id="output" style="background:#1e293b; color:#a6e22e; padding:15px; border-radius:8px; margin-top:15px; overflow-x:auto;"></pre>
     </div>
 
     <script>
-        // 1. STRUTTURA DATI
         const defaultDB = {
-            levels: [{ id: "lvl_inf", name: "Infanzia" }, { id: "lvl_prim", name: "Primaria" }, { id: "lvl_sec", name: "Secondaria" }],
+            levels: [
+                { id: "lvl_inf", name: "Infanzia" }, 
+                { id: "lvl_prim", name: "Primaria" }, 
+                { id: "lvl_sec", name: "Secondaria" }
+            ],
             subjects: [], classes: [], timeslots: [], 
-            teachers: [], // Contiene: { id, name, dayOff, maxHours, assignments: [{classId, subjectId}] }
-            lessons: [],  // Contiene: { id, timeslotId, classId, teacherId, subjectId }
-            substitutions: []
+            teachers: [], lessons: [], substitutions: []
         };
-        let db = JSON.parse(localStorage.getItem('school_db_v6')) || defaultDB;
-        
-        // Retrocompatibilità
-        db.teachers.forEach(t => { if(!t.assignments) t.assignments = []; });
-
+        let db = JSON.parse(localStorage.getItem('school_db_v7')) || defaultDB;
         let currentTeacherId = null;
 
         function openTab(tabId) {
@@ -175,7 +183,7 @@
         }
 
         function updateUI() {
-            localStorage.setItem('school_db_v6', JSON.stringify(db));
+            localStorage.setItem('school_db_v7', JSON.stringify(db));
             document.getElementById('output').textContent = JSON.stringify(db, null, 2);
             
             const levelOpts = db.levels.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
@@ -192,51 +200,84 @@
             if(currentTeacherId) document.getElementById('teacher-selector').value = currentTeacherId;
         }
 
-        // --- TAB 1: DATI BASE ---
-        function addSubject() {
-            const name = document.getElementById('s-name').value.trim();
-            if(!name) return;
-            db.subjects.push({ id: "s_" + Date.now(), name });
-            document.getElementById('s-name').value = ''; updateUI();
-        }
-        function addClass() {
-            const name = document.getElementById('c-name').value.trim();
-            if(!name) return;
-            db.classes.push({ id: "c_" + Date.now(), levelId: document.getElementById('c-level').value, name });
-            document.getElementById('c-name').value = ''; updateUI();
-        }
-        function addTimeslot() {
-            const start = document.getElementById('ts-start').value;
-            const end = document.getElementById('ts-end').value;
-            if(!start || !end) return;
-            db.timeslots.push({ 
-                id: "ts_" + Date.now(), 
-                levelId: document.getElementById('ts-level').value, 
-                day: document.getElementById('ts-day').value, 
-                type: document.getElementById('ts-type').value, 
-                start, end 
-            });
-            db.timeslots.sort((a,b) => a.start.localeCompare(b.start));
-            updateUI();
+        // --- FUNZIONE IMPORT EXCEL VIA SHEETJS ---
+        function importExcel() {
+            const fileInput = document.getElementById('excel-file');
+            const file = fileInput.files[0];
+            if (!file) return alert("Seleziona prima un file Excel.");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    
+                    let countStats = { mat: 0, cls: 0, prof: 0 };
+
+                    // 1. Lettura Foglio Materie
+                    if(workbook.Sheets['Materie']) {
+                        const materieData = XLSX.utils.sheet_to_json(workbook.Sheets['Materie']);
+                        materieData.forEach(row => {
+                            if(row.Materia && !db.subjects.find(s => s.name.toLowerCase() === row.Materia.toString().toLowerCase())) {
+                                db.subjects.push({ id: "s_" + Date.now() + Math.random().toString(36).substring(2,7), name: row.Materia.toString() });
+                                countStats.mat++;
+                            }
+                        });
+                    }
+
+                    // 2. Lettura Foglio Classi
+                    if(workbook.Sheets['Classi']) {
+                        const classiData = XLSX.utils.sheet_to_json(workbook.Sheets['Classi']);
+                        classiData.forEach(row => {
+                            if(row.Ordine && row.Classe) {
+                                // Trova il levelId in base al nome (es. Primaria -> lvl_prim)
+                                const levelMatch = db.levels.find(l => l.name.toLowerCase() === row.Ordine.toString().toLowerCase());
+                                if(levelMatch) {
+                                    // Evita duplicati di classe nello stesso ordine
+                                    if(!db.classes.find(c => c.name === row.Classe.toString() && c.levelId === levelMatch.id)) {
+                                        db.classes.push({ id: "c_" + Date.now() + Math.random().toString(36).substring(2,7), levelId: levelMatch.id, name: row.Classe.toString() });
+                                        countStats.cls++;
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // 3. Lettura Foglio Docenti
+                    if(workbook.Sheets['Docenti']) {
+                        const docentiData = XLSX.utils.sheet_to_json(workbook.Sheets['Docenti']);
+                        docentiData.forEach(row => {
+                            if(row.Docente && !db.teachers.find(t => t.name.toLowerCase() === row.Docente.toString().toLowerCase())) {
+                                db.teachers.push({
+                                    id: "t_" + Date.now() + Math.random().toString(36).substring(2,7),
+                                    name: row.Docente.toString(),
+                                    dayOff: row.GiornoLibero ? row.GiornoLibero.toString() : "Nessuno",
+                                    maxHours: row.Ore ? parseInt(row.Ore) : 18,
+                                    assignments: []
+                                });
+                                countStats.prof++;
+                            }
+                        });
+                    }
+
+                    updateUI();
+                    fileInput.value = ''; // Resetta il campo file
+                    alert(`Importazione completata con successo!\nAggiunti:\n- ${countStats.mat} Materie\n- ${countStats.cls} Classi\n- ${countStats.prof} Docenti`);
+
+                } catch(err) {
+                    alert("Si è verificato un errore durante la lettura del file. Assicurati che i nomi dei fogli e delle colonne siano esatti.");
+                    console.error(err);
+                }
+            };
+            reader.readAsArrayBuffer(file);
         }
 
-        // --- TAB 2: GESTIONE DOCENTI E FLAG CLASSI ---
-        function addTeacher() {
-            const name = document.getElementById('t-name').value.trim();
-            if(!name) return;
-            const newId = "t_" + Date.now();
-            db.teachers.push({ 
-                id: newId, name, 
-                dayOff: document.getElementById('t-dayoff').value, 
-                maxHours: parseInt(document.getElementById('t-hours').value) || 18,
-                assignments: [] // Array dei flag (classi e materie assegnate)
-            });
-            document.getElementById('t-name').value = '';
-            currentTeacherId = newId;
-            updateUI();
-            loadTeacherAssignments();
-        }
-
+        // --- ALTRE FUNZIONI (GIA' PRESENTI NELLE V6) ---
+        function addSubject() { const n = document.getElementById('s-name').value.trim(); if(n) { db.subjects.push({id:"s_"+Date.now(), name:n}); document.getElementById('s-name').value=''; updateUI(); } }
+        function addClass() { const n = document.getElementById('c-name').value.trim(); if(n) { db.classes.push({id:"c_"+Date.now(), levelId:document.getElementById('c-level').value, name:n}); document.getElementById('c-name').value=''; updateUI(); } }
+        function addTimeslot() { const s=document.getElementById('ts-start').value, e=document.getElementById('ts-end').value; if(s&&e){ db.timeslots.push({id:"ts_"+Date.now(), levelId:document.getElementById('ts-level').value, day:document.getElementById('ts-day').value, type:document.getElementById('ts-type').value, start:s, end:e}); db.timeslots.sort((a,b)=>a.start.localeCompare(b.start)); updateUI(); } }
+        function addTeacher() { const n=document.getElementById('t-name').value.trim(); if(n){ const nid="t_"+Date.now(); db.teachers.push({id:nid, name:n, dayOff:document.getElementById('t-dayoff').value, maxHours:parseInt(document.getElementById('t-hours').value)||18, assignments:[]}); document.getElementById('t-name').value=''; currentTeacherId=nid; updateUI(); loadTeacherAssignments(); } }
+        
         function loadTeacherAssignments() {
             currentTeacherId = document.getElementById('teacher-selector').value;
             const ws = document.getElementById('assignment-workspace');
@@ -248,111 +289,68 @@
             document.getElementById('assign-msg').textContent = '';
 
             const container = document.getElementById('class-flags-container');
-            if(db.classes.length === 0 || db.subjects.length === 0) {
-                container.innerHTML = "<p style='color:red;'>⚠️ Devi prima creare almeno una Classe e una Materia nel Passo 1!</p>"; return;
-            }
+            if(db.classes.length===0 || db.subjects.length===0) { container.innerHTML="<p style='color:red;'>Crea materie e classi prima!</p>"; return; }
 
             let html = '';
-            const subjectOpts = db.subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-
             db.classes.forEach(c => {
                 const isAssigned = teacher.assignments.find(a => a.classId === c.id);
-                const isChecked = isAssigned ? 'checked' : '';
-                const selectedSubj = isAssigned ? isAssigned.subjectId : '';
-
-                html += `<div class="assign-row">
-                    <input type="checkbox" id="chk_${c.id}" value="${c.id}" ${isChecked}>
-                    <label for="chk_${c.id}">${c.name}</label>
-                    <select id="subj_${c.id}">
-                        ${db.subjects.map(s => `<option value="${s.id}" ${selectedSubj === s.id ? 'selected' : ''}>${s.name}</option>`).join('')}
-                    </select>
-                </div>`;
+                html += `<div class="assign-row"><input type="checkbox" id="chk_${c.id}" value="${c.id}" ${isAssigned?'checked':''}>
+                <label for="chk_${c.id}">${c.name}</label>
+                <select id="subj_${c.id}">${db.subjects.map(s => `<option value="${s.id}" ${isAssigned&&isAssigned.subjectId===s.id?'selected':''}>${s.name}</option>`).join('')}</select></div>`;
             });
             container.innerHTML = html;
         }
 
         function saveTeacherAssignments() {
-            const teacher = db.teachers.find(t => t.id === currentTeacherId);
-            teacher.assignments = []; // Resetta e ricalcola
+            const t = db.teachers.find(t => t.id === currentTeacherId);
+            t.assignments = [];
+            db.classes.forEach(c => { const chk=document.getElementById(`chk_${c.id}`); if(chk&&chk.checked) t.assignments.push({classId:c.id, subjectId:document.getElementById(`subj_${c.id}`).value}); });
             
-            db.classes.forEach(c => {
-                const chk = document.getElementById(`chk_${c.id}`);
-                if(chk && chk.checked) {
-                    const subjectId = document.getElementById(`subj_${c.id}`).value;
-                    teacher.assignments.push({ classId: c.id, subjectId: subjectId });
-                }
-            });
-            
-            // Pulisce eventuali lezioni nel tabellone per classi da cui è stato rimosso
             db.lessons = db.lessons.filter(l => {
-                if(l.teacherId === currentTeacherId) {
-                    // Mantiene la lezione solo se il flag esiste ancora
-                    return teacher.assignments.some(a => a.classId === l.classId && a.subjectId === l.subjectId);
-                }
+                if(l.teacherId===currentTeacherId) return t.assignments.some(a => a.classId===l.classId && a.subjectId===l.subjectId);
                 return true;
             });
-
             document.getElementById('assign-msg').textContent = "✔ Salvato!";
-            setTimeout(() => document.getElementById('assign-msg').textContent = "", 2000);
+            setTimeout(()=>document.getElementById('assign-msg').textContent="", 2000);
             updateUI();
         }
 
-        // --- TAB 3: COMPOSIZIONE TABELLONE ---
         function renderComposerGrid() {
             const classId = document.getElementById('compose-class-select').value;
             const container = document.getElementById('composer-grid-container');
             if(!classId) { container.innerHTML = ''; return; }
-
             const cls = db.classes.find(c => c.id === classId);
-            
-            // Trova i docenti che hanno il flag per questa classe
             const eligibleTeachers = db.teachers.filter(t => t.assignments.some(a => a.classId === classId));
             
-            if(eligibleTeachers.length === 0) {
-                container.innerHTML = `<p style="color:red; font-weight:bold;">Nessun docente è stato assegnato alla classe ${cls.name}. Vai al Passo 2 e metti il flag ai docenti!</p>`;
-                return;
-            }
+            if(eligibleTeachers.length===0) return container.innerHTML = `<p style="color:red; font-weight:bold;">Nessun docente assegnato a ${cls.name}. Usa la Tab 2 per i flag.</p>`;
 
             let html = `<table class="timetable-composer"><tr><th style="width:120px;">Orario</th>`;
             const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
             days.forEach(d => html += `<th>${d}</th>`);
             html += `</tr>`;
 
-            // Prendi tutti gli slot univoci (orari) per questo livello di scuola
             const levelSlots = db.timeslots.filter(ts => ts.levelId === cls.levelId);
-            // Crea un array di orari unici (es. "08:00 - 09:00")
             const uniqueTimes = [...new Set(levelSlots.map(ts => `${ts.start}-${ts.end}-${ts.type}`))].sort();
 
             uniqueTimes.forEach(timeKey => {
                 const [start, end, type] = timeKey.split('-');
                 let cssClass = type === 'break' ? 'slot-break' : '';
-                
                 html += `<tr><td class="${cssClass}"><b>${start} - ${end}</b><br><small>${type.toUpperCase()}</small></td>`;
                 
                 days.forEach(day => {
-                    // Trova lo slot specifico per questo giorno e orario
-                    const slot = levelSlots.find(ts => ts.day === day && ts.start === start && ts.end === end);
-                    
-                    if(!slot) { html += `<td></td>`; return; }
-                    if(slot.type !== 'lesson') { html += `<td class="${cssClass}"></td>`; return; }
+                    const slot = levelSlots.find(ts => ts.day===day && ts.start===start && ts.end===end);
+                    if(!slot || slot.type!=='lesson') { html += `<td class="${cssClass}"></td>`; return; }
 
-                    // Trova la lezione attualmente salvata in questo slot per questa classe
-                    const existingLesson = db.lessons.find(l => l.classId === classId && l.timeslotId === slot.id);
+                    const existingLesson = db.lessons.find(l => l.classId===classId && l.timeslotId===slot.id);
                     const selectedValue = existingLesson ? `${existingLesson.teacherId}|${existingLesson.subjectId}` : '';
 
-                    html += `<td>
-                        <select onchange="handleGridChange('${classId}', '${slot.id}', this)">
-                            <option value="">-- Vuoto --</option>`;
-                            
-                            eligibleTeachers.forEach(t => {
-                                // Trova la materia associata a questo prof per questa classe
-                                const assignment = t.assignments.find(a => a.classId === classId);
-                                const subj = db.subjects.find(s => s.id === assignment.subjectId);
-                                const val = `${t.id}|${subj.id}`;
-                                const isSelected = selectedValue === val ? 'selected' : '';
-                                html += `<option value="${val}" ${isSelected}>${t.name} (${subj.name})</option>`;
-                            });
-
+                    html += `<td><select onchange="handleGridChange('${classId}', '${slot.id}', this)"><option value="">-- Vuoto --</option>`;
+                    eligibleTeachers.forEach(t => {
+                        const a = t.assignments.find(a => a.classId===classId);
+                        const s = db.subjects.find(s => s.id===a.subjectId);
+                        const val = `${t.id}|${s.id}`;
+                        html += `<option value="${val}" ${selectedValue===val?'selected':''}>${t.name} (${s.name})</option>`;
+                    });
                     html += `</select></td>`;
                 });
                 html += `</tr>`;
@@ -364,95 +362,22 @@
         function handleGridChange(classId, timeslotId, selectElement) {
             const val = selectElement.value;
             const slot = db.timeslots.find(ts => ts.id === timeslotId);
-            
-            // Rimuovi eventuale lezione esistente per questa cella (per sovrascrivere o svuotare)
-            db.lessons = db.lessons.filter(l => !(l.classId === classId && l.timeslotId === timeslotId));
+            db.lessons = db.lessons.filter(l => !(l.classId===classId && l.timeslotId===timeslotId));
 
             if(val !== "") {
                 const [teacherId, subjectId] = val.split('|');
                 const teacher = db.teachers.find(t => t.id === teacherId);
 
-                // Controllo 1: Giorno Libero
-                if(teacher.dayOff === slot.day) {
-                    alert(`⛔ Errore: ${slot.day} è il GIORNO LIBERO di ${teacher.name}!`);
-                    renderComposerGrid(); // Resetta la griglia
-                    return;
-                }
-
-                // Controllo 2: Sovrapposizione (è già in un'altra classe?)
+                if(teacher.dayOff === slot.day) { alert(`⛔ Errore: ${slot.day} è GIORNO LIBERO di ${teacher.name}!`); return renderComposerGrid(); }
                 const busyLesson = db.lessons.find(l => l.teacherId === teacherId && l.timeslotId === timeslotId);
-                if(busyLesson) {
-                    const busyClass = db.classes.find(c => c.id === busyLesson.classId);
-                    alert(`⛔ Errore: ${teacher.name} sta già insegnando nella classe ${busyClass.name} in quest'ora!`);
-                    renderComposerGrid(); // Resetta
-                    return;
-                }
-
-                // Salva
+                if(busyLesson) { const bc = db.classes.find(c=>c.id===busyLesson.classId); alert(`⛔ Errore: ${teacher.name} sta insegnando in ${bc.name}!`); return renderComposerGrid(); }
                 db.lessons.push({ id: "l_" + Date.now(), classId, teacherId, subjectId, timeslotId });
             }
-            updateUI(); // Salva nel localStorage
+            updateUI();
         }
 
-        // --- TAB 4: SUPPLENZE (Adattato) ---
-        function loadAbsentTeacherLessons() {
-            const tid = document.getElementById('sub-absent-teacher').value;
-            const day = document.getElementById('sub-day').value;
-            const area = document.getElementById('sub-lessons-area');
-            if(!tid) { area.innerHTML = ''; return; }
-
-            const daySlotIds = db.timeslots.filter(ts => ts.day === day).map(ts => ts.id);
-            const absentLessons = db.lessons.filter(l => l.teacherId === tid && daySlotIds.includes(l.timeslotId));
-
-            if(absentLessons.length === 0) return area.innerHTML = `<p>Nessuna lezione da coprire.</p>`;
-
-            let html = ``;
-            absentLessons.forEach(lesson => {
-                const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId);
-                const cls = db.classes.find(c => c.id === lesson.classId);
-                
-                const availableSubs = db.teachers.filter(t => {
-                    if(t.id === tid) return false;
-                    if(t.dayOff === slot.day) return false; // Non è nel suo giorno libero
-                    const busy = db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || 
-                                 db.substitutions.some(sub => sub.subTeacherId === t.id && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id);
-                    return !busy;
-                });
-
-                const activeSub = db.substitutions.find(s => s.lessonId === lesson.id);
-
-                html += `<div style="background:#fff; padding:10px; border:1px solid #ccc; margin-bottom:10px; border-radius:4px; display:flex; justify-content:space-between;">
-                    <div><b>${slot.start}-${slot.end}</b> | Classe: <b>${cls.name}</b> ${activeSub ? `<br><span style="color:red">➡ Sostituto: ${db.teachers.find(t=>t.id===activeSub.subTeacherId).name}</span>` : ''}</div>
-                    <div>`;
-                if(!activeSub) {
-                    if(availableSubs.length > 0) {
-                        html += `<select id="sub-${lesson.id}">${availableSubs.map(t=>`<option value="${t.id}">${t.name}</option>`).join('')}</select>
-                                 <button class="warning" onclick="assignSub('${lesson.id}')">Assegna Sostituto</button>`;
-                    } else { html += `<b style="color:red;">Nessuno libero!</b>`; }
-                } else { html += `<button class="danger" onclick="removeSub('${activeSub.id}')">Rimuovi Sostituto</button>`; }
-                html += `</div></div>`;
-            });
-            area.innerHTML = html;
-        }
-        function assignSub(lId) { db.substitutions.push({ id: "sub_" + Date.now(), lessonId: lId, subTeacherId: document.getElementById(`sub-${lId}`).value }); updateUI(); loadAbsentTeacherLessons(); }
-        function removeSub(sId) { db.substitutions = db.substitutions.filter(s => s.id !== sId); updateUI(); loadAbsentTeacherLessons(); }
-
-        // --- UTILITY ---
-        function exportJSON() {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: "application/json" }));
-            a.download = "orario_completo.json";
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        }
-        function clearDB() {
-            if(confirm("⚠ Cancellare tutto il database irreversibilmente?")) {
-                localStorage.removeItem('school_db_v6');
-                db = JSON.parse(JSON.stringify(defaultDB));
-                currentTeacherId = null; updateUI();
-                document.getElementById('assignment-workspace').style.display = 'none';
-                document.getElementById('composer-grid-container').innerHTML = '';
-            }
-        }
+        function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"})); a.download="orario.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+        function clearDB() { if(confirm("⚠ Azzerare tutto?")) { localStorage.removeItem('school_db_v7'); db=JSON.parse(JSON.stringify(defaultDB)); currentTeacherId=null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
 
         updateUI();
     </script>
