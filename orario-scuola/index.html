@@ -177,6 +177,66 @@
             }
         }
 
+        <!-- GESTIONE FILE JSON (EXPORT / IMPORT) -->
+        <div class="section full-width">
+            <h3>Backup e Ripristino (File JSON)</h3>
+            <p>Usa questi tasti per scaricare il tuo database sul computer o caricarne uno esistente.</p>
+            <div class="inline-group">
+                <button onclick="exportJSON()" style="background: #28a745;">📥 Scarica File JSON</button>
+                <input type="file" id="import-file" accept=".json" onchange="importJSON(event)" style="border: none; margin-top: 5px;">
+            </div>
+        </div>
+
+        // --- FUNZIONI DI ESPORTAZIONE E IMPORTAZIONE DEL FILE JSON ---
+
+        // Esporta il database attuale in un file .json scaricabile
+        function exportJSON() {
+            // Converte il database in una stringa di testo formattata
+            const dataStr = JSON.stringify(db, null, 2);
+            // Crea un "Blob" (un file in memoria) con i dati
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            // Crea un link invisibile e lo clicca automaticamente per avviare il download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "orario_scolastico_backup.json"; // Nome del file scaricato
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Importa un file .json dal computer per sovrascrivere il database
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    // Legge il testo del file e lo converte in un oggetto JavaScript
+                    const importedDB = JSON.parse(e.target.result);
+                    
+                    // Controlla che il file abbia la struttura corretta (minimo vitale)
+                    if (importedDB.teachers && importedDB.classes && importedDB.lessons) {
+                        db = importedDB; // Aggiorna il database in memoria
+                        updateUI();      // Salva nel localStorage e aggiorna la grafica
+                        alert("Database caricato con successo!");
+                    } else {
+                        alert("Il file JSON non sembra essere un backup valido di questa app.");
+                    }
+                } catch (error) {
+                    alert("Errore nella lettura del file. Assicurati che sia un JSON valido.");
+                }
+                // Resetta l'input file per permettere di ricaricare lo stesso file in futuro
+                document.getElementById('import-file').value = ""; 
+            };
+            
+            // Avvia la lettura del file
+            reader.readAsText(file);
+        }
+        
         // Avvio
         updateUI();
     </script>
