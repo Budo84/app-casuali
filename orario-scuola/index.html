@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orario Scolastico Completo V11 - Stampa & Import</title>
+    <title>Orario Scolastico Completo V12 - Fix Assegnazioni</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f4f6f9; color: #333; }
@@ -30,6 +30,8 @@
         
         .assign-row { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #eee; }
         .assign-row input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; margin: 0; }
+        /* Modificata la larghezza da 150px a 250px per contenere il nome dell'ordine intero */
+        .assign-row label { width: 250px; font-weight: bold; cursor: pointer; } 
         .assign-row select { margin: 0; width: auto; flex-grow: 1; padding: 6px; }
 
         .timetable-composer { width: 100%; border-collapse: collapse; margin-top: 15px; }
@@ -46,7 +48,6 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 25px; border-radius: 8px; width: 400px; max-width: 90%; }
 
-        /* REGOLE DI STAMPA: Nasconde tutto ciò che non serve quando premi CTRL+P */
         @media print {
             body { background: white; padding: 0; margin: 0; }
             h1, .tabs, .card-header, button, select, input, p, hr { display: none !important; }
@@ -128,7 +129,6 @@
     <div id="tab-interactive" class="tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2 style="margin:0;">Tabellone Generale</h2>
-            <!-- TASTO STAMPA -->
             <button onclick="window.print()" style="background:#475569; padding: 10px 20px;">🖨️ Stampa questa griglia</button>
         </div>
         <div class="card" style="background:#f5f3ff; margin-top:15px;">
@@ -188,7 +188,7 @@
 
     <script>
         const defaultDB = { levels: [{ id: "lvl_inf", name: "Infanzia" }, { id: "lvl_prim", name: "Primaria" }, { id: "lvl_sec", name: "Secondaria" }], subjects: [], classes: [], timeslots: [], teachers: [], lessons: [], substitutions: [] };
-        let db = JSON.parse(localStorage.getItem('school_db_v11')) || defaultDB;
+        let db = JSON.parse(localStorage.getItem('school_db_v12')) || defaultDB;
         let currentTeacherId = null;
         let currentInteractiveLessonId = null;
 
@@ -201,7 +201,7 @@
         }
 
         function updateUI() {
-            localStorage.setItem('school_db_v11', JSON.stringify(db));
+            localStorage.setItem('school_db_v12', JSON.stringify(db));
             const levelOpts = db.levels.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
             document.getElementById('c-level').innerHTML = levelOpts;
             document.getElementById('ts-level').innerHTML = levelOpts;
@@ -222,7 +222,7 @@
         }
 
         // ==========================================
-        // NUOVE FUNZIONI: JSON IMPORT E TEMPLATE EXCEL
+        // JSON IMPORT E TEMPLATE EXCEL
         // ==========================================
         function importJSON() {
             const file = document.getElementById('json-file').files[0];
@@ -231,14 +231,13 @@
             reader.onload = function(e) {
                 try {
                     const importedDB = JSON.parse(e.target.result);
-                    // Verifica che sia un DB valido di questa app controllando le chiavi
                     if (importedDB.levels && importedDB.classes && importedDB.teachers) {
                         db = importedDB;
                         updateUI();
                         alert("✅ Database ripristinato con successo!");
                         document.getElementById('json-file').value = '';
                     } else {
-                        alert("❌ Il file JSON caricato non sembra essere un backup valido per questa applicazione.");
+                        alert("❌ Il file JSON caricato non sembra essere un backup valido.");
                     }
                 } catch(err) {
                     alert("❌ Errore durante la lettura del file JSON.");
@@ -249,11 +248,8 @@
 
         function downloadExcelTemplate() {
             const wb = XLSX.utils.book_new();
-            // Foglio 1
             const wsMat = XLSX.utils.aoa_to_sheet([["Materia"], ["Matematica"], ["Italiano"]]);
-            // Foglio 2
             const wsCls = XLSX.utils.aoa_to_sheet([["Ordine", "Classe"], ["Primaria", "1A"], ["Secondaria", "1B"]]);
-            // Foglio 3
             const wsDoc = XLSX.utils.aoa_to_sheet([["Docente", "GiornoLibero", "Ore"], ["Mario Rossi", "Lunedì", 18], ["Giulia Bianchi", "Nessuno", 24]]);
             
             XLSX.utils.book_append_sheet(wb, wsMat, "Materie");
@@ -405,27 +401,49 @@
         function removeInteractiveSub(subId) { db.substitutions = db.substitutions.filter(s => s.id !== subId); updateUI(); closeCellModal(); }
 
         // ==========================================
-        // ALTRE FUNZIONI ESISTENTI (BASE + EXPORT)
+        // ALTRE FUNZIONI ESISTENTI
         // ==========================================
         function addSubject() { const n = document.getElementById('s-name').value.trim(); if(n) { db.subjects.push({id:"s_"+Date.now(), name:n}); document.getElementById('s-name').value=''; updateUI(); } }
         function addClass() { const n = document.getElementById('c-name').value.trim(); if(n) { db.classes.push({id:"c_"+Date.now(), levelId:document.getElementById('c-level').value, name:n}); document.getElementById('c-name').value=''; updateUI(); } }
         function addTimeslot() { const s=document.getElementById('ts-start').value, e=document.getElementById('ts-end').value; if(s&&e){ db.timeslots.push({id:"ts_"+Date.now(), levelId:document.getElementById('ts-level').value, day:document.getElementById('ts-day').value, type:document.getElementById('ts-type').value, start:s, end:e}); db.timeslots.sort((a,b)=>a.start.localeCompare(b.start)); updateUI(); } }
         function addTeacher() { const n=document.getElementById('t-name').value.trim(); if(n){ const nid="t_"+Date.now(); db.teachers.push({id:nid, name:n, dayOff:document.getElementById('t-dayoff').value, maxHours:parseInt(document.getElementById('t-hours').value)||18, assignments:[]}); document.getElementById('t-name').value=''; currentTeacherId=nid; updateUI(); loadTeacherAssignments(); } }
+        
+        // --- MODIFICA APPLICATA IN V12 ---
         function loadTeacherAssignments() {
-            currentTeacherId = document.getElementById('teacher-selector').value; const ws = document.getElementById('assignment-workspace'); if(!currentTeacherId) { ws.style.display = 'none'; return; }
-            const teacher = db.teachers.find(t => t.id === currentTeacherId); ws.style.display = 'block'; document.getElementById('assign-teacher-name').textContent = teacher.name;
+            currentTeacherId = document.getElementById('teacher-selector').value; 
+            const ws = document.getElementById('assignment-workspace'); 
+            if(!currentTeacherId) { ws.style.display = 'none'; return; }
+            const teacher = db.teachers.find(t => t.id === currentTeacherId); 
+            ws.style.display = 'block'; 
+            document.getElementById('assign-teacher-name').textContent = teacher.name;
             const container = document.getElementById('class-flags-container');
             if(db.classes.length===0 || db.subjects.length===0) { container.innerHTML="<p style='color:red;'>Crea materie e classi prima!</p>"; return; }
-            let html = ''; db.classes.forEach(c => { const isAssigned = teacher.assignments.find(a => a.classId === c.id); html += `<div class="assign-row"><input type="checkbox" id="chk_${c.id}" value="${c.id}" ${isAssigned?'checked':''}><label for="chk_${c.id}">${c.name}</label><select id="subj_${c.id}">${db.subjects.map(s => `<option value="${s.id}" ${isAssigned&&isAssigned.subjectId===s.id?'selected':''}>${s.name}</option>`).join('')}</select></div>`; }); container.innerHTML = html;
+            
+            let html = ''; 
+            db.classes.forEach(c => { 
+                const isAssigned = teacher.assignments.find(a => a.classId === c.id); 
+                const levelName = db.levels.find(l => l.id === c.levelId)?.name || ''; // NOME DEL LIVELLO TROVATO
+                
+                html += `<div class="assign-row">
+                    <input type="checkbox" id="chk_${c.id}" value="${c.id}" ${isAssigned?'checked':''}>
+                    <label for="chk_${c.id}">${c.name} (${levelName})</label>
+                    <select id="subj_${c.id}">${db.subjects.map(s => `<option value="${s.id}" ${isAssigned&&isAssigned.subjectId===s.id?'selected':''}>${s.name}</option>`).join('')}</select>
+                </div>`; 
+            }); 
+            container.innerHTML = html;
         }
+
         function saveTeacherAssignments() { const t = db.teachers.find(t => t.id === currentTeacherId); t.assignments = []; db.classes.forEach(c => { const chk=document.getElementById(`chk_${c.id}`); if(chk&&chk.checked) t.assignments.push({classId:c.id, subjectId:document.getElementById(`subj_${c.id}`).value}); }); db.lessons = db.lessons.filter(l => { if(l.teacherId===currentTeacherId) return t.assignments.some(a => a.classId===l.classId && a.subjectId===l.subjectId); return true; }); updateUI(); alert("Salvato!"); }
         
         function renderComposerGrid() {
             const classId = document.getElementById('compose-class-select').value; const container = document.getElementById('composer-grid-container'); if(!classId) { container.innerHTML = ''; return; }
             const cls = db.classes.find(c => c.id === classId); const eligibleTeachers = db.teachers.filter(t => t.assignments.some(a => a.classId === classId));
             if(eligibleTeachers.length===0) return container.innerHTML = `<p style="color:red; font-weight:bold;">Nessun docente assegnato a ${cls.name}.</p>`;
-            let html = `<table class="timetable-composer"><tr><th style="width:120px;">Orario</th>`; const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']; days.forEach(d => html += `<th>${d}</th>`); html += `</tr>`;
+
+            let html = `<table class="timetable-composer"><tr><th style="width:120px;">Orario</th>`;
+            const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']; days.forEach(d => html += `<th>${d}</th>`); html += `</tr>`;
             const levelSlots = db.timeslots.filter(ts => ts.levelId === cls.levelId); const uniqueTimes = [...new Set(levelSlots.map(ts => `${ts.start}-${ts.end}-${ts.type}`))].sort();
+
             uniqueTimes.forEach(timeKey => {
                 const [start, end, type] = timeKey.split('-'); let cssClass = type === 'break' ? 'slot-break' : ''; html += `<tr><td class="${cssClass}"><b>${start} - ${end}</b><br><small>${type.toUpperCase()}</small></td>`;
                 days.forEach(day => {
@@ -457,7 +475,7 @@
         function generateExcelFile(aoaData, filename) { const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(aoaData); ws['!cols'] = [{wch: 12}, {wch: 15}, {wch: 20}, {wch: 25}, {wch: 25}]; XLSX.utils.book_append_sheet(wb, ws, "Orario"); XLSX.writeFile(wb, `${filename}.xlsx`); }
 
         function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"})); a.download="backup_database.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
-        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati, sei sicuro?")) { localStorage.removeItem('school_db_v11'); db=JSON.parse(JSON.stringify(defaultDB)); currentTeacherId=null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
+        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati, sei sicuro?")) { localStorage.removeItem('school_db_v12'); db=JSON.parse(JSON.stringify(defaultDB)); currentTeacherId=null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
 
         updateUI();
     </script>
