@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orario Scolastico Completo V23 - Stampa A4 Orizzontale Ottimizzata</title>
+    <title>Orario Scolastico Completo V23 - Griglia Docente per Fascia</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f4f6f9; color: #333; }
@@ -58,42 +58,31 @@
         input.custom-select { border: 2px solid #cbd5e1; padding: 8px; border-radius: 4px; font-weight: bold; width: 140px; margin: 0; }
         input.custom-select:focus { border-color: #3b82f6; outline: none; }
 
-        /* ========================================================
-           MOTORE DI STAMPA A4 ORIZZONTALE OTTIMIZZATO
-           ======================================================== */
+        /* MOTORE DI STAMPA OTTIMIZZATO A4 ORIZZONTALE */
         @media print {
             body { background: white; padding: 0; margin: 0; color: black; }
-            /* Nascondi elementi di interfaccia */
             h1, .tabs, button, input, select, hr, datalist { display: none !important; }
             .card-header, #interactive-filters, #tab-interactive > div:first-child { display: none !important; }
             
-            /* Mostra solo il tabellone interattivo pulito */
             .tab-content { display: none !important; box-shadow: none; border: none; padding: 0; margin: 0; }
             #tab-interactive { display: block !important; }
             .card { border: none; box-shadow: none; margin: 0; padding: 0; background: transparent; }
             
-            /* Tipografia Titoli */
             #interactive-grid-container h2 { font-size: 16pt; margin-bottom: 15px; margin-top:0; color: black !important; text-align: center; }
             #interactive-grid-container h3 { font-size: 14pt; margin-top: 15px; margin-bottom: 5px; color: black !important; }
             
-            /* Layout Tabella Forzato per Singola Pagina */
             .timetable-composer { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9pt; }
             .timetable-composer th, .timetable-composer td { border: 1px solid #333; padding: 4px; text-align: center; vertical-align: middle; word-wrap: break-word; overflow: hidden; }
             .timetable-composer th { background-color: #eee !important; color: #000 !important; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .timetable-composer th:first-child { width: 12% !important; } /* Colonna orari stretta */
+            .timetable-composer th:first-child { width: 12% !important; } 
             
-            /* Stile Celle Ripulito */
             .slot-break { background-color: #f9f9f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .co-teaching-box { border: 1px solid #666; padding: 3px; margin: 1px 0; border-radius: 3px; font-size: 8.5pt; line-height: 1.2; box-shadow: none; background: white !important; }
             
-            /* Adatta le materie tra parentesi su una riga */
             .badge { display: inline; background: transparent !important; color: #333; font-size: 8pt; padding: 0; border: none; font-weight: normal; margin-top: 2px; }
             .badge::before { content: " ("; }
             .badge::after { content: ")"; }
-            
             .sub-active { border: 2px dashed #000 !important; }
-            
-            /* Impostazioni Carta A4 Orizzontale */
             @page { size: A4 landscape; margin: 10mm; }
         }
     </style>
@@ -115,7 +104,7 @@
         <button class="tab-btn primary" onclick="openTab('tab-teachers')">2. Assegnazioni</button>
         <button class="tab-btn" onclick="openTab('tab-compose')">3. Componi Orario</button>
         <button class="tab-btn warning" onclick="openTab('tab-subs')">4. Assenze</button>
-        <button class="tab-btn" style="background:#8b5cf6; color:white;" onclick="openTab('tab-interactive')">5. Monitor Interattivo & Stampa</button>
+        <button class="tab-btn" style="background:#8b5cf6; color:white;" onclick="openTab('tab-interactive')">5. Monitor & Stampa</button>
         <button class="tab-btn" onclick="openTab('tab-db')" style="margin-left: auto; background: #64748b; color:white;">Dati & Excel</button>
     </div>
 
@@ -141,7 +130,7 @@
             <div class="card" style="grid-column: span 3; border-left: 5px solid #3b82f6;">
                 <div class="card-header" style="background:#eff6ff; color:#1e40af;">Editor Interattivo (Orari, Ricreazioni, Pranzo)</div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <p style="font-size:13px; color:#3b82f6; font-weight:bold;">Scegli il tipo di attività. I docenti potranno essere inseriti in <b>qualsiasi fascia</b> (anche Pranzo/Mensa).</p>
+                    <p style="font-size:13px; color:#3b82f6; font-weight:bold;">Scegli il tipo di attività. L'aggiornamento avverrà per <b>tutta la settimana</b>.</p>
                     <select id="view-ts-level" onchange="renderTimeslotsList()" style="width:250px; margin:0; padding:5px; border-color:#3b82f6;"></select>
                 </div>
                 <div id="timeslot-list-container" style="margin-top:15px; max-height:400px; overflow-y:auto;"></div>
@@ -171,7 +160,7 @@
         </div>
         <div id="assignment-workspace" class="card" style="display:none; margin-top:20px; border-left: 4px solid #3b82f6;">
             <div class="card-header">Classi in cui insegna: <span id="assign-teacher-name" style="color:#3b82f6;"></span></div>
-            <p style="font-size:12px;">Se il docente ha più materie nella stessa classe, seleziona una materia, salva, e poi aggiungilo di nuovo o scegli una macro-materia. Per la sorveglianza, assegna "Sorveglianza Mensa" come materia alla classe d'interesse.</p>
+            <p style="font-size:12px;">Seleziona la materia e metti la spunta. Per la sorveglianza, usa una materia fittizia (es. "Mensa").</p>
             <div id="class-flags-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background:#fff;"></div>
             <button class="primary" style="margin-top: 15px;" onclick="saveTeacherAssignments()">💾 Salva Assegnazioni</button>
         </div>
@@ -182,7 +171,7 @@
         <div class="card" style="background:#eff6ff;">
             <label style="font-weight:bold;">Seleziona Classe:</label>
             <select id="compose-class-select" onchange="renderComposerGrid()" style="max-width: 300px;"></select>
-            <p style="font-size:13px; color:#5b21b6; margin:10px 0 0 0;">Puoi aggiungere <b>quanti docenti vuoi nella stessa casella</b> (Compresenza / Sostegno / Assistenti). Seleziona il docente dal menu a tendina per aggiungerlo all'ora.</p>
+            <p style="font-size:13px; color:#5b21b6; margin:10px 0 0 0;">Puoi aggiungere <b>quanti docenti vuoi nella stessa casella</b> (Compresenza). Seleziona il docente dal menu a tendina.</p>
         </div>
         <div id="composer-grid-container" style="margin-top:20px;"></div>
     </div>
@@ -209,7 +198,7 @@
                 <select id="interactive-view-mode" onchange="updateInteractiveFilters()" style="border-color:#8b5cf6;">
                     <option value="level">Tutto l'Ordine di Scuola</option>
                     <option value="class">Singola Classe</option>
-                    <option value="teacher">Singolo Docente (Griglia A4)</option>
+                    <option value="teacher">Griglia Singolo Docente</option>
                 </select>
             </div>
             <div>
@@ -289,6 +278,9 @@
             updateUI();
         }
 
+        // ==========================================
+        // GESTORE CENTRALE INTERFACCIA E MEMORIA STATO
+        // ==========================================
         function updateUI() {
             localStorage.setItem('school_db_v23', JSON.stringify(db));
             
@@ -456,7 +448,7 @@
         }
 
         // ==========================================
-        // TAB 2 E TAB 3 (ASSEGNAZIONI E TABELLONE)
+        // TAB 2: ASSEGNAZIONI DOCENTI E TAB 3: TABELLONE
         // ==========================================
         function loadTeacherAssignments() {
             currentTeacherId = document.getElementById('teacher-selector').value; 
@@ -542,7 +534,7 @@
                     });
 
                     cellHtml += `<select onchange="addGridLesson('${classId}', '${slot.id}', this)" style="margin-top:5px; border:1px solid #10b981; background:#f0fdf4;">
-                        <option value="">+ Docente</option>`;
+                        <option value="">+ Aggiungi Docente</option>`;
                     
                     eligibleTeachers.forEach(t => { 
                         if(!slotLessons.find(l => l.teacherId === t.id)) {
@@ -565,25 +557,16 @@
         }
 
         function addGridLesson(classId, timeslotId, selectElement) {
-            const val = selectElement.value; 
-            selectElement.value = ""; 
+            const val = selectElement.value; selectElement.value = ""; 
             if(val === "") return; 
             
             const slot = db.timeslots.find(ts => ts.id === timeslotId); 
             const [teacherId, subjectId] = val.split('|'); 
             const teacher = db.teachers.find(t => t.id === teacherId); 
             
-            if(teacher.dayOff === slot.day) { 
-                alert(`⛔ Errore: ${slot.day} è il GIORNO LIBERO di ${teacher.name}!`); 
-                return renderComposerGrid(); 
-            } 
-            
+            if(teacher.dayOff === slot.day) { alert(`⛔ Errore: ${slot.day} è il GIORNO LIBERO di ${teacher.name}!`); return renderComposerGrid(); } 
             const busyLesson = db.lessons.find(l => l.teacherId === teacherId && l.timeslotId === timeslotId); 
-            if(busyLesson) { 
-                const bc = db.classes.find(c=>c.id===busyLesson.classId); 
-                alert(`⛔ Errore: ${teacher.name} sta già lavorando nella classe ${bc ? bc.name : ''} in questa fascia oraria!`); 
-                return renderComposerGrid(); 
-            } 
+            if(busyLesson) { const bc = db.classes.find(c=>c.id===busyLesson.classId); alert(`⛔ Errore: ${teacher.name} sta già lavorando nella classe ${bc ? bc.name : ''} in questa fascia oraria!`); return renderComposerGrid(); } 
             
             db.lessons.push({ id: "l_" + Date.now() + Math.random().toString(36).substring(2,7), classId, teacherId, subjectId, timeslotId }); 
             updateUI(); 
@@ -662,8 +645,8 @@
                 const daySlots = db.timeslots.filter(ts => ts.levelId === levelId && ts.day === day).sort((a,b)=>a.start.localeCompare(b.start));
                 if(daySlots.length === 0) return;
 
-                html += `<h2>${day}</h2><table class="timetable-composer"><tr><th>Orario</th>`;
-                levelClasses.forEach(c => html += `<th>${c.name}</th>`); html += `</tr>`;
+                html += `<h3 style="color:#5b21b6; border-bottom:2px solid #5b21b6; padding-bottom:5px;">${day}</h3><table class="timetable-composer"><tr><th style="width:120px; background:#8b5cf6;">Orario</th>`;
+                levelClasses.forEach(c => html += `<th style="background:#8b5cf6;">${c.name}</th>`); html += `</tr>`;
 
                 daySlots.forEach(slot => {
                     let cssClass = slot.type !== 'Lezione' ? 'slot-break' : '';
@@ -695,8 +678,8 @@
             const cls = db.classes.find(c => c.id === classId); const levelSlots = db.timeslots.filter(ts => ts.levelId === cls.levelId); const uniqueTimes = [...new Set(levelSlots.map(ts => `${ts.start}-${ts.end}-${ts.type}`))].sort();
 
             const days = getInteractiveDays();
-            let html = `<h2>Orario Classe ${cls.name}</h2><table class="timetable-composer"><tr><th>Orario</th>`;
-            days.forEach(d => html += `<th>${d}</th>`); html += `</tr>`;
+            let html = `<h2 style="color:#5b21b6; text-align:center;">Orario Classe ${cls.name}</h2><table class="timetable-composer"><tr><th style="width:120px; background:#8b5cf6;">Orario</th>`;
+            days.forEach(d => html += `<th style="background:#8b5cf6;">${d}</th>`); html += `</tr>`;
 
             uniqueTimes.forEach(timeKey => {
                 const [start, end, type] = timeKey.split('-'); let cssClass = type !== 'Lezione' ? 'slot-break' : '';
@@ -725,68 +708,86 @@
             }); html += `</table>`; container.innerHTML = html;
         }
 
+        // ==========================================
+        // NUOVA LOGICA: GRIGLIA DOCENTE ALLINEATA PER INDICE DI FASCIA
+        // ==========================================
         function renderInteractiveTeacherGrid() {
             const teacherId = document.getElementById('interactive-teacher-select').value; const container = document.getElementById('interactive-grid-container'); if(!teacherId) { container.innerHTML = ''; return; }
             const teacher = db.teachers.find(t => t.id === teacherId); 
-            
             const days = getInteractiveDays();
-            let html = `<h2>Orario Docente: ${teacher.name}</h2>`;
-            html += `<table class="timetable-composer"><tr><th>Fascia Oraria</th>`;
-            days.forEach(d => html += `<th>${d}</th>`);
+            
+            let html = `<h2 style="color:#5b21b6; text-align:center;">Orario Docente: ${teacher.name}</h2>`;
+            html += `<table class="timetable-composer"><tr><th style="width:120px; background:#8b5cf6;">Fascia</th>`;
+            days.forEach(d => html += `<th style="background:#8b5cf6;">${d}</th>`);
             html += `</tr>`;
 
             const myLessons = db.lessons.filter(l => l.teacherId === teacherId); 
             const mySubs = db.substitutions.filter(s => s.subTeacherId === teacherId); 
             
-            const teacherLevels = [...new Set(db.classes.filter(c => teacher.assignments.some(a => a.classId === c.id)).map(c => c.levelId))];
-            const validSlots = teacherLevels.length > 0 ? db.timeslots.filter(ts => teacherLevels.includes(ts.levelId)) : db.timeslots;
-            
-            const uniqueTimesMap = new Map();
-            validSlots.forEach(ts => uniqueTimesMap.set(`${ts.start}-${ts.end}`, {start: ts.start, end: ts.end}));
-            const uniqueTimes = Array.from(uniqueTimesMap.values()).sort((a,b)=>a.start.localeCompare(b.start));
+            // Trova gli indici per tutte le fasce
+            const slotMetadata = {};
+            let maxFascia = 0;
+            db.levels.forEach(lvl => {
+                ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'].forEach(day => {
+                    const daySlots = db.timeslots.filter(t => t.levelId === lvl.id && t.day === day).sort((a,b)=>a.start.localeCompare(b.start));
+                    daySlots.forEach((ts, index) => {
+                        slotMetadata[ts.id] = { index: index };
+                        if(index > maxFascia) maxFascia = index;
+                    });
+                });
+            });
 
             let hasLessons = false;
-            uniqueTimes.forEach(time => {
-                let rowHtml = `<tr><td><b>${time.start} - ${time.end}</b></td>`;
-                let hasContentInRow = false; 
+            
+            for(let i = 0; i <= maxFascia; i++) {
+                let rowHtml = `<tr><td><b>${i+1}° Fascia</b></td>`;
+                let hasContentInRow = false;
 
                 days.forEach(day => {
-                    const matchingSlots = db.timeslots.filter(ts => ts.day === day && ts.start === time.start && ts.end === time.end);
-                    const slotIds = matchingSlots.map(ts => ts.id);
-                    if(matchingSlots.length > 0) hasContentInRow = true; 
-
                     let cellHtml = '';
-                    const myL = myLessons.filter(x => slotIds.includes(x.timeslotId));
+                    
+                    // 1. Titolare
+                    const myL = myLessons.filter(l => slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day);
                     myL.forEach(l => {
-                        hasLessons = true;
-                        const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(sbj => sbj.id === l.subjectId); const sub = db.substitutions.find(s => s.lessonId === l.id);
+                        hasContentInRow = true; hasLessons = true;
+                        const ts = db.timeslots.find(t=>t.id===l.timeslotId);
+                        const cls = db.classes.find(c => c.id === l.classId);
+                        const subj = db.subjects.find(s => s.id === l.subjectId);
+                        const sub = db.substitutions.find(s => s.lessonId === l.id);
+                        
+                        let timeStr = `<div style="font-size:10px; color:#666;">${ts.start}-${ts.end}</div>`;
                         if(sub) {
                             const subT = db.teachers.find(t => t.id === sub.subTeacherId);
-                            cellHtml += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${l.id}')"><span class="badge">[SOST]</span><br><del>${cls.name}</del><br><b>${subT.name}</b><br><span class="badge">${subj.name}</span></div>`;
+                            cellHtml += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${l.id}')">${timeStr}<span class="badge">[SOST]</span><br><del>${cls.name}</del><br><b>${subT.name}</b><br><span class="badge">${subj.name}</span></div>`;
                         } else {
-                            cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${l.id}')"><b>${cls.name}</b><br><span class="badge">${subj.name}</span></div>`;
+                            cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${l.id}')">${timeStr}<b>${cls.name}</b><br><span class="badge">${subj.name}</span></div>`;
                         }
                     });
 
-                    const myS = mySubs.filter(sub => { const sl = db.lessons.find(lex=>lex.id===sub.lessonId); return sl && slotIds.includes(sl.timeslotId); });
+                    // 2. Supplenze
+                    const myS = mySubs.filter(sub => { const l = db.lessons.find(lex=>lex.id===sub.lessonId); return l && slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day; });
                     myS.forEach(s => {
-                        hasLessons = true;
-                        const sl = db.lessons.find(lex=>lex.id===s.lessonId); const cls = db.classes.find(c => c.id === sl.classId); const subj = db.subjects.find(sbj => sbj.id === sl.subjectId);
-                        cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${sl.id}')" style="background:#dcfce7; border: 1px solid #166534;"><b style="color:#166534;">${cls.name}</b><br><span class="badge" style="background:#bbf7d0;">${subj.name}</span><br><small style="color:#166534; font-weight:bold;">SUPPLENZA</small></div>`;
+                        hasContentInRow = true; hasLessons = true;
+                        const l = db.lessons.find(lex=>lex.id===s.lessonId); const ts = db.timeslots.find(t=>t.id===l.timeslotId); const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(sbj => sbj.id === l.subjectId);
+                        let timeStr = `<div style="font-size:10px; color:#166534;">${ts.start}-${ts.end}</div>`;
+                        cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${l.id}')" style="background:#dcfce7; border: 1px solid #166534;">${timeStr}<b style="color:#166534;">${cls.name}</b><br><span class="badge" style="background:#bbf7d0;">${subj.name}</span><br><small style="color:#166534; font-weight:bold;">SUPPLENZA</small></div>`;
                     });
 
+                    if(!cellHtml) cellHtml = `<span style="color:#ccc;">---</span>`;
                     rowHtml += `<td>${cellHtml}</td>`;
                 });
                 rowHtml += `</tr>`;
                 if(hasContentInRow) html += rowHtml; 
-            });
+            }
 
             html += `</table>`; 
             if(!hasLessons) html += `<p>Nessuna lezione assegnata a questo docente.</p>`;
             container.innerHTML = html;
         }
 
-        // Funzione Modale
+        // ==========================================
+        // MODALE GESTIONE CELLE E SUPPLENZE
+        // ==========================================
         function openCellModal(lessonId) {
             currentInteractiveLessonId = lessonId; const lesson = db.lessons.find(l => l.id === lessonId); const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId); const subj = db.subjects.find(s => s.id === lesson.subjectId); const titolare = db.teachers.find(t => t.id === lesson.teacherId);
             document.getElementById('modal-cell-info').innerHTML = `<b>Classe:</b> ${cls.name}<br><b>Orario:</b> ${slot.day} ${slot.start} - ${slot.end}<br><b>Attività:</b> ${subj.name}<br><b>Prof. Titolare:</b> ${titolare.name}`;
@@ -805,7 +806,7 @@
         function removeInteractiveSub(subId) { db.substitutions = db.substitutions.filter(s => s.id !== subId); updateUI(); closeCellModal(); }
 
         // ==========================================
-        // EXPORT JSON ED EXCEL
+        // TAB 6: EXPORT EXCEL E DATI
         // ==========================================
         function importJSON() { const file = document.getElementById('json-file').files[0]; if (!file) return alert("Seleziona JSON."); const reader = new FileReader(); reader.onload = function(e) { try { const importedDB = JSON.parse(e.target.result); if (importedDB.levels && importedDB.classes && importedDB.teachers) { db = importedDB; updateUI(); alert("✅ Database ripristinato!"); document.getElementById('json-file').value = ''; } else alert("❌ File JSON non valido."); } catch(err) { alert("❌ Errore durante la lettura."); } }; reader.readAsText(file); }
         function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"})); a.download="backup_database.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
@@ -865,50 +866,57 @@
             }); generateExcelFile(excelData, `Orario_Classe_${cls.name}`); 
         }
 
+        // ==========================================
+        // EXPORT DOCENTE AGGIORNATO CON INDICE FASCIA
+        // ==========================================
         function exportExcelByTeacher() { 
             const teacherId = document.getElementById('export-teacher-select').value; if(!teacherId) return alert("Seleziona docente"); 
             const teacher = db.teachers.find(t => t.id === teacherId); 
             
-            let excelData = [["Fascia Oraria", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì"]]; 
+            let excelData = [["Fascia", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì"]]; 
             const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']; 
             
             const myLessons = db.lessons.filter(l => l.teacherId === teacherId); 
             const mySubs = db.substitutions.filter(s => s.subTeacherId === teacherId); 
 
-            const teacherLevels = [...new Set(db.classes.filter(c => teacher.assignments.some(a => a.classId === c.id)).map(c => c.levelId))];
-            const validSlots = teacherLevels.length > 0 ? db.timeslots.filter(ts => teacherLevels.includes(ts.levelId)) : db.timeslots;
-            
-            const uniqueTimesMap = new Map();
-            validSlots.forEach(ts => uniqueTimesMap.set(`${ts.start}-${ts.end}`, {start: ts.start, end: ts.end}));
-            const uniqueTimes = Array.from(uniqueTimesMap.values()).sort((a,b)=>a.start.localeCompare(b.start));
+            const slotMetadata = {};
+            let maxFascia = 0;
+            db.levels.forEach(lvl => {
+                ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'].forEach(day => {
+                    const daySlots = db.timeslots.filter(t => t.levelId === lvl.id && t.day === day).sort((a,b)=>a.start.localeCompare(b.start));
+                    daySlots.forEach((ts, index) => {
+                        slotMetadata[ts.id] = { index: index };
+                        if(index > maxFascia) maxFascia = index;
+                    });
+                });
+            });
 
-            uniqueTimes.forEach(time => {
-                let row = [`${time.start} - ${time.end}`];
+            for(let i = 0; i <= maxFascia; i++) {
+                let row = [`${i+1}° Fascia`];
                 let hasContentInRow = false;
                 
                 days.forEach(day => {
-                    const matchingSlots = db.timeslots.filter(ts => ts.day === day && ts.start === time.start && ts.end === time.end);
-                    const slotIds = matchingSlots.map(ts => ts.id);
-                    if(matchingSlots.length > 0) hasContentInRow = true;
-
-                    const myL = myLessons.filter(x => slotIds.includes(x.timeslotId));
-                    const myS = mySubs.filter(sub => { const sl = db.lessons.find(lex=>lex.id===sub.lessonId); return sl && slotIds.includes(sl.timeslotId); });
-                    
                     let cellText = "";
+                    
+                    const myL = myLessons.filter(l => slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day);
                     myL.forEach(l => {
-                        const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(sbj => sbj.id === l.subjectId); const isSubbed = db.substitutions.find(sub => sub.lessonId === l.id);
-                        if(isSubbed) cellText += (cellText?" \n+ ":"") + `[SOSTITUITO DA ${db.teachers.find(t=>t.id===isSubbed.subTeacherId).name}] ${cls.name} (${subj.name})`;
-                        else cellText += (cellText?" \n+ ":"") + `${cls.name} (${subj.name})`;
+                        hasContentInRow = true;
+                        const ts = db.timeslots.find(t=>t.id===l.timeslotId); const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(sbj => sbj.id === l.subjectId); const isSubbed = db.substitutions.find(sub => sub.lessonId === l.id);
+                        if(isSubbed) cellText += (cellText?" \n+ ":"") + `[${ts.start}-${ts.end}] [SOSTITUITO DA ${db.teachers.find(t=>t.id===isSubbed.subTeacherId).name}] ${cls.name} (${subj.name})`;
+                        else cellText += (cellText?" \n+ ":"") + `[${ts.start}-${ts.end}] ${cls.name} (${subj.name})`;
                     });
+
+                    const myS = mySubs.filter(sub => { const l = db.lessons.find(lex=>lex.id===sub.lessonId); return l && slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day; });
                     myS.forEach(s => {
-                        const sl = db.lessons.find(lex=>lex.id===s.lessonId); const cls = db.classes.find(c => c.id === sl.classId); const subj = db.subjects.find(sbj => sbj.id === sl.subjectId);
-                        cellText += (cellText?" \n+ ":"") + `[SUPPLENZA] ${cls.name} (${subj.name})`;
+                        hasContentInRow = true;
+                        const sl = db.lessons.find(lex=>lex.id===s.lessonId); const ts = db.timeslots.find(t=>t.id===sl.timeslotId); const cls = db.classes.find(c => c.id === sl.classId); const subj = db.subjects.find(sbj => sbj.id === sl.subjectId);
+                        cellText += (cellText?" \n+ ":"") + `[${ts.start}-${ts.end}] [SUPPLENZA] ${cls.name} (${subj.name})`;
                     });
                     
                     row.push(cellText || "---");
                 });
                 if(hasContentInRow) excelData.push(row);
-            });
+            }
 
             if(excelData.length === 1) return alert("Il docente non ha lezioni assegnate."); 
             generateExcelFile(excelData, `Orario_Prof_${teacher.name.replace(/ /g,"_")}`); 
@@ -916,8 +924,8 @@
 
         function generateExcelFile(aoaData, filename) { const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(aoaData); ws['!cols'] = [{wch: 15}, {wch: 22}, {wch: 22}, {wch: 22}, {wch: 22}, {wch: 22}]; XLSX.utils.book_append_sheet(wb, ws, "Orario"); XLSX.writeFile(wb, `${filename}.xlsx`); }
 
-        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati del database, sei sicuro?")) { localStorage.removeItem('school_db_v23'); db = JSON.parse(JSON.stringify(defaultDB)); currentTeacherId = null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
-
+        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati, sei sicuro?")) { localStorage.removeItem('school_db_v23'); db=JSON.parse(JSON.stringify(defaultDB)); currentTeacherId=null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
+        
         updateUI();
     </script>
 </body>
