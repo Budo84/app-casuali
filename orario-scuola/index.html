@@ -2,8 +2,12 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orario Scolastico Completo V24 - Nomi File Dinamici</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Orario Scolastico V26 - App Mobile & Supplenze Smart</title>
+    
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Orario Scolastico Completo","short_name":"OrarioApp","start_url":".","display":"standalone","background_color":"#f4f6f9","theme_color":"#3b82f6","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 100 100\\"><rect width=\\"100\\" height=\\"100\\" fill=\\"%233b82f6\\"/><text x=\\"50\\" y=\\"65\\" font-size=\\"50\\" fill=\\"white\\" text-anchor=\\"middle\\" font-family=\\"Arial\\">OS</text></svg>","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}'>
+    <meta name="theme-color" content="#3b82f6">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f4f6f9; color: #333; }
@@ -33,7 +37,12 @@
         .assign-row label { width: 250px; font-weight: bold; cursor: pointer; } 
         .assign-row select { margin: 0; width: auto; flex-grow: 1; padding: 6px; }
 
-        .timetable-composer { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        /* Contenitori Scrollabili per Mobile */
+        #composer-grid-container, #interactive-grid-container, #timeslot-list-container, #class-flags-container { 
+            overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; 
+        }
+
+        .timetable-composer { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 600px; }
         .timetable-composer th, .timetable-composer td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; vertical-align: top; }
         .timetable-composer th { background: #3b82f6; color: white; }
         .timetable-composer td select { margin: 0; width: 100%; font-size: 12px; padding: 4px; border-color: #3b82f6; background: #eff6ff; font-weight: bold;}
@@ -48,37 +57,43 @@
         .cell-interactive:hover { border-color: #3b82f6; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: scale(1.02); z-index: 10;}
         .sub-active { border: 2px solid #ef4444 !important; background: #fee2e2 !important; }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 400px; max-width: 90%; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; }
+        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 400px; max-width: 100%; max-height: 90vh; overflow-y: auto; }
 
-        .ts-list-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .ts-list-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 500px; }
         .ts-list-table th, .ts-list-table td { padding: 8px; border: 1px solid #ccc; text-align: center; }
         .ts-list-table th { background: #f1f5f9; }
 
         input.custom-select { border: 2px solid #cbd5e1; padding: 8px; border-radius: 4px; font-weight: bold; width: 140px; margin: 0; }
         input.custom-select:focus { border-color: #3b82f6; outline: none; }
 
+        /* RESPONSIVITA' MOBILE */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 15px; }
+            .tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+            .tab-btn { flex: 0 0 auto; white-space: nowrap; font-size: 13px; }
+            input, select, button { font-size: 16px !important; } 
+            #interactive-filters { flex-direction: column; align-items: stretch; gap: 10px; }
+            #interactive-filters > div { width: 100%; }
+        }
+
         /* MOTORE DI STAMPA OTTIMIZZATO A4 ORIZZONTALE */
         @media print {
             body { background: white; padding: 0; margin: 0; color: black; }
             h1, .tabs, button, input, select, hr, datalist { display: none !important; }
             .card-header, #interactive-filters, #tab-interactive > div:first-child { display: none !important; }
-            
             .tab-content { display: none !important; box-shadow: none; border: none; padding: 0; margin: 0; }
             #tab-interactive { display: block !important; }
             .card { border: none; box-shadow: none; margin: 0; padding: 0; background: transparent; }
-            
             #interactive-grid-container h2 { font-size: 16pt; margin-bottom: 15px; margin-top:0; color: black !important; text-align: center; }
             #interactive-grid-container h3 { font-size: 14pt; margin-top: 15px; margin-bottom: 5px; color: black !important; }
-            
-            .timetable-composer { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9pt; }
+            .timetable-composer { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9pt; min-width: auto; }
             .timetable-composer th, .timetable-composer td { border: 1px solid #333; padding: 4px; text-align: center; vertical-align: middle; word-wrap: break-word; overflow: hidden; }
             .timetable-composer th { background-color: #eee !important; color: #000 !important; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .timetable-composer th:first-child { width: 12% !important; } 
-            
             .slot-break { background-color: #f9f9f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .co-teaching-box { border: 1px solid #666; padding: 3px; margin: 1px 0; border-radius: 3px; font-size: 8.5pt; line-height: 1.2; box-shadow: none; background: white !important; }
-            
             .badge { display: inline; background: transparent !important; color: #333; font-size: 8pt; padding: 0; border: none; font-weight: normal; margin-top: 2px; }
             .badge::before { content: " ("; }
             .badge::after { content: ")"; }
@@ -132,16 +147,16 @@
                     <p style="font-size:13px; color:#3b82f6; font-weight:bold;">Scegli il tipo di attività. L'aggiornamento avverrà per <b>tutta la settimana</b>.</p>
                     <select id="view-ts-level" onchange="renderTimeslotsList()" style="width:250px; margin:0; padding:5px; border-color:#3b82f6;"></select>
                 </div>
-                <div id="timeslot-list-container" style="margin-top:15px; max-height:400px; overflow-y:auto;"></div>
+                <div id="timeslot-list-container" style="margin-top:15px;"></div>
             </div>
 
             <div class="card" style="grid-column: span 3; background:#fafafa;">
                 <div class="card-header" style="background:#eee;">Aggiunta Singola Manuale (Per attività extra/singolo giorno)</div>
-                <div style="display: flex; gap: 15px;">
-                    <div style="flex:1;"><label>Ordine:</label><select id="ts-level"></select></div>
-                    <div style="flex:1;"><label>Giorno:</label><select id="ts-day"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
-                    <div style="flex:1;"><label>Tipo (Scegli o scrivi):</label><input type="text" id="ts-type" list="type-suggestions" value="Lezione"></div>
-                    <div style="flex:1;"><label>Da - A:</label><div style="display:flex; gap:5px;"><input type="time" id="ts-start"> <input type="time" id="ts-end"></div></div>
+                <div style="display: flex; gap: 15px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:150px;"><label>Ordine:</label><select id="ts-level"></select></div>
+                    <div style="flex:1; min-width:150px;"><label>Giorno:</label><select id="ts-day"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
+                    <div style="flex:1; min-width:150px;"><label>Tipo (Scegli o scrivi):</label><input type="text" id="ts-type" list="type-suggestions" value="Lezione"></div>
+                    <div style="flex:1; min-width:200px;"><label>Da - A:</label><div style="display:flex; gap:5px;"><input type="time" id="ts-start"> <input type="time" id="ts-end"></div></div>
                 </div>
                 <button onclick="addTimeslot()" style="background:#64748b; margin-top: 15px;">Aggiungi Singola Fascia</button>
             </div>
@@ -159,7 +174,7 @@
         <div id="assignment-workspace" class="card" style="display:none; margin-top:20px; border-left: 4px solid #3b82f6;">
             <div class="card-header">Classi in cui insegna: <span id="assign-teacher-name" style="color:#3b82f6;"></span></div>
             <p style="font-size:12px;">Seleziona la materia e metti la spunta. Per la sorveglianza, usa una materia fittizia (es. "Mensa").</p>
-            <div id="class-flags-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background:#fff;"></div>
+            <div id="class-flags-container"></div>
             <button class="primary" style="margin-top: 15px;" onclick="saveTeacherAssignments()">💾 Salva Assegnazioni</button>
         </div>
     </div>
@@ -182,7 +197,7 @@
     </div>
 
     <div id="tab-interactive" class="tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap:10px;">
             <h2 style="margin:0;">Monitor Interattivo e Stampa Griglie</h2>
             <button onclick="printTimetable()" style="background:#475569; padding: 10px 20px;">🖨️ Stampa questa vista</button>
         </div>
@@ -252,15 +267,25 @@
     </div>
 
     <script>
+        // ==========================================
+        // REGISTRAZIONE SERVICE WORKER (PWA Installabile)
+        // ==========================================
+        if ('serviceWorker' in navigator) {
+            const swCode = `self.addEventListener('install', (e) => self.skipWaiting()); self.addEventListener('activate', (e) => e.waitUntil(clients.claim())); self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request).catch(() => new Response('Sei offline. Le modifiche ai dati sono salve nel browser.'))));`;
+            const blob = new Blob([swCode], { type: 'text/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(console.error);
+        }
+
         const defaultDB = { levels: [{ id: "lvl_inf", name: "Infanzia" }, { id: "lvl_prim", name: "Primaria" }, { id: "lvl_sec", name: "Secondaria" }], subjects: [], classes: [], timeslots: [], teachers: [], lessons: [], substitutions: [] };
-        let db = JSON.parse(localStorage.getItem('school_db_v23')) || defaultDB;
+        let db = JSON.parse(localStorage.getItem('school_db_v26')) || defaultDB;
         let currentTeacherId = null;
         let currentInteractiveLessonId = null;
 
-        if (!localStorage.getItem('school_db_v23')) {
-            if(localStorage.getItem('school_db_v22')) db = JSON.parse(localStorage.getItem('school_db_v22'));
-            else if(localStorage.getItem('school_db_v21')) db = JSON.parse(localStorage.getItem('school_db_v21'));
-            localStorage.setItem('school_db_v23', JSON.stringify(db));
+        if (!localStorage.getItem('school_db_v26')) {
+            if(localStorage.getItem('school_db_v25')) db = JSON.parse(localStorage.getItem('school_db_v25'));
+            else if(localStorage.getItem('school_db_v24')) db = JSON.parse(localStorage.getItem('school_db_v24'));
+            else if(localStorage.getItem('school_db_v23')) db = JSON.parse(localStorage.getItem('school_db_v23'));
+            localStorage.setItem('school_db_v26', JSON.stringify(db));
         }
 
         function openTab(tabId) {
@@ -271,11 +296,8 @@
             updateUI();
         }
 
-        // ==========================================
-        // GESTORE CENTRALE INTERFACCIA E MEMORIA STATO
-        // ==========================================
         function updateUI() {
-            localStorage.setItem('school_db_v23', JSON.stringify(db));
+            localStorage.setItem('school_db_v26', JSON.stringify(db));
             
             const state = {
                 tsLevel: document.getElementById('ts-level')?.value,
@@ -339,9 +361,6 @@
             renderTimeslotsList();
         }
 
-        // ==========================================
-        // AGGIUNTO: FUNZIONE DI STAMPA CON NOME FILE DINAMICO
-        // ==========================================
         function printTimetable() {
             const mode = document.getElementById('interactive-view-mode').value;
             let exportName = "Orario_Scolastico";
@@ -358,9 +377,9 @@
             }
             
             const originalTitle = document.title;
-            document.title = exportName; // Modifica il titolo così il PDF prende il nome corretto
+            document.title = exportName; 
             window.print();
-            setTimeout(() => document.title = originalTitle, 1000); // Ripristina il titolo dopo 1 secondo
+            setTimeout(() => document.title = originalTitle, 1000); 
         }
 
         // ==========================================
@@ -465,7 +484,7 @@
         }
 
         // ==========================================
-        // TAB 2: ASSEGNAZIONI DOCENTI E TAB 3: TABELLONE
+        // TAB 2: ASSEGNAZIONI DOCENTI
         // ==========================================
         function loadTeacherAssignments() {
             currentTeacherId = document.getElementById('teacher-selector').value; 
@@ -482,7 +501,6 @@
             db.classes.forEach(c => { 
                 const isAssigned = teacher.assignments.find(a => a.classId === c.id); 
                 const levelName = db.levels.find(l => l.id === c.levelId)?.name || 'Sconosciuto';
-                
                 html += `<div class="assign-row">
                     <input type="checkbox" id="chk_${c.id}" value="${c.id}" ${isAssigned?'checked':''}>
                     <label for="chk_${c.id}">${c.name} (${levelName})</label>
@@ -510,6 +528,9 @@
             updateUI(); alert("Assegnazioni salvate correttamente!"); 
         }
 
+        // ==========================================
+        // TAB 3: COMPOSIZIONE CON COMPRESENZA ILLIMITATA
+        // ==========================================
         function renderComposerGrid() {
             const classId = document.getElementById('compose-class-select').value; 
             const container = document.getElementById('composer-grid-container'); 
@@ -596,7 +617,7 @@
         }
 
         // ==========================================
-        // TAB 4: SUPPLENZE RAPIDE
+        // TAB 4: SUPPLENZE RAPIDE (CORRETTO FILTRO ORDINE DI SCUOLA)
         // ==========================================
         function loadAbsentTeacherLessons() {
             const tid = document.getElementById('sub-absent-teacher').value; const day = document.getElementById('sub-day').value; const area = document.getElementById('sub-lessons-area'); if(!tid) { area.innerHTML = ''; return; }
@@ -604,10 +625,17 @@
             if(absentLessons.length === 0) return area.innerHTML = `<p>Nessuna lezione da coprire.</p>`;
             let html = ``; absentLessons.forEach(lesson => {
                 const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId);
+                
                 const availableSubs = db.teachers.filter(t => {
                     if(t.id === tid || t.dayOff === slot.day) return false;
+                    
+                    // FILTRO: Il supplente deve insegnare in classi di QUESTO livello di scuola
+                    const tLevels = db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId);
+                    if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
+                    
                     return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id));
                 });
+                
                 const activeSub = db.substitutions.find(s => s.lessonId === lesson.id);
                 html += `<div style="background:#fff; padding:10px; border:1px solid #ccc; margin-bottom:10px; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
                     <div><b>${slot.start}-${slot.end}</b> | Classe: <b>${cls.name}</b> ${activeSub ? `<br><span style="color:red">➡ Sostituto: ${db.teachers.find(t=>t.id===activeSub.subTeacherId).name}</span>` : ''}</div>
@@ -625,7 +653,7 @@
         function removeSub(sId) { db.substitutions = db.substitutions.filter(s => s.id !== sId); updateUI(); loadAbsentTeacherLessons(); }
 
         // ==========================================
-        // TAB 5: MONITOR UNIVERSALE INTERATTIVO E MODALE
+        // TAB 5: MONITOR UNIVERSALE INTERATTIVO
         // ==========================================
         function updateInteractiveFilters() {
             const mode = document.getElementById('interactive-view-mode').value;
@@ -738,9 +766,7 @@
             const myLessons = db.lessons.filter(l => l.teacherId === teacherId); 
             const mySubs = db.substitutions.filter(s => s.subTeacherId === teacherId); 
             
-            // Trova gli indici per tutte le fasce
-            const slotMetadata = {};
-            let maxFascia = 0;
+            const slotMetadata = {}; let maxFascia = 0;
             db.levels.forEach(lvl => {
                 ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'].forEach(day => {
                     const daySlots = db.timeslots.filter(t => t.levelId === lvl.id && t.day === day).sort((a,b)=>a.start.localeCompare(b.start));
@@ -760,14 +786,10 @@
                 days.forEach(day => {
                     let cellHtml = '';
                     
-                    // 1. Titolare
                     const myL = myLessons.filter(l => slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day);
                     myL.forEach(l => {
                         hasContentInRow = true; hasLessons = true;
-                        const ts = db.timeslots.find(t=>t.id===l.timeslotId);
-                        const cls = db.classes.find(c => c.id === l.classId);
-                        const subj = db.subjects.find(s => s.id === l.subjectId);
-                        const sub = db.substitutions.find(s => s.lessonId === l.id);
+                        const ts = db.timeslots.find(t=>t.id===l.timeslotId); const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(s => s.id === l.subjectId); const sub = db.substitutions.find(s => s.lessonId === l.id);
                         
                         let timeStr = `<div style="font-size:10px; color:#666;">${ts.start}-${ts.end}</div>`;
                         if(sub) {
@@ -778,7 +800,6 @@
                         }
                     });
 
-                    // 2. Supplenze
                     const myS = mySubs.filter(sub => { const l = db.lessons.find(lex=>lex.id===sub.lessonId); return l && slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day; });
                     myS.forEach(s => {
                         hasContentInRow = true; hasLessons = true;
@@ -799,7 +820,7 @@
             container.innerHTML = html;
         }
 
-        // Funzione Modale
+        // Funzione Modale per gestire supplenze intelligenti (livello scuola)
         function openCellModal(lessonId) {
             currentInteractiveLessonId = lessonId; const lesson = db.lessons.find(l => l.id === lessonId); const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId); const subj = db.subjects.find(s => s.id === lesson.subjectId); const titolare = db.teachers.find(t => t.id === lesson.teacherId);
             document.getElementById('modal-cell-info').innerHTML = `<b>Classe:</b> ${cls.name}<br><b>Orario:</b> ${slot.day} ${slot.start} - ${slot.end}<br><b>Attività:</b> ${subj.name}<br><b>Prof. Titolare:</b> ${titolare.name}`;
@@ -808,7 +829,16 @@
                 const subTeacher = db.teachers.find(t => t.id === activeSub.subTeacherId);
                 subArea.innerHTML = `<div style="background:#fee2e2; padding:10px; border-radius:4px; border: 1px solid #ef4444;"><b style="color:#dc2626;">⚠ Supplenza Attiva</b><br>Sostituto attuale: <b>${subTeacher.name}</b><button class="danger" style="margin-top:15px; width:100%;" onclick="removeInteractiveSub('${activeSub.id}')">Annulla Supplenza</button></div>`;
             } else {
-                const availableSubs = db.teachers.filter(t => { if(t.id === titolare.id || t.dayOff === slot.day) return false; return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id)); });
+                const availableSubs = db.teachers.filter(t => { 
+                    if(t.id === titolare.id || t.dayOff === slot.day) return false; 
+                    
+                    // FILTRO: Il supplente deve insegnare in classi di QUESTO livello di scuola
+                    const tLevels = db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId);
+                    if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
+
+                    return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id)); 
+                });
+                
                 if (availableSubs.length > 0) { subArea.innerHTML = `<label><b>Seleziona Sostituto Libero:</b></label><select id="modal-sub-select" style="width:100%; margin-top:5px; padding:8px;">${availableSubs.map(t=>`<option value="${t.id}">${t.name}</option>`).join('')}</select><button class="warning" style="margin-top:15px; width:100%; font-size:15px;" onclick="saveInteractiveSub()">Conferma Sostituzione</button>`; } 
                 else { subArea.innerHTML = `<p style="color:#dc2626; font-weight:bold; margin:0;">Nessun docente libero in questa fascia oraria!</p>`; }
             } document.getElementById('cell-modal').style.display = 'flex';
@@ -825,16 +855,7 @@
         function addTeacher() { const n=document.getElementById('t-name').value.trim(); if(n){ const nid="t_"+Date.now(); db.teachers.push({id:nid, name:n, dayOff:document.getElementById('t-dayoff').value, maxHours:parseInt(document.getElementById('t-hours').value)||18, assignments:[]}); document.getElementById('t-name').value=''; currentTeacherId=nid; updateUI(); loadTeacherAssignments(); } }
         
         function importJSON() { const file = document.getElementById('json-file').files[0]; if (!file) return alert("Seleziona JSON."); const reader = new FileReader(); reader.onload = function(e) { try { const importedDB = JSON.parse(e.target.result); if (importedDB.levels && importedDB.classes && importedDB.teachers) { db = importedDB; updateUI(); alert("✅ Database ripristinato!"); document.getElementById('json-file').value = ''; } else alert("❌ File JSON non valido."); } catch(err) { alert("❌ Errore durante la lettura."); } }; reader.readAsText(file); }
-        
-        // AGGIUNTO: Nome file Backup JSON Dinamico con Data
-        function exportJSON() { 
-            const a=document.createElement('a'); 
-            a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"})); 
-            const dateStr = new Date().toISOString().slice(0,10); 
-            a.download=`Backup_Scuola_${dateStr}.json`; 
-            document.body.appendChild(a); a.click(); document.body.removeChild(a); 
-        }
-
+        function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"})); const dateStr = new Date().toISOString().slice(0,10); a.download=`Backup_Scuola_${dateStr}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
         function downloadExcelTemplate() { const wb = XLSX.utils.book_new(); const wsMat = XLSX.utils.aoa_to_sheet([["Materia"], ["Matematica"], ["Italiano"]]); const wsCls = XLSX.utils.aoa_to_sheet([["Ordine", "Classe"], ["Primaria", "1A"], ["Secondaria", "1B"]]); const wsDoc = XLSX.utils.aoa_to_sheet([["Docente", "GiornoLibero", "Ore"], ["Mario Rossi", "Lunedì", 18], ["Giulia Bianchi", "Nessuno", 24]]); XLSX.utils.book_append_sheet(wb, wsMat, "Materie"); XLSX.utils.book_append_sheet(wb, wsCls, "Classi"); XLSX.utils.book_append_sheet(wb, wsDoc, "Docenti"); XLSX.writeFile(wb, "Template_Da_Compilare_Orario.xlsx"); }
         function importExcel() { 
             const fileInput = document.getElementById('excel-file'); const file = fileInput.files[0]; if (!file) return alert("Seleziona file Excel."); 
@@ -894,32 +915,46 @@
         function exportExcelByTeacher() { 
             const teacherId = document.getElementById('export-teacher-select').value; if(!teacherId) return alert("Seleziona docente"); 
             const teacher = db.teachers.find(t => t.id === teacherId); 
-            let excelData = [["Fascia Oraria", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì"]]; 
+            let excelData = [["Fascia", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì"]]; 
             const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']; 
-            const myLessons = db.lessons.filter(l => l.teacherId === teacherId); const mySubs = db.substitutions.filter(s => s.subTeacherId === teacherId); 
-            const teacherLevels = [...new Set(db.classes.filter(c => teacher.assignments.some(a => a.classId === c.id)).map(c => c.levelId))];
-            const validSlots = teacherLevels.length > 0 ? db.timeslots.filter(ts => teacherLevels.includes(ts.levelId)) : db.timeslots;
-            const uniqueTimesMap = new Map(); validSlots.forEach(ts => uniqueTimesMap.set(`${ts.start}-${ts.end}`, {start: ts.start, end: ts.end}));
-            const uniqueTimes = Array.from(uniqueTimesMap.values()).sort((a,b)=>a.start.localeCompare(b.start));
+            
+            const myLessons = db.lessons.filter(l => l.teacherId === teacherId); 
+            const mySubs = db.substitutions.filter(s => s.subTeacherId === teacherId); 
 
-            uniqueTimes.forEach(time => {
-                let row = [`${time.start} - ${time.end}`]; let hasContentInRow = false;
+            const slotMetadata = {}; let maxFascia = 0;
+            db.levels.forEach(lvl => {
+                ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'].forEach(day => {
+                    const daySlots = db.timeslots.filter(t => t.levelId === lvl.id && t.day === day).sort((a,b)=>a.start.localeCompare(b.start));
+                    daySlots.forEach((ts, index) => { slotMetadata[ts.id] = { index: index }; if(index > maxFascia) maxFascia = index; });
+                });
+            });
+
+            for(let i = 0; i <= maxFascia; i++) {
+                let row = [`${i+1}° Fascia`]; let hasContentInRow = false;
                 days.forEach(day => {
-                    const matchingSlots = db.timeslots.filter(ts => ts.day === day && ts.start === time.start && ts.end === time.end); const slotIds = matchingSlots.map(ts => ts.id);
-                    if(matchingSlots.length > 0) hasContentInRow = true;
-                    const myL = myLessons.filter(x => slotIds.includes(x.timeslotId)); const myS = mySubs.filter(sub => { const sl = db.lessons.find(lex=>lex.id===sub.lessonId); return sl && slotIds.includes(sl.timeslotId); });
                     let cellText = "";
-                    myL.forEach(l => { const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(sbj => sbj.id === l.subjectId); const isSubbed = db.substitutions.find(sub => sub.lessonId === l.id); if(isSubbed) cellText += (cellText?" \n+ ":"") + `[SOSTITUITO DA ${db.teachers.find(t=>t.id===isSubbed.subTeacherId).name}] ${cls.name} (${subj.name})`; else cellText += (cellText?" \n+ ":"") + `${cls.name} (${subj.name})`; });
-                    myS.forEach(s => { const sl = db.lessons.find(lex=>lex.id===s.lessonId); const cls = db.classes.find(c => c.id === sl.classId); const subj = db.subjects.find(sbj => sbj.id === sl.subjectId); cellText += (cellText?" \n+ ":"") + `[SUPPLENZA] ${cls.name} (${subj.name})`; });
+                    const myL = myLessons.filter(l => slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day);
+                    myL.forEach(l => {
+                        hasContentInRow = true;
+                        const ts = db.timeslots.find(t=>t.id===l.timeslotId); const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(sbj => sbj.id === l.subjectId); const isSubbed = db.substitutions.find(sub => sub.lessonId === l.id);
+                        if(isSubbed) cellText += (cellText?" \n+ ":"") + `[${ts.start}-${ts.end}] [SOSTITUITO DA ${db.teachers.find(t=>t.id===isSubbed.subTeacherId).name}] ${cls.name} (${subj.name})`;
+                        else cellText += (cellText?" \n+ ":"") + `[${ts.start}-${ts.end}] ${cls.name} (${subj.name})`;
+                    });
+                    const myS = mySubs.filter(sub => { const l = db.lessons.find(lex=>lex.id===sub.lessonId); return l && slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day; });
+                    myS.forEach(s => {
+                        hasContentInRow = true;
+                        const sl = db.lessons.find(lex=>lex.id===s.lessonId); const ts = db.timeslots.find(t=>t.id===sl.timeslotId); const cls = db.classes.find(c => c.id === sl.classId); const subj = db.subjects.find(sbj => sbj.id === sl.subjectId);
+                        cellText += (cellText?" \n+ ":"") + `[${ts.start}-${ts.end}] [SUPPLENZA] ${cls.name} (${subj.name})`;
+                    });
                     row.push(cellText || "---");
                 });
                 if(hasContentInRow) excelData.push(row);
-            });
+            }
             if(excelData.length === 1) return alert("Il docente non ha lezioni assegnate."); generateExcelFile(excelData, `Orario_Prof_${teacher.name.replace(/ /g,"_")}`); 
         }
 
         function generateExcelFile(aoaData, filename) { const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(aoaData); ws['!cols'] = [{wch: 15}, {wch: 22}, {wch: 22}, {wch: 22}, {wch: 22}, {wch: 22}]; XLSX.utils.book_append_sheet(wb, ws, "Orario"); XLSX.writeFile(wb, `${filename}.xlsx`); }
-        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati del database, sei sicuro?")) { localStorage.removeItem('school_db_v24'); db = JSON.parse(JSON.stringify(defaultDB)); currentTeacherId = null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
+        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati del database, sei sicuro?")) { localStorage.removeItem('school_db_v26'); db = JSON.parse(JSON.stringify(defaultDB)); currentTeacherId = null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
 
         updateUI();
     </script>
