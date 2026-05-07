@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orario Scolastico Completo V28 - Supplenze Ristrette & Giorni</title>
+    <title>Orario Scolastico Completo V28 - Supplenze Perfette</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f4f6f9; color: #333; }
@@ -103,7 +103,7 @@
         <button class="tab-btn active" onclick="openTab('tab-config')">1. Dati Base</button>
         <button class="tab-btn primary" onclick="openTab('tab-teachers')">2. Assegnazioni</button>
         <button class="tab-btn" onclick="openTab('tab-compose')">3. Componi Orario</button>
-        <button class="tab-btn warning" onclick="openTab('tab-subs')">4. Assenze</button>
+        <button class="tab-btn warning" onclick="openTab('tab-subs')">4. Assenze & Supplenze</button>
         <button class="tab-btn" style="background:#8b5cf6; color:white;" onclick="openTab('tab-interactive')">5. Monitor & Stampa</button>
         <button class="tab-btn" onclick="openTab('tab-db')" style="margin-left: auto; background: #64748b; color:white;">Dati & Excel</button>
     </div>
@@ -174,6 +174,7 @@
     </div>
 
     <div id="tab-subs" class="tab-content">
+        
         <div class="card" style="margin-bottom: 20px; background: #fffbeb; border-color: #34d399; padding: 15px;">
             <h4 style="margin-top: 0; color: #065f46; margin-bottom: 10px;">⚙️ Regole di Supplenza</h4>
             
@@ -190,7 +191,7 @@
             
             <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #a7f3d0;">
                 <b style="font-size:14px; color: #065f46;">Orario Pomeridiano (dalle 13:30 in poi):</b><br>
-                <p style="font-size:12px; color:#6b7280; margin: 4px 0 10px 0;">Seleziona in quali giorni il pomeriggio è <b>Curricolare</b> (la regola ferrea rimane attiva). Nei giorni non spuntati (attività extra), la regola ferrea si spegne automaticamente al pomeriggio e tutti i docenti del plesso tornano disponibili.</p>
+                <p style="font-size:12px; color:#6b7280; margin: 4px 0 10px 0;">Seleziona in quali giorni il pomeriggio è <b>Curricolare</b> (la regola ristretta rimane attiva). Nei giorni non spuntati (attività extra), la regola si spegne automaticamente al pomeriggio e tutti i docenti del plesso tornano disponibili per la supplenza.</p>
                 
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;" id="strict-days-container">
                     <label style="font-size:13px; cursor: pointer;"><input type="checkbox" value="Lunedì" class="strict-day-cb" onchange="toggleStrictSub()"> Lunedì</label>
@@ -287,12 +288,15 @@
         };
         
         let db = JSON.parse(localStorage.getItem('school_db_v28')) || defaultDB;
+        
+        // Assicura l'esistenza dei settings per retrocompatibilità
         if (!db.settings) db.settings = { strictPrim: false, strictSec: true, strictDays: ['Martedì', 'Giovedì'] };
         if (!db.settings.strictDays) db.settings.strictDays = ['Martedì', 'Giovedì'];
 
         let currentTeacherId = null;
         let currentInteractiveLessonId = null;
 
+        // Migrazione da versioni precedenti
         if (!localStorage.getItem('school_db_v28')) {
             if(localStorage.getItem('school_db_v27')) db = JSON.parse(localStorage.getItem('school_db_v27'));
             else if(localStorage.getItem('school_db_v26')) db = JSON.parse(localStorage.getItem('school_db_v26'));
@@ -371,7 +375,7 @@
             if(state.interPeriod) document.getElementById('interactive-period').value = state.interPeriod;
             if(state.interDay) document.getElementById('interactive-day-select').value = state.interDay;
             
-            // Ripristino stato checkbox UI in base alle impostazioni
+            // Ripristino stato checkbox Impostazioni
             if (!db.settings) db.settings = { strictPrim: false, strictSec: true, strictDays: ['Martedì', 'Giovedì'] };
             if (!db.settings.strictDays) db.settings.strictDays = ['Martedì', 'Giovedì'];
             
@@ -379,14 +383,16 @@
             if(document.getElementById('strict-sub-sec')) document.getElementById('strict-sub-sec').checked = db.settings.strictSec;
             
             const daysCb = document.querySelectorAll('.strict-day-cb');
-            daysCb.forEach(cb => { cb.checked = db.settings.strictDays.includes(cb.value); });
+            if(daysCb.length > 0) {
+                daysCb.forEach(cb => { cb.checked = db.settings.strictDays.includes(cb.value); });
+            }
 
             if(document.getElementById('tab-interactive').classList.contains('active')) updateInteractiveFilters(); 
             if(document.getElementById('tab-compose').classList.contains('active')) renderComposerGrid();
             renderTimeslotsList();
         }
 
-        // AGGIORNATO: Salva anche i giorni spuntati per la regola pomeridiana
+        // SALVATAGGIO REGOLE
         function toggleStrictSub() {
             if (!db.settings) db.settings = { strictPrim: false, strictSec: true, strictDays: ['Martedì', 'Giovedì'] };
             db.settings.strictPrim = document.getElementById('strict-sub-prim').checked;
@@ -396,7 +402,7 @@
             db.settings.strictDays = Array.from(daysCb).filter(cb => cb.checked).map(cb => cb.value);
             
             updateUI();
-            if (document.getElementById('sub-absent-teacher').value) loadAbsentTeacherLessons();
+            if (document.getElementById('sub-absent-teacher')?.value) loadAbsentTeacherLessons();
         }
 
         function printTimetable() {
@@ -647,7 +653,7 @@
         }
 
         // ==========================================
-        // TAB 4: SUPPLENZE RAPIDE (CON FILTRO CORRETTO E REGOLA 13:30 + GIORNI)
+        // LOGICA REGOLE SUPPLENZE AVANZATA - CORRETTA
         // ==========================================
         function loadAbsentTeacherLessons() {
             const tid = document.getElementById('sub-absent-teacher').value; const day = document.getElementById('sub-day').value; const area = document.getElementById('sub-lessons-area'); if(!tid) { area.innerHTML = ''; return; }
@@ -663,19 +669,26 @@
                 // Variabile per la "Regola del pomeriggio" in base ai giorni selezionati
                 const isAfternoon = slot.start >= "13:30";
                 const isStrictDay = db.settings.strictDays.includes(slot.day);
-                const enforceStrict = !isAfternoon || isStrictDay; // Applica regola se è MATTINA oppure se è un POMERIGGIO SPUNTATO
+                const enforceStrict = !isAfternoon || isStrictDay; 
 
                 const availableSubs = db.teachers.filter(t => {
                     if(t.id === tid || t.dayOff === slot.day) return false;
                     
-                    // Applichiamo la regola ferrea solo se richiesta dalle impostazioni
+                    // CONTROLLO PRECISO REALE (Basato sulle lezioni a tabellone o in alternativa sugli assignments se non ha ancora lezioni)
+                    const hasAnyLesson = db.lessons.some(l => l.teacherId === t.id);
+                    const teachesInClass = db.lessons.some(l => l.teacherId === t.id && l.classId === cls.id);
+                    const isAssignedToClass = teachesInClass || (!hasAnyLesson && t.assignments.some(a => a.classId === cls.id));
+
                     if (isSec && db.settings.strictSec && enforceStrict) {
-                        if (!t.assignments.some(a => a.classId === cls.id)) return false; 
+                        if (!isAssignedToClass) return false; 
                     } else if (isPrim && db.settings.strictPrim && enforceStrict) {
-                        if (!t.assignments.some(a => a.classId === cls.id)) return false; 
+                        if (!isAssignedToClass) return false; 
                     } else {
-                        // Se la regola ferrea è spenta (es. pomeriggi extra), basta insegnare nello STESSO GRADO
-                        const tLevels = db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId);
+                        // Regola morbida: Basta che insegni nello STESSO ORDINE DI SCUOLA
+                        let tLevels = [...new Set(db.lessons.filter(l => l.teacherId === t.id).map(l => db.classes.find(c => c.id === l.classId)?.levelId))].filter(Boolean);
+                        if(tLevels.length === 0) {
+                            tLevels = [...new Set(db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId))];
+                        }
                         if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
                     }
                     
@@ -698,9 +711,6 @@
         function assignSub(lId) { db.substitutions.push({ id: "sub_" + Date.now(), lessonId: lId, subTeacherId: document.getElementById(`sub-${lId}`).value }); updateUI(); loadAbsentTeacherLessons(); }
         function removeSub(sId) { db.substitutions = db.substitutions.filter(s => s.id !== sId); updateUI(); loadAbsentTeacherLessons(); }
 
-        // ==========================================
-        // TAB 5: MONITOR UNIVERSALE INTERATTIVO
-        // ==========================================
         function updateInteractiveFilters() {
             const mode = document.getElementById('interactive-view-mode').value;
             const period = document.getElementById('interactive-period').value;
@@ -840,7 +850,7 @@
                         let timeStr = `<div style="font-size:10px; color:#666;">${ts.start}-${ts.end}</div>`;
                         if(sub) {
                             const subT = db.teachers.find(t => t.id === sub.subTeacherId);
-                            cellHtml += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${l.id}')">${timeStr}<span class="badge">[SOST]</span><br><del>${cls.name}</del><br><b>${subT.name}</b><br><span class="badge">${subject.name}</span></div>`;
+                            cellHtml += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${l.id}')">${timeStr}<span class="badge">[SOST]</span><br><del>${cls.name}</del><br><b>${subT.name}</b><br><span class="badge">${subj.name}</span></div>`;
                         } else {
                             cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${l.id}')">${timeStr}<b>${cls.name}</b><br><span class="badge">${subj.name}</span></div>`;
                         }
@@ -866,7 +876,7 @@
             container.innerHTML = html;
         }
 
-        // Funzione Modale (CON FILTRO CORRETTO E REGOLA 13:30 + GIORNI)
+        // LOGICA MODALE RISCRITTA UGUALE
         function openCellModal(lessonId) {
             currentInteractiveLessonId = lessonId; const lesson = db.lessons.find(l => l.id === lessonId); const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId); const subj = db.subjects.find(s => s.id === lesson.subjectId); const titolare = db.teachers.find(t => t.id === lesson.teacherId);
             document.getElementById('modal-cell-info').innerHTML = `<b>Classe:</b> ${cls.name}<br><b>Orario:</b> ${slot.day} ${slot.start} - ${slot.end}<br><b>Attività:</b> ${subj.name}<br><b>Prof. Titolare:</b> ${titolare.name}`;
@@ -880,20 +890,26 @@
                 const isSec = lvlName.includes('sec');
                 const isPrim = lvlName.includes('prim');
                 
-                // Variabile per la "Regola del pomeriggio" in base ai giorni selezionati
                 const isAfternoon = slot.start >= "13:30";
                 const isStrictDay = db.settings.strictDays.includes(slot.day);
-                const enforceStrict = !isAfternoon || isStrictDay; // Applica regola se è MATTINA oppure se è un POMERIGGIO SPUNTATO
+                const enforceStrict = !isAfternoon || isStrictDay; 
 
                 const availableSubs = db.teachers.filter(t => { 
                     if(t.id === titolare.id || t.dayOff === slot.day) return false; 
                     
+                    const hasAnyLesson = db.lessons.some(l => l.teacherId === t.id);
+                    const teachesInClass = db.lessons.some(l => l.teacherId === t.id && l.classId === cls.id);
+                    const isAssignedToClass = teachesInClass || (!hasAnyLesson && t.assignments.some(a => a.classId === cls.id));
+
                     if (isSec && db.settings.strictSec && enforceStrict) {
-                        if (!t.assignments.some(a => a.classId === cls.id)) return false; 
+                        if (!isAssignedToClass) return false; 
                     } else if (isPrim && db.settings.strictPrim && enforceStrict) {
-                        if (!t.assignments.some(a => a.classId === cls.id)) return false; 
+                        if (!isAssignedToClass) return false; 
                     } else {
-                        const tLevels = db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId);
+                        let tLevels = [...new Set(db.lessons.filter(l => l.teacherId === t.id).map(l => db.classes.find(c => c.id === l.classId)?.levelId))].filter(Boolean);
+                        if(tLevels.length === 0) {
+                            tLevels = [...new Set(db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId))];
+                        }
                         if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
                     }
 
