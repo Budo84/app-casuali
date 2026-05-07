@@ -2,8 +2,12 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orario Scolastico Completo V24 - Supplenze per Ordine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Orario Scolastico V28 - Regole Supplenze Avanzate</title>
+    
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Orario Scolastico Completo","short_name":"OrarioApp","start_url":".","display":"standalone","background_color":"#f4f6f9","theme_color":"#3b82f6","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 100 100\\"><rect width=\\"100\\" height=\\"100\\" fill=\\"%233b82f6\\"/><text x=\\"50\\" y=\\"65\\" font-size=\\"50\\" fill=\\"white\\" text-anchor=\\"middle\\" font-family=\\"Arial\\">OS</text></svg>","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}'>
+    <meta name="theme-color" content="#3b82f6">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f4f6f9; color: #333; }
@@ -33,7 +37,12 @@
         .assign-row label { width: 250px; font-weight: bold; cursor: pointer; } 
         .assign-row select { margin: 0; width: auto; flex-grow: 1; padding: 6px; }
 
-        .timetable-composer { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        /* Contenitori Scrollabili per Mobile */
+        #composer-grid-container, #interactive-grid-container, #timeslot-list-container, #class-flags-container { 
+            overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; 
+        }
+
+        .timetable-composer { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 600px; }
         .timetable-composer th, .timetable-composer td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; vertical-align: top; }
         .timetable-composer th { background: #3b82f6; color: white; }
         .timetable-composer td select { margin: 0; width: 100%; font-size: 12px; padding: 4px; border-color: #3b82f6; background: #eff6ff; font-weight: bold;}
@@ -48,37 +57,43 @@
         .cell-interactive:hover { border-color: #3b82f6; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: scale(1.02); z-index: 10;}
         .sub-active { border: 2px solid #ef4444 !important; background: #fee2e2 !important; }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 400px; max-width: 90%; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; }
+        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 400px; max-width: 100%; max-height: 90vh; overflow-y: auto; }
 
-        .ts-list-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .ts-list-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 500px; }
         .ts-list-table th, .ts-list-table td { padding: 8px; border: 1px solid #ccc; text-align: center; }
         .ts-list-table th { background: #f1f5f9; }
 
         input.custom-select { border: 2px solid #cbd5e1; padding: 8px; border-radius: 4px; font-weight: bold; width: 140px; margin: 0; }
         input.custom-select:focus { border-color: #3b82f6; outline: none; }
 
+        /* RESPONSIVITA' MOBILE */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 15px; }
+            .tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+            .tab-btn { flex: 0 0 auto; white-space: nowrap; font-size: 13px; }
+            input, select, button { font-size: 16px !important; } 
+            #interactive-filters { flex-direction: column; align-items: stretch; gap: 10px; }
+            #interactive-filters > div { width: 100%; }
+        }
+
         /* MOTORE DI STAMPA OTTIMIZZATO A4 ORIZZONTALE */
         @media print {
             body { background: white; padding: 0; margin: 0; color: black; }
             h1, .tabs, button, input, select, hr, datalist { display: none !important; }
             .card-header, #interactive-filters, #tab-interactive > div:first-child { display: none !important; }
-            
             .tab-content { display: none !important; box-shadow: none; border: none; padding: 0; margin: 0; }
             #tab-interactive { display: block !important; }
             .card { border: none; box-shadow: none; margin: 0; padding: 0; background: transparent; }
-            
             #interactive-grid-container h2 { font-size: 16pt; margin-bottom: 15px; margin-top:0; color: black !important; text-align: center; }
             #interactive-grid-container h3 { font-size: 14pt; margin-top: 15px; margin-bottom: 5px; color: black !important; }
-            
-            .timetable-composer { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9pt; }
+            .timetable-composer { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9pt; min-width: auto; }
             .timetable-composer th, .timetable-composer td { border: 1px solid #333; padding: 4px; text-align: center; vertical-align: middle; word-wrap: break-word; overflow: hidden; }
             .timetable-composer th { background-color: #eee !important; color: #000 !important; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .timetable-composer th:first-child { width: 12% !important; } 
-            
             .slot-break { background-color: #f9f9f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .co-teaching-box { border: 1px solid #666; padding: 3px; margin: 1px 0; border-radius: 3px; font-size: 8.5pt; line-height: 1.2; box-shadow: none; background: white !important; }
-            
             .badge { display: inline; background: transparent !important; color: #333; font-size: 8pt; padding: 0; border: none; font-weight: normal; margin-top: 2px; }
             .badge::before { content: " ("; }
             .badge::after { content: ")"; }
@@ -103,7 +118,7 @@
         <button class="tab-btn active" onclick="openTab('tab-config')">1. Dati Base</button>
         <button class="tab-btn primary" onclick="openTab('tab-teachers')">2. Assegnazioni</button>
         <button class="tab-btn" onclick="openTab('tab-compose')">3. Componi Orario</button>
-        <button class="tab-btn warning" onclick="openTab('tab-subs')">4. Assenze</button>
+        <button class="tab-btn warning" onclick="openTab('tab-subs')">4. Assenze & Supplenze</button>
         <button class="tab-btn" style="background:#8b5cf6; color:white;" onclick="openTab('tab-interactive')">5. Monitor & Stampa</button>
         <button class="tab-btn" onclick="openTab('tab-db')" style="margin-left: auto; background: #64748b; color:white;">Dati & Excel</button>
     </div>
@@ -137,11 +152,11 @@
 
             <div class="card" style="grid-column: span 3; background:#fafafa;">
                 <div class="card-header" style="background:#eee;">Aggiunta Singola Manuale (Per attività extra/singolo giorno)</div>
-                <div style="display: flex; gap: 15px;">
-                    <div style="flex:1;"><label>Ordine:</label><select id="ts-level"></select></div>
-                    <div style="flex:1;"><label>Giorno:</label><select id="ts-day"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
-                    <div style="flex:1;"><label>Tipo (Scegli o scrivi):</label><input type="text" id="ts-type" list="type-suggestions" value="Lezione"></div>
-                    <div style="flex:1;"><label>Da - A:</label><div style="display:flex; gap:5px;"><input type="time" id="ts-start"> <input type="time" id="ts-end"></div></div>
+                <div style="display: flex; gap: 15px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:150px;"><label>Ordine:</label><select id="ts-level"></select></div>
+                    <div style="flex:1; min-width:150px;"><label>Giorno:</label><select id="ts-day"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
+                    <div style="flex:1; min-width:150px;"><label>Tipo (Scegli o scrivi):</label><input type="text" id="ts-type" list="type-suggestions" value="Lezione"></div>
+                    <div style="flex:1; min-width:200px;"><label>Da - A:</label><div style="display:flex; gap:5px;"><input type="time" id="ts-start"> <input type="time" id="ts-end"></div></div>
                 </div>
                 <button onclick="addTimeslot()" style="background:#64748b; margin-top: 15px;">Aggiungi Singola Fascia</button>
             </div>
@@ -178,13 +193,23 @@
             <div><label>Docente Assente:</label><select id="sub-absent-teacher" onchange="loadAbsentTeacherLessons()"></select></div>
             <div><label>Giorno Assenza:</label><select id="sub-day" onchange="loadAbsentTeacherLessons()"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
         </div>
+
+        <div class="card" style="margin-top: 15px; background: #fffbeb; border-color: #34d399; padding: 15px;">
+            <h4 style="margin-top: 0; color: #065f46; margin-bottom: 10px;">⚙️ Regole di Supplenza</h4>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <label style="cursor: pointer; font-weight:normal; font-size:14px;"><input type="checkbox" id="strict-sub-prim" onchange="toggleStrictSub('prim')"> <b>Primaria:</b> Il supplente deve insegnare in quella specifica classe</label>
+                <label style="cursor: pointer; font-weight:normal; font-size:14px;"><input type="checkbox" id="strict-sub-sec" onchange="toggleStrictSub('sec')"> <b>Secondaria:</b> Il supplente deve insegnare in quella specifica classe</label>
+            </div>
+            <p style="font-size:11px; color:#6b7280; margin: 8px 0 0 0;">(Selezionando la casella, verranno proposti solo i docenti che hanno assegnazioni nella classe scoperta. Altrimenti verranno proposti tutti i docenti liberi di quel grado di scuola).</p>
+        </div>
+
         <div id="sub-lessons-area" style="margin-top:20px;"></div>
     </div>
 
     <div id="tab-interactive" class="tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap:10px;">
             <h2 style="margin:0;">Monitor Interattivo e Stampa Griglie</h2>
-            <button onclick="printTimetable()" style="background:#475569; padding: 10px 20px;">🖨️ Stampa questa vista</button>
+            <button onclick="printTimetable()" style="background:#475569; padding: 10px 20px;">🖨️ Stampa vista in PDF</button>
         </div>
         
         <div id="interactive-filters" class="card" style="background:#f5f3ff; margin-top:15px; display:flex; gap:20px; align-items:flex-end; flex-wrap:wrap;">
@@ -252,16 +277,33 @@
     </div>
 
     <script>
-        const defaultDB = { levels: [{ id: "lvl_inf", name: "Infanzia" }, { id: "lvl_prim", name: "Primaria" }, { id: "lvl_sec", name: "Secondaria" }], subjects: [], classes: [], timeslots: [], teachers: [], lessons: [], substitutions: [] };
-        let db = JSON.parse(localStorage.getItem('school_db_v24')) || defaultDB;
+        // ==========================================
+        // REGISTRAZIONE SERVICE WORKER (PWA Installabile)
+        // ==========================================
+        if ('serviceWorker' in navigator) {
+            const swCode = `self.addEventListener('install', (e) => self.skipWaiting()); self.addEventListener('activate', (e) => e.waitUntil(clients.claim())); self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request).catch(() => new Response('Sei offline. Le modifiche ai dati sono salve nel browser.'))));`;
+            const blob = new Blob([swCode], { type: 'text/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(console.error);
+        }
+
+        const defaultDB = { 
+            levels: [{ id: "lvl_inf", name: "Infanzia" }, { id: "lvl_prim", name: "Primaria" }, { id: "lvl_sec", name: "Secondaria" }], 
+            subjects: [], classes: [], timeslots: [], teachers: [], lessons: [], substitutions: [], 
+            settings: { strictPrim: false, strictSec: true } 
+        };
+        
+        let db = JSON.parse(localStorage.getItem('school_db_v28')) || defaultDB;
+        
+        // Retrocompatibilità versioni vecchie
+        if (!localStorage.getItem('school_db_v28')) {
+            if(localStorage.getItem('school_db_v27')) db = JSON.parse(localStorage.getItem('school_db_v27'));
+            else if(localStorage.getItem('school_db_v26')) db = JSON.parse(localStorage.getItem('school_db_v26'));
+            if(!db.settings) db.settings = { strictPrim: false, strictSec: true }; // Aggiunta automatica settings per vecchi DB
+            localStorage.setItem('school_db_v28', JSON.stringify(db));
+        }
+
         let currentTeacherId = null;
         let currentInteractiveLessonId = null;
-
-        if (!localStorage.getItem('school_db_v24')) {
-            if(localStorage.getItem('school_db_v23')) db = JSON.parse(localStorage.getItem('school_db_v23'));
-            else if(localStorage.getItem('school_db_v22')) db = JSON.parse(localStorage.getItem('school_db_v22'));
-            localStorage.setItem('school_db_v24', JSON.stringify(db));
-        }
 
         function openTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -272,7 +314,7 @@
         }
 
         function updateUI() {
-            localStorage.setItem('school_db_v24', JSON.stringify(db));
+            localStorage.setItem('school_db_v28', JSON.stringify(db));
             
             const state = {
                 tsLevel: document.getElementById('ts-level')?.value,
@@ -331,9 +373,21 @@
             if(state.interPeriod) document.getElementById('interactive-period').value = state.interPeriod;
             if(state.interDay) document.getElementById('interactive-day-select').value = state.interDay;
             
+            // Ripristino stato checkbox regole
+            if(document.getElementById('strict-sub-prim')) document.getElementById('strict-sub-prim').checked = db.settings.strictPrim;
+            if(document.getElementById('strict-sub-sec')) document.getElementById('strict-sub-sec').checked = db.settings.strictSec;
+
             if(document.getElementById('tab-interactive').classList.contains('active')) updateInteractiveFilters(); 
             if(document.getElementById('tab-compose').classList.contains('active')) renderComposerGrid();
             renderTimeslotsList();
+        }
+
+        // Gestione Click interruttori Regole
+        function toggleStrictSub(levelType) {
+            if(levelType === 'prim') db.settings.strictPrim = document.getElementById('strict-sub-prim').checked;
+            if(levelType === 'sec') db.settings.strictSec = document.getElementById('strict-sub-sec').checked;
+            updateUI();
+            loadAbsentTeacherLessons();
         }
 
         function printTimetable() {
@@ -357,6 +411,9 @@
             setTimeout(() => document.title = originalTitle, 1000); 
         }
 
+        // ==========================================
+        // TAB 1: GENERATORE E EDITOR
+        // ==========================================
         function addMinutes(timeStr, minsToAdd) {
             let [h, m] = timeStr.split(':').map(Number); let totalMins = h * 60 + m + parseInt(minsToAdd);
             return `${(Math.floor(totalMins/60)%24).toString().padStart(2,'0')}:${(totalMins%60).toString().padStart(2,'0')}`;
@@ -455,6 +512,9 @@
             }
         }
 
+        // ==========================================
+        // TAB 2: ASSEGNAZIONI DOCENTI
+        // ==========================================
         function loadTeacherAssignments() {
             currentTeacherId = document.getElementById('teacher-selector').value; 
             const ws = document.getElementById('assignment-workspace'); 
@@ -470,7 +530,6 @@
             db.classes.forEach(c => { 
                 const isAssigned = teacher.assignments.find(a => a.classId === c.id); 
                 const levelName = db.levels.find(l => l.id === c.levelId)?.name || 'Sconosciuto';
-                
                 html += `<div class="assign-row">
                     <input type="checkbox" id="chk_${c.id}" value="${c.id}" ${isAssigned?'checked':''}>
                     <label for="chk_${c.id}">${c.name} (${levelName})</label>
@@ -498,6 +557,9 @@
             updateUI(); alert("Assegnazioni salvate correttamente!"); 
         }
 
+        // ==========================================
+        // TAB 3: COMPOSIZIONE CON COMPRESENZA ILLIMITATA
+        // ==========================================
         function renderComposerGrid() {
             const classId = document.getElementById('compose-class-select').value; 
             const container = document.getElementById('composer-grid-container'); 
@@ -583,18 +645,36 @@
             updateUI();
         }
 
+        // ==========================================
+        // TAB 4: SUPPLENZE RAPIDE (AGGIORNATO CON REGOLE SMART)
+        // ==========================================
         function loadAbsentTeacherLessons() {
             const tid = document.getElementById('sub-absent-teacher').value; const day = document.getElementById('sub-day').value; const area = document.getElementById('sub-lessons-area'); if(!tid) { area.innerHTML = ''; return; }
             const daySlotIds = db.timeslots.filter(ts => ts.day === day).map(ts => ts.id); const absentLessons = db.lessons.filter(l => l.teacherId === tid && daySlotIds.includes(l.timeslotId));
             if(absentLessons.length === 0) return area.innerHTML = `<p>Nessuna lezione da coprire.</p>`;
-            let html = ``; absentLessons.forEach(lesson => {
+            
+            let html = ``; 
+            absentLessons.forEach(lesson => {
                 const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId);
                 
+                // Variabili di appoggio per capire in che ordine di scuola ci troviamo
+                const lvlName = db.levels.find(l => l.id === cls.levelId).name.toLowerCase();
+                const isSec = lvlName.includes('sec');
+                const isPrim = lvlName.includes('prim');
+
                 const availableSubs = db.teachers.filter(t => {
                     if(t.id === tid || t.dayOff === slot.day) return false;
                     
-                    const tLevels = db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId);
-                    if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false;
+                    // Applica le regole restrittive se attive
+                    if (isSec && db.settings.strictSec) {
+                        if (!t.assignments.some(a => a.classId === cls.id)) return false; // Deve insegnare in QUESTA classe
+                    } else if (isPrim && db.settings.strictPrim) {
+                        if (!t.assignments.some(a => a.classId === cls.id)) return false; // Deve insegnare in QUESTA classe
+                    } else {
+                        // Regola base: Deve insegnare nello STESSO ORDINE DI SCUOLA
+                        const tLevels = db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId);
+                        if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
+                    }
                     
                     return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id));
                 });
@@ -615,6 +695,9 @@
         function assignSub(lId) { db.substitutions.push({ id: "sub_" + Date.now(), lessonId: lId, subTeacherId: document.getElementById(`sub-${lId}`).value }); updateUI(); loadAbsentTeacherLessons(); }
         function removeSub(sId) { db.substitutions = db.substitutions.filter(s => s.id !== sId); updateUI(); loadAbsentTeacherLessons(); }
 
+        // ==========================================
+        // TAB 5: MONITOR UNIVERSALE INTERATTIVO
+        // ==========================================
         function updateInteractiveFilters() {
             const mode = document.getElementById('interactive-view-mode').value;
             const period = document.getElementById('interactive-period').value;
@@ -780,22 +863,36 @@
             container.innerHTML = html;
         }
 
+        // Funzione Modale (CON DOPPIO FILTRO AGGIORNATO)
         function openCellModal(lessonId) {
             currentInteractiveLessonId = lessonId; const lesson = db.lessons.find(l => l.id === lessonId); const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId); const subj = db.subjects.find(s => s.id === lesson.subjectId); const titolare = db.teachers.find(t => t.id === lesson.teacherId);
             document.getElementById('modal-cell-info').innerHTML = `<b>Classe:</b> ${cls.name}<br><b>Orario:</b> ${slot.day} ${slot.start} - ${slot.end}<br><b>Attività:</b> ${subj.name}<br><b>Prof. Titolare:</b> ${titolare.name}`;
             const activeSub = db.substitutions.find(s => s.lessonId === lessonId); const subArea = document.getElementById('modal-sub-area');
+            
             if (activeSub) {
                 const subTeacher = db.teachers.find(t => t.id === activeSub.subTeacherId);
                 subArea.innerHTML = `<div style="background:#fee2e2; padding:10px; border-radius:4px; border: 1px solid #ef4444;"><b style="color:#dc2626;">⚠ Supplenza Attiva</b><br>Sostituto attuale: <b>${subTeacher.name}</b><button class="danger" style="margin-top:15px; width:100%;" onclick="removeInteractiveSub('${activeSub.id}')">Annulla Supplenza</button></div>`;
             } else {
+                const lvlName = db.levels.find(l => l.id === cls.levelId).name.toLowerCase();
+                const isSec = lvlName.includes('sec');
+                const isPrim = lvlName.includes('prim');
+
                 const availableSubs = db.teachers.filter(t => { 
                     if(t.id === titolare.id || t.dayOff === slot.day) return false; 
                     
-                    const tLevels = db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId);
-                    if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false;
-                    
+                    // FILTRO SCUOLA E CLASSE
+                    if (isSec && db.settings.strictSec) {
+                        if (!t.assignments.some(a => a.classId === cls.id)) return false; 
+                    } else if (isPrim && db.settings.strictPrim) {
+                        if (!t.assignments.some(a => a.classId === cls.id)) return false; 
+                    } else {
+                        const tLevels = db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId);
+                        if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
+                    }
+
                     return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id)); 
                 });
+                
                 if (availableSubs.length > 0) { subArea.innerHTML = `<label><b>Seleziona Sostituto Libero:</b></label><select id="modal-sub-select" style="width:100%; margin-top:5px; padding:8px;">${availableSubs.map(t=>`<option value="${t.id}">${t.name}</option>`).join('')}</select><button class="warning" style="margin-top:15px; width:100%; font-size:15px;" onclick="saveInteractiveSub()">Conferma Sostituzione</button>`; } 
                 else { subArea.innerHTML = `<p style="color:#dc2626; font-weight:bold; margin:0;">Nessun docente libero in questa fascia oraria!</p>`; }
             } document.getElementById('cell-modal').style.display = 'flex';
@@ -897,7 +994,7 @@
         }
 
         function generateExcelFile(aoaData, filename) { const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(aoaData); ws['!cols'] = [{wch: 15}, {wch: 22}, {wch: 22}, {wch: 22}, {wch: 22}, {wch: 22}]; XLSX.utils.book_append_sheet(wb, ws, "Orario"); XLSX.writeFile(wb, `${filename}.xlsx`); }
-        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati del database, sei sicuro?")) { localStorage.removeItem('school_db_v24'); db = JSON.parse(JSON.stringify(defaultDB)); currentTeacherId = null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
+        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati del database, sei sicuro?")) { localStorage.removeItem('school_db_v28'); db = JSON.parse(JSON.stringify(defaultDB)); currentTeacherId = null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
 
         updateUI();
     </script>
