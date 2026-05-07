@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orario Scolastico Completo V27 - Regole Supplenze</title>
+    <title>Orario Scolastico Completo V28 - Supplenze Ristrette</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f4f6f9; color: #333; }
@@ -174,19 +174,25 @@
     </div>
 
     <div id="tab-subs" class="tab-content">
+        <div class="card" style="margin-bottom: 20px; background: #fffbeb; border-color: #34d399; padding: 15px;">
+            <h4 style="margin-top: 0; color: #065f46; margin-bottom: 10px;">⚙️ Regole di Supplenza</h4>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <label style="cursor: pointer; font-weight:normal; font-size:14px;">
+                    <input type="checkbox" id="strict-sub-prim" onchange="toggleStrictSub('prim')"> 
+                    <b>Primaria:</b> Il supplente deve insegnare in quella specifica classe
+                </label>
+                <label style="cursor: pointer; font-weight:normal; font-size:14px;">
+                    <input type="checkbox" id="strict-sub-sec" onchange="toggleStrictSub('sec')"> 
+                    <b>Secondaria:</b> Il supplente deve insegnare in quella specifica classe
+                </label>
+            </div>
+            <p style="font-size:11px; color:#6b7280; margin: 8px 0 0 0;">Se attivo: vengono proposti SOLO i docenti che insegnano già nella classe scoperta. Se spento: vengono proposti tutti i docenti dello stesso grado di scuola (o chi insegna in entrambi i gradi).</p>
+        </div>
+
         <div class="card grid-2">
             <div><label>Docente Assente:</label><select id="sub-absent-teacher" onchange="loadAbsentTeacherLessons()"></select></div>
             <div><label>Giorno Assenza:</label><select id="sub-day" onchange="loadAbsentTeacherLessons()"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
         </div>
-        
-        <div class="card" style="margin-top: 15px; background: #fffbeb; border-color: #34d399; padding: 15px;">
-            <h4 style="margin-top: 0; color: #065f46; margin-bottom: 10px;">⚙️ Regole di Supplenza</h4>
-            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                <label style="cursor: pointer; font-weight:normal; font-size:14px;"><input type="checkbox" id="strict-sub-prim" onchange="toggleStrictSub('prim')"> <b>Primaria:</b> Il supplente deve insegnare in quella specifica classe</label>
-                <label style="cursor: pointer; font-weight:normal; font-size:14px;"><input type="checkbox" id="strict-sub-sec" onchange="toggleStrictSub('sec')"> <b>Secondaria:</b> Il supplente deve insegnare in quella specifica classe</label>
-            </div>
-        </div>
-
         <div id="sub-lessons-area" style="margin-top:20px;"></div>
     </div>
 
@@ -266,10 +272,21 @@
             subjects: [], classes: [], timeslots: [], teachers: [], lessons: [], substitutions: [],
             settings: { strictPrim: false, strictSec: true }
         };
-        let db = JSON.parse(localStorage.getItem('school_db_v27')) || defaultDB;
+        
+        let db = JSON.parse(localStorage.getItem('school_db_v28')) || defaultDB;
         if (!db.settings) db.settings = { strictPrim: false, strictSec: true };
+        
         let currentTeacherId = null;
         let currentInteractiveLessonId = null;
+
+        if (!localStorage.getItem('school_db_v28')) {
+            if(localStorage.getItem('school_db_v27')) db = JSON.parse(localStorage.getItem('school_db_v27'));
+            else if(localStorage.getItem('school_db_v26')) db = JSON.parse(localStorage.getItem('school_db_v26'));
+            else if(localStorage.getItem('school_db_v24')) db = JSON.parse(localStorage.getItem('school_db_v24'));
+            
+            if(!db.settings) db.settings = { strictPrim: false, strictSec: true };
+            localStorage.setItem('school_db_v28', JSON.stringify(db));
+        }
 
         function openTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -280,7 +297,7 @@
         }
 
         function updateUI() {
-            localStorage.setItem('school_db_v27', JSON.stringify(db));
+            localStorage.setItem('school_db_v28', JSON.stringify(db));
             
             const state = {
                 tsLevel: document.getElementById('ts-level')?.value,
@@ -339,15 +356,19 @@
             if(state.interPeriod) document.getElementById('interactive-period').value = state.interPeriod;
             if(state.interDay) document.getElementById('interactive-day-select').value = state.interDay;
             
+            // Ripristino stato checkbox UI in base alle impostazioni
+            if (!db.settings) db.settings = { strictPrim: false, strictSec: true };
             if(document.getElementById('strict-sub-prim')) document.getElementById('strict-sub-prim').checked = db.settings.strictPrim;
             if(document.getElementById('strict-sub-sec')) document.getElementById('strict-sub-sec').checked = db.settings.strictSec;
-            
+
             if(document.getElementById('tab-interactive').classList.contains('active')) updateInteractiveFilters(); 
             if(document.getElementById('tab-compose').classList.contains('active')) renderComposerGrid();
             renderTimeslotsList();
         }
 
+        // FUNZIONE REGOLE SUPPLENZE
         function toggleStrictSub(levelType) {
+            if (!db.settings) db.settings = { strictPrim: false, strictSec: true };
             if(levelType === 'prim') db.settings.strictPrim = document.getElementById('strict-sub-prim').checked;
             if(levelType === 'sec') db.settings.strictSec = document.getElementById('strict-sub-sec').checked;
             updateUI();
@@ -601,6 +622,9 @@
             updateUI();
         }
 
+        // ==========================================
+        // TAB 4: SUPPLENZE RAPIDE (CON FILTRO CORRETTO E SELEZIONABILE)
+        // ==========================================
         function loadAbsentTeacherLessons() {
             const tid = document.getElementById('sub-absent-teacher').value; const day = document.getElementById('sub-day').value; const area = document.getElementById('sub-lessons-area'); if(!tid) { area.innerHTML = ''; return; }
             const daySlotIds = db.timeslots.filter(ts => ts.day === day).map(ts => ts.id); const absentLessons = db.lessons.filter(l => l.teacherId === tid && daySlotIds.includes(l.timeslotId));
@@ -616,9 +640,9 @@
                     if(t.id === tid || t.dayOff === slot.day) return false;
                     
                     if (isSec && db.settings.strictSec) {
-                        if (!t.assignments.some(a => a.classId === cls.id)) return false;
+                        if (!t.assignments.some(a => a.classId === cls.id)) return false; 
                     } else if (isPrim && db.settings.strictPrim) {
-                        if (!t.assignments.some(a => a.classId === cls.id)) return false;
+                        if (!t.assignments.some(a => a.classId === cls.id)) return false; 
                     } else {
                         const tLevels = db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId);
                         if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
@@ -643,6 +667,9 @@
         function assignSub(lId) { db.substitutions.push({ id: "sub_" + Date.now(), lessonId: lId, subTeacherId: document.getElementById(`sub-${lId}`).value }); updateUI(); loadAbsentTeacherLessons(); }
         function removeSub(sId) { db.substitutions = db.substitutions.filter(s => s.id !== sId); updateUI(); loadAbsentTeacherLessons(); }
 
+        // ==========================================
+        // TAB 5: MONITOR UNIVERSALE INTERATTIVO
+        // ==========================================
         function updateInteractiveFilters() {
             const mode = document.getElementById('interactive-view-mode').value;
             const period = document.getElementById('interactive-period').value;
@@ -782,7 +809,7 @@
                         let timeStr = `<div style="font-size:10px; color:#666;">${ts.start}-${ts.end}</div>`;
                         if(sub) {
                             const subT = db.teachers.find(t => t.id === sub.subTeacherId);
-                            cellHtml += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${l.id}')">${timeStr}<span class="badge">[SOST]</span><br><del>${cls.name}</del><br><b>${subT.name}</b><br><span class="badge">${subj.name}</span></div>`;
+                            cellHtml += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${l.id}')">${timeStr}<span class="badge">[SOST]</span><br><del>${cls.name}</del><br><b>${subT.name}</b><br><span class="badge">${subject.name}</span></div>`;
                         } else {
                             cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${l.id}')">${timeStr}<b>${cls.name}</b><br><span class="badge">${subj.name}</span></div>`;
                         }
@@ -808,10 +835,12 @@
             container.innerHTML = html;
         }
 
+        // Funzione Modale (CON DOPPIO FILTRO AGGIORNATO)
         function openCellModal(lessonId) {
             currentInteractiveLessonId = lessonId; const lesson = db.lessons.find(l => l.id === lessonId); const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId); const subj = db.subjects.find(s => s.id === lesson.subjectId); const titolare = db.teachers.find(t => t.id === lesson.teacherId);
             document.getElementById('modal-cell-info').innerHTML = `<b>Classe:</b> ${cls.name}<br><b>Orario:</b> ${slot.day} ${slot.start} - ${slot.end}<br><b>Attività:</b> ${subj.name}<br><b>Prof. Titolare:</b> ${titolare.name}`;
             const activeSub = db.substitutions.find(s => s.lessonId === lessonId); const subArea = document.getElementById('modal-sub-area');
+            
             if (activeSub) {
                 const subTeacher = db.teachers.find(t => t.id === activeSub.subTeacherId);
                 subArea.innerHTML = `<div style="background:#fee2e2; padding:10px; border-radius:4px; border: 1px solid #ef4444;"><b style="color:#dc2626;">⚠ Supplenza Attiva</b><br>Sostituto attuale: <b>${subTeacher.name}</b><button class="danger" style="margin-top:15px; width:100%;" onclick="removeInteractiveSub('${activeSub.id}')">Annulla Supplenza</button></div>`;
@@ -850,7 +879,25 @@
         function addClass() { const n = document.getElementById('c-name').value.trim(); if(n) { db.classes.push({id:"c_"+Date.now(), levelId:document.getElementById('c-level').value, name:n}); document.getElementById('c-name').value=''; updateUI(); } }
         function addTeacher() { const n=document.getElementById('t-name').value.trim(); if(n){ const nid="t_"+Date.now(); db.teachers.push({id:nid, name:n, dayOff:document.getElementById('t-dayoff').value, maxHours:parseInt(document.getElementById('t-hours').value)||18, assignments:[]}); document.getElementById('t-name').value=''; currentTeacherId=nid; updateUI(); loadTeacherAssignments(); } }
         
-        function importJSON() { const file = document.getElementById('json-file').files[0]; if (!file) return alert("Seleziona JSON."); const reader = new FileReader(); reader.onload = function(e) { try { const importedDB = JSON.parse(e.target.result); if (importedDB.levels && importedDB.classes && importedDB.teachers) { db = importedDB; updateUI(); alert("✅ Database ripristinato!"); document.getElementById('json-file').value = ''; } else alert("❌ File JSON non valido."); } catch(err) { alert("❌ Errore durante la lettura."); } }; reader.readAsText(file); }
+        function importJSON() { 
+            const file = document.getElementById('json-file').files[0]; 
+            if (!file) return alert("Seleziona JSON."); 
+            const reader = new FileReader(); 
+            reader.onload = function(e) { 
+                try { 
+                    const importedDB = JSON.parse(e.target.result); 
+                    if (importedDB.levels && importedDB.classes && importedDB.teachers) { 
+                        if (!importedDB.settings) importedDB.settings = { strictPrim: false, strictSec: true };
+                        db = importedDB; 
+                        updateUI(); 
+                        alert("✅ Database ripristinato!"); 
+                        document.getElementById('json-file').value = ''; 
+                    } else alert("❌ File JSON non valido."); 
+                } catch(err) { alert("❌ Errore durante la lettura."); } 
+            }; 
+            reader.readAsText(file); 
+        }
+        
         function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"})); const dateStr = new Date().toISOString().slice(0,10); a.download=`Backup_Scuola_${dateStr}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
         function downloadExcelTemplate() { const wb = XLSX.utils.book_new(); const wsMat = XLSX.utils.aoa_to_sheet([["Materia"], ["Matematica"], ["Italiano"]]); const wsCls = XLSX.utils.aoa_to_sheet([["Ordine", "Classe"], ["Primaria", "1A"], ["Secondaria", "1B"]]); const wsDoc = XLSX.utils.aoa_to_sheet([["Docente", "GiornoLibero", "Ore"], ["Mario Rossi", "Lunedì", 18], ["Giulia Bianchi", "Nessuno", 24]]); XLSX.utils.book_append_sheet(wb, wsMat, "Materie"); XLSX.utils.book_append_sheet(wb, wsCls, "Classi"); XLSX.utils.book_append_sheet(wb, wsDoc, "Docenti"); XLSX.writeFile(wb, "Template_Da_Compilare_Orario.xlsx"); }
         function importExcel() { 
@@ -936,7 +983,7 @@
         }
 
         function generateExcelFile(aoaData, filename) { const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(aoaData); ws['!cols'] = [{wch: 15}, {wch: 22}, {wch: 22}, {wch: 22}, {wch: 22}, {wch: 22}]; XLSX.utils.book_append_sheet(wb, ws, "Orario"); XLSX.writeFile(wb, `${filename}.xlsx`); }
-        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati del database, sei sicuro?")) { localStorage.removeItem('school_db_v27'); db = JSON.parse(JSON.stringify(defaultDB)); currentTeacherId = null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
+        function clearDB() { if(confirm("⚠ ATTENZIONE! Cancellerai tutti i dati del database, sei sicuro?")) { localStorage.removeItem('school_db_v28'); db = JSON.parse(JSON.stringify(defaultDB)); currentTeacherId = null; updateUI(); document.getElementById('assignment-workspace').style.display='none'; document.getElementById('composer-grid-container').innerHTML=''; } }
 
         updateUI();
     </script>
