@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Orario Scolastico Completo V28 - Supplenze Perfette</title>
     
     <link rel="manifest" href='data:application/manifest+json,{"name":"Orario Scolastico Completo","short_name":"OrarioApp","start_url":".","display":"standalone","background_color":"#f4f6f9","theme_color":"#3b82f6","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 100 100\\"><rect width=\\"100\\" height=\\"100\\" fill=\\"%233b82f6\\"/><text x=\\"50\\" y=\\"65\\" font-size=\\"50\\" fill=\\"white\\" text-anchor=\\"middle\\" font-family=\\"Arial\\">OS</text></svg>","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}'>
@@ -65,6 +65,22 @@
         /* CONTENITORE NASCOSTO PER STAMPA SUPPLENZE */
         #subs-report-print { display: none; }
 
+        /* RESPONSIVITA' MOBILE Aggiunta */
+        #composer-grid-container, #interactive-grid-container, #timeslot-list-container, #class-flags-container { 
+            overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; 
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 15px; }
+            .tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+            .tab-btn { flex: 0 0 auto; white-space: nowrap; font-size: 13px; }
+            input, select, button { font-size: 16px !important; } 
+            #interactive-filters { flex-direction: column; align-items: stretch; gap: 10px; }
+            #interactive-filters > div { width: 100%; }
+            .timetable-composer { min-width: 600px; }
+        }
+
         /* MOTORE DI STAMPA OTTIMIZZATO A4 ORIZZONTALE */
         @media print {
             body { background: white; padding: 0; margin: 0; color: black; }
@@ -78,7 +94,7 @@
             #interactive-grid-container h2 { font-size: 16pt; margin-bottom: 15px; margin-top:0; color: black !important; text-align: center; }
             #interactive-grid-container h3 { font-size: 14pt; margin-top: 15px; margin-bottom: 5px; color: black !important; }
             
-            .timetable-composer { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9pt; }
+            .timetable-composer { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9pt; min-width: auto; }
             .timetable-composer th, .timetable-composer td { border: 1px solid #333; padding: 4px; text-align: center; vertical-align: middle; word-wrap: break-word; overflow: hidden; }
             .timetable-composer th { background-color: #eee !important; color: #000 !important; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .timetable-composer th:first-child { width: 12% !important; } 
@@ -144,16 +160,16 @@
                     <p style="font-size:13px; color:#3b82f6; font-weight:bold;">Scegli il tipo di attività. L'aggiornamento avverrà per <b>tutta la settimana</b>.</p>
                     <select id="view-ts-level" onchange="renderTimeslotsList()" style="width:250px; margin:0; padding:5px; border-color:#3b82f6;"></select>
                 </div>
-                <div id="timeslot-list-container" style="margin-top:15px; max-height:400px; overflow-y:auto;"></div>
+                <div id="timeslot-list-container" style="margin-top:15px; max-height:400px;"></div>
             </div>
 
             <div class="card" style="grid-column: span 3; background:#fafafa;">
                 <div class="card-header" style="background:#eee;">Aggiunta Singola Manuale (Per attività extra/singolo giorno)</div>
-                <div style="display: flex; gap: 15px;">
-                    <div style="flex:1;"><label>Ordine:</label><select id="ts-level"></select></div>
-                    <div style="flex:1;"><label>Giorno:</label><select id="ts-day"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
-                    <div style="flex:1;"><label>Tipo (Scegli o scrivi):</label><input type="text" id="ts-type" list="type-suggestions" value="Lezione"></div>
-                    <div style="flex:1;"><label>Da - A:</label><div style="display:flex; gap:5px;"><input type="time" id="ts-start"> <input type="time" id="ts-end"></div></div>
+                <div style="display: flex; gap: 15px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:150px;"><label>Ordine:</label><select id="ts-level"></select></div>
+                    <div style="flex:1; min-width:150px;"><label>Giorno:</label><select id="ts-day"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
+                    <div style="flex:1; min-width:150px;"><label>Tipo (Scegli o scrivi):</label><input type="text" id="ts-type" list="type-suggestions" value="Lezione"></div>
+                    <div style="flex:1; min-width:150px;"><label>Da - A:</label><div style="display:flex; gap:5px;"><input type="time" id="ts-start"> <input type="time" id="ts-end"></div></div>
                 </div>
                 <button onclick="addTimeslot()" style="background:#64748b; margin-top: 15px;">Aggiungi Singola Fascia</button>
             </div>
@@ -171,7 +187,7 @@
         <div id="assignment-workspace" class="card" style="display:none; margin-top:20px; border-left: 4px solid #3b82f6;">
             <div class="card-header">Classi in cui insegna: <span id="assign-teacher-name" style="color:#3b82f6;"></span></div>
             <p style="font-size:12px;">Seleziona la materia e metti la spunta. Per la sorveglianza, usa una materia fittizia (es. "Mensa").</p>
-            <div id="class-flags-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background:#fff;"></div>
+            <div id="class-flags-container" style="max-height: 400px; padding: 10px; background:#fff; border: 1px solid #ccc;"></div>
             <button class="primary" style="margin-top: 15px;" onclick="saveTeacherAssignments()">💾 Salva Assegnazioni</button>
         </div>
     </div>
@@ -187,7 +203,7 @@
 
     <div id="tab-subs" class="tab-content">
         
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap:wrap; gap:10px;">
             <h2 style="margin:0; color:#2c3e50;">Gestione Assenze e Supplenze</h2>
             <button onclick="printSubstitutions()" style="background:#475569; padding: 10px 20px;">🖨️ Stampa Riepilogo Supplenze</button>
         </div>
@@ -228,7 +244,7 @@
     </div>
 
     <div id="tab-interactive" class="tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap:wrap; gap:10px;">
             <h2 style="margin:0;">Monitor Interattivo e Stampa Griglie</h2>
             <button onclick="printTimetable()" style="background:#475569; padding: 10px 20px;">🖨️ Stampa questa vista</button>
         </div>
@@ -750,6 +766,9 @@
             updateUI();
         }
 
+        // ==========================================
+        // LOGICA REGOLE SUPPLENZE AVANZATA CON ORDINAMENTO E INFO PLESSO
+        // ==========================================
         function loadAbsentTeacherLessons() {
             const tid = document.getElementById('sub-absent-teacher').value; const day = document.getElementById('sub-day').value; const area = document.getElementById('sub-lessons-area'); if(!tid) { area.innerHTML = ''; return; }
             const daySlotIds = db.timeslots.filter(ts => ts.day === day).map(ts => ts.id); const absentLessons = db.lessons.filter(l => l.teacherId === tid && daySlotIds.includes(l.timeslotId));
