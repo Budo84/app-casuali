@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orario Scolastico Completo V28 - Supplenze e Calendario</title>
+    <title>Orario Scolastico Completo V28 - Supplenze Perfette</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f4f6f9; color: #333; }
@@ -20,7 +20,7 @@
         .card { background: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .card-header { background: #f8fafc; margin: -20px -20px 20px -20px; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; border-radius: 8px 8px 0 0; font-weight: bold; }
         
-        input[type="text"], input[type="number"], input[type="time"], input[type="date"], select, input[type="file"] { padding: 10px; margin: 5px 0 15px 0; width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; }
+        input[type="text"], input[type="number"], input[type="time"], select, input[type="file"] { padding: 10px; margin: 5px 0 15px 0; width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; }
         button { padding: 10px 18px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
         button:hover { background: #059669; }
         button.danger { background: #ef4444; }
@@ -92,6 +92,7 @@
             body.printing-subs > *:not(#subs-report-print) { display: none !important; }
             body.printing-subs #subs-report-print { display: block !important; width: 100%; }
             body.printing-subs #tab-interactive { display: none !important; }
+            body.printing-subs #tab-subs { display: none !important; }
         }
     </style>
 </head>
@@ -218,13 +219,13 @@
 
         <div class="card grid-2">
             <div><label>Docente Assente:</label><select id="sub-absent-teacher" onchange="loadAbsentTeacherLessons()"></select></div>
-            <div><label>Data Assenza (Calendario):</label><input type="date" id="sub-date" onchange="loadAbsentTeacherLessons()"></div>
+            <div><label>Giorno Assenza:</label><select id="sub-day" onchange="loadAbsentTeacherLessons()"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option></select></div>
         </div>
         <div id="sub-lessons-area" style="margin-top:20px;"></div>
     </div>
 
     <div id="tab-interactive" class="tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap:wrap; gap:10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2 style="margin:0;">Monitor Interattivo e Stampa Griglie</h2>
             <button onclick="printTimetable()" style="background:#475569; padding: 10px 20px;">🖨️ Stampa questa vista</button>
         </div>
@@ -245,9 +246,11 @@
                     <option value="day">Vista Giornaliera</option>
                 </select>
             </div>
-            <div>
-                <label style="font-weight:bold; color:#5b21b6;">Data Riferimento:</label>
-                <input type="date" id="interactive-date" onchange="updateInteractiveFilters()" style="border-color:#8b5cf6; width: 150px;">
+            <div id="filter-day-container" style="display:none;">
+                <label style="font-weight:bold; color:#5b21b6;">Seleziona Giorno:</label>
+                <select id="interactive-day-select" onchange="renderInteractiveTimetable()" style="border-color:#8b5cf6;">
+                    <option value="Lunedì">Lunedì</option><option value="Martedì">Martedì</option><option value="Mercoledì">Mercoledì</option><option value="Giovedì">Giovedì</option><option value="Venerdì">Venerdì</option>
+                </select>
             </div>
             
             <div id="filter-level-container"><label style="font-weight:bold; color:#5b21b6;">Seleziona Ordine:</label><select id="interactive-level-select" onchange="renderInteractiveTimetable()" style="border-color:#8b5cf6;"></select></div>
@@ -300,12 +303,14 @@
         
         let db = JSON.parse(localStorage.getItem('school_db_v28')) || defaultDB;
         
+        // Assicura l'esistenza dei settings per retrocompatibilità
         if (!db.settings) db.settings = { strictPrim: false, strictSec: true, strictDays: ['Martedì', 'Giovedì'] };
         if (!db.settings.strictDays) db.settings.strictDays = ['Martedì', 'Giovedì'];
 
         let currentTeacherId = null;
         let currentInteractiveLessonId = null;
 
+        // Migrazione da versioni precedenti
         if (!localStorage.getItem('school_db_v28')) {
             if(localStorage.getItem('school_db_v27')) db = JSON.parse(localStorage.getItem('school_db_v27'));
             else if(localStorage.getItem('school_db_v26')) db = JSON.parse(localStorage.getItem('school_db_v26'));
@@ -316,33 +321,9 @@
             localStorage.setItem('school_db_v28', JSON.stringify(db));
         }
 
+        // --- FIX INFANZIA ---
         if (!db.levels.some(l => l.id === "lvl_inf" || l.name.toLowerCase() === "infanzia")) {
             db.levels.unshift({ id: "lvl_inf", name: "Infanzia" });
-        }
-
-        // Funzioni Helper Date
-        function getItalianDay(dateStr) {
-            if(!dateStr) return '';
-            const d = new Date(dateStr);
-            const days = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
-            return days[d.getDay()];
-        }
-
-        function getWeekDates(refDateStr) {
-            if(!refDateStr) return {};
-            const ref = new Date(refDateStr);
-            const day = ref.getDay();
-            const diff = ref.getDate() - day + (day === 0 ? -6 : 1);
-            const monday = new Date(ref.setDate(diff));
-            
-            const dates = {};
-            const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
-            days.forEach((d, i) => {
-                const current = new Date(monday);
-                current.setDate(monday.getDate() + i);
-                dates[d] = current.toISOString().split('T')[0];
-            });
-            return dates;
         }
 
         function openTab(tabId) {
@@ -356,11 +337,6 @@
         function updateUI() {
             localStorage.setItem('school_db_v28', JSON.stringify(db));
             
-            // Imposta date di default se vuote
-            const today = new Date().toISOString().split('T')[0];
-            if (!document.getElementById('sub-date').value) document.getElementById('sub-date').value = today;
-            if (!document.getElementById('interactive-date').value) document.getElementById('interactive-date').value = today;
-
             const state = {
                 tsLevel: document.getElementById('ts-level')?.value,
                 viewTsLevel: document.getElementById('view-ts-level')?.value,
@@ -373,7 +349,8 @@
                 composeClass: document.getElementById('compose-class-select')?.value,
                 exportClass: document.getElementById('export-class-select')?.value,
                 interactiveClass: document.getElementById('interactive-class-select')?.value,
-                interPeriod: document.getElementById('interactive-period')?.value
+                interPeriod: document.getElementById('interactive-period')?.value,
+                interDay: document.getElementById('interactive-day-select')?.value
             };
 
             const levelOpts = db.levels.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
@@ -424,6 +401,7 @@
             if(state.exportClass) document.getElementById('export-class-select').value = state.exportClass;
             if(state.interactiveClass) document.getElementById('interactive-class-select').value = state.interactiveClass;
             if(state.interPeriod) document.getElementById('interactive-period').value = state.interPeriod;
+            if(state.interDay) document.getElementById('interactive-day-select').value = state.interDay;
             
             // Ripristino stato checkbox Impostazioni
             if (!db.settings) db.settings = { strictPrim: false, strictSec: true, strictDays: ['Martedì', 'Giovedì'] };
@@ -437,11 +415,14 @@
                 daysCb.forEach(cb => { cb.checked = db.settings.strictDays.includes(cb.value); });
             }
 
+            // SINCRONIZZAZIONE TRA SCHEDE
             if(document.getElementById('tab-interactive').classList.contains('active')) updateInteractiveFilters(); 
             if(document.getElementById('tab-compose').classList.contains('active')) renderComposerGrid();
+            if(document.getElementById('tab-subs').classList.contains('active')) loadAbsentTeacherLessons();
             renderTimeslotsList();
         }
 
+        // SALVATAGGIO REGOLE
         function toggleStrictSub() {
             if (!db.settings) db.settings = { strictPrim: false, strictSec: true, strictDays: ['Martedì', 'Giovedì'] };
             db.settings.strictPrim = document.getElementById('strict-sub-prim').checked;
@@ -475,13 +456,9 @@
             setTimeout(() => document.title = originalTitle, 1000); 
         }
 
-        // STAMPA SUPPLENZE CON DATA
+        // NUOVA FUNZIONE: STAMPA SUPPLENZE
         function printSubstitutions() {
-            const dateVal = document.getElementById('sub-date').value;
-            if(!dateVal) return alert("Seleziona una data per stampare le supplenze.");
-
-            const daySubs = db.substitutions.filter(s => s.date === dateVal);
-            if (daySubs.length === 0) return alert("Nessuna supplenza inserita per la data selezionata.");
+            if (db.substitutions.length === 0) return alert("Nessuna supplenza attiva da stampare.");
             
             let reportDiv = document.getElementById('subs-report-print');
             if (!reportDiv) {
@@ -489,14 +466,13 @@
                 reportDiv.id = 'subs-report-print';
                 document.body.appendChild(reportDiv);
             }
-
-            const formattedDate = new Date(dateVal).toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             
-            let printHtml = `<h2 style="text-align:center; color:black;">Riepilogo Supplenze - ${formattedDate.toUpperCase()}</h2>
+            let printHtml = `<h2 style="text-align:center; color:black;">Riepilogo Supplenze</h2>
             <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12pt;" border="1" cellpadding="8">
-            <tr style="background:#eee;"><th>Fascia Oraria</th><th>Classe (Ordine)</th><th>Docente Assente</th><th>Sostituto</th></tr>`;
+            <tr style="background:#eee;"><th>Giorno</th><th>Orario</th><th>Classe (Ordine)</th><th>Docente Assente</th><th>Sostituto</th></tr>`;
             
-            let subsData = daySubs.map(sub => {
+            const daysOrder = { 'Lunedì':1, 'Martedì':2, 'Mercoledì':3, 'Giovedì':4, 'Venerdì':5 };
+            let subsData = db.substitutions.map(sub => {
                 const l = db.lessons.find(x => x.id === sub.lessonId);
                 if (!l) return null;
                 const ts = db.timeslots.find(x => x.id === l.timeslotId);
@@ -505,25 +481,30 @@
                 const tAssente = db.teachers.find(x => x.id === l.teacherId);
                 const tSost = db.teachers.find(x => x.id === sub.subTeacherId);
                 return { 
+                    day: ts?.day || '?', 
                     start: ts?.start || '?', 
                     end: ts?.end || '?', 
                     className: c?.name || '?', 
                     levelName: lvl?.name.replace('Scuola ', '') || '?', 
                     absent: tAssente?.name || 'Sconosciuto', 
-                    subbed: tSost?.name || 'Sconosciuto'
+                    subbed: tSost?.name || 'Sconosciuto', 
+                    dayOrd: daysOrder[ts?.day] || 9 
                 };
             }).filter(Boolean);
 
-            subsData.sort((a,b) => a.start.localeCompare(b.start));
+            subsData.sort((a,b) => {
+                if(a.dayOrd !== b.dayOrd) return a.dayOrd - b.dayOrd;
+                return a.start.localeCompare(b.start);
+            });
 
             subsData.forEach(d => {
-                printHtml += `<tr><td>${d.start} - ${d.end}</td><td>${d.className} (${d.levelName})</td><td style="color:#dc2626;">${d.absent}</td><td style="color:#166534; font-weight:bold;">${d.subbed}</td></tr>`;
+                printHtml += `<tr><td>${d.day}</td><td>${d.start} - ${d.end}</td><td>${d.className} (${d.levelName})</td><td style="color:#dc2626;">${d.absent}</td><td style="color:#166534; font-weight:bold;">${d.subbed}</td></tr>`;
             });
             printHtml += `</table>`;
             reportDiv.innerHTML = printHtml;
 
             const originalTitle = document.title;
-            document.title = "Supplenze_" + dateVal;
+            document.title = "Riepilogo_Supplenze";
             document.body.classList.add('printing-subs');
             window.print();
             document.body.classList.remove('printing-subs');
@@ -758,29 +739,12 @@
             updateUI();
         }
 
-        // LOGICA SUPPLENZE CON DATA
         function loadAbsentTeacherLessons() {
-            const tid = document.getElementById('sub-absent-teacher').value; 
-            const dateVal = document.getElementById('sub-date').value; 
-            const area = document.getElementById('sub-lessons-area'); 
-            
-            if(!tid || !dateVal) { area.innerHTML = ''; return; }
-            
-            const day = getItalianDay(dateVal);
-            if(day === 'Sabato' || day === 'Domenica') {
-                area.innerHTML = '<p style="color:red; font-weight:bold;">Seleziona un giorno dal Lunedì al Venerdì.</p>';
-                return;
-            }
-
-            const daySlotIds = db.timeslots.filter(ts => ts.day === day).map(ts => ts.id); 
-            const absentLessons = db.lessons.filter(l => l.teacherId === tid && daySlotIds.includes(l.timeslotId));
-            
-            if(absentLessons.length === 0) return area.innerHTML = `<p>Nessuna lezione da coprire in questa data.</p>`;
-            
-            let html = ``; 
-            absentLessons.forEach(lesson => {
-                const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); 
-                const cls = db.classes.find(c => c.id === lesson.classId);
+            const tid = document.getElementById('sub-absent-teacher').value; const day = document.getElementById('sub-day').value; const area = document.getElementById('sub-lessons-area'); if(!tid) { area.innerHTML = ''; return; }
+            const daySlotIds = db.timeslots.filter(ts => ts.day === day).map(ts => ts.id); const absentLessons = db.lessons.filter(l => l.teacherId === tid && daySlotIds.includes(l.timeslotId));
+            if(absentLessons.length === 0) return area.innerHTML = `<p>Nessuna lezione da coprire.</p>`;
+            let html = ``; absentLessons.forEach(lesson => {
+                const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId);
                 
                 const lvlName = db.levels.find(l => l.id === cls.levelId).name.toLowerCase();
                 const isSec = lvlName.includes('sec');
@@ -809,14 +773,13 @@
                         if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
                     }
                     
-                    return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && sub.date === dateVal && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id));
+                    return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id));
                 });
                 
+                // ORDINAMENTO ALFABETICO E INFO PLESSO IN TENDINA
                 availableSubs.sort((a,b) => a.name.localeCompare(b.name));
 
-                // Cerca la supplenza per la DATA specifica
-                const activeSub = db.substitutions.find(s => s.lessonId === lesson.id && s.date === dateVal);
-                
+                const activeSub = db.substitutions.find(s => s.lessonId === lesson.id);
                 html += `<div style="background:#fff; padding:10px; border:1px solid #ccc; margin-bottom:10px; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
                     <div><b>${slot.start}-${slot.end}</b> | Classe: <b>${cls.name}</b> ${activeSub ? `<br><span style="color:red">➡ Sostituto: ${db.teachers.find(t=>t.id===activeSub.subTeacherId).name}</span>` : ''}</div>
                     <div>`;
@@ -837,18 +800,8 @@
             area.innerHTML = html;
         }
 
-        function assignSub(lId) { 
-            const dateVal = document.getElementById('sub-date').value;
-            db.substitutions.push({ id: "sub_" + Date.now(), lessonId: lId, subTeacherId: document.getElementById(`sub-${lId}`).value, date: dateVal }); 
-            updateUI(); 
-            loadAbsentTeacherLessons(); 
-        }
-
-        function removeSub(sId) { 
-            db.substitutions = db.substitutions.filter(s => s.id !== sId); 
-            updateUI(); 
-            loadAbsentTeacherLessons(); 
-        }
+        function assignSub(lId) { db.substitutions.push({ id: "sub_" + Date.now(), lessonId: lId, subTeacherId: document.getElementById(`sub-${lId}`).value }); updateUI(); loadAbsentTeacherLessons(); }
+        function removeSub(sId) { db.substitutions = db.substitutions.filter(s => s.id !== sId); updateUI(); loadAbsentTeacherLessons(); }
 
         function updateInteractiveFilters() {
             const mode = document.getElementById('interactive-view-mode').value;
@@ -857,6 +810,7 @@
             document.getElementById('filter-level-container').style.display = mode === 'level' ? 'block' : 'none';
             document.getElementById('filter-class-container').style.display = mode === 'class' ? 'block' : 'none';
             document.getElementById('filter-teacher-container').style.display = mode === 'teacher' ? 'block' : 'none';
+            document.getElementById('filter-day-container').style.display = period === 'day' ? 'block' : 'none';
             
             document.getElementById('interactive-grid-container').innerHTML = ''; 
             renderInteractiveTimetable();
@@ -864,10 +818,7 @@
 
         function getInteractiveDays() {
             const period = document.getElementById('interactive-period').value;
-            if(period === 'day') {
-                const d = getItalianDay(document.getElementById('interactive-date').value);
-                return (d === 'Sabato' || d === 'Domenica') ? [] : [d];
-            }
+            if(period === 'day') return [document.getElementById('interactive-day-select').value];
             return ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
         }
 
@@ -882,18 +833,12 @@
             const levelId = document.getElementById('interactive-level-select').value; const container = document.getElementById('interactive-grid-container'); if(!levelId) { container.innerHTML = ''; return; }
             const levelClasses = db.classes.filter(c => c.levelId === levelId); if(levelClasses.length === 0) return container.innerHTML = "<p>Nessuna classe presente.</p>";
 
-            const refDate = document.getElementById('interactive-date').value;
-            const weekDates = getWeekDates(refDate);
-
             let html = ''; const days = getInteractiveDays();
-            if(days.length === 0) return container.innerHTML = "<p>Seleziona un giorno feriale.</p>";
-
             days.forEach(day => {
-                const currentDate = weekDates[day];
                 const daySlots = db.timeslots.filter(ts => ts.levelId === levelId && ts.day === day).sort((a,b)=>a.start.localeCompare(b.start));
                 if(daySlots.length === 0) return;
 
-                html += `<h3 style="color:#5b21b6; border-bottom:2px solid #5b21b6; padding-bottom:5px;">${day} (${currentDate})</h3><table class="timetable-composer"><tr><th style="width:120px; background:#8b5cf6;">Orario</th>`;
+                html += `<h3 style="color:#5b21b6; border-bottom:2px solid #5b21b6; padding-bottom:5px;">${day}</h3><table class="timetable-composer"><tr><th style="width:120px; background:#8b5cf6;">Orario</th>`;
                 levelClasses.forEach(c => html += `<th style="background:#8b5cf6;">${c.name}</th>`); html += `</tr>`;
 
                 daySlots.forEach(slot => {
@@ -906,13 +851,12 @@
                         else {
                             let cellContent = '';
                             cellLessons.forEach(lesson => {
-                                const teacher = db.teachers.find(t => t.id === lesson.teacherId); const subject = db.subjects.find(s => s.id === lesson.subjectId); 
-                                const sub = db.substitutions.find(s => s.lessonId === lesson.id && s.date === currentDate);
+                                const teacher = db.teachers.find(t => t.id === lesson.teacherId); const subject = db.subjects.find(s => s.id === lesson.subjectId); const sub = db.substitutions.find(s => s.lessonId === lesson.id);
                                 if(sub) {
                                     const subT = db.teachers.find(t => t.id === sub.subTeacherId);
-                                    cellContent += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${lesson.id}', '${currentDate}')"><span class="badge">[SOST]</span><br><del>${teacher.name}</del><br><b>${subT.name}</b><br><span class="badge">${subject.name}</span></div>`;
+                                    cellContent += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${lesson.id}')"><span class="badge">[SOST]</span><br><del>${teacher.name}</del><br><b>${subT.name}</b><br><span class="badge">${subject.name}</span></div>`;
                                 } else {
-                                    cellContent += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${lesson.id}', '${currentDate}')" title="Clicca per gestire"><b>${teacher.name}</b><br><span class="badge">${subject.name}</span></div>`;
+                                    cellContent += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${lesson.id}')" title="Clicca per gestire"><b>${teacher.name}</b><br><span class="badge">${subject.name}</span></div>`;
                                 }
                             });
                             html += `<td class="${cssClass}">${cellContent}</td>`;
@@ -926,21 +870,15 @@
             const classId = document.getElementById('interactive-class-select').value; const container = document.getElementById('interactive-grid-container'); if(!classId) { container.innerHTML = ''; return; }
             const cls = db.classes.find(c => c.id === classId); const levelSlots = db.timeslots.filter(ts => ts.levelId === cls.levelId); const uniqueTimes = [...new Set(levelSlots.map(ts => `${ts.start}-${ts.end}-${ts.type}`))].sort();
 
-            const refDate = document.getElementById('interactive-date').value;
-            const weekDates = getWeekDates(refDate);
-
             const days = getInteractiveDays();
-            if(days.length === 0) return container.innerHTML = "<p>Seleziona un giorno feriale.</p>";
-
             let html = `<h2 style="color:#5b21b6; text-align:center;">Orario Classe ${cls.name}</h2><table class="timetable-composer"><tr><th style="width:120px; background:#8b5cf6;">Orario</th>`;
-            days.forEach(d => html += `<th style="background:#8b5cf6;">${d}<br><small>${weekDates[d]}</small></th>`); html += `</tr>`;
+            days.forEach(d => html += `<th style="background:#8b5cf6;">${d}</th>`); html += `</tr>`;
 
             uniqueTimes.forEach(timeKey => {
                 const [start, end, type] = timeKey.split('-'); let cssClass = type !== 'Lezione' ? 'slot-break' : '';
                 html += `<tr><td class="${cssClass}"><b>${start} - ${end}</b><br><small>${type.toUpperCase()}</small></td>`;
                 
                 days.forEach(day => {
-                    const currentDate = weekDates[day];
                     const slot = levelSlots.find(ts => ts.day === day && ts.start === start && ts.end === end);
                     if(!slot) { html += `<td class="${cssClass}"></td>`; } 
                     else {
@@ -949,13 +887,12 @@
                         else {
                             let cellContent = '';
                             cellLessons.forEach(lesson => {
-                                const teacher = db.teachers.find(t => t.id === lesson.teacherId); const subject = db.subjects.find(s => s.id === lesson.subjectId); 
-                                const sub = db.substitutions.find(s => s.lessonId === lesson.id && s.date === currentDate);
+                                const teacher = db.teachers.find(t => t.id === lesson.teacherId); const subject = db.subjects.find(s => s.id === lesson.subjectId); const sub = db.substitutions.find(s => s.lessonId === lesson.id);
                                 if(sub) {
                                     const subT = db.teachers.find(t => t.id === sub.subTeacherId);
-                                    cellContent += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${lesson.id}', '${currentDate}')"><span class="badge">[SOST]</span><br><del>${teacher.name}</del><br><b>${subT.name}</b><br><span class="badge">${subject.name}</span></div>`;
+                                    cellContent += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${lesson.id}')"><span class="badge">[SOST]</span><br><del>${teacher.name}</del><br><b>${subT.name}</b><br><span class="badge">${subject.name}</span></div>`;
                                 } else {
-                                    cellContent += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${lesson.id}', '${currentDate}')"><b>${teacher.name}</b><br><span class="badge">${subject.name}</span></div>`;
+                                    cellContent += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${lesson.id}')"><b>${teacher.name}</b><br><span class="badge">${subject.name}</span></div>`;
                                 }
                             }); html += `<td class="${cssClass}">${cellContent}</td>`;
                         }
@@ -968,15 +905,10 @@
             const teacherId = document.getElementById('interactive-teacher-select').value; const container = document.getElementById('interactive-grid-container'); if(!teacherId) { container.innerHTML = ''; return; }
             const teacher = db.teachers.find(t => t.id === teacherId); 
             
-            const refDate = document.getElementById('interactive-date').value;
-            const weekDates = getWeekDates(refDate);
-
             const days = getInteractiveDays();
-            if(days.length === 0) return container.innerHTML = "<p>Seleziona un giorno feriale.</p>";
-
             let html = `<h2 style="color:#5b21b6; text-align:center;">Orario Docente: ${teacher.name}</h2>`;
             html += `<table class="timetable-composer"><tr><th style="width:120px; background:#8b5cf6;">Fascia</th>`;
-            days.forEach(d => html += `<th style="background:#8b5cf6;">${d}<br><small>${weekDates[d]}</small></th>`);
+            days.forEach(d => html += `<th style="background:#8b5cf6;">${d}</th>`);
             html += `</tr>`;
 
             const myLessons = db.lessons.filter(l => l.teacherId === teacherId); 
@@ -1001,29 +933,27 @@
 
                 days.forEach(day => {
                     let cellHtml = '';
-                    const currentDate = weekDates[day];
                     
                     const myL = myLessons.filter(l => slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day);
                     myL.forEach(l => {
                         hasContentInRow = true; hasLessons = true;
-                        const ts = db.timeslots.find(t=>t.id===l.timeslotId); const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(s => s.id === l.subjectId); 
-                        const sub = db.substitutions.find(s => s.lessonId === l.id && s.date === currentDate);
+                        const ts = db.timeslots.find(t=>t.id===l.timeslotId); const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(s => s.id === l.subjectId); const sub = db.substitutions.find(s => s.lessonId === l.id);
                         
                         let timeStr = `<div style="font-size:10px; color:#666;">${ts.start}-${ts.end}</div>`;
                         if(sub) {
                             const subT = db.teachers.find(t => t.id === sub.subTeacherId);
-                            cellHtml += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${l.id}', '${currentDate}')">${timeStr}<span class="badge">[SOST]</span><br><del>${cls.name}</del><br><b>${subT.name}</b><br><span class="badge">${subj.name}</span></div>`;
+                            cellHtml += `<div class="co-teaching-box cell-interactive sub-active" onclick="openCellModal('${l.id}')">${timeStr}<span class="badge">[SOST]</span><br><del>${cls.name}</del><br><b>${subT.name}</b><br><span class="badge">${subject.name}</span></div>`;
                         } else {
-                            cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${l.id}', '${currentDate}')">${timeStr}<b>${cls.name}</b><br><span class="badge">${subj.name}</span></div>`;
+                            cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${l.id}')">${timeStr}<b>${cls.name}</b><br><span class="badge">${subj.name}</span></div>`;
                         }
                     });
 
-                    const myS = mySubs.filter(sub => { const l = db.lessons.find(lex=>lex.id===sub.lessonId); return l && sub.date === currentDate && slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day; });
+                    const myS = mySubs.filter(sub => { const l = db.lessons.find(lex=>lex.id===sub.lessonId); return l && slotMetadata[l.timeslotId]?.index === i && db.timeslots.find(ts=>ts.id===l.timeslotId).day === day; });
                     myS.forEach(s => {
                         hasContentInRow = true; hasLessons = true;
                         const l = db.lessons.find(lex=>lex.id===s.lessonId); const ts = db.timeslots.find(t=>t.id===l.timeslotId); const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(sbj => sbj.id === l.subjectId);
                         let timeStr = `<div style="font-size:10px; color:#166534;">${ts.start}-${ts.end}</div>`;
-                        cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${l.id}', '${currentDate}')" style="background:#dcfce7; border: 1px solid #166534;">${timeStr}<b style="color:#166534;">${cls.name}</b><br><span class="badge" style="background:#bbf7d0;">${subj.name}</span><br><small style="color:#166534; font-weight:bold;">SUPPLENZA</small></div>`;
+                        cellHtml += `<div class="co-teaching-box cell-interactive" onclick="openCellModal('${l.id}')" style="background:#dcfce7; border: 1px solid #166534;">${timeStr}<b style="color:#166534;">${cls.name}</b><br><span class="badge" style="background:#bbf7d0;">${subj.name}</span><br><small style="color:#166534; font-weight:bold;">SUPPLENZA</small></div>`;
                     });
 
                     if(!cellHtml) cellHtml = `<span style="color:#ccc;">---</span>`;
@@ -1038,16 +968,11 @@
             container.innerHTML = html;
         }
 
-        function openCellModal(lessonId, dateVal) {
-            currentInteractiveLessonId = lessonId; 
-            document.getElementById('cell-modal').dataset.date = dateVal;
-
-            const lesson = db.lessons.find(l => l.id === lessonId); const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId); const subj = db.subjects.find(s => s.id === lesson.subjectId); const titolare = db.teachers.find(t => t.id === lesson.teacherId);
-            
-            document.getElementById('modal-cell-info').innerHTML = `<b>Classe:</b> ${cls.name}<br><b>Data:</b> ${dateVal} (${slot.day})<br><b>Orario:</b> ${slot.start} - ${slot.end}<br><b>Attività:</b> ${subj.name}<br><b>Prof. Titolare:</b> ${titolare.name}`;
-            
-            const activeSub = db.substitutions.find(s => s.lessonId === lessonId && s.date === dateVal); 
-            const subArea = document.getElementById('modal-sub-area');
+        // ORDINAMENTO E PLESSO ANCHE NELLA MODALE DEL MONITOR
+        function openCellModal(lessonId) {
+            currentInteractiveLessonId = lessonId; const lesson = db.lessons.find(l => l.id === lessonId); const slot = db.timeslots.find(ts => ts.id === lesson.timeslotId); const cls = db.classes.find(c => c.id === lesson.classId); const subj = db.subjects.find(s => s.id === lesson.subjectId); const titolare = db.teachers.find(t => t.id === lesson.teacherId);
+            document.getElementById('modal-cell-info').innerHTML = `<b>Classe:</b> ${cls.name}<br><b>Orario:</b> ${slot.day} ${slot.start} - ${slot.end}<br><b>Attività:</b> ${subj.name}<br><b>Prof. Titolare:</b> ${titolare.name}`;
+            const activeSub = db.substitutions.find(s => s.lessonId === lessonId); const subArea = document.getElementById('modal-sub-area');
             
             if (activeSub) {
                 const subTeacher = db.teachers.find(t => t.id === activeSub.subTeacherId);
@@ -1080,7 +1005,7 @@
                         if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
                     }
 
-                    return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && sub.date === dateVal && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id)); 
+                    return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && db.lessons.find(l=>l.id===sub.lessonId).timeslotId === slot.id)); 
                 });
                 
                 availableSubs.sort((a,b) => a.name.localeCompare(b.name));
@@ -1099,21 +1024,9 @@
                 else { subArea.innerHTML = `<p style="color:#dc2626; font-weight:bold; margin:0;">Nessun docente libero in questa fascia oraria!</p>`; }
             } document.getElementById('cell-modal').style.display = 'flex';
         }
-
         function closeCellModal() { document.getElementById('cell-modal').style.display = 'none'; currentInteractiveLessonId = null; }
-        
-        function saveInteractiveSub() { 
-            const dateVal = document.getElementById('cell-modal').dataset.date;
-            db.substitutions.push({ id: "sub_" + Date.now(), lessonId: currentInteractiveLessonId, subTeacherId: document.getElementById('modal-sub-select').value, date: dateVal }); 
-            updateUI(); 
-            closeCellModal(); 
-        }
-        
-        function removeInteractiveSub(subId) { 
-            db.substitutions = db.substitutions.filter(s => s.id !== subId); 
-            updateUI(); 
-            closeCellModal(); 
-        }
+        function saveInteractiveSub() { db.substitutions.push({ id: "sub_" + Date.now(), lessonId: currentInteractiveLessonId, subTeacherId: document.getElementById('modal-sub-select').value }); updateUI(); closeCellModal(); }
+        function removeInteractiveSub(subId) { db.substitutions = db.substitutions.filter(s => s.id !== subId); updateUI(); closeCellModal(); }
 
         // ==========================================
         // TAB 6: IMPORT/EXPORT JSON ED EXCEL
