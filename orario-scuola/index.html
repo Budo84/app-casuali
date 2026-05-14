@@ -61,6 +61,11 @@
         /* CONTENITORE NASCOSTO PER STAMPA SUPPLENZE */
         #subs-report-print { display: none; }
 
+        /* OPTGROUP STYLES FOR SUBSTITUTIONS */
+        optgroup[label^="🟢"] { color: #166534; font-weight: bold; font-style: normal; }
+        optgroup[label^="🟡"] { color: #b45309; font-weight: bold; font-style: normal; }
+        optgroup[label^="🔴"] { color: #dc2626; font-weight: bold; font-style: normal; }
+
         /* MOTORE DI STAMPA OTTIMIZZATO A4 ORIZZONTALE */
         @media print {
             body { background: white; padding: 0; margin: 0; color: black; }
@@ -183,6 +188,7 @@
     </div>
 
     <div id="tab-subs" class="tab-content">
+        
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap:wrap; gap:10px;">
             <h2 style="margin:0; color:#2c3e50;">Gestione Assenze e Supplenze</h2>
             <button onclick="printSubstitutions()" style="background:#475569; padding: 10px 20px;">🖨️ Stampa Riepilogo Supplenze</button>
@@ -320,7 +326,7 @@
             db.levels.unshift({ id: "lvl_inf", name: "Infanzia" });
         }
 
-        // --- GESTIONE DATE ---
+        // Funzioni Helper Date
         function getLocalYYYYMMDD() {
             const now = new Date();
             const y = now.getFullYear();
@@ -391,10 +397,9 @@
 
             const levelOpts = db.levels.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
             
-            // ORDINAMENTO DOCENTI ALFABETICO E INSERIMENTO INFO PLESSO
             const sortedTeachers = db.teachers.slice().sort((a, b) => a.name.localeCompare(b.name));
             const teacherOpts = `<option value="">-- Seleziona Docente --</option>` + sortedTeachers.map(t => {
-                const tLevels = [...new Set(t.assignments.map(a => db.classes.find(c => c.id === a.classId)?.levelId))].filter(Boolean);
+                const tLevels = [...new Set(t.assignments.map(a => db.classes.find(c => c.id === a.classId)?.levelId))];
                 const levelNames = tLevels.map(lid => db.levels.find(l => l.id === lid)?.name.replace('Scuola ', '')).filter(Boolean).join(', ');
                 const info = levelNames ? ` [${levelNames}]` : '';
                 return `<option value="${t.id}">${t.name}${info}</option>`;
@@ -465,6 +470,7 @@
             db.settings.strictDays = Array.from(daysCb).filter(cb => cb.checked).map(cb => cb.value);
             
             updateUI();
+            if (document.getElementById('sub-absent-teacher')?.value) loadAbsentTeacherLessons();
         }
 
         function printTimetable() {
@@ -542,6 +548,11 @@
             window.print();
             document.body.classList.remove('printing-subs');
             setTimeout(() => document.title = originalTitle, 1000);
+        }
+
+        function addMinutes(timeStr, minsToAdd) {
+            let [h, m] = timeStr.split(':').map(Number); let totalMins = h * 60 + m + parseInt(minsToAdd);
+            return `${(Math.floor(totalMins/60)%24).toString().padStart(2,'0')}:${(totalMins%60).toString().padStart(2,'0')}`;
         }
 
         function generateStandardWeek() {
@@ -773,6 +784,9 @@
             updateUI();
         }
 
+        // ==========================================
+        // LOGICA SUPPLENZE CON CATEGORIE INTELLIGENTI
+        // ==========================================
         function loadAbsentTeacherLessons() {
             const tid = document.getElementById('sub-absent-teacher').value; 
             const dateVal = document.getElementById('sub-date').value; 
@@ -805,55 +819,105 @@
                 const isStrictDay = db.settings.strictDays.includes(slot.day);
                 const enforceStrict = !isAfternoon || isStrictDay; 
 
-                const availableSubs = db.teachers.filter(t => {
-                    if(t.id === tid || t.dayOff === slot.day) return false;
+                const availableSubs = [];
+                
+                db.teachers.forEach(t => {
+                    if(t.id === tid) return;
                     
                     const hasAnyLesson = db.lessons.some(l => l.teacherId === t.id);
                     const teachesInClass = db.lessons.some(l => l.teacherId === t.id && l.classId === cls.id);
                     const isAssignedToClass = teachesInClass || (!hasAnyLesson && t.assignments.some(a => a.classId === cls.id));
 
+                    let satisfiesStrict = true;
                     if (isSec && db.settings.strictSec && enforceStrict) {
-                        if (!isAssignedToClass) return false; 
+                        if (!isAssignedToClass) satisfiesStrict = false; 
                     } else if (isPrim && db.settings.strictPrim && enforceStrict) {
-                        if (!isAssignedToClass) return false; 
+                        if (!isAssignedToClass) satisfiesStrict = false; 
                     } else {
                         let tLevels = [...new Set(db.lessons.filter(l => l.teacherId === t.id).map(l => db.classes.find(c => c.id === l.classId)?.levelId))].filter(Boolean);
                         if(tLevels.length === 0) {
                             tLevels = [...new Set(db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId))];
                         }
-                        if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
+                        if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) satisfiesStrict = false; 
                     }
                     
-                    return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && sub.date === dateVal && db.lessons.find(l=>l.id===sub.lessonId)?.timeslotId === slot.id));
+                    if (!satisfiesStrict) return;
+
+                    const isDayOff = t.dayOff === slot.day;
+                    const dayLessonsCount = db.lessons.filter(l => l.teacherId === t.id && daySlotIds.includes(l.timeslotId)).length;
+                    const daySubsCount = db.substitutions.filter(s => s.subTeacherId === t.id && s.date === dateVal && daySlotIds.includes(db.lessons.find(lx=>lx.id===s.lessonId)?.timeslotId)).length;
+                    const lessonsThatDay = dayLessonsCount + daySubsCount;
+
+                    const isOnlyHour = !isDayOff && lessonsThatDay === 0;
+
+                    const busyLesson = db.lessons.find(l => l.teacherId === t.id && l.timeslotId === slot.id);
+                    const busySub = db.substitutions.find(s => s.subTeacherId === t.id && s.date === dateVal && db.lessons.find(lx=>lx.id===s.lessonId)?.timeslotId === slot.id);
+                    const isBusyInSlot = busyLesson || busySub;
+
+                    let category = '';
+                    let labelExtra = '';
+
+                    if (isDayOff) {
+                        category = 'LAST_CHOICE';
+                        labelExtra = ' (Giorno Libero)';
+                    } else if (isOnlyHour) {
+                        category = 'LAST_CHOICE';
+                        labelExtra = ' (Viene solo per 1 ora)';
+                    } else if (isBusyInSlot) {
+                        category = 'SWAP';
+                        const busyClass = busyLesson ? db.classes.find(c=>c.id===busyLesson.classId)?.name : db.classes.find(c=>c.id===db.lessons.find(lx=>lx.id===busySub.lessonId)?.classId)?.name;
+                        labelExtra = ` (Scambio: ha già ${busyClass || 'classe'})`;
+                    } else {
+                        category = 'EXTRA_HOUR';
+                        labelExtra = ` (+1 ora extra)`;
+                    }
+
+                    availableSubs.push({ teacher: t, labelExtra: labelExtra, category: category });
                 });
                 
-                availableSubs.sort((a,b) => a.name.localeCompare(b.name));
+                availableSubs.sort((a,b) => a.teacher.name.localeCompare(b.teacher.name));
 
                 const activeSub = db.substitutions.find(s => s.lessonId === lesson.id && s.date === dateVal);
                 
                 html += `<div style="background:#fff; padding:10px; border:1px solid #ccc; margin-bottom:10px; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
                     <div><b>${slot.start}-${slot.end}</b> | Classe: <b>${cls.name}</b> ${activeSub ? `<br><span style="color:red">➡ Sostituto: ${db.teachers.find(t=>t.id===activeSub.subTeacherId)?.name || ''}</span>` : ''}</div>
-                    <div>`;
+                    <div style="width: 50%; display: flex; gap: 10px;">`;
                 if(!activeSub) {
                     if(availableSubs.length > 0) { 
-                        html += `<select id="sub-${lesson.id}">${availableSubs.map(t=>{
+                        let extraHtml = ''; let swapHtml = ''; let lastHtml = '';
+                        availableSubs.forEach(subObj => {
+                            const t = subObj.teacher;
                             const tLevels = [...new Set(t.assignments.map(a => db.classes.find(c => c.id === a.classId)?.levelId))];
                             const levelNames = tLevels.map(lid => db.levels.find(l => l.id === lid)?.name.replace('Scuola ', '')).filter(Boolean).join(', ');
                             const info = levelNames ? ` [${levelNames}]` : '';
-                            return `<option value="${t.id}">${t.name}${info}</option>`;
-                        }).join('')}</select><button class="warning" onclick="assignSub('${lesson.id}')">Assegna</button>`; 
+                            const opt = `<option value="${t.id}">${t.name}${info}${subObj.labelExtra}</option>`;
+                            if(subObj.category === 'EXTRA_HOUR') extraHtml += opt;
+                            else if(subObj.category === 'SWAP') swapHtml += opt;
+                            else if(subObj.category === 'LAST_CHOICE') lastHtml += opt;
+                        });
+                        
+                        let selectHtml = `<select id="sub-${lesson.id}">`;
+                        selectHtml += `<option value="">-- Seleziona Sostituto --</option>`;
+                        if(extraHtml) selectHtml += `<optgroup label="🟢 AUMENTA ORE (Già a scuola, ora buca)">${extraHtml}</optgroup>`;
+                        if(swapHtml) selectHtml += `<optgroup label="🟡 SCAMBIO CLASSE (Ore invariate)">${swapHtml}</optgroup>`;
+                        if(lastHtml) selectHtml += `<optgroup label="🔴 ULTIMA SCELTA (Giorno libero / Solo per 1 ora)">${lastHtml}</optgroup>`;
+                        selectHtml += `</select>`;
+
+                        html += `${selectHtml}<button class="warning" onclick="assignSub('${lesson.id}')">Assegna</button>`; 
                     } else { 
                         html += `<b style="color:red;">Nessuno libero!</b>`; 
                     }
-                } else { html += `<button class="danger" onclick="removeSub('${activeSub.id}')">Rimuovi Sostituto</button>`; }
+                } else { html += `<button class="danger" style="margin-left:auto;" onclick="removeSub('${activeSub.id}')">Rimuovi Sostituto</button>`; }
                 html += `</div></div>`;
             });
             area.innerHTML = html;
         }
 
         function assignSub(lId) { 
+            const subId = document.getElementById(`sub-${lId}`).value;
+            if(!subId) return alert('Seleziona un sostituto.');
             const dateVal = document.getElementById('sub-date').value;
-            db.substitutions.push({ id: "sub_" + Date.now(), lessonId: lId, subTeacherId: document.getElementById(`sub-${lId}`).value, date: dateVal }); 
+            db.substitutions.push({ id: "sub_" + Date.now(), lessonId: lId, subTeacherId: subId, date: dateVal }); 
             updateUI(); 
         }
 
@@ -1060,6 +1124,9 @@
             container.innerHTML = html;
         }
 
+        // ==========================================
+        // LOGICA MODALE GRID CON CATEGORIE INTELLIGENTI
+        // ==========================================
         function openCellModal(lessonId, dateVal) {
             currentInteractiveLessonId = lessonId; 
             document.getElementById('cell-modal').dataset.date = dateVal;
@@ -1084,39 +1151,87 @@
                 const isStrictDay = db.settings.strictDays.includes(slot.day);
                 const enforceStrict = !isAfternoon || isStrictDay; 
 
-                const availableSubs = db.teachers.filter(t => { 
-                    if(t.id === titolare.id || t.dayOff === slot.day) return false; 
+                const availableSubs = [];
+                
+                db.teachers.forEach(t => { 
+                    if(t.id === titolare.id) return; 
                     
                     const hasAnyLesson = db.lessons.some(l => l.teacherId === t.id);
                     const teachesInClass = db.lessons.some(l => l.teacherId === t.id && l.classId === cls.id);
                     const isAssignedToClass = teachesInClass || (!hasAnyLesson && t.assignments.some(a => a.classId === cls.id));
 
+                    let satisfiesStrict = true;
                     if (isSec && db.settings.strictSec && enforceStrict) {
-                        if (!isAssignedToClass) return false; 
+                        if (!isAssignedToClass) satisfiesStrict = false; 
                     } else if (isPrim && db.settings.strictPrim && enforceStrict) {
-                        if (!isAssignedToClass) return false; 
+                        if (!isAssignedToClass) satisfiesStrict = false; 
                     } else {
                         let tLevels = [...new Set(db.lessons.filter(l => l.teacherId === t.id).map(l => db.classes.find(c => c.id === l.classId)?.levelId))].filter(Boolean);
                         if(tLevels.length === 0) {
                             tLevels = [...new Set(db.classes.filter(c => t.assignments.some(a => a.classId === c.id)).map(c => c.levelId))];
                         }
-                        if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) return false; 
+                        if (tLevels.length > 0 && !tLevels.includes(cls.levelId)) satisfiesStrict = false; 
                     }
 
-                    return !(db.lessons.some(l => l.teacherId === t.id && l.timeslotId === slot.id) || db.substitutions.some(sub => sub.subTeacherId === t.id && sub.date === dateVal && db.lessons.find(l=>l.id===sub.lessonId)?.timeslotId === slot.id)); 
+                    if (!satisfiesStrict) return;
+
+                    const isDayOff = t.dayOff === slot.day;
+                    const daySlotIds = db.timeslots.filter(ts => ts.day === slot.day).map(ts => ts.id);
+                    const dayLessonsCount = db.lessons.filter(l => l.teacherId === t.id && daySlotIds.includes(l.timeslotId)).length;
+                    const daySubsCount = db.substitutions.filter(s => s.subTeacherId === t.id && s.date === dateVal && daySlotIds.includes(db.lessons.find(lx=>lx.id===s.lessonId)?.timeslotId)).length;
+                    const lessonsThatDay = dayLessonsCount + daySubsCount;
+
+                    const isOnlyHour = !isDayOff && lessonsThatDay === 0;
+
+                    const busyLesson = db.lessons.find(l => l.teacherId === t.id && l.timeslotId === slot.id);
+                    const busySub = db.substitutions.find(s => s.subTeacherId === t.id && s.date === dateVal && db.lessons.find(lx=>lx.id===s.lessonId)?.timeslotId === slot.id);
+                    const isBusyInSlot = busyLesson || busySub;
+
+                    let category = '';
+                    let labelExtra = '';
+
+                    if (isDayOff) {
+                        category = 'LAST_CHOICE';
+                        labelExtra = ' (Giorno Libero)';
+                    } else if (isOnlyHour) {
+                        category = 'LAST_CHOICE';
+                        labelExtra = ' (Viene solo per 1 ora)';
+                    } else if (isBusyInSlot) {
+                        category = 'SWAP';
+                        const busyClass = busyLesson ? db.classes.find(c=>c.id===busyLesson.classId)?.name : db.classes.find(c=>c.id===db.lessons.find(lx=>lx.id===busySub.lessonId)?.classId)?.name;
+                        labelExtra = ` (Scambio: ha già ${busyClass || 'classe'})`;
+                    } else {
+                        category = 'EXTRA_HOUR';
+                        labelExtra = ` (+1 ora extra)`;
+                    }
+
+                    availableSubs.push({ teacher: t, labelExtra: labelExtra, category: category });
                 });
                 
-                availableSubs.sort((a,b) => a.name.localeCompare(b.name));
+                availableSubs.sort((a,b) => a.teacher.name.localeCompare(b.teacher.name));
 
                 if (availableSubs.length > 0) { 
-                    subArea.innerHTML = `<label><b>Seleziona Sostituto Libero:</b></label>
-                    <select id="modal-sub-select" style="width:100%; margin-top:5px; padding:8px;">
-                    ${availableSubs.map(t=>{
+                    let extraHtml = ''; let swapHtml = ''; let lastHtml = '';
+                    availableSubs.forEach(subObj => {
+                        const t = subObj.teacher;
                         const tLevels = [...new Set(t.assignments.map(a => db.classes.find(c => c.id === a.classId)?.levelId))];
                         const levelNames = tLevels.map(lid => db.levels.find(l => l.id === lid)?.name.replace('Scuola ', '')).filter(Boolean).join(', ');
                         const info = levelNames ? ` [${levelNames}]` : '';
-                        return `<option value="${t.id}">${t.name}${info}</option>`;
-                    }).join('')}</select>
+                        const opt = `<option value="${t.id}">${t.name}${info}${subObj.labelExtra}</option>`;
+                        if(subObj.category === 'EXTRA_HOUR') extraHtml += opt;
+                        else if(subObj.category === 'SWAP') swapHtml += opt;
+                        else if(subObj.category === 'LAST_CHOICE') lastHtml += opt;
+                    });
+                    
+                    let selectHtml = `<select id="modal-sub-select" style="width:100%; margin-top:5px; padding:8px;">`;
+                    selectHtml += `<option value="">-- Seleziona Sostituto --</option>`;
+                    if(extraHtml) selectHtml += `<optgroup label="🟢 AUMENTA ORE (Già a scuola, ora buca)">${extraHtml}</optgroup>`;
+                    if(swapHtml) selectHtml += `<optgroup label="🟡 SCAMBIO CLASSE (Ore invariate)">${swapHtml}</optgroup>`;
+                    if(lastHtml) selectHtml += `<optgroup label="🔴 ULTIMA SCELTA (Giorno libero / Solo per 1 ora)">${lastHtml}</optgroup>`;
+                    selectHtml += `</select>`;
+
+                    subArea.innerHTML = `<label><b>Seleziona Sostituto Libero:</b></label>
+                    ${selectHtml}
                     <button class="warning" style="margin-top:15px; width:100%; font-size:15px;" onclick="saveInteractiveSub()">Conferma Sostituzione</button>`; 
                 } 
                 else { subArea.innerHTML = `<p style="color:#dc2626; font-weight:bold; margin:0;">Nessun docente libero in questa fascia oraria!</p>`; }
@@ -1126,8 +1241,10 @@
         function closeCellModal() { document.getElementById('cell-modal').style.display = 'none'; currentInteractiveLessonId = null; }
         
         function saveInteractiveSub() { 
+            const subId = document.getElementById('modal-sub-select').value;
+            if(!subId) return alert('Seleziona un sostituto.');
             const dateVal = document.getElementById('cell-modal').dataset.date;
-            db.substitutions.push({ id: "sub_" + Date.now(), lessonId: currentInteractiveLessonId, subTeacherId: document.getElementById('modal-sub-select').value, date: dateVal }); 
+            db.substitutions.push({ id: "sub_" + Date.now(), lessonId: currentInteractiveLessonId, subTeacherId: subId, date: dateVal }); 
             updateUI(); 
             closeCellModal(); 
         }
@@ -1200,8 +1317,8 @@
                         if (cellLessons.length === 0) { row.push(slot.type !== 'Lezione' ? slot.type.toUpperCase() : ""); } 
                         else { 
                             let cellText = cellLessons.map(lesson => {
-                                const teacher = db.teachers.find(t => t.id === lesson.teacherId); const subject = db.subjects.find(s => s.id === lesson.subjectId); 
-                                return `${teacher?.name || '?'} (${subject?.name || '?'})`; 
+                                const teacher = db.teachers.find(t => t.id === lesson.teacherId); const subject = db.subjects.find(s => s.id === lesson.subjectId); const sub = db.substitutions.find(s => s.lessonId === lesson.id); 
+                                return sub ? `[SOST] ${db.teachers.find(t=>t.id===sub.subTeacherId).name} (${subject.name})` : `${teacher.name} (${subject.name})`; 
                             }).join(" \n+ "); row.push(cellText); 
                         } 
                     }); excelData.push(row); 
@@ -1219,8 +1336,8 @@
                     if (cellLessons.length === 0) { row.push(slot.type !== 'Lezione' ? slot.type.toUpperCase() : "---"); } 
                     else { 
                         let cellText = cellLessons.map(lesson => {
-                            const teacher = db.teachers.find(t => t.id === lesson.teacherId); const subject = db.subjects.find(s => s.id === lesson.subjectId); 
-                            return `${teacher?.name || '?'} - ${subject?.name || '?'}`; 
+                            const teacher = db.teachers.find(t => t.id === lesson.teacherId); const subject = db.subjects.find(s => s.id === lesson.subjectId); const sub = db.substitutions.find(s => s.lessonId === lesson.id); 
+                            return sub ? `[SOST] ${db.teachers.find(t=>t.id===sub.subTeacherId).name} - ${subject.name}` : `${teacher.name} - ${subject.name}`; 
                         }).join(" \n+ "); row.push(cellText); 
                     } excelData.push(row); 
                 }); 
@@ -1232,7 +1349,7 @@
             const teacher = db.teachers.find(t => t.id === teacherId); 
             let excelData = [["Fascia Oraria", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì"]]; 
             const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']; 
-            const myLessons = db.lessons.filter(l => l.teacherId === teacherId); 
+            const myLessons = db.lessons.filter(l => l.teacherId === teacherId); const mySubs = db.substitutions.filter(s => s.subTeacherId === teacherId); 
             const teacherLevels = [...new Set(db.classes.filter(c => teacher.assignments.some(a => a.classId === c.id)).map(c => c.levelId))];
             const validSlots = teacherLevels.length > 0 ? db.timeslots.filter(ts => teacherLevels.includes(ts.levelId)) : db.timeslots;
             const uniqueTimesMap = new Map(); validSlots.forEach(ts => uniqueTimesMap.set(`${ts.start}-${ts.end}`, {start: ts.start, end: ts.end}));
@@ -1243,9 +1360,10 @@
                 days.forEach(day => {
                     const matchingSlots = db.timeslots.filter(ts => ts.day === day && ts.start === time.start && ts.end === time.end); const slotIds = matchingSlots.map(ts => ts.id);
                     if(matchingSlots.length > 0) hasContentInRow = true;
-                    const myL = myLessons.filter(x => slotIds.includes(x.timeslotId)); 
+                    const myL = myLessons.filter(x => slotIds.includes(x.timeslotId)); const myS = mySubs.filter(sub => { const sl = db.lessons.find(lex=>lex.id===sub.lessonId); return sl && slotIds.includes(sl.timeslotId); });
                     let cellText = "";
-                    myL.forEach(l => { const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(sbj => sbj.id === l.subjectId); cellText += (cellText?" \n+ ":"") + `${cls?.name || '?'} (${subj?.name || '?'})`; });
+                    myL.forEach(l => { const cls = db.classes.find(c => c.id === l.classId); const subj = db.subjects.find(sbj => sbj.id === l.subjectId); const isSubbed = db.substitutions.find(sub => sub.lessonId === l.id); if(isSubbed) cellText += (cellText?" \n+ ":"") + `[SOSTITUITO DA ${db.teachers.find(t=>t.id===isSubbed.subTeacherId).name}] ${cls.name} (${subj.name})`; else cellText += (cellText?" \n+ ":"") + `${cls.name} (${subj.name})`; });
+                    myS.forEach(s => { const sl = db.lessons.find(lex=>lex.id===s.lessonId); const cls = db.classes.find(c => c.id === sl.classId); const subj = db.subjects.find(sbj => sbj.id === sl.subjectId); cellText += (cellText?" \n+ ":"") + `[SUPPLENZA] ${cls.name} (${subj.name})`; });
                     row.push(cellText || "---");
                 });
                 if(hasContentInRow) excelData.push(row);
