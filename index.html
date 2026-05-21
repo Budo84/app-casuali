@@ -2,457 +2,126 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Giornalino Web Builder PRO (Touch & Gallery)</title>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --sidebar-bg: #1e293b;
-            --workspace-bg: #f1f5f9;
-            --accent-green: #10b981;
-            --accent-blue: #3b82f6;
-            --accent-purple: #8b5cf6;
-            --text-light: #f8fafc;
-        }
-
-        /* Impostazioni Base */
-        body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--bg-color); color: #1e293b; overflow: hidden; overscroll-behavior: none; }
-
-        /* --- SIDEBAR --- */
-        #toolbox {
-            width: 320px; flex-shrink: 0; background-color: var(--sidebar-bg); padding: 20px; color: var(--text-light);
-            box-shadow: 4px 0 15px rgba(0,0,0,0.3); z-index: 10; display: flex; flex-direction: column; overflow-y: auto;
-        }
-        #toolbox h2 { margin: 0 0 10px 0; font-size: 1.4rem; border-bottom: 2px solid #334155; padding-bottom: 10px; }
-        .section-title { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; margin: 20px 0 10px 0; font-weight: bold; letter-spacing: 1px; }
-
-        /* Blocchi */
-        .block {
-            padding: 12px 15px; margin-bottom: 8px; color: white; cursor: grab; border-radius: 8px; font-weight: 600;
-            font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2); user-select: none; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1);
-            touch-action: none;
-        }
-        .block:hover { transform: translateY(-2px); filter: brightness(1.2); }
-        .block.layout { background: var(--accent-purple); }
-        .block.base { background: var(--accent-blue); }
-
-        /* Bottoni Azione */
-        .action-btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.2s; }
-        #save-html { background: var(--accent-green); color: white; margin-top: 30px; font-size: 1rem; }
-        #save-project { background: #64748b; color: white; font-size: 0.8rem; }
-        #load-project-label { background: #475569; color: white; font-size: 0.8rem; text-align: center; cursor: pointer; padding: 12px; border-radius: 8px; margin-top: 10px; display: block; font-weight: bold;}
-        #load-project { display: none; }
-
-        /* --- MAIN AREA --- */
-        #main { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; padding: 15px; gap: 15px; background: #e2e8f0; }
-        
-        #workspace { flex: 1; background-color: var(--workspace-bg); border: 3px dashed #cbd5e1; border-radius: 12px; padding: 20px; overflow-y: auto; }
-        #workspace.drag-over { border-color: var(--accent-green); background-color: #ecfdf5; }
-
-        /* Blocchi di lavoro */
-        .work-block { 
-            background: white; border: 1px solid #e2e8f0; border-left: 6px solid #cbd5e1; 
-            border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            animation: popIn 0.3s ease-out; transition: transform 0.2s ease;
-        }
-        @keyframes popIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
-        .work-block.layout { border-left-color: var(--accent-purple); }
-        .work-block.base { border-left-color: var(--accent-blue); }
-        
-        .block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; color: #334155; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
-        .controls { display: flex; gap: 5px; }
-        .move-btn { background: #e2e8f0; color: #334155; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .move-btn:hover { background: #cbd5e1; }
-        .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; margin-left: 5px; }
-        .delete-btn:hover { background: #ef4444; color: white; }
-
-        .input-group { margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
-        .input-group label { font-size: 0.75rem; color: #64748b; font-weight: bold; }
-        .work-block input, .work-block textarea { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 0.9rem; box-sizing: border-box; }
-        
-        /* --- PANNELLI CODICE --- */
-        #output-container { display: flex; height: 45%; gap: 15px; min-height: 0; }
-        .editors-column { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-        .code-panel { display: flex; flex-direction: column; flex: 1; background: #1e1e1e; border-radius: 10px; overflow: hidden; border: 1px solid #334155; }
-        .code-header { background: #2d2d2d; padding: 8px 15px; font-size: 0.8rem; font-weight: bold; color: #94a3b8; display: flex; justify-content: space-between; }
-        textarea.code-area { flex: 1; padding: 12px; background: transparent; color: #d4d4d4; font-family: 'Consolas', monospace; font-size: 12px; border: none; resize: none; outline: none; line-height: 1.5; width: 100%; box-sizing: border-box; }
-        #css-output { color: #9cdcfe; }
-        #code-output { color: #ce9178; }
-
-        /* Anteprima */
-        #preview-panel { flex: 1.2; background: white; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); min-width: 0; }
-        #visual-preview { flex: 1; padding: 0; overflow-y: auto; background: #ccc; }
-        .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 99999; border-radius: 0 !important; }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 900px) {
-            body { flex-direction: column; height: auto; min-height: 100vh; overflow-y: auto; }
-            #toolbox { width: 100%; height: 35vh; min-height: 250px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-            #main { height: auto; overflow: visible; padding: 10px; }
-            #workspace { min-height: 400px; }
-            #output-container { flex-direction: column; height: auto; }
-            .code-panel { min-height: 250px; }
-            #preview-panel { min-height: 400px; }
-        }
-    </style>
-</head>
-<body>
-
-    <div id="toolbox">
-        <h2>🛠️ Web Lab Redazione</h2>
-        
-        <div class="section-title">Layout di Pagina</div>
-        <div class="block layout" draggable="true" data-type="header">📰 Testata e Titolo</div>
-        <div class="block layout" draggable="true" data-type="img-text">🖼️ Articolo con Foto</div>
-        <div class="block layout" draggable="true" data-type="2-cols">👥 Due Colonne</div>
-        <div class="block layout" draggable="true" data-type="gallery">🖼️🖼️ Galleria Scorrevole</div>
-        <div class="block layout" draggable="true" data-type="footer">🦶 Piè di Pagina</div>
-
-        <div class="section-title">Contenuti Liberi</div>
-        <div class="block base" draggable="true" data-type="h2">T Titolo Medio</div>
-        <div class="block base" draggable="true" data-type="p">¶ Testo Normale</div>
-        <div class="block base" draggable="true" data-type="list">📝 Lista Puntata</div>
-        <div class="block base" draggable="true" data-type="btn">🔗 Pulsante Link</div>
-        <div class="block base" draggable="true" data-type="img">🖼️ Foto Singola</div>
-
-        <button id="save-html" class="action-btn" onclick="saveHTML()">🚀 ESPORTA SITO WEB</button>
-        
-        <div class="section-title">Gestione Progetto</div>
-        <button id="save-project" class="action-btn" onclick="saveProject()">💾 Salva Progetto (.json)</button>
-        <label id="load-project-label" for="load-project">📂 Carica Progetto</label>
-        <input type="file" id="load-project" accept=".json" onchange="loadProject(event)">
-    </div>
-
-    <div id="main">
-        <div id="workspace">
-            <h3 id="placeholder" style="color: #64748b; text-align: center; margin-top: 100px; font-weight: normal; pointer-events: none;">
-                Trascina qui i blocchi per comporre la tua pagina!<br>
-            </h3>
-        </div>
-
-        <div id="output-container">
-            <div class="editors-column">
-                <div class="code-panel">
-                    <div class="code-header">🎨 STILE (CSS)</div>
-                    <textarea id="css-output" class="code-area" spellcheck="false" oninput="updatePreviewFromCode()">
-/* PERSONALIZZA IL TUO SITO */
-.preview-wrapper {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f8fafc;
-  color: #1e293b;
-  padding: 20px;
-}
-.site-header { background-color: #1e293b; color: white; }
-.site-footer { background-color: #334155; color: #cbd5e1; }</textarea>
-                </div>
-                <div class="code-panel">
-                    <div class="code-header">📝 STRUTTURA (HTML)</div>
-                    <textarea id="code-output" class="code-area" spellcheck="false" oninput="updatePreviewFromCode()"></textarea>
-                </div>
-            </div>
-            
-            <div id="preview-panel">
-                <div class="panel-header" style="background:#f1f5f9; padding:8px 15px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-weight:bold; font-size:0.8rem;">👁️ ANTEPRIMA REAL-TIME</span>
-                    <button onclick="toggleFullscreen()" style="background:none; border:none; cursor:pointer; font-size:1.1rem;">⛶</button>
-                </div>
-                <div id="visual-preview"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const workspace = document.getElementById('workspace');
-        const blocks = document.querySelectorAll('.block');
-
-        // --- DRAG AND DROP MISTO (MOUSE + TOUCH) ---
-        blocks.forEach(b => {
-            b.addEventListener('dragstart', e => e.dataTransfer.setData('type', b.dataset.type));
-        });
-
-        workspace.addEventListener('dragover', e => { e.preventDefault(); workspace.classList.add('drag-over'); });
-        workspace.addEventListener('dragleave', () => workspace.classList.remove('drag-over'));
-        workspace.addEventListener('drop', e => {
-            e.preventDefault(); workspace.classList.remove('drag-over');
-            const type = e.dataTransfer.getData('type');
-            if (type) createWorkspaceBlock(type);
-        });
-
-        let dragClone = null;
-        let draggedType = null;
-
-        blocks.forEach(b => {
-            b.addEventListener('touchstart', e => {
-                draggedType = b.dataset.type;
-                dragClone = b.cloneNode(true);
-                dragClone.style.position = 'fixed';
-                dragClone.style.zIndex = '999999';
-                dragClone.style.opacity = '0.8';
-                dragClone.style.pointerEvents = 'none';
-                dragClone.style.width = b.offsetWidth + 'px';
-                document.body.appendChild(dragClone);
-                const touch = e.touches[0];
-                moveClone(touch.clientX, touch.clientY);
-            }, {passive: false});
-
-            b.addEventListener('touchmove', e => {
-                if (!dragClone) return;
-                e.preventDefault();
-                const touch = e.touches[0];
-                moveClone(touch.clientX, touch.clientY);
-                const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (dropTarget && dropTarget.closest('#workspace')) {
-                    workspace.classList.add('drag-over');
-                } else {
-                    workspace.classList.remove('drag-over');
-                }
-            }, {passive: false});
-
-            b.addEventListener('touchend', e => {
-                if (!dragClone) return;
-                const touch = e.changedTouches[0];
-                const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (dropTarget && dropTarget.closest('#workspace')) {
-                    createWorkspaceBlock(draggedType);
-                }
-                workspace.classList.remove('drag-over');
-                dragClone.remove();
-                dragClone = null;
-                draggedType = null;
-            });
-        });
-
-        function moveClone(x, y) {
-            dragClone.style.left = (x - dragClone.offsetWidth / 2) + 'px';
-            dragClone.style.top = (y - dragClone.offsetHeight / 2) + 'px';
-        }
-
-        // --- ORDINAMENTO BLOCCHI ---
-        function moveBlock(btn, direction) {
-            const block = btn.closest('.work-block');
-            
-            if (direction === -1) { // Sposta Su
-                const prev = block.previousElementSibling;
-                // Impedisce di spostarlo sopra al placeholder vuoto (se dovesse riapparire)
-                if (prev && prev.tagName !== 'H3') {
-                    workspace.insertBefore(block, prev);
-                    // Effetto visivo
-                    block.style.transform = 'translateY(-10px)';
-                    setTimeout(() => block.style.transform = 'translateY(0)', 150);
-                }
-            } else if (direction === 1) { // Sposta Giù
-                const next = block.nextElementSibling;
-                if (next) {
-                    workspace.insertBefore(next, block);
-                    block.style.transform = 'translateY(10px)';
-                    setTimeout(() => block.style.transform = 'translateY(0)', 150);
-                }
-            }
-            updateGenerators();
-        }
-
-        // --- CREAZIONE DEI BLOCCHI ---
-        function createWorkspaceBlock(type, savedData = null) {
-            const block = document.createElement('div');
-            block.className = `work-block ${['header','img-text','2-cols','gallery','footer'].includes(type) ? 'layout' : 'base'}`;
-            block.dataset.type = type;
-
-            let html = `
-                <div class="block-header">
-                    <span>${getBlockLabel(type)}</span> 
-                    <div class="controls">
-                        <button class="move-btn" onclick="moveBlock(this, -1)" title="Sposta Su">⬆️</button>
-                        <button class="move-btn" onclick="moveBlock(this, 1)" title="Sposta Giù">⬇️</button>
-                        <button class="delete-btn" onclick="removeBlock(this)">X</button>
-                    </div>
-                </div>`;
-            
-            if (type === 'header') {
-                html += field('Titolo Giornalino', 'v-title', savedData?.title, 'Es. Cronache di Classe');
-                html += field('Sottotitolo / Data', 'v-sub', savedData?.sub, 'Es. Maggio 2024');
-            } else if (type === 'img-text') {
-                html += field('Link Foto', 'v-img', savedData?.img, 'foto.jpg');
-                html += field('Titolo Articolo', 'v-title', savedData?.title);
-                html += area('Testo Articolo', 'v-text', savedData?.text);
-            } else if (type === '2-cols') {
-                html += `<div style="display:flex; flex-direction: column; gap:10px;">
-                    <div style="background:#f8fafc; padding:10px; border-radius:6px;">${field('Titolo Sx','v-t1', savedData?.t1)}${area('Testo Sx','v-txt1', savedData?.txt1)}</div>
-                    <div style="background:#f8fafc; padding:10px; border-radius:6px;">${field('Titolo Dx','v-t2', savedData?.t2)}${area('Testo Dx','v-txt2', savedData?.txt2)}</div>
-                </div>`;
-            } else if (type === 'gallery') {
-                html += area('Link delle foto (una per riga, premi Invio)', 'v-gallery', savedData?.gallery, 'foto1.jpg\nfoto2.jpg\nfoto3.jpg');
-            } else if (type === 'list') {
-                html += area('Elementi della lista (uno per riga)', 'v-list', savedData?.list);
-            } else if (type === 'btn') {
-                html += field('Testo Pulsante', 'v-text', savedData?.text, 'Leggi di più');
-                html += field('Link (URL)', 'v-link', savedData?.link, 'intervista.html');
-            } else if (type === 'footer') {
-                html += field('Testo Credits', 'v-text', savedData?.text, 'Creato dalla classe 3A');
-            } else if (type === 'h2') {
-                html += field('Titolo Medio', 'v-title', savedData?.title);
-            } else if (type === 'p') {
-                html += area('Paragrafo', 'v-text', savedData?.text);
-            } else if (type === 'img') {
-                html += field('URL Immagine', 'v-img', savedData?.img);
-            }
-
-            block.innerHTML = html;
-            workspace.appendChild(block);
-            document.getElementById('placeholder').style.display = 'none';
-            updateGenerators();
-        }
-
-        // Helpers UI
-        function field(label, cls, val='', ph='') { return `<div class="input-group"><label>${label}</label><input type="text" class="${cls}" value="${val||''}" placeholder="${ph}" oninput="updateGenerators()"></div>`; }
-        function area(label, cls, val='', ph='') { return `<div class="input-group"><label>${label}</label><textarea class="${cls}" placeholder="${ph}" oninput="updateGenerators()">${val||''}</textarea></div>`; }
-        function getBlockLabel(t) {
-            const labels = {header:'📰 Testata', 'img-text':'🖼️ Articolo+Foto', '2-cols':'👥 Due Colonne', gallery:'🖼️🖼️ Galleria Scorrevole', footer:'🦶 Piè di Pagina', h2:'T Titolo', p:'¶ Paragrafo', list:'📝 Lista', btn:'🔗 Pulsante', img:'🖼️ Foto'};
-            return labels[t] || t;
-        }
-
-        function removeBlock(btn) {
-            btn.closest('.work-block').remove();
-            updateGenerators();
-            if(workspace.querySelectorAll('.work-block').length === 0) document.getElementById('placeholder').style.display = 'block';
-        }
-
-        // --- GENERAZIONE CODICE ---
-        function updateGenerators() {
-            let html = '';
-            workspace.querySelectorAll('.work-block').forEach(block => {
-                const type = block.dataset.type;
-                const getV = (c) => block.querySelector('.'+c)?.value || '';
-
-                if (type === 'header') {
-                    html += `\n<header class="site-header">\n  <h1>${getV('v-title')}</h1>\n  <p>${getV('v-sub')}</p>\n</header>\n`;
-                } else if (type === 'img-text') {
-                    html += `<div class="layout-img-text">\n  <img src="${getV('v-img')}" alt="Foto">\n  <div class="content">\n    <h2>${getV('v-title')}</h2>\n    <p>${getV('v-text').replace(/\n/g,'<br>')}</p>\n  </div>\n</div>\n`;
-                } else if (type === '2-cols') {
-                    html += `<div class="layout-2-cols">\n  <div class="col"><h2>${getV('v-t1')}</h2><p>${getV('v-txt1').replace(/\n/g,'<br>')}</p></div>\n  <div class="col"><h2>${getV('v-t2')}</h2><p>${getV('v-txt2').replace(/\n/g,'<br>')}</p></div>\n</div>\n`;
-                } else if (type === 'gallery') {
-                    const urls = getV('v-gallery').split('\n').filter(i => i.trim() !== '');
-                    if(urls.length > 0) {
-                        html += `<div class="image-gallery">\n  ${urls.map(url => `<img src="${url}" alt="Galleria">`).join('\n  ')}\n</div>\n`;
-                    }
-                } else if (type === 'list') {
-                    const items = getV('v-list').split('\n').filter(i => i.trim() !== '');
-                    if(items.length > 0) html += `<ul>\n  ${items.map(i => `<li>${i}</li>`).join('\n  ')}\n</ul>\n`;
-                } else if (type === 'btn') {
-                    html += `<a href="${getV('v-link')}" class="site-btn">${getV('v-text')}</a>\n`;
-                } else if (type === 'footer') {
-                    html += `<footer class="site-footer"><p>${getV('v-text')}</p></footer>\n`;
-                } else if (type === 'h2') {
-                    html += `<h2>${getV('v-title')}</h2>\n`;
-                } else if (type === 'p') {
-                    html += `<p>${getV('v-text').replace(/\n/g,'<br>')}</p>\n`;
-                } else if (type === 'img') {
-                    html += `<img src="${getV('v-img')}" class="base-img">\n`;
-                }
-            });
-
-            document.getElementById('code-output').value = html;
-            updatePreviewFromCode();
-            autoSave();
-        }
-
-        // Il codice CSS integrato di base per far funzionare bene la Galleria ovunque
-        const baseCSS = `
-                .preview-wrapper img.base-img { max-width:100%; border-radius:8px; display:block; margin: 15px 0; }
-                .layout-img-text { display:flex; gap:20px; margin:20px 0; background:white; padding:15px; border-radius:8px; align-items:flex-start; }
-                .layout-img-text img { width:40%; max-width:100%; border-radius:8px; }
-                .layout-2-cols { display:flex; gap:20px; margin:20px 0; }
-                .layout-2-cols .col { flex:1; background:white; padding:15px; border-radius:8px; }
-                .site-header { text-align:center; padding:30px; border-radius:8px; margin-bottom:20px; }
-                .site-footer { text-align:center; padding:20px; border-radius:8px; margin-top:30px; }
-                .site-btn { display:inline-block; padding:10px 20px; background:#3b82f6; color:white; text-decoration:none; border-radius:5px; margin:10px 0; }
-                
-                /* STILE GALLERIA SCORREVOLE (CSS CAROUSEL) */
-                .image-gallery { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; margin: 25px 0; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-                .image-gallery img { height: 250px; width: auto; max-width: 90vw; object-fit: cover; border-radius: 8px; scroll-snap-align: center; flex-shrink: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-                .image-gallery::-webkit-scrollbar { height: 8px; }
-                .image-gallery::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 4px; }
-                .image-gallery::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
-                
-                @media (max-width: 600px) { .layout-img-text, .layout-2-cols { flex-direction:column; } .layout-img-text img { width:100%; } }
-        `;
-
-        function updatePreviewFromCode() {
-            const html = document.getElementById('code-output').value;
-            const css = document.getElementById('css-output').value;
-            document.getElementById('visual-preview').innerHTML = `<style>${baseCSS} ${css}</style><div class="preview-wrapper">${html}</div>`;
-        }
-
-        // --- SALVATAGGIO E CARICAMENTO ---
-        function saveProject() {
-            const data = { css: document.getElementById('css-output').value, blocks: [] };
-            workspace.querySelectorAll('.work-block').forEach(b => {
-                const type = b.dataset.type; const vals = {};
-                b.querySelectorAll('input, textarea').forEach(i => vals[i.className] = i.value);
-                data.blocks.push({type, vals});
-            });
-            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'progetto-giornalino.json'; a.click();
-        }
-
-        function loadProject(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                const data = JSON.parse(e.target.result);
-                workspace.innerHTML = '';
-                document.getElementById('css-output').value = data.css;
-                data.blocks.forEach(b => createWorkspaceBlock(b.type, b.vals));
-            };
-            reader.readAsText(file);
-        }
-
-        function autoSave() {
-            const blocks = [];
-            workspace.querySelectorAll('.work-block').forEach(b => {
-                const vals = {}; b.querySelectorAll('input, textarea').forEach(i => vals[i.className] = i.value);
-                blocks.push({type: b.dataset.type, vals});
-            });
-            localStorage.setItem('giornalino_autosave', JSON.stringify({ css: document.getElementById('css-output').value, blocks: blocks }));
-        }
-
-        function loadAutoSave() {
-            const saved = localStorage.getItem('giornalino_autosave');
-            if (saved) {
-                const data = JSON.parse(saved);
-                document.getElementById('css-output').value = data.css;
-                data.blocks.forEach(b => createWorkspaceBlock(b.type, b.vals));
-            }
-        }
-
-        function saveHTML() {
-            const html = document.getElementById('code-output').value;
-            const css = document.getElementById('css-output').value;
-            const full = `<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Il Nostro Giornalino</title>
+    <title>APP-CASUALI</title>
     <style>
-        body { margin:0; padding:0; background:#f1f5f9; }
-        .container { max-width:900px; margin:0 auto; padding:20px; overflow-x: hidden; }
-        ${baseCSS}
-        ${css}
+        body { 
+            font-family: sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            color: white; 
+            margin: 0; 
+            padding: 20px;
+            box-sizing: border-box;
+
+            /* Sfondo generale scuro con immagine */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
+        }
+        
+        h1 { 
+            margin-bottom: 30px; 
+            text-align: center;
+            font-size: 3rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5); 
+        }
+
+        .bottoni-container {
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 20px; 
+            max-width: 900px; 
+            
+            /* Effetto vetro */
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- STILE BASE DEL BOTTONE CON VARIABILI --- */
+        .btn {
+            background: var(--bg-color); /* Usa la variabile del colore sfondo */
+            color: white; 
+            text-decoration: none;
+            padding: 20px 20px; 
+            border-radius: 10px;
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            width: 200px; 
+            text-align: center;
+            display: block; 
+            box-shadow: 0 4px 0 var(--shadow-color); /* Usa la variabile del colore ombra */
+            transition: all 0.2s ease; 
+        }
+
+        .btn:hover {
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 0 var(--shadow-color); /* L'ombra cresce e mantiene il suo colore! */
+        }
+
+        .btn:active { 
+            transform: translateY(4px); 
+            box-shadow: none; 
+        }
+
+        /* --- COLORI SPECIFICI PER OGNI BOTTONE --- */
+        .btn-pizza { --bg-color: #e67e22; --shadow-color: #d35400; }         /* Arancione pomodoro/crosta */
+        .btn-family { --bg-color: #2ecc71; --shadow-color: #27ae60; }        /* Verde rassicurante/casa */
+        .btn-ruota { --bg-color: #9b59b6; --shadow-color: #8e44ad; }         /* Viola casinò/gioco */
+        .btn-volantini { --bg-color: #3498db; --shadow-color: #2980b9; }     /* Azzurro carta/informativo */
+        .btn-lab { --bg-color: #34495e; --shadow-color: #2c3e50; }           /* Blu scuro tecnologico */
+        .btn-sarabanda { --bg-color: #fd79a8; --shadow-color: #e84393; }     /* Rosa fluo musicale/pop */
+        .btn-trivial { --bg-color: #1abc9c; --shadow-color: #16a085; }       /* Verde acqua da tavolo da gioco */
+        .btn-suggeritore { --bg-color: #f39c12; --shadow-color: #e67e22; }   /* Giallo/Arancio "evidenziatore" */
+        .btn-spartiti { --bg-color: #636e72; --shadow-color: #2d3436; }      /* Grigio scuro per la musica su carta */
+        .btn-pierino { --bg-color: #d35400; --shadow-color: #a04000; }       /* Marroncino legno violino */
+        .btn-pixelart { --bg-color: #00d394; --shadow-color: #00d394; }       /* Verde acqua */
+        .btn-convertitore-doc { --bg-color: #0004d3; --shadow-color: #0004d3; }       /* Blu */
+        .btn-convertitore-audio { --bg-color: #d30066; --shadow-color: #d30066; }       /* Fucsia */
+        .btn-convertitore-immagini { --bg-color: #d39b00; --shadow-color: #d39b00; }       /* Arancione */
+        .btn-spesa-comune { --bg-color: #00d320; --shadow-color: #00d320; }       /* Verde */
+        .btn-spesa-comune { --bg-color: #002ad3; --shadow-color: #002ad3; }       /*blu*/
+        .btn-orario-scuola { --bg-color: #d37800; --shadow-color: #d37800; }       /*blu*/
+        .btn-orario-scuola-installabile { --bg-color: #d37800; --shadow-color: #d37800; }       /*blu*/
+        .btn-site-builder { --bg-color: #d37800; --shadow-color: #d37800; }       /*blu*/
+        .btn-site-builder-Tablet { --bg-color: #d37800; --shadow-color: #d37800; }       /*blu*/
     </style>
 </head>
 <body>
-    <div class="container preview-wrapper">
-${html}
-    </div>
-</body>
-</html>`;
-            const blob = new Blob([full], {type: 'text/html'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'giornalino-scuola.html'; a.click();
-        }
 
-        function toggleFullscreen() { document.getElementById('preview-panel').classList.toggle('fullscreen-mode'); }
-        window.onload = loadAutoSave;
-    </script>
+    <h1>APP-CASUALI</h1>
+
+    <div class="bottoni-container">
+        <a href="pizza/index.html" class="btn btn-pizza">🍕 Pizze</a>
+        <a href="spesa/index.html" class="btn btn-family">👨‍👩‍👧‍👦 FamilyMenu</a>
+        <a href="ruotafortuna/index.html" class="btn btn-ruota">🔴 Ruota Fortuna</a>
+        <a href="volantini/index.html" class="btn btn-volantini">📕 Volantini</a>
+        <a href="check-lab/index.html" class="btn btn-lab">💻 Laboratorio</a>
+        <a href="sarabanda/index.html" class="btn btn-sarabanda">🎧 Sarabanda</a>
+        <a href="trivial/index.html" class="btn btn-trivial">🎲 Trivial</a>
+        <a href="suggeritore/index.html" class="btn btn-suggeritore">🔎 Suggeritore</a>
+        <a href="cerca-spartiti/index.html" class="btn btn-spartiti">🎼 Spartiti</a>
+        <a href="pierino/index.html" class="btn btn-pierino">🎻 Pierino</a>
+         <a href="pixel-art/index.html" class="btn btn-convertitore-doc">🖼️ Pixel-Art</a>
+        <a href="convertitore-doc/converter.html" class="btn btn-convertitore-doc">📓 Convertitore-Doc</a>
+        <a href="convertitore-audio/index.html" class="btn btn-convertitore-audio">🎶 Convertitore-Audio</a>
+        <a href="convertitore-immagini/index.html" class="btn btn-convertitore-immagini">🎨 Convertitore-Immagini</a>
+        <a href="spesa-comune/index.html" class="btn btn-spesa-comune">🛒 Spesa-comune</a>
+        <a href="drive-music-player/index.html" class="btn btn-drive-music-player">🎧 Music-Player</a>
+        <a href="orario-scuola/index.html" class="btn btn-orario-scuola">🏫 Orario-Scuola</a>
+        <a href="orario-scuola-installabile/index.html" class="btn btn-orario-scuola-installabile">🏫 Orario-Scuola-Installabile</a>
+        <a href="site-builder/site-builder.html" class="btn btn-site-builder">🛜 Site-Builder</a>
+        <a href="site-builder-Tablet/index.html" class="btn btn-site-builder-Tablet">🛜 Site-Builder-Tablet</a>
+    </div>
+
 </body>
 </html>
