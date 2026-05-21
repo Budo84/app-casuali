@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Giornalino Web Builder PRO (Touch)</title>
+    <title>Giornalino Web Builder PRO (Media & Accessibility)</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -15,73 +15,77 @@
             --text-light: #f8fafc;
         }
 
-        /* Impostazioni Base */
         body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--bg-color); color: #1e293b; overflow: hidden; overscroll-behavior: none; }
 
         /* --- SIDEBAR --- */
-        #toolbox {
-            width: 320px; flex-shrink: 0; background-color: var(--sidebar-bg); padding: 20px; color: var(--text-light);
-            box-shadow: 4px 0 15px rgba(0,0,0,0.3); z-index: 10; display: flex; flex-direction: column; overflow-y: auto;
-        }
+        #toolbox { width: 320px; flex-shrink: 0; background-color: var(--sidebar-bg); padding: 20px; color: var(--text-light); box-shadow: 4px 0 15px rgba(0,0,0,0.3); z-index: 10; display: flex; flex-direction: column; overflow-y: auto; }
         #toolbox h2 { margin: 0 0 10px 0; font-size: 1.4rem; border-bottom: 2px solid #334155; padding-bottom: 10px; }
         .section-title { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; margin: 20px 0 10px 0; font-weight: bold; letter-spacing: 1px; }
 
-        /* Blocchi */
-        .block {
-            padding: 12px 15px; margin-bottom: 8px; color: white; cursor: grab; border-radius: 8px; font-weight: 600;
-            font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2); user-select: none; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1);
-            touch-action: none; /* Fondamentale per il touch */
-        }
+        .block { padding: 12px 15px; margin-bottom: 8px; color: white; cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2); user-select: none; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1); }
         .block:hover { transform: translateY(-2px); filter: brightness(1.2); }
         .block.layout { background: var(--accent-purple); }
         .block.base { background: var(--accent-blue); }
 
-        /* Bottoni Azione */
         .action-btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.2s; }
         #save-html { background: var(--accent-green); color: white; margin-top: 30px; font-size: 1rem; }
+        #save-html:hover { background: #059669; }
         #save-project { background: #64748b; color: white; font-size: 0.8rem; }
+        #save-project:hover { background: #475569; }
         #load-project-label { background: #475569; color: white; font-size: 0.8rem; text-align: center; cursor: pointer; padding: 12px; border-radius: 8px; margin-top: 10px; display: block; font-weight: bold;}
+        #load-project-label:hover { background: #334155; }
         #load-project { display: none; }
 
         /* --- MAIN AREA --- */
         #main { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; padding: 15px; gap: 15px; background: #e2e8f0; }
-        
         #workspace { flex: 1; background-color: var(--workspace-bg); border: 3px dashed #cbd5e1; border-radius: 12px; padding: 20px; overflow-y: auto; }
         #workspace.drag-over { border-color: var(--accent-green); background-color: #ecfdf5; }
 
-        /* Blocchi di lavoro */
-        .work-block { 
-            background: white; border: 1px solid #e2e8f0; border-left: 6px solid #cbd5e1; 
-            border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            animation: popIn 0.3s ease-out;
-        }
-        @keyframes popIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+        .work-block { background: white; border: 1px solid #e2e8f0; border-left: 6px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05); animation: popIn 0.2s ease-out; transition: transform 0.2s ease; }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
         .work-block.layout { border-left-color: var(--accent-purple); }
         .work-block.base { border-left-color: var(--accent-blue); }
-        .block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; color: #334155; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
+        
+        .block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; color: #334155; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
+        .controls { display: flex; gap: 5px; }
+        .move-btn { background: #e2e8f0; color: #334155; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .move-btn:hover { background: #cbd5e1; }
+        .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; margin-left: 5px; }
+        .delete-btn:hover { background: #ef4444; color: white; }
+
         .input-group { margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
         .input-group label { font-size: 0.75rem; color: #64748b; font-weight: bold; }
+        .input-group label.access { color: #d97706; } /* Colore per evidenziare le etichette di accessibilità */
         .work-block input, .work-block textarea { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 0.9rem; box-sizing: border-box; }
-        .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
         
         /* --- PANNELLI CODICE --- */
         #output-container { display: flex; height: 45%; gap: 15px; min-height: 0; }
         .editors-column { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-        .code-panel { display: flex; flex-direction: column; flex: 1; background: #1e1e1e; border-radius: 10px; overflow: hidden; border: 1px solid #334155; }
-        .code-header { background: #2d2d2d; padding: 8px 15px; font-size: 0.8rem; font-weight: bold; color: #94a3b8; display: flex; justify-content: space-between; }
+        .code-panel { display: flex; flex-direction: column; flex: 1; background: #1e1e1e; border-radius: 10px; overflow: hidden; border: 1px solid #334155; position: relative; }
+        .code-header { background: #2d2d2d; padding: 8px 15px; font-size: 0.8rem; font-weight: bold; color: #94a3b8; display: flex; justify-content: space-between; align-items: center;}
         textarea.code-area { flex: 1; padding: 12px; background: transparent; color: #d4d4d4; font-family: 'Consolas', monospace; font-size: 12px; border: none; resize: none; outline: none; line-height: 1.5; width: 100%; box-sizing: border-box; }
         #css-output { color: #9cdcfe; }
         #code-output { color: #ce9178; }
+        
+        .theme-selector { background: #1e293b; color: #38bdf8; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; outline: none;}
+        .help-btn { background: #f59e0b; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;}
+        .help-btn:hover { background: #d97706; }
 
-        /* Anteprima */
         #preview-panel { flex: 1.2; background: white; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); min-width: 0; }
         #visual-preview { flex: 1; padding: 0; overflow-y: auto; background: #ccc; }
         .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 99999; border-radius: 0 !important; }
 
-        /* --- OTTIMIZZAZIONE RESPONSIVE PER TABLET E SMARTPHONE --- */
+        /* --- MODAL CHEAT SHEET --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 100000; display: none; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 12px; max-width: 400px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .modal-content h3 { margin-top: 0; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .modal-content ul { padding-left: 20px; line-height: 1.8; color: #334155; }
+        .modal-content code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #ef4444; font-weight: bold; }
+        .close-modal { background: #1e293b; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 15px;}
+
         @media (max-width: 900px) {
             body { flex-direction: column; height: auto; min-height: 100vh; overflow-y: auto; }
-            #toolbox { width: 100%; height: 35vh; min-height: 250px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+            #toolbox { width: 100%; height: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
             #main { height: auto; overflow: visible; padding: 10px; }
             #workspace { min-height: 400px; }
             #output-container { flex-direction: column; height: auto; }
@@ -93,40 +97,51 @@
 <body>
 
     <div id="toolbox">
-        <h2>🛠️ Web Lab Redazione</h2>
+        <h2>🛠️ Redazione Web</h2>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top:0;">Clicca o trascina un blocco per aggiungerlo.</p>
         
         <div class="section-title">Layout di Pagina</div>
         <div class="block layout" draggable="true" data-type="header">📰 Testata e Titolo</div>
         <div class="block layout" draggable="true" data-type="img-text">🖼️ Articolo con Foto</div>
         <div class="block layout" draggable="true" data-type="2-cols">👥 Due Colonne</div>
+        <div class="block layout" draggable="true" data-type="gallery">🖼️🖼️ Galleria Scorrevole</div>
         <div class="block layout" draggable="true" data-type="footer">🦶 Piè di Pagina</div>
 
         <div class="section-title">Contenuti Liberi</div>
         <div class="block base" draggable="true" data-type="h2">T Titolo Medio</div>
         <div class="block base" draggable="true" data-type="p">¶ Testo Normale</div>
         <div class="block base" draggable="true" data-type="list">📝 Lista Puntata</div>
-        <div class="block base" draggable="true" data-type="btn">🔗 Pulsante Link</div>
+        <div class="block base" draggable="true" data-type="video">▶️ Video YouTube</div>
         <div class="block base" draggable="true" data-type="img">🖼️ Foto Singola</div>
+        <div class="block base" draggable="true" data-type="btn">🔗 Pulsante Link</div>
 
         <button id="save-html" class="action-btn" onclick="saveHTML()">🚀 ESPORTA SITO WEB</button>
         
         <div class="section-title">Gestione Progetto</div>
         <button id="save-project" class="action-btn" onclick="saveProject()">💾 Salva Progetto (.json)</button>
-        <label id="load-project-label" for="load-project">📂 Carica Progetto</label>
+        <label id="load-project-label" for="load-project">📂 Carica Progetto JSON</label>
         <input type="file" id="load-project" accept=".json" onchange="loadProject(event)">
     </div>
 
     <div id="main">
         <div id="workspace">
             <h3 id="placeholder" style="color: #64748b; text-align: center; margin-top: 100px; font-weight: normal; pointer-events: none;">
-                Trascina qui i blocchi per comporre la tua pagina!<br>
+                L'area di lavoro è vuota.<br>Clicca su un blocco a sinistra per iniziare!
             </h3>
         </div>
 
         <div id="output-container">
             <div class="editors-column">
                 <div class="code-panel">
-                    <div class="code-header">🎨 STILE (CSS)</div>
+                    <div class="code-header">
+                        🎨 STILE (CSS)
+                        <select class="theme-selector" id="theme-dropdown" onchange="applyTheme()">
+                            <option value="default">Tema: Classico Base</option>
+                            <option value="classic">Tema: Giornale Elegante</option>
+                            <option value="cyber">Tema: Cyber-Tech</option>
+                            <option value="pop">Tema: Pop Creativo</option>
+                        </select>
+                    </div>
                     <textarea id="css-output" class="code-area" spellcheck="false" oninput="updatePreviewFromCode()">
 /* PERSONALIZZA IL TUO SITO */
 .preview-wrapper {
@@ -139,8 +154,11 @@
 .site-footer { background-color: #334155; color: #cbd5e1; }</textarea>
                 </div>
                 <div class="code-panel">
-                    <div class="code-header">📝 STRUTTURA (HTML)</div>
-                    <textarea id="code-output" class="code-area" spellcheck="false" oninput="updatePreviewFromCode()"></textarea>
+                    <div class="code-header">
+                        📝 STRUTTURA (HTML)
+                        <button class="help-btn" onclick="toggleCheatSheet(true)">💡 Aiuto Tag</button>
+                    </div>
+                    <textarea id="code-output" class="code-area" spellcheck="false" readonly></textarea>
                 </div>
             </div>
             
@@ -154,15 +172,47 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="cheat-modal">
+        <div class="modal-content">
+            <h3>💡 Bignami dell'HTML</h3>
+            <p style="font-size: 0.9rem;">Puoi usare questi codici nei tuoi testi (Paragrafi o Liste) per abbellirli:</p>
+            <ul>
+                <li><code>&lt;b&gt;</code>testo<code>&lt;/b&gt;</code> = <b>Grassetto</b></li>
+                <li><code>&lt;i&gt;</code>testo<code>&lt;/i&gt;</code> = <i>Corsivo</i></li>
+                <li><code>&lt;u&gt;</code>testo<code>&lt;/u&gt;</code> = <u>Sottolineato</u></li>
+                <li><code>&lt;mark&gt;</code>testo<code>&lt;/mark&gt;</code> = <mark>Evidenziatore</mark></li>
+                <li><code>&lt;br&gt;</code> = Vai a capo (invio riga)</li>
+            </ul>
+            <button class="close-modal" onclick="toggleCheatSheet(false)">Ho Capito, Chiudi</button>
+        </div>
+    </div>
+
     <script>
         const workspace = document.getElementById('workspace');
-        const blocks = document.querySelectorAll('.block');
+        
+        // --- GESTIONE TEMI CSS ---
+        const cssThemes = {
+            "default": "/* PERSONALIZZA IL TUO SITO */\n.preview-wrapper {\n  font-family: 'Segoe UI', sans-serif;\n  background-color: #f8fafc;\n  color: #1e293b;\n  padding: 20px;\n}\n.site-header { background-color: #1e293b; color: white; }\n.site-footer { background-color: #334155; color: #cbd5e1; }",
+            "classic": "/* TEMA: GIORNALE ELEGANTE */\n.preview-wrapper {\n  font-family: 'Georgia', serif;\n  background-color: #fffaf0;\n  color: #333333;\n  padding: 20px;\n}\n.site-header { \n  background-color: #ffffff; \n  color: #111111; \n  border-bottom: 4px double #333; \n  border-radius: 0;\n}\n.site-footer { \n  background-color: #f1f1f1; \n  color: #555555; \n  border-top: 1px solid #ccc;\n}\n.preview-wrapper h2 { font-style: italic; color: #555; border-bottom: 1px solid #ccc; padding-bottom: 5px; }",
+            "cyber": "/* TEMA: CYBER-TECH */\n.preview-wrapper {\n  font-family: 'Courier New', monospace;\n  background-color: #0f172a;\n  color: #10b981;\n  padding: 20px;\n}\n.site-header { background-color: #000; color: #10b981; border: 1px solid #10b981; }\n.site-footer { background-color: #000; color: #10b981; border: 1px solid #10b981; }\n.preview-wrapper h2 { color: #38bdf8; text-transform: uppercase; }\n.layout-img-text, .layout-2-cols .col { background-color: #1e293b; border: 1px solid #38bdf8; box-shadow: 2px 2px 0px #10b981; }",
+            "pop": "/* TEMA: POP CREATIVO */\n.preview-wrapper {\n  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;\n  background-color: #fdf4ff;\n  color: #701a75;\n  padding: 20px;\n}\n.site-header { background-color: #d946ef; color: white; border-radius: 20px; box-shadow: 5px 5px 0px #86198f; }\n.site-footer { background-color: #f0abfc; color: #701a75; border-radius: 20px; }\n.preview-wrapper h2 { color: #d946ef; }\n.layout-img-text, .layout-2-cols .col { border-radius: 20px; box-shadow: 4px 4px 0px #f0abfc; }"
+        };
 
-        // --- DRAG AND DROP MISTO (MOUSE + TOUCH) ---
+        function applyTheme() {
+            const selector = document.getElementById('theme-dropdown');
+            const themeCode = cssThemes[selector.value];
+            document.getElementById('css-output').value = themeCode;
+            updateGenerators();
+        }
 
-        // 1. Logica Mouse (Desktop)
-        blocks.forEach(b => {
+        function toggleCheatSheet(show) {
+            document.getElementById('cheat-modal').style.display = show ? 'flex' : 'none';
+        }
+
+        // --- GESTIONE DRAG, DROP E CLICK DEI BLOCCHI ---
+        document.querySelectorAll('.block').forEach(b => {
             b.addEventListener('dragstart', e => e.dataTransfer.setData('type', b.dataset.type));
+            b.addEventListener('click', () => createWorkspaceBlock(b.dataset.type));
         });
 
         workspace.addEventListener('dragover', e => { e.preventDefault(); workspace.classList.add('drag-over'); });
@@ -173,147 +223,148 @@
             if (type) createWorkspaceBlock(type);
         });
 
-        // 2. Logica Touch (Smartphone/Tablet)
-        let dragClone = null;
-        let draggedType = null;
-
-        blocks.forEach(b => {
-            b.addEventListener('touchstart', e => {
-                draggedType = b.dataset.type;
-                
-                // Crea un clone fantasma che seguirà il dito
-                dragClone = b.cloneNode(true);
-                dragClone.style.position = 'fixed';
-                dragClone.style.zIndex = '999999';
-                dragClone.style.opacity = '0.8';
-                dragClone.style.pointerEvents = 'none'; // Importante per far cliccare "attraverso" il clone
-                dragClone.style.width = b.offsetWidth + 'px';
-                document.body.appendChild(dragClone);
-                
-                const touch = e.touches[0];
-                moveClone(touch.clientX, touch.clientY);
-            }, {passive: false});
-
-            b.addEventListener('touchmove', e => {
-                if (!dragClone) return;
-                e.preventDefault(); // Impedisce lo scorrimento della pagina mentre si trascina un blocco
-                
-                const touch = e.touches[0];
-                moveClone(touch.clientX, touch.clientY);
-
-                // Evidenzia visivamente l'area di lavoro se ci passiamo sopra
-                const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (dropTarget && dropTarget.closest('#workspace')) {
-                    workspace.classList.add('drag-over');
-                } else {
-                    workspace.classList.remove('drag-over');
-                }
-            }, {passive: false});
-
-            b.addEventListener('touchend', e => {
-                if (!dragClone) return;
-                
-                const touch = e.changedTouches[0];
-                const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-
-                // Se alzi il dito sopra il workspace, crea il blocco
-                if (dropTarget && dropTarget.closest('#workspace')) {
-                    createWorkspaceBlock(draggedType);
-                }
-
-                workspace.classList.remove('drag-over');
-                dragClone.remove();
-                dragClone = null;
-                draggedType = null;
-            });
-        });
-
-        function moveClone(x, y) {
-            dragClone.style.left = (x - dragClone.offsetWidth / 2) + 'px';
-            dragClone.style.top = (y - dragClone.offsetHeight / 2) + 'px';
+        function moveBlock(btn, direction) {
+            const block = btn.closest('.work-block');
+            if (direction === -1) { 
+                const prev = block.previousElementSibling;
+                if (prev && prev.id !== 'placeholder') { workspace.insertBefore(block, prev); }
+            } else if (direction === 1) { 
+                const next = block.nextElementSibling;
+                if (next) { workspace.insertBefore(next, block); }
+            }
+            updateGenerators();
         }
 
-        // --- CREAZIONE DEI BLOCCHI ---
+        function escapeHTML(str) { return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+        // --- ESTRAZIONE ID VIDEO YOUTUBE ---
+        function getYouTubeId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // --- CREAZIONE BLOCCHI ---
         function createWorkspaceBlock(type, savedData = null) {
             const block = document.createElement('div');
-            block.className = `work-block ${['header','img-text','2-cols','footer'].includes(type) ? 'layout' : 'base'}`;
+            block.className = `work-block ${['header','img-text','2-cols','gallery','footer'].includes(type) ? 'layout' : 'base'}`;
             block.dataset.type = type;
 
-            let html = `<div class="block-header"><span>${getBlockLabel(type)}</span> <button class="delete-btn" onclick="removeBlock(this)">Elimina</button></div>`;
+            let html = `
+                <div class="block-header">
+                    <span>${getBlockLabel(type)}</span> 
+                    <div class="controls">
+                        <button class="move-btn" onclick="moveBlock(this, -1)" title="Sposta Su">⬆️</button>
+                        <button class="move-btn" onclick="moveBlock(this, 1)" title="Sposta Giù">⬇️</button>
+                        <button class="delete-btn" onclick="removeBlock(this)">X</button>
+                    </div>
+                </div>`;
             
+            const v = (key) => savedData && savedData[key] ? savedData[key] : '';
+
             if (type === 'header') {
-                html += field('Titolo Giornalino', 'v-title', savedData?.title, 'Es. Cronache di Classe');
-                html += field('Sottotitolo / Data', 'v-sub', savedData?.sub, 'Es. Maggio 2024');
+                html += field('Titolo Giornalino', 'v-title', v('v-title'), 'Es. Cronache di Classe');
+                html += field('Sottotitolo / Data', 'v-sub', v('v-sub'), 'Es. Maggio 2026');
             } else if (type === 'img-text') {
-                html += field('Link Foto', 'v-img', savedData?.img, 'foto.jpg');
-                html += field('Titolo Articolo', 'v-title', savedData?.title);
-                html += area('Testo Articolo', 'v-text', savedData?.text);
+                html += field('Link Foto (o foto.jpg)', 'v-img', v('v-img'), 'foto.jpg');
+                html += fieldAccess('Descrizione Foto (Alt text - per non vedenti)', 'v-alt', v('v-alt'), 'Es. Gruppo in posa davanti al museo');
+                html += field('Titolo Articolo', 'v-title', v('v-title'));
+                html += area('Testo Articolo', 'v-text', v('v-text'));
             } else if (type === '2-cols') {
                 html += `<div style="display:flex; flex-direction: column; gap:10px;">
-                    <div style="background:#f8fafc; padding:10px; border-radius:6px;">${field('Titolo Sx','v-t1', savedData?.t1)}${area('Testo Sx','v-txt1', savedData?.txt1)}</div>
-                    <div style="background:#f8fafc; padding:10px; border-radius:6px;">${field('Titolo Dx','v-t2', savedData?.t2)}${area('Testo Dx','v-txt2', savedData?.txt2)}</div>
+                    <div style="background:#f8fafc; padding:10px; border-radius:6px;">${field('Titolo Sx','v-t1', v('v-t1'))}${area('Testo Sx','v-txt1', v('v-txt1'))}</div>
+                    <div style="background:#f8fafc; padding:10px; border-radius:6px;">${field('Titolo Dx','v-t2', v('v-t2'))}${area('Testo Dx','v-txt2', v('v-txt2'))}</div>
                 </div>`;
+            } else if (type === 'gallery') {
+                html += area('Link delle foto (una per riga, premi Invio)', 'v-gallery', v('v-gallery'), 'foto1.jpg\nfoto2.jpg');
+                html += fieldAccess('Descrizione Generale (Alt text)', 'v-alt', v('v-alt'), 'Es. Foto ricordo della gita');
             } else if (type === 'list') {
-                html += area('Elementi della lista (uno per riga)', 'v-list', savedData?.list);
+                html += area('Elementi della lista (uno per riga)', 'v-list', v('v-list'));
+            } else if (type === 'video') {
+                html += field('Link del video YouTube', 'v-vid', v('v-vid'), 'Es. https://www.youtube.com/watch?v=...');
             } else if (type === 'btn') {
-                html += field('Testo Pulsante', 'v-text', savedData?.text, 'Leggi di più');
-                html += field('Link (URL)', 'v-link', savedData?.link, 'intervista.html');
+                html += field('Testo Pulsante', 'v-text', v('v-text'), 'Leggi di più');
+                html += field('Link (URL)', 'v-link', v('v-link'), 'intervista.html');
             } else if (type === 'footer') {
-                html += field('Testo Credits', 'v-text', savedData?.text, 'Creato dalla classe 3A');
+                html += field('Testo Credits', 'v-text', v('v-text'), 'Creato dalla classe 3A');
             } else if (type === 'h2') {
-                html += field('Titolo Medio', 'v-title', savedData?.title);
+                html += field('Titolo Medio', 'v-title', v('v-title'));
             } else if (type === 'p') {
-                html += area('Paragrafo', 'v-text', savedData?.text);
+                html += area('Paragrafo', 'v-text', v('v-text'));
             } else if (type === 'img') {
-                html += field('URL Immagine', 'v-img', savedData?.img);
+                html += field('URL Immagine', 'v-img', v('v-img'));
+                html += fieldAccess('Descrizione Immagine (Alt text)', 'v-alt', v('v-alt'), 'Es. Grafico dei risultati');
             }
 
             block.innerHTML = html;
             workspace.appendChild(block);
-            document.getElementById('placeholder').style.display = 'none';
+            
+            const ph = document.getElementById('placeholder');
+            if (ph) ph.style.display = 'none';
+            
             updateGenerators();
         }
 
-        // Helpers UI
-        function field(label, cls, val='', ph='') { return `<div class="input-group"><label>${label}</label><input type="text" class="${cls}" value="${val||''}" placeholder="${ph}" oninput="updateGenerators()"></div>`; }
-        function area(label, cls, val='') { return `<div class="input-group"><label>${label}</label><textarea class="${cls}" oninput="updateGenerators()">${val||''}</textarea></div>`; }
-        function getBlockLabel(t) {
-            const labels = {header:'📰 Testata', 'img-text':'🖼️ Articolo+Foto', '2-cols':'👥 Due Colonne', footer:'🦶 Piè di Pagina', h2:'T Titolo', p:'¶ Paragrafo', list:'📝 Lista', btn:'🔗 Pulsante', img:'🖼️ Foto'};
-            return labels[t] || t;
+        // Builders UI per i field
+        function field(label, cls, val='', ph='') { return `<div class="input-group"><label>${label}</label><input type="text" class="${cls}" value="${escapeHTML(val)}" placeholder="${ph}" oninput="updateGenerators()"></div>`; }
+        function fieldAccess(label, cls, val='', ph='') { return `<div class="input-group"><label class="access">👁️ ${label}</label><input type="text" class="${cls}" value="${escapeHTML(val)}" placeholder="${ph}" oninput="updateGenerators()"></div>`; }
+        function area(label, cls, val='', ph='') { return `<div class="input-group"><label>${label}</label><textarea class="${cls}" placeholder="${ph}" oninput="updateGenerators()">${escapeHTML(val)}</textarea></div>`; }
+        
+        function getBlockLabel(t) { const labels = {header:'📰 Testata', 'img-text':'🖼️ Articolo+Foto', '2-cols':'👥 Due Colonne', gallery:'🖼️🖼️ Galleria', footer:'🦶 Piè di Pagina', h2:'T Titolo', p:'¶ Paragrafo', list:'📝 Lista', video: '▶️ Video YouTube', btn:'🔗 Pulsante', img:'🖼️ Foto'}; return labels[t] || t; }
+        
+        function removeBlock(btn) { 
+            btn.closest('.work-block').remove(); 
+            updateGenerators(); 
+            if(workspace.querySelectorAll('.work-block').length === 0) {
+                const ph = document.getElementById('placeholder');
+                if (ph) ph.style.display = 'block';
+            }
         }
 
-        function removeBlock(btn) {
-            btn.closest('.work-block').remove();
-            updateGenerators();
-            if(workspace.querySelectorAll('.work-block').length === 0) document.getElementById('placeholder').style.display = 'block';
-        }
-
-        // --- GENERAZIONE CODICE ---
+        // --- GENERAZIONE CODICE (Ora supporta Alt e Video) ---
         function updateGenerators() {
             let html = '';
+            
+            const getV = (block, className, isAttribute = false) => {
+                let val = block.querySelector('.' + className)?.value || '';
+                if (isAttribute) val = val.replace(/"/g, '&quot;');
+                return val;
+            };
+
             workspace.querySelectorAll('.work-block').forEach(block => {
                 const type = block.dataset.type;
-                const getV = (c) => block.querySelector('.'+c)?.value || '';
 
                 if (type === 'header') {
-                    html += `\n<header class="site-header">\n  <h1>${getV('v-title')}</h1>\n  <p>${getV('v-sub')}</p>\n</header>\n`;
+                    html += `\n<header class="site-header">\n  <h1>${getV(block, 'v-title')}</h1>\n  <p>${getV(block, 'v-sub')}</p>\n</header>\n`;
                 } else if (type === 'img-text') {
-                    html += `<div class="layout-img-text">\n  <img src="${getV('v-img')}" alt="Foto">\n  <div class="content">\n    <h2>${getV('v-title')}</h2>\n    <p>${getV('v-text').replace(/\n/g,'<br>')}</p>\n  </div>\n</div>\n`;
+                    html += `<div class="layout-img-text">\n  <img src="${getV(block, 'v-img', true)}" alt="${getV(block, 'v-alt', true)}">\n  <div class="content">\n    <h2>${getV(block, 'v-title')}</h2>\n    <p>${getV(block, 'v-text').replace(/\n/g,'<br>')}</p>\n  </div>\n</div>\n`;
                 } else if (type === '2-cols') {
-                    html += `<div class="layout-2-cols">\n  <div class="col"><h2>${getV('v-t1')}</h2><p>${getV('v-txt1').replace(/\n/g,'<br>')}</p></div>\n  <div class="col"><h2>${getV('v-t2')}</h2><p>${getV('v-txt2').replace(/\n/g,'<br>')}</p></div>\n</div>\n`;
+                    html += `<div class="layout-2-cols">\n  <div class="col"><h2>${getV(block, 'v-t1')}</h2><p>${getV(block, 'v-txt1').replace(/\n/g,'<br>')}</p></div>\n  <div class="col"><h2>${getV(block, 'v-t2')}</h2><p>${getV(block, 'v-txt2').replace(/\n/g,'<br>')}</p></div>\n</div>\n`;
+                } else if (type === 'gallery') {
+                    const urls = getV(block, 'v-gallery').split('\n').filter(i => i.trim() !== '');
+                    const altTxt = getV(block, 'v-alt', true) || 'Immagine galleria';
+                    if(urls.length > 0) { html += `<div class="image-gallery">\n  ${urls.map(url => `<img src="${url.replace(/"/g, '&quot;')}" alt="${altTxt}">`).join('\n  ')}\n</div>\n`; }
                 } else if (type === 'list') {
-                    const items = getV('v-list').split('\n').filter(i => i.trim() !== '');
-                    html += `<ul>\n  ${items.map(i => `<li>${i}</li>`).join('\n  ')}\n</ul>\n`;
+                    const items = getV(block, 'v-list').split('\n').filter(i => i.trim() !== '');
+                    if(items.length > 0) html += `<ul>\n  ${items.map(i => `<li>${i}</li>`).join('\n  ')}\n</ul>\n`;
+                } else if (type === 'video') {
+                    const rawUrl = getV(block, 'v-vid');
+                    const ytId = getYouTubeId(rawUrl);
+                    if (ytId) {
+                        html += `<div class="video-wrapper">\n  <iframe src="https://www.youtube.com/embed/${ytId}" allowfullscreen></iframe>\n</div>\n`;
+                    } else if (rawUrl.trim() !== '') {
+                        html += `<p style="color:red; font-weight:bold;">[Inserire un link YouTube valido]</p>\n`;
+                    }
                 } else if (type === 'btn') {
-                    html += `<a href="${getV('v-link')}" class="site-btn">${getV('v-text')}</a>\n`;
+                    html += `<a href="${getV(block, 'v-link', true)}" class="site-btn">${getV(block, 'v-text')}</a>\n`;
                 } else if (type === 'footer') {
-                    html += `<footer class="site-footer"><p>${getV('v-text')}</p></footer>\n`;
+                    html += `<footer class="site-footer"><p>${getV(block, 'v-text')}</p></footer>\n`;
                 } else if (type === 'h2') {
-                    html += `<h2>${getV('v-title')}</h2>\n`;
+                    html += `<h2>${getV(block, 'v-title')}</h2>\n`;
                 } else if (type === 'p') {
-                    html += `<p>${getV('v-text').replace(/\n/g,'<br>')}</p>\n`;
+                    html += `<p>${getV(block, 'v-text').replace(/\n/g,'<br>')}</p>\n`;
                 } else if (type === 'img') {
-                    html += `<img src="${getV('v-img')}" class="base-img">\n`;
+                    html += `<img src="${getV(block, 'v-img', true)}" class="base-img" alt="${getV(block, 'v-alt', true)}">\n`;
                 }
             });
 
@@ -322,24 +373,36 @@
             autoSave();
         }
 
+        const baseCSS = `
+                .preview-wrapper img { height: auto; }
+                .preview-wrapper img.base-img { max-width:100%; border-radius:8px; display:block; margin: 15px 0; }
+                .layout-img-text { display:flex; gap:20px; margin:20px 0; background:white; padding:15px; border-radius:8px; align-items:flex-start; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+                .layout-img-text img { width:40%; max-width:100%; border-radius:8px; }
+                .layout-2-cols { display:flex; gap:20px; margin:20px 0; }
+                .layout-2-cols .col { flex:1; background:white; padding:15px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+                .site-header { text-align:center; padding:30px; border-radius:8px; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+                .site-footer { text-align:center; padding:20px; border-radius:8px; margin-top:30px; }
+                .site-btn { display:inline-block; padding:10px 20px; background:#3b82f6; color:white; text-decoration:none; border-radius:5px; margin:10px 0; }
+                
+                .image-gallery { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; margin: 25px 0; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+                .image-gallery img { height: 250px; width: auto; max-width: 90vw; object-fit: cover; border-radius: 8px; scroll-snap-align: center; flex-shrink: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                .image-gallery::-webkit-scrollbar { height: 8px; }
+                .image-gallery::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 4px; }
+                .image-gallery::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+                
+                .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: #000; }
+                .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+                
+                @media (max-width: 600px) { .layout-img-text, .layout-2-cols { flex-direction:column; } .layout-img-text img { width:100%; } }
+        `;
+
         function updatePreviewFromCode() {
             const html = document.getElementById('code-output').value;
             const css = document.getElementById('css-output').value;
-            document.getElementById('visual-preview').innerHTML = `<style>
-                .preview-wrapper img { max-width:100%; border-radius:8px; }
-                .layout-img-text { display:flex; gap:20px; margin:20px 0; background:white; padding:15px; border-radius:8px; align-items:flex-start; }
-                .layout-img-text img { width:40%; }
-                .layout-2-cols { display:flex; gap:20px; margin:20px 0; }
-                .layout-2-cols .col { flex:1; background:white; padding:15px; border-radius:8px; }
-                .site-header { text-align:center; padding:30px; border-radius:8px; margin-bottom:20px; }
-                .site-footer { text-align:center; padding:20px; border-radius:8px; margin-top:30px; }
-                .site-btn { display:inline-block; padding:10px 20px; background:#3b82f6; color:white; text-decoration:none; border-radius:5px; margin:10px 0; }
-                @media (max-width: 600px) { .layout-img-text, .layout-2-cols { flex-direction:column; } .layout-img-text img { width:100%; } }
-                ${css}
-            </style><div class="preview-wrapper">${html}</div>`;
+            document.getElementById('visual-preview').innerHTML = `<style>${baseCSS} ${css}</style><div class="preview-wrapper">${html}</div>`;
         }
 
-        // --- SALVATAGGIO E CARICAMENTO ---
+        // --- SISTEMA SALVATAGGIO ---
         function saveProject() {
             const data = { css: document.getElementById('css-output').value, blocks: [] };
             workspace.querySelectorAll('.work-block').forEach(b => {
@@ -347,7 +410,7 @@
                 b.querySelectorAll('input, textarea').forEach(i => vals[i.className] = i.value);
                 data.blocks.push({type, vals});
             });
-            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'progetto-giornalino.json'; a.click();
         }
 
@@ -356,12 +419,20 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = e => {
-                const data = JSON.parse(e.target.result);
-                workspace.innerHTML = '';
-                document.getElementById('css-output').value = data.css;
-                data.blocks.forEach(b => createWorkspaceBlock(b.type, b.vals));
+                try {
+                    const text = e.target.result;
+                    if (text.includes('<!DOCTYPE html>')) {
+                        alert("ERRORE: Hai caricato il file HTML esportato! 🚫\nPer continuare a lavorare devi caricare il file .json del progetto.");
+                        return;
+                    }
+                    const data = JSON.parse(text);
+                    workspace.querySelectorAll('.work-block').forEach(b => b.remove());
+                    document.getElementById('css-output').value = data.css || '';
+                    if(data.blocks) { data.blocks.forEach(b => createWorkspaceBlock(b.type, b.vals)); }
+                } catch (error) { alert("Attenzione: Il file non è valido o è corrotto."); }
             };
             reader.readAsText(file);
+            event.target.value = ''; 
         }
 
         function autoSave() {
@@ -370,15 +441,22 @@
                 const vals = {}; b.querySelectorAll('input, textarea').forEach(i => vals[i.className] = i.value);
                 blocks.push({type: b.dataset.type, vals});
             });
-            localStorage.setItem('giornalino_autosave', JSON.stringify({ css: document.getElementById('css-output').value, blocks: blocks }));
+            try { localStorage.setItem('giornalino_autosave', JSON.stringify({ css: document.getElementById('css-output').value, blocks: blocks })); } 
+            catch(e) {}
         }
 
         function loadAutoSave() {
             const saved = localStorage.getItem('giornalino_autosave');
             if (saved) {
-                const data = JSON.parse(saved);
-                document.getElementById('css-output').value = data.css;
-                data.blocks.forEach(b => createWorkspaceBlock(b.type, b.vals));
+                try {
+                    const data = JSON.parse(saved);
+                    document.getElementById('css-output').value = data.css || cssThemes['default'];
+                    if(data.blocks && data.blocks.length > 0) {
+                        const ph = document.getElementById('placeholder');
+                        if (ph) ph.style.display = 'none';
+                        data.blocks.forEach(b => createWorkspaceBlock(b.type, b.vals));
+                    }
+                } catch(e) {}
             }
         }
 
@@ -393,26 +471,18 @@
     <title>Il Nostro Giornalino</title>
     <style>
         body { margin:0; padding:0; background:#f1f5f9; }
-        .container { max-width:900px; margin:0 auto; padding:20px; }
-        img { max-width:100%; border-radius:8px; }
-        .layout-img-text { display:flex; gap:20px; margin:20px 0; background:white; padding:20px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
-        .layout-img-text img { width:45%; }
-        .layout-2-cols { display:flex; gap:20px; margin:20px 0; }
-        .layout-2-cols .col { flex:1; background:white; padding:20px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
-        .site-header { text-align:center; padding:40px; border-radius:8px; margin-bottom:30px; }
-        .site-footer { text-align:center; padding:20px; border-radius:8px; margin-top:40px; }
-        .site-btn { display:inline-block; padding:12px 24px; background:#2563eb; color:white; text-decoration:none; border-radius:6px; font-weight:bold; }
-        @media (max-width:768px) { .layout-img-text, .layout-2-cols { flex-direction:column; } .layout-img-text img { width:100%; } }
+        .container { max-width:900px; margin:0 auto; padding:20px; overflow-x: hidden; }
+        ${baseCSS}
         ${css}
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container preview-wrapper">
 ${html}
     </div>
 </body>
 </html>`;
-            const blob = new Blob([full], {type: 'text/html'});
+            const blob = new Blob([full], {type: 'text/html;charset=utf-8'});
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'giornalino-scuola.html'; a.click();
         }
 
