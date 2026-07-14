@@ -1,6 +1,6 @@
 {
   "short_name": "Web Wallet",
-  "name": "Web Wallet Carte Offline",
+  "name": "Web Wallet Carte",
   "icons": [
     {
       "src": "logos/icon-192.png",
@@ -14,8 +14,8 @@
     }
   ],
   "start_url": "./index.html",
-  "background_color": "#f2f2f7",
-  "theme_color": "#007aff",
+  "background_color": "#f9f9fb",
+  "theme_color": "#111111",
   "display": "standalone",
   "orientation": "portrait"
 }
