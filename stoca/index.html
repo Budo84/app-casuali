@@ -11,11 +11,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logos/icon-192.png">
 
-    <!-- Librerie esterne -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <!-- Nuova libreria per il Drag & Drop fluido -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         :root {
@@ -32,7 +31,7 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); padding-bottom: 100px; }
         
         #mainView { padding: 24px 16px; max-width: 500px; margin: 0 auto; }
-        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .header-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
         
         .settings-btn { 
@@ -42,6 +41,13 @@
         }
         .settings-btn:active { background: rgba(0,0,0,0.05); }
 
+        /* Barra di ricerca */
+        .search-container { position: relative; margin-bottom: 24px; }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+        #searchInput { width: 100%; padding: 12px 12px 12px 42px; border: none; border-radius: 14px; background: #e5e5ea; font-size: 16px; color: var(--text-main); }
+        #searchInput:focus { background: #d1d1d6; outline: none; }
+        #searchInput::placeholder { color: #8e8e93; }
+
         .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         
         .card-thumb {
@@ -49,22 +55,17 @@
             display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
             text-align: left; cursor: pointer; transition: transform 0.1s ease;
             aspect-ratio: 1.5; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
-            user-select: none; /* Previene la selezione del testo durante il trascinamento */
+            user-select: none;
         }
         
-        /* Classi dinamiche per l'effetto "Flottante" del Drag & Drop */
         .sortable-ghost { opacity: 0.3; }
-        .sortable-drag { 
-            transform: scale(1.05) rotate(2deg); 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important; 
-            z-index: 100;
-        }
+        .sortable-drag { transform: scale(1.05) rotate(2deg); box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important; z-index: 100; }
         
         .card-thumb .card-icon { position: absolute; top: 14px; right: 14px; width: 20px; height: 20px; opacity: 0.85; display: flex; align-items: center; justify-content: center; }
         .card-thumb .card-icon svg { width: 100%; height: 100%; fill: #ffffff; }
         
         .card-thumb .name { 
-            font-family: "Futura", "Trebuchet MS", "Century Gothic", sans-serif;
+            font-family: "Futura", "Trebuchet MS", sans-serif;
             font-weight: 700; font-size: 16px; color: #ffffff; line-height: 1.2;
             margin-top: auto; word-break: break-word; max-width: 85%; letter-spacing: -0.3px;
         }
@@ -81,16 +82,13 @@
         .detail-card-header .card-icon { width: 28px; height: 28px; }
         .detail-card-header .card-icon svg { width: 100%; height: 100%; fill: #ffffff; }
 
-        .barcode-container { background: white; padding: 20px 12px; border-radius: 16px; width: 100%; display: flex; justify-content: center; border: 1px solid #f2f2f7; }
-        .barcode-container svg { max-width: 100%; height: auto; }
+        .barcode-container { background: white; padding: 20px 12px; border-radius: 16px; width: 100%; display: flex; align-items: center; justify-content: center; border: 1px solid #f2f2f7; min-height: 120px; }
+        .barcode-container svg, .barcode-container img { max-width: 100%; height: auto; margin: 0 auto; }
+        
         .detail-number { margin-top: 16px; font-size: 17px; font-weight: 600; letter-spacing: 2px; color: var(--text-secondary); }
         .detail-actions { margin-top: 30px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
 
-        .fab {
-            position: fixed; bottom: 30px; right: 24px; width: 56px; height: 56px;
-            background-color: var(--primary); color: white; border-radius: 50%; font-size: 28px;
-            display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); cursor: pointer; z-index: 100;
-        }
+        .fab { position: fixed; bottom: 30px; right: 24px; width: 56px; height: 56px; background-color: var(--primary); color: white; border-radius: 50%; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); cursor: pointer; z-index: 100; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; padding: 20px 16px; }
         .modal-content { max-width: 450px; margin: 0 auto; background: var(--card-bg); padding: 24px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
@@ -98,8 +96,8 @@
         
         .form-group { margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
         .form-group label { font-weight: 600; font-size: 13px; color: var(--text-secondary); }
-        input[type="text"] { padding: 14px; border: 1.5px solid #e5e5ea; border-radius: 12px; font-size: 16px; background: #f4f4f7; color: var(--text-main); width: 100%; }
-        input[type="text"]:focus { outline: none; border-color: var(--primary); background: #fff; }
+        input[type="text"], select { padding: 14px; border: 1.5px solid #e5e5ea; border-radius: 12px; font-size: 16px; background: #f4f4f7; color: var(--text-main); width: 100%; appearance: none; outline: none; }
+        input[type="text"]:focus, select:focus { border-color: var(--primary); background: #fff; }
         
         .color-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 6px; }
         .color-option { aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.15s; }
@@ -128,6 +126,12 @@
                 </svg>
             </button>
         </div>
+        
+        <div class="search-container">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="searchInput" placeholder="Cerca tessera..." oninput="filterCards()">
+        </div>
+
         <div class="card-grid" id="cardGrid"></div>
     </div>
 
@@ -147,12 +151,15 @@
                 </div>
             </div>
             
-            <div class="barcode-container">
-                <svg id="detailBarcode"></svg>
-            </div>
+            <div class="barcode-container" id="barcodeContainerDiv"></div>
+            
             <div id="detailNumber" class="detail-number"></div>
             
             <div class="detail-actions">
+                <button class="btn btn-outline" id="shareCardBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                    Condividi Carta
+                </button>
                 <button class="btn btn-danger" id="deleteCardBtn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                     Elimina questa carta
@@ -186,12 +193,20 @@
             </div>
 
             <div class="form-group">
-                <label>Numero Tessera:</label>
+                <label>Formato del Codice:</label>
+                <select id="codeFormat">
+                    <option value="CODE128">Codice a Barre Standard</option>
+                    <option value="QR">QR Code</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Numero Tessera / Dati QR:</label>
                 <input type="text" id="barcodeNumber" placeholder="Inserisci il codice">
             </div>
 
             <div class="form-group">
-                <label>Seleziona Colore Sfondo (25 opzioni):</label>
+                <label>Seleziona Colore Sfondo:</label>
                 <div class="color-selector" id="colorSelector"></div>
             </div>
 
@@ -210,22 +225,18 @@
             </div>
 
             <div class="modal-header" style="margin-top: 0;">Impostazioni Database</div>
-            
             <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
                 Fai una copia di sicurezza delle tue carte salvandole come file JSON, oppure ripristina un backup precedente.
             </p>
-
             <button class="btn btn-outline" onclick="exportData()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 Esporta Carte (JSON)
             </button>
-
             <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 Importa Backup
             </button>
             <input type="file" id="importFile" accept=".json" onchange="importData(event)">
-
             <button class="btn btn-close" style="margin-top: 20px;" onclick="closeModals()">Chiudi</button>
         </div>
     </div>
@@ -269,7 +280,11 @@
             document.getElementById('fabBtn').style.display = (viewId === 'detailView') ? 'none' : 'flex';
 
             document.getElementById(viewId).style.display = 'block';
-            if (viewId === 'mainView') { renderGrid(); if (html5QrcodeScanner) stopScanner(); }
+            if (viewId === 'mainView') { 
+                document.getElementById('searchInput').value = ''; 
+                renderGrid(); 
+                if (html5QrcodeScanner) stopScanner(); 
+            }
         }
 
         function closeModals() {
@@ -295,13 +310,16 @@
         function saveNewCard() {
             const name = document.getElementById('shopName').value.trim();
             const number = document.getElementById('barcodeNumber').value.trim();
+            const format = document.getElementById('codeFormat').value; // Recupera il formato
+            
             if (!name || !number) { alert('Nome e numero sono obbligatori.'); return; }
             
-            cards.push({ name, number, color: selectedColor });
+            cards.push({ name, number, color: selectedColor, format: format });
             localStorage.setItem('myCards', JSON.stringify(cards));
             
             document.getElementById('shopName').value = '';
             document.getElementById('barcodeNumber').value = '';
+            document.getElementById('codeFormat').value = 'CODE128';
             selectedColor = colorPalette[0];
             buildColorSelector();
             
@@ -314,6 +332,26 @@
                 localStorage.setItem('myCards', JSON.stringify(cards)); 
                 showView('mainView');
             }
+        }
+
+        // Funzione per la Barra di Ricerca
+        function filterCards() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const thumbs = document.querySelectorAll('.card-thumb');
+            
+            // Disabilita il drag & drop quando si sta cercando
+            if (sortableInstance) {
+                sortableInstance.option("disabled", query.length > 0);
+            }
+
+            thumbs.forEach((thumb, index) => {
+                const cardName = cards[index].name.toLowerCase();
+                if (cardName.includes(query)) {
+                    thumb.style.display = 'flex';
+                } else {
+                    thumb.style.display = 'none';
+                }
+            });
         }
 
         function renderGrid() {
@@ -338,20 +376,17 @@
                 grid.appendChild(thumb);
             });
 
-            // Inizializza o aggiorna il Drag & Drop
             if (sortableInstance) sortableInstance.destroy();
             sortableInstance = new Sortable(grid, {
                 animation: 200,
-                delay: 250, // Ritardo per il tocco (evita conflitti con lo scroll)
+                delay: 250, 
                 delayOnTouchOnly: true,
                 ghostClass: 'sortable-ghost',
                 dragClass: 'sortable-drag',
                 onEnd: function (evt) {
-                    // Aggiorna l'array in base al nuovo ordine
                     const movedItem = cards.splice(evt.oldIndex, 1)[0];
                     cards.splice(evt.newIndex, 0, movedItem);
                     localStorage.setItem('myCards', JSON.stringify(cards));
-                    // Ri-renderizza per aggiornare gli indici nei click
                     renderGrid();
                 }
             });
@@ -362,8 +397,55 @@
             document.getElementById('detailName').innerText = card.name;
             document.getElementById('detailNumber').innerText = card.number;
             document.getElementById('deleteCardBtn').onclick = () => deleteCard(index);
+            
+            // Condivisione tramite Web Share API
+            document.getElementById('shareCardBtn').onclick = () => {
+                const shareData = {
+                    title: `Carta ${card.name}`,
+                    text: `Ecco la mia carta fedeltà ${card.name}.\nNumero: ${card.number}`
+                };
+                if (navigator.share) {
+                    navigator.share(shareData).catch(err => console.log('Condivisione annullata', err));
+                } else {
+                    // Fallback per computer desktop
+                    navigator.clipboard.writeText(`${shareData.text}`);
+                    alert("Numero copiato negli appunti!");
+                }
+            };
+            
             showView('detailView');
-            try { JsBarcode("#detailBarcode", card.number, { format: "CODE128", lineColor: "#000", width: 3, height: 85, displayValue: false }); } catch(e) {}
+
+            // Logica universale per Barcode e QR Code
+            const container = document.getElementById('barcodeContainerDiv');
+            container.innerHTML = ''; // Pulisce il contenitore
+
+            // Se la carta non ha la proprietà format (vecchi salvataggi), assume CODE128
+            const cardFormat = card.format || 'CODE128';
+
+            if (cardFormat === 'QR') {
+                try {
+                    new QRCode(container, {
+                        text: card.number,
+                        width: 160,
+                        height: 160,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                } catch (e) { console.error("Errore QR Code:", e); }
+            } else {
+                try {
+                    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    container.appendChild(svg);
+                    JsBarcode(svg, card.number, {
+                        format: "CODE128",
+                        lineColor: "#000",
+                        width: 3,
+                        height: 85,
+                        displayValue: false
+                    });
+                } catch(e) { console.error("Errore Barcode:", e); }
+            }
         }
 
         function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
