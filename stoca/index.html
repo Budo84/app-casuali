@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Web Wallet</title>
     
-    <!-- Configurazione PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#111111">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logos/icon-192.png">
 
-    <!-- Librerie esterne salvate in cache dal Service Worker per l'uso offline -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -20,376 +18,113 @@
         :root {
             --bg-color: #f9f9fb;
             --card-bg: #ffffff;
-            --primary: #111111; /* Klarna style usa molto nero/toni scuri e contrasto forte */
+            --primary: #111111; 
             --danger: #ff3b30;
             --text-main: #111111;
             --text-secondary: #7e7e82;
-            --accent-pink: #ffb3c6; /* Richiamo stile Klarna */
+            --accent-pink: #ffb3c6; 
         }
         
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            margin: 0; 
-            padding: 0;
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); padding-bottom: 100px; }
+        
+        #mainView { padding: 24px 16px; max-width: 500px; margin: 0 auto; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .header-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+        
+        /* Icona Impostazioni (Ingranaggio) */
+        .settings-btn { 
+            background: none; border: none; color: var(--text-main); cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; padding: 8px; border-radius: 50%;
+            transition: background 0.2s;
         }
+        .settings-btn:active { background: rgba(0,0,0,0.05); }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding-bottom: 100px;
-        }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         
-        /* --- SCHERMATA PRINCIPALE --- */
-        #mainView { 
-            padding: 24px 16px; 
-            max-width: 500px; 
-            margin: 0 auto; 
-        }
-        
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .header-title { 
-            font-size: 26px; 
-            font-weight: 800; 
-            letter-spacing: -0.5px;
-        }
-        
-        /* Griglia delle carte in stile Klarna (2 colonne fisse, molto pulita) */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        
-        /* Card stile Klarna Wallet */
         .card-thumb {
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: flex-start;
-            text-align: left;
-            cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-            aspect-ratio: 1.5; /* Rapporto proporzioni carta */
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+            text-align: left; cursor: pointer; transition: transform 0.1s ease;
+            aspect-ratio: 1.5; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
         }
+        .card-thumb:active { transform: scale(0.97); }
         
-        .card-thumb:active { 
-            transform: scale(0.97); 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03); 
-        }
+        .card-thumb .card-icon { position: absolute; top: 14px; right: 14px; width: 20px; height: 20px; opacity: 0.85; display: flex; align-items: center; justify-content: center; }
+        .card-thumb .card-icon svg { width: 100%; height: 100%; fill: #ffffff; }
         
-        /* Simbolo carta piccolo in alto a destra */
-        .card-thumb .card-icon {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            width: 20px;
-            height: 20px;
-            opacity: 0.85;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .card-thumb .card-icon svg {
-            width: 100%;
-            height: 100%;
-            fill: #ffffff;
-        }
-        
-        /* Nome del supermercato con Font Futura */
         .card-thumb .name { 
             font-family: "Futura", "Trebuchet MS", "Century Gothic", sans-serif;
-            font-weight: 700; 
-            font-size: 16px; 
-            color: #ffffff;
-            line-height: 1.2;
-            margin-top: auto; /* Spinge il testo in basso come in molti wallet */
-            word-break: break-word;
-            max-width: 85%;
-            letter-spacing: -0.3px;
+            font-weight: 700; font-size: 16px; color: #ffffff; line-height: 1.2;
+            margin-top: auto; word-break: break-word; max-width: 85%; letter-spacing: -0.3px;
         }
 
-        /* Stato vuoto */
-        .empty-state {
-            grid-column: span 2;
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-            font-size: 15px;
-        }
+        .empty-state { grid-column: span 2; text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 15px; }
 
-        /* --- DETTAGLIO CARTA --- */
-        #detailView { 
-            display: none; 
-            padding: 20px 16px; 
-            max-width: 500px; 
-            margin: 0 auto; 
-            text-align: center; 
-        }
-        
-        .back-btn-container {
-            text-align: left;
-            margin-bottom: 20px;
-        }
+        #detailView { display: none; padding: 20px 16px; max-width: 500px; margin: 0 auto; text-align: center; }
+        .back-btn-container { text-align: left; margin-bottom: 20px; }
+        .back-btn { background: none; border: none; font-size: 16px; font-weight: 600; color: var(--text-main); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 
-        .back-btn {
-            background: none;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-main);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
+        .detail-card { background: var(--card-bg); border-radius: 24px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center; border: 1px solid #f2f2f7; }
+        .detail-card-header { width: 100%; border-radius: 16px; padding: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; text-align: left; position: relative; }
+        .detail-title { font-family: "Futura", "Trebuchet MS", sans-serif; font-size: 22px; font-weight: 700; color: #ffffff; word-break: break-word; max-width: 80%; }
+        .detail-card-header .card-icon { width: 28px; height: 28px; }
+        .detail-card-header .card-icon svg { width: 100%; height: 100%; fill: #ffffff; }
 
-        .detail-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 1px solid #f2f2f7;
-        }
-        
-        /* Intestazione della carta dettaglio che richiama il colore originale della tessera */
-        .detail-card-header {
-            width: 100%;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            text-align: left;
-            position: relative;
-        }
+        .barcode-container { background: white; padding: 20px 12px; border-radius: 16px; width: 100%; display: flex; justify-content: center; border: 1px solid #f2f2f7; }
+        .barcode-container svg { max-width: 100%; height: auto; }
+        .detail-number { margin-top: 16px; font-size: 17px; font-weight: 600; letter-spacing: 2px; color: var(--text-secondary); }
+        .detail-actions { margin-top: 30px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
 
-        .detail-title { 
-            font-family: "Futura", "Trebuchet MS", "Century Gothic", sans-serif;
-            font-size: 22px; 
-            font-weight: 700; 
-            color: #ffffff;
-            word-break: break-word;
-            max-width: 80%;
-        }
-        
-        .detail-card-header .card-icon {
-            width: 28px;
-            height: 28px;
-        }
-        
-        .detail-card-header .card-icon svg {
-            width: 100%;
-            height: 100%;
-            fill: #ffffff;
-        }
-
-        .barcode-container { 
-            background: white; 
-            padding: 20px 12px; 
-            border-radius: 16px; 
-            width: 100%; 
-            display: flex; 
-            justify-content: center;
-            border: 1px solid #f2f2f7;
-        }
-        
-        .barcode-container svg { 
-            max-width: 100%; 
-            height: auto; 
-        }
-        
-        .detail-number { 
-            margin-top: 16px; 
-            font-size: 17px; 
-            font-weight: 600; 
-            letter-spacing: 2px; 
-            color: var(--text-secondary); 
-        }
-        
-        /* Menu azioni interne al dettaglio */
-        .detail-actions { 
-            margin-top: 30px; 
-            width: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-        }
-
-        /* --- FAB (Pulsante aggiungi fluttuante in stile Klarna) --- */
         .fab {
-            position: fixed; 
-            bottom: 30px; 
-            right: 24px;
-            width: 56px; 
-            height: 56px;
-            background-color: var(--primary); 
-            color: white;
-            border-radius: 50%; 
-            font-size: 28px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-            cursor: pointer; 
-            z-index: 100;
-            transition: transform 0.1s ease;
-        }
-        .fab:active {
-            transform: scale(0.92);
+            position: fixed; bottom: 30px; right: 24px; width: 56px; height: 56px;
+            background-color: var(--primary); color: white; border-radius: 50%; font-size: 28px;
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); cursor: pointer; z-index: 100;
         }
 
-        /* --- MODALE AGGIUNGI CARTA --- */
-        #addModal {
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background: var(--bg-color); 
-            z-index: 200; 
-            overflow-y: auto; 
-            padding: 20px 16px;
-        }
+        /* Modali (Aggiungi e Impostazioni) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; padding: 20px 16px; }
+        .modal-content { max-width: 450px; margin: 0 auto; background: var(--card-bg); padding: 24px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .modal-header { margin-bottom: 20px; font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
         
-        .modal-content { 
-            max-width: 450px; 
-            margin: 0 auto; 
-            background: var(--card-bg); 
-            padding: 24px; 
-            border-radius: 24px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
-        }
+        .form-group { margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-weight: 600; font-size: 13px; color: var(--text-secondary); }
+        input[type="text"] { padding: 14px; border: 1.5px solid #e5e5ea; border-radius: 12px; font-size: 16px; background: #f4f4f7; color: var(--text-main); width: 100%; }
+        input[type="text"]:focus { outline: none; border-color: var(--primary); background: #fff; }
         
-        .modal-header {
-            margin-bottom: 20px;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -0.3px;
-        }
-        
-        .form-group { 
-            margin-bottom: 18px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px; 
-        }
-        
-        .form-group label { 
-            font-weight: 600; 
-            font-size: 13px; 
-            color: var(--text-secondary); 
-        }
-        
-        input[type="text"] { 
-            padding: 14px; 
-            border: 1.5px solid #e5e5ea; 
-            border-radius: 12px; 
-            font-size: 16px; 
-            background: #f4f4f7; 
-            color: var(--text-main);
-            transition: border-color 0.2s, background 0.2s;
-            width: 100%;
-        }
-        
-        input[type="text"]:focus { 
-            outline: none; 
-            border-color: var(--primary); 
-            background: #fff; 
-        }
-        
-        /* Selettore colori per lo sfondo tessera */
-        .color-selector {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-top: 6px;
-        }
-        
-        .color-option {
-            aspect-ratio: 1;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 3px solid transparent;
-            transition: transform 0.15s;
-        }
-        
-        .color-option.selected {
-            border-color: var(--primary);
-            transform: scale(1.1);
-        }
+        /* Griglia colori espansa a 5 colonne */
+        .color-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 6px; }
+        .color-option { aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.15s; }
+        .color-option.selected { border-color: var(--primary); transform: scale(1.1); box-shadow: 0 0 0 2px white inset; }
 
-        /* Pulsanti */
-        .btn { 
-            padding: 14px; 
-            border: none; 
-            border-radius: 12px; 
-            font-size: 15px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            text-align: center; 
-            width: 100%; 
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
+        .btn { padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;}
         .btn-primary { background-color: var(--primary); color: white; }
-        .btn-primary:active { opacity: 0.9; }
-        
         .btn-danger { background-color: var(--danger); color: white; }
-        .btn-danger:active { opacity: 0.9; }
-        
         .btn-secondary { background-color: var(--accent-pink); color: #111111; }
-        .btn-secondary:active { opacity: 0.9; }
-        
+        .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-close { background-color: #e5e5ea; color: var(--text-main); }
-        .btn-close:active { opacity: 0.9; }
 
-        #reader { 
-            width: 100%; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            display: none; 
-            margin-bottom: 15px; 
-            border: 1px solid #e5e5ea;
-        }
+        #reader { width: 100%; border-radius: 12px; overflow: hidden; display: none; margin-bottom: 15px; border: 1px solid #e5e5ea; }
+        
+        /* Nascondi input file nativo per l'importazione */
+        #importFile { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- VISTA PRINCIPALE (Griglia di tessere) -->
     <div id="mainView">
         <div class="header-container">
             <div class="header-title">Web Wallet</div>
+            <button class="settings-btn" onclick="showView('settingsModal')" aria-label="Impostazioni">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
         </div>
-        
-        <div class="card-grid" id="cardGrid">
-            <!-- Le carte inserite compariranno qui -->
-        </div>
+        <div class="card-grid" id="cardGrid"></div>
     </div>
 
-    <!-- VISTA DETTAGLIO CARTA (Eliminazione sicura all'interno) -->
     <div id="detailView">
         <div class="back-btn-container">
             <button class="back-btn" onclick="showView('mainView')">
@@ -399,7 +134,6 @@
         </div>
         
         <div class="detail-card">
-            <!-- Intestazione colorata come la tessera originale -->
             <div id="detailCardHeader" class="detail-card-header">
                 <div id="detailName" class="detail-title"></div>
                 <div class="card-icon">
@@ -421,39 +155,58 @@
         </div>
     </div>
 
-    <!-- BOTTONE FLUTTUANTE AGGIUNGI CARTA -->
-    <div class="fab" onclick="showView('addModal')">+</div>
+    <div class="fab" id="fabBtn" onclick="showView('addModal')">+</div>
 
-    <!-- MODALE INSERIMENTO CARTA -->
-    <div id="addModal">
+    <div id="addModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">Aggiungi Carta</div>
             
-            <button class="btn btn-secondary" style="margin-bottom: 16px;" onclick="startScanner()">
+            <button class="btn btn-secondary" onclick="startScanner()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                Scansiona Codice a Barre
+                Scansiona Codice
             </button>
             <div id="reader"></div>
 
             <div class="form-group">
-                <label>Nome Supermercato / Negozio:</label>
-                <input type="text" id="shopName" placeholder="Es. Conad, Coop, Esselunga...">
+                <label>Nome Negozio:</label>
+                <input type="text" id="shopName" placeholder="Es. Conad, Coop...">
             </div>
 
             <div class="form-group">
                 <label>Numero Tessera:</label>
-                <input type="text" id="barcodeNumber" placeholder="Inserisci o scansiona il codice">
+                <input type="text" id="barcodeNumber" placeholder="Inserisci il codice">
             </div>
 
             <div class="form-group">
-                <label>Seleziona Colore Sfondo:</label>
-                <div class="color-selector" id="colorSelector">
-                    <!-- I colori verranno generati dinamicamente via JS -->
-                </div>
+                <label>Seleziona Colore Sfondo (25 opzioni):</label>
+                <div class="color-selector" id="colorSelector"></div>
             </div>
 
-            <button class="btn btn-primary" style="margin-top: 15px; margin-bottom: 10px;" onclick="saveNewCard()">Salva Carta</button>
-            <button class="btn btn-close" onclick="closeAddModal()">Annulla</button>
+            <button class="btn btn-primary" onclick="saveNewCard()">Salva Carta</button>
+            <button class="btn btn-close" onclick="closeModals()">Annulla</button>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">Impostazioni Database</div>
+            
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
+                Fai una copia di sicurezza delle tue carte salvandole come file JSON, oppure ripristina un backup precedente.
+            </p>
+
+            <button class="btn btn-outline" onclick="exportData()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Esporta Carte (JSON)
+            </button>
+
+            <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Importa Backup
+            </button>
+            <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+
+            <button class="btn btn-close" style="margin-top: 20px;" onclick="closeModals()">Chiudi</button>
         </div>
     </div>
 
@@ -461,27 +214,20 @@
         let cards = JSON.parse(localStorage.getItem('myCards')) || [];
         let html5QrcodeScanner = null;
         
-        // Palette di colori eleganti per lo sfondo delle tessere (No Bianco)
+        // Nuova Palette estesa (25 colori vivaci/scuri, NO bianco)
         const colorPalette = [
-            "#0a84ff", // Blu iOS
-            "#30d158", // Verde iOS
-            "#ff9f0a", // Arancione iOS
-            "#bf5af2", // Viola iOS
-            "#ff375f", // Rosa/Rosso iOS
-            "#5e5ce6", // Indaco
-            "#64d2ff", // Celeste
-            "#ffd60a", // Giallo caldo
-            "#3a3a3c", // Grigio scuro
-            "#ac8e68"  // Bronzo/Marrone caldo
+            "#0a84ff", "#30d158", "#ff9f0a", "#bf5af2", "#ff375f", // iOS classici
+            "#5e5ce6", "#64d2ff", "#ffd60a", "#3a3a3c", "#ac8e68", // Alternative iOS
+            "#ff453a", "#32ade6", "#00c7be", "#007aff", "#4cd964", // Toni Brillanti
+            "#8a2be2", "#d2691e", "#dc143c", "#008b8b", "#2f4f4f", // Toni Scuri 1
+            "#191970", "#8b0000", "#ff1493", "#228b22", "#4b0082"  // Toni Profondi 2
         ];
-        
         let selectedColor = colorPalette[0];
 
-        // Genera selettore colore all'avvio
         function buildColorSelector() {
             const container = document.getElementById('colorSelector');
             container.innerHTML = '';
-            colorPalette.forEach((color, idx) => {
+            colorPalette.forEach((color) => {
                 const opt = document.createElement('div');
                 opt.className = 'color-option' + (color === selectedColor ? ' selected' : '');
                 opt.style.backgroundColor = color;
@@ -494,150 +240,150 @@
             });
         }
 
+        // Gestione Viste e Modali
         function showView(viewId) {
+            // Nasconde tutto
             document.getElementById('mainView').style.display = 'none';
             document.getElementById('detailView').style.display = 'none';
             document.getElementById('addModal').style.display = 'none';
+            document.getElementById('settingsModal').style.display = 'none';
             
+            // Logica del FAB (nascondi nel dettaglio, mostra negli altri)
+            document.getElementById('fabBtn').style.display = (viewId === 'detailView') ? 'none' : 'flex';
+
             document.getElementById(viewId).style.display = 'block';
-            
-            if (viewId === 'mainView') {
-                renderGrid();
-                if (html5QrcodeScanner) stopScanner();
-            }
+            if (viewId === 'mainView') { renderGrid(); if (html5QrcodeScanner) stopScanner(); }
         }
 
-        function closeAddModal() {
+        function closeModals() {
             if (html5QrcodeScanner) stopScanner();
             showView('mainView');
         }
 
+        // Funzioni Scanner
         function startScanner() {
             document.getElementById('reader').style.display = 'block';
             if(!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
-
-            html5QrcodeScanner.start(
-                { facingMode: "environment" },
-                { fps: 15, qrbox: { width: 260, height: 110 } },
-                (decodedText) => {
-                    document.getElementById('barcodeNumber').value = decodedText;
-                    stopScanner();
-                },
+            html5QrcodeScanner.start( { facingMode: "environment" }, { fps: 15, qrbox: { width: 260, height: 110 } },
+                (decodedText) => { document.getElementById('barcodeNumber').value = decodedText; stopScanner(); },
                 (errorMessage) => {}
-            ).catch(err => alert("Abilita l'accesso alla fotocamera. Richiede HTTPS o localhost."));
+            ).catch(err => alert("Fotocamera non accessibile (richiede connessione sicura HTTPS)."));
         }
 
         function stopScanner() {
             if(html5QrcodeScanner) {
-                html5QrcodeScanner.stop().then(() => {
-                    document.getElementById('reader').style.display = 'none';
-                }).catch(e => console.error(e));
+                html5QrcodeScanner.stop().then(() => { document.getElementById('reader').style.display = 'none'; }).catch(e => console.error(e));
             }
         }
 
+        // Gestione Database locale
         function saveNewCard() {
             const name = document.getElementById('shopName').value.trim();
             const number = document.getElementById('barcodeNumber').value.trim();
+            if (!name || !number) { alert('Nome e numero sono obbligatori.'); return; }
             
-            if (!name || !number) {
-                alert('Fornisci un nome e il numero di tessera.');
-                return;
-            }
-
-            cards.push({ 
-                name, 
-                number, 
-                color: selectedColor 
-            });
+            cards.push({ name, number, color: selectedColor });
             localStorage.setItem('myCards', JSON.stringify(cards));
             
-            // Ripristina form
+            // Reset form
             document.getElementById('shopName').value = '';
             document.getElementById('barcodeNumber').value = '';
             selectedColor = colorPalette[0];
             buildColorSelector();
             
-            showView('mainView');
+            closeModals();
         }
 
         function deleteCard(index) {
-            if(confirm(`Sei sicuro di voler eliminare la tessera "${cards[index].name}"?`)) {
-                cards.splice(index, 1);
-                localStorage.setItem('myCards', JSON.stringify(cards));
+            if(confirm(`Eliminare definitivamente questa tessera?`)) {
+                cards.splice(index, 1); 
+                localStorage.setItem('myCards', JSON.stringify(cards)); 
                 showView('mainView');
             }
         }
 
+        // Render Griglia
         function renderGrid() {
-            const grid = document.getElementById('cardGrid');
-            grid.innerHTML = '';
-            
-            if (cards.length === 0) {
-                grid.innerHTML = '<div class="empty-state">Nessuna tessera salvata. Clicca il pulsante "+" in basso per aggiungerne una.</div>';
-                return;
-            }
+            const grid = document.getElementById('cardGrid'); grid.innerHTML = '';
+            if (cards.length === 0) { grid.innerHTML = '<div class="empty-state">Nessuna tessera salvata.<br>Aggiungine una o importa un backup dal menu in alto.</div>'; return; }
             
             cards.forEach((card, index) => {
                 const thumb = document.createElement('div');
-                thumb.className = 'card-thumb';
-                thumb.style.backgroundColor = card.color || '#3a3a3c';
+                thumb.className = 'card-thumb'; thumb.style.backgroundColor = card.color || '#3a3a3c';
                 thumb.onclick = () => openCardDetail(card, index);
-                
                 thumb.innerHTML = `
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V12h16v6zm0-10H4V6h16v2z"/></svg>
-                    </div>
+                    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V12h16v6zm0-10H4V6h16v2z"/></svg></div>
                     <div class="name">${escapeHTML(card.name)}</div>
                 `;
                 grid.appendChild(thumb);
             });
         }
 
+        // Dettaglio Carta
         function openCardDetail(card, index) {
-            // Applica il colore originale all'intestazione della modale di dettaglio
-            const header = document.getElementById('detailCardHeader');
-            header.style.backgroundColor = card.color || '#3a3a3c';
-            
+            document.getElementById('detailCardHeader').style.backgroundColor = card.color || '#3a3a3c';
             document.getElementById('detailName').innerText = card.name;
             document.getElementById('detailNumber').innerText = card.number;
-            
             document.getElementById('deleteCardBtn').onclick = () => deleteCard(index);
-            
             showView('detailView');
-
-            try {
-                JsBarcode("#detailBarcode", card.number, {
-                    format: "CODE128",
-                    lineColor: "#000",
-                    width: 3,
-                    height: 85,
-                    displayValue: false
-                });
-            } catch(e) { 
-                console.error("Errore di rendering codice a barre: ", e); 
-            }
+            try { JsBarcode("#detailBarcode", card.number, { format: "CODE128", lineColor: "#000", width: 3, height: 85, displayValue: false }); } catch(e) {}
         }
 
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, 
-                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-            );
+        // Utilità
+        function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
+
+        // --- EXPORT & IMPORT JSON ---
+        function exportData() {
+            if(cards.length === 0) { alert("Non ci sono carte da esportare!"); return; }
+            
+            const dataStr = JSON.stringify(cards, null, 2);
+            // Crea un Blob e genera un URL per il download
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'wallet_backup.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
-        // Registrazione Service Worker per installazione PWA
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedCards = JSON.parse(e.target.result);
+                    
+                    if (Array.isArray(importedCards)) {
+                        if(confirm("ATTENZIONE: Stai per sovrascrivere il database attuale.\nTutte le carte attualmente salvate verranno perse e sostituite con quelle del backup. Procedere?")) {
+                            cards = importedCards;
+                            localStorage.setItem('myCards', JSON.stringify(cards));
+                            closeModals();
+                            alert("Importazione completata con successo!");
+                        }
+                    } else {
+                        alert("Il file selezionato non è un backup valido (formato Array errato).");
+                    }
+                } catch (err) {
+                    alert("Errore di lettura del file. Assicurati che sia un JSON valido.");
+                }
+                event.target.value = ''; // Resetta l'input file per permettere nuove selezioni identiche
+            };
+            reader.readAsText(file);
+        }
+
+        // PWA Service Worker
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker Registrato!', reg))
-                    .catch(err => console.error('Errore registrazione Service Worker:', err));
-            });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(err => console.error(err)); });
         }
-
-        // Setup iniziale
-        window.onload = () => {
-            buildColorSelector();
-            showView('mainView');
-        };
+        
+        // Avvio app
+        window.onload = () => { buildColorSelector(); showView('mainView'); };
     </script>
 </body>
 </html>
