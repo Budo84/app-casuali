@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stocard Clone SPA</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --primary: #007aff;
+            --text: #1c1c1e;
+            --text-secondary: #8e8e93;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px; /* Spazio per il FAB */
+        }
+        
+        /* --- VISTA PRINCIPALE (LISTA CARTE) --- */
+        #mainView { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .header-title { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+        
+        .card-thumb {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .card-thumb:active { transform: scale(0.95); }
+        .card-thumb img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .card-thumb .name { font-weight: bold; font-size: 14px; }
+        .delete-badge {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: #ff3b30; color: white;
+            border-radius: 50%; width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; border: none; cursor: pointer;
+        }
+
+        /* Dettaglio Carta (quando cliccata) */
+        #detailView { display: none; text-align: center; padding: 20px; }
+        .barcode-container { background: white; padding: 20px; border-radius: 12px; margin-top: 20px; display: inline-block; }
+
+        /* --- PULSANTE FLUTTUANTE --- */
+        .fab {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 60px; height: 60px;
+            background-color: var(--primary); color: white;
+            border-radius: 30px; font-size: 32px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+            cursor: pointer; z-index: 100;
+        }
+
+        /* --- MODALE AGGIUNGI CARTA --- */
+        #addModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 200; overflow-y: auto;
+            padding: 20px; box-sizing: border-box;
+        }
+        .modal-content { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 16px; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
+        input[type="text"], input[type="file"] { padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+        
+        .btn { padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; width: 100%; margin-top: 10px; }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-secondary { background-color: #34c759; color: white; }
+        .btn-close { background-color: #e5e5ea; color: var(--text); margin-top: 15px; }
+
+        #reader { width: 100%; border-radius: 8px; display: none; margin-bottom: 15px; }
+        #logoPreview { width: 60px; height: 60px; object-fit: contain; margin: 10px auto; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="mainView">
+        <div class="header-title">Le Mie Carte</div>
+        <div class="card-grid" id="cardGrid"></div>
+    </div>
+
+    <div id="detailView">
+        <button class="btn btn-close" onclick="showView('mainView')" style="width: auto; margin-bottom:20px;">⬅ Torna alle carte</button>
+        <h2 id="detailName"></h2>
+        <div class="barcode-container">
+            <svg id="detailBarcode"></svg>
+        </div>
+        <div style="margin-top: 10px; font-size: 20px; letter-spacing: 2px;" id="detailNumber"></div>
+    </div>
+
+    <div class="fab" onclick="showView('addModal')">+</div>
+
+    <div id="addModal">
+        <div class="modal-content">
+            <h2 style="margin-top:0;">Nuova Carta</h2>
+            
+            <button class="btn btn-secondary" onclick="startScanner()">📷 Scansiona Codice a Barre</button>
+            <div id="reader"></div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Nome Supermercato/Negozio:</label>
+                <input type="text" id="shopName" placeholder="Es. Conad, Esselunga, Coop..." oninput="autoDetectLogo()">
+                <img id="logoPreview" src="" alt="Logo Trovato">
+            </div>
+
+            <div class="form-group">
+                <label>Numero Carta:</label>
+                <input type="text" id="barcodeNumber" placeholder="Inserisci o scansiona il numero">
+            </div>
+
+            <div class="form-group">
+                <label>O carica una foto della carta (Opzionale):</label>
+                <input type="file" id="cardPhoto" accept="image/*" capture="environment">
+            </div>
+
+            <button class="btn btn-primary" onclick="saveNewCard()">Salva Carta</button>
+            <button class="btn btn-close" onclick="showView('mainView')">Annulla</button>
+        </div>
+    </div>
+
+    <script>
+        let cards = JSON.parse(localStorage.getItem('myCards')) || [];
+        let html5QrcodeScanner = null;
+        let detectedLogoUrl = "";
+
+        // Database locale dei loghi italiani ad alta priorità
+        const brandDatabase = {
+            "conad": "https://upload.wikimedia.org/wikipedia/commons/2/23/Conad_Logo.svg",
+            "coop": "https://upload.wikimedia.org/wikipedia/commons/0/07/Coop_logo.svg",
+            "esselunga": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Logo_Esselunga.svg",
+            "carrefour": "https://upload.wikimedia.org/wikipedia/en/1/12/Carrefour_logo_no_tag.svg",
+            "lidl": "https://upload.wikimedia.org/wikipedia/commons/9/91/Lidl_Logo.svg",
+            "eurospin": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Eurospin_202x_logo.svg/1024px-Eurospin_202x_logo.svg.png",
+            "pam": "https://upload.wikimedia.org/wikipedia/commons/4/41/Pam_Panorama_logo.svg",
+            "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/MD_S.p.A._logo.svg/1024px-MD_S.p.A._logo.svg.png",
+            "ikea": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Ikea_logo.svg",
+            "decathlon": "https://upload.wikimedia.org/wikipedia/commons/0/08/Decathlon_Logo.png",
+            "mediaworld": "https://upload.wikimedia.org/wikipedia/commons/4/4b/MediaMarkt_logo.svg",
+            "unieuro": "https://upload.wikimedia.org/wikipedia/commons/9/94/Unieuro_logo.svg"
+        };
+
+        // Funzione per la navigazione stile SPA
+        function showView(viewId) {
+            document.getElementById('mainView').style.display = 'none';
+            document.getElementById('detailView').style.display = 'none';
+            document.getElementById('addModal').style.display = 'none';
+            
+            document.getElementById(viewId).style.display = viewId === 'mainView' ? 'block' : 'block';
+            
+            if (viewId === 'mainView') renderGrid();
+            if (viewId === 'mainView' && html5QrcodeScanner) stopScanner();
+        }
+
+        // Auto-completamento del logo in tempo reale
+        function autoDetectLogo() {
+            const input = document.getElementById('shopName').value.toLowerCase().trim();
+            const preview = document.getElementById('logoPreview');
+            detectedLogoUrl = "";
+
+            if (input.length < 2) {
+                preview.style.display = 'none';
+                return;
+            }
+
+            // 1. Cerca nel DB locale (molto veloce e affidabile per l'Italia)
+            for (let key in brandDatabase) {
+                if (input.includes(key)) {
+                    detectedLogoUrl = brandDatabase[key];
+                    break;
+                }
+            }
+
+            // 2. Fallback su Clearbit (cerca il dominio .it)
+            if (!detectedLogoUrl) {
+                let cleanName = input.replace(/\s+/g, '');
+                detectedLogoUrl = `https://logo.clearbit.com/${cleanName}.it`;
+            }
+
+            // Mostra l'anteprima
+            preview.src = detectedLogoUrl;
+            preview.style.display = 'block';
+            
+            // Gestione errore Clearbit (se non trova nulla nasconde l'immagine)
+            preview.onerror = function() {
+                this.style.display = 'none';
+                detectedLogoUrl = ""; // Reset se fallisce
+            };
+        }
+
+        // Funzione Scanner
+        function startScanner() {
+            document.getElementById('reader').style.display = 'block';
+            if(!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
+
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 100 } },
+                (decodedText) => {
+                    document.getElementById('barcodeNumber').value = decodedText;
+                    stopScanner();
+                },
+                (errorMessage) => {}
+            ).catch(err => alert("Errore fotocamera. Usa connessione HTTPS o localhost."));
+        }
+
+        function stopScanner() {
+            if(html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    document.getElementById('reader').style.display = 'none';
+                }).catch(e => console.error(e));
+            }
+        }
+
+        // Salvataggio nuova carta
+        function saveNewCard() {
+            const name = document.getElementById('shopName').value.trim();
+            const number = document.getElementById('barcodeNumber').value.trim();
+            
+            if (!name || !number) {
+                alert('Nome e Numero carta sono obbligatori.');
+                return;
+            }
+
+            // Usa il logo rilevato, altrimenti un placeholder generico
+            const finalLogo = detectedLogoUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23ccc"/><text x="50" y="55" font-size="40" text-anchor="middle" fill="white">🛍️</text></svg>';
+
+            cards.push({ name, number, logo: finalLogo });
+            localStorage.setItem('myCards', JSON.stringify(cards));
+            
+            // Reset form
+            document.getElementById('shopName').value = '';
+            document.getElementById('barcodeNumber').value = '';
+            document.getElementById('logoPreview').style.display = 'none';
+            detectedLogoUrl = "";
+            
+            showView('mainView');
+        }
+
+        // Elimina carta
+        function deleteCard(event, index) {
+            event.stopPropagation(); // Evita di aprire il dettaglio quando clicchi sulla X
+            if(confirm("Vuoi eliminare questa carta?")) {
+                cards.splice(index, 1);
+                localStorage.setItem('myCards', JSON.stringify(cards));
+                renderGrid();
+            }
+        }
+
+        // Disegna la griglia principale
+        function renderGrid() {
+            const grid = document.getElementById('cardGrid');
+            grid.innerHTML = '';
+            
+            cards.forEach((card, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'card-thumb';
+                thumb.onclick = () => openCardDetail(card);
+                
+                thumb.innerHTML = `
+                    <button class="delete-badge" onclick="deleteCard(event, ${index})">×</button>
+                    <img src="${card.logo}" alt="Logo" onerror="this.src=''">
+                    <div class="name">${card.name}</div>
+                `;
+                grid.appendChild(thumb);
+            });
+        }
+
+        // Apre la vista per mostrare il codice a barre gigante
+        function openCardDetail(card) {
+            document.getElementById('detailName').innerText = card.name;
+            document.getElementById('detailNumber').innerText = card.number;
+            showView('detailView');
+
+            try {
+                JsBarcode("#detailBarcode", card.number, {
+                    format: "CODE128",
+                    lineColor: "#000",
+                    width: 3,
+                    height: 100,
+                    displayValue: false // Il numero lo stampiamo sotto più grande
+                });
+            } catch(e) { console.error("Errore generazione barcode", e); }
+        }
+
+        // Avvio app
+        window.onload = () => showView('mainView');
+    </script>
+</body>
+</html>
