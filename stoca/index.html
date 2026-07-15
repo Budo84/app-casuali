@@ -41,7 +41,6 @@
         }
         .settings-btn:active { background: rgba(0,0,0,0.05); }
 
-        /* Barra di ricerca */
         .search-container { position: relative; margin-bottom: 24px; }
         .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
         #searchInput { width: 100%; padding: 12px 12px 12px 42px; border: none; border-radius: 14px; background: #e5e5ea; font-size: 16px; color: var(--text-main); }
@@ -310,7 +309,7 @@
         function saveNewCard() {
             const name = document.getElementById('shopName').value.trim();
             const number = document.getElementById('barcodeNumber').value.trim();
-            const format = document.getElementById('codeFormat').value; // Recupera il formato
+            const format = document.getElementById('codeFormat').value;
             
             if (!name || !number) { alert('Nome e numero sono obbligatori.'); return; }
             
@@ -334,12 +333,10 @@
             }
         }
 
-        // Funzione per la Barra di Ricerca
         function filterCards() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const thumbs = document.querySelectorAll('.card-thumb');
             
-            // Disabilita il drag & drop quando si sta cercando
             if (sortableInstance) {
                 sortableInstance.option("disabled", query.length > 0);
             }
@@ -398,39 +395,77 @@
             document.getElementById('detailNumber').innerText = card.number;
             document.getElementById('deleteCardBtn').onclick = () => deleteCard(index);
             
-            // Condivisione tramite Web Share API
+            const cardFormat = card.format || 'CODE128';
+            
+            // Logica di Condivisione Immagine + Testo
             document.getElementById('shareCardBtn').onclick = () => {
-                const shareData = {
-                    title: `Carta ${card.name}`,
-                    text: `Ecco la mia carta fedeltà ${card.name}.\nNumero: ${card.number}`
-                };
-                if (navigator.share) {
-                    navigator.share(shareData).catch(err => console.log('Condivisione annullata', err));
-                } else {
-                    // Fallback per computer desktop
-                    navigator.clipboard.writeText(`${shareData.text}`);
-                    alert("Numero copiato negli appunti!");
+                try {
+                    let targetCanvas;
+                    
+                    if (cardFormat === 'QR') {
+                        const tempDiv = document.createElement('div');
+                        new QRCode(tempDiv, {
+                            text: card.number, width: 300, height: 300,
+                            colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
+                        });
+                        targetCanvas = tempDiv.querySelector('canvas');
+                    } else {
+                        targetCanvas = document.createElement('canvas');
+                        JsBarcode(targetCanvas, card.number, {
+                            format: "CODE128", lineColor: "#000", background: "#ffffff",
+                            width: 4, height: 150, displayValue: true, fontSize: 24, margin: 20
+                        });
+                    }
+
+                    if (!targetCanvas) return alert("Errore di generazione dell'immagine.");
+
+                    // Converti in File sincrono per evitare blocchi da Safari iOS
+                    const dataUrl = targetCanvas.toDataURL('image/png');
+                    const arr = dataUrl.split(',');
+                    const mime = arr[0].match(/:(.*?);/)[1];
+                    const bstr = atob(arr[1]);
+                    let n = bstr.length;
+                    const u8arr = new Uint8Array(n);
+                    while(n--) { u8arr[n] = bstr.charCodeAt(n); }
+                    
+                    const fileName = `Carta_${card.name.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+                    const file = new File([u8arr], fileName, { type: mime });
+
+                    const shareData = {
+                        title: `Carta ${card.name}`,
+                        text: `Ecco la mia carta fedeltà ${card.name}.\nNumero: ${card.number}`,
+                        files: [file]
+                    };
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share(shareData).catch(err => console.log('Condivisione annullata', err));
+                    } else if (navigator.share) {
+                        navigator.share({ title: shareData.title, text: shareData.text });
+                    } else {
+                        // Fallback Desktop
+                        const url = URL.createObjectURL(file);
+                        const a = document.createElement('a');
+                        a.href = url; a.download = file.name;
+                        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                        navigator.clipboard.writeText(shareData.text);
+                        alert("Dispositivo non compatibile con la condivisione nativa.\nL'immagine è stata scaricata e il testo copiato negli appunti.");
+                    }
+                } catch (e) {
+                    console.error("Errore durante la condivisione:", e);
                 }
             };
             
             showView('detailView');
 
-            // Logica universale per Barcode e QR Code
+            // Renderizza a schermo
             const container = document.getElementById('barcodeContainerDiv');
-            container.innerHTML = ''; // Pulisce il contenitore
-
-            // Se la carta non ha la proprietà format (vecchi salvataggi), assume CODE128
-            const cardFormat = card.format || 'CODE128';
+            container.innerHTML = ''; 
 
             if (cardFormat === 'QR') {
                 try {
                     new QRCode(container, {
-                        text: card.number,
-                        width: 160,
-                        height: 160,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.M
+                        text: card.number, width: 160, height: 160,
+                        colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M
                     });
                 } catch (e) { console.error("Errore QR Code:", e); }
             } else {
@@ -438,11 +473,7 @@
                     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     container.appendChild(svg);
                     JsBarcode(svg, card.number, {
-                        format: "CODE128",
-                        lineColor: "#000",
-                        width: 3,
-                        height: 85,
-                        displayValue: false
+                        format: "CODE128", lineColor: "#000", width: 3, height: 85, displayValue: false
                     });
                 } catch(e) { console.error("Errore Barcode:", e); }
             }
@@ -456,12 +487,8 @@
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = 'wallet_backup.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            a.href = url; a.download = 'wallet_backup.json';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
         function importData(event) {
