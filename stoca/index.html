@@ -15,6 +15,7 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         :root {
@@ -75,17 +76,19 @@
         .back-btn-container { text-align: left; margin-bottom: 20px; }
         .back-btn { background: none; border: none; font-size: 16px; font-weight: 600; color: var(--text-main); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 
-        .detail-card { background: var(--card-bg); border-radius: 24px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center; border: 1px solid #f2f2f7; }
+        /* Contenitore grafico della tessera (da catturare in screenshot) */
+        .detail-card-graphic { background: var(--card-bg); border-radius: 24px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center; border: 1px solid #f2f2f7; margin-bottom: 24px; }
         .detail-card-header { width: 100%; border-radius: 16px; padding: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; text-align: left; position: relative; }
         .detail-title { font-family: "Futura", "Trebuchet MS", sans-serif; font-size: 22px; font-weight: 700; color: #ffffff; word-break: break-word; max-width: 80%; }
         .detail-card-header .card-icon { width: 28px; height: 28px; }
         .detail-card-header .card-icon svg { width: 100%; height: 100%; fill: #ffffff; }
 
         .barcode-container { background: white; padding: 20px 12px; border-radius: 16px; width: 100%; display: flex; align-items: center; justify-content: center; border: 1px solid #f2f2f7; min-height: 120px; }
-        .barcode-container svg, .barcode-container img { max-width: 100%; height: auto; margin: 0 auto; }
+        .barcode-container img { max-width: 100%; height: auto; margin: 0 auto; display: block; }
         
         .detail-number { margin-top: 16px; font-size: 17px; font-weight: 600; letter-spacing: 2px; color: var(--text-secondary); }
-        .detail-actions { margin-top: 30px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
+        
+        .detail-actions { width: 100%; display: flex; flex-direction: column; gap: 12px; }
 
         .fab { position: fixed; bottom: 30px; right: 24px; width: 56px; height: 56px; background-color: var(--primary); color: white; border-radius: 50%; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); cursor: pointer; z-index: 100; }
 
@@ -103,10 +106,14 @@
         .color-option.selected { border-color: var(--primary); transform: scale(1.1); box-shadow: 0 0 0 2px white inset; }
 
         .btn { padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;}
-        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary { background-color: var(--primary); color: white; transition: opacity 0.2s; }
+        .btn-primary:active { opacity: 0.8; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-danger { background-color: var(--danger); color: white; }
         .btn-secondary { background-color: var(--accent-pink); color: #111111; }
-        .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); transition: all 0.2s; }
+        .btn-outline:active { background-color: #f2f2f7; }
+        .btn-outline:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; }
         .btn-close { background-color: #e5e5ea; color: var(--text-main); }
 
         #reader { width: 100%; border-radius: 12px; overflow: hidden; display: none; margin-bottom: 15px; border: 1px solid #e5e5ea; }
@@ -119,10 +126,7 @@
         <div class="header-container">
             <div class="header-title">Web Wallet</div>
             <button class="settings-btn" onclick="showView('settingsModal')" aria-label="Impostazioni">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                </svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             </button>
         </div>
         
@@ -142,28 +146,26 @@
             </button>
         </div>
         
-        <div class="detail-card">
+        <div id="captureCard" class="detail-card-graphic">
             <div id="detailCardHeader" class="detail-card-header">
                 <div id="detailName" class="detail-title"></div>
                 <div class="card-icon">
                     <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V12h16v6zm0-10H4V6h16v2z"/></svg>
                 </div>
             </div>
-            
             <div class="barcode-container" id="barcodeContainerDiv"></div>
-            
             <div id="detailNumber" class="detail-number"></div>
+        </div>
             
-            <div class="detail-actions">
-                <button class="btn btn-outline" id="shareCardBtn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                    Condividi Carta
-                </button>
-                <button class="btn btn-danger" id="deleteCardBtn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                    Elimina questa carta
-                </button>
-            </div>
+        <div class="detail-actions">
+            <button class="btn btn-outline" id="shareCardBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                <span>Condividi Carta</span>
+            </button>
+            <button class="btn btn-danger" id="deleteCardBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                Elimina questa carta
+            </button>
         </div>
     </div>
 
@@ -177,20 +179,15 @@
                     Indietro
                 </button>
             </div>
-
             <div class="modal-header" style="margin-top: 0;">Aggiungi Carta</div>
-            
             <button class="btn btn-secondary" onclick="startScanner()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                 Scansiona Codice
             </button>
             <div id="reader"></div>
-
             <div class="form-group">
-                <label>Nome Negozio:</label>
-                <input type="text" id="shopName" placeholder="Es. Conad, Coop...">
+                <label>Nome Negozio:</label><input type="text" id="shopName" placeholder="Es. Conad, Coop...">
             </div>
-
             <div class="form-group">
                 <label>Formato del Codice:</label>
                 <select id="codeFormat">
@@ -198,19 +195,13 @@
                     <option value="QR">QR Code</option>
                 </select>
             </div>
-
             <div class="form-group">
-                <label>Numero Tessera / Dati QR:</label>
-                <input type="text" id="barcodeNumber" placeholder="Inserisci il codice">
+                <label>Numero Tessera / Dati QR:</label><input type="text" id="barcodeNumber" placeholder="Inserisci il codice">
             </div>
-
             <div class="form-group">
-                <label>Seleziona Colore Sfondo:</label>
-                <div class="color-selector" id="colorSelector"></div>
+                <label>Seleziona Colore Sfondo:</label><div class="color-selector" id="colorSelector"></div>
             </div>
-
             <button class="btn btn-primary" onclick="saveNewCard()">Salva Carta</button>
-            <button class="btn btn-close" onclick="closeModals()">Annulla</button>
         </div>
     </div>
 
@@ -222,7 +213,6 @@
                     Indietro
                 </button>
             </div>
-
             <div class="modal-header" style="margin-top: 0;">Impostazioni Database</div>
             <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
                 Fai una copia di sicurezza delle tue carte salvandole come file JSON, oppure ripristina un backup precedente.
@@ -236,7 +226,6 @@
                 Importa Backup
             </button>
             <input type="file" id="importFile" accept=".json" onchange="importData(event)">
-            <button class="btn btn-close" style="margin-top: 20px;" onclick="closeModals()">Chiudi</button>
         </div>
     </div>
 
@@ -275,7 +264,6 @@
             document.getElementById('detailView').style.display = 'none';
             document.getElementById('addModal').style.display = 'none';
             document.getElementById('settingsModal').style.display = 'none';
-            
             document.getElementById('fabBtn').style.display = (viewId === 'detailView') ? 'none' : 'flex';
 
             document.getElementById(viewId).style.display = 'block';
@@ -321,7 +309,6 @@
             document.getElementById('codeFormat').value = 'CODE128';
             selectedColor = colorPalette[0];
             buildColorSelector();
-            
             closeModals();
         }
 
@@ -336,25 +323,16 @@
         function filterCards() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const thumbs = document.querySelectorAll('.card-thumb');
-            
-            if (sortableInstance) {
-                sortableInstance.option("disabled", query.length > 0);
-            }
-
+            if (sortableInstance) sortableInstance.option("disabled", query.length > 0);
             thumbs.forEach((thumb, index) => {
                 const cardName = cards[index].name.toLowerCase();
-                if (cardName.includes(query)) {
-                    thumb.style.display = 'flex';
-                } else {
-                    thumb.style.display = 'none';
-                }
+                thumb.style.display = cardName.includes(query) ? 'flex' : 'none';
             });
         }
 
         function renderGrid() {
             const grid = document.getElementById('cardGrid'); 
             grid.innerHTML = '';
-            
             if (cards.length === 0) { 
                 grid.innerHTML = '<div class="empty-state">Nessuna tessera salvata.<br>Aggiungine una o importa un backup dal menu in alto.</div>'; 
                 if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
@@ -375,11 +353,8 @@
 
             if (sortableInstance) sortableInstance.destroy();
             sortableInstance = new Sortable(grid, {
-                animation: 200,
-                delay: 250, 
-                delayOnTouchOnly: true,
-                ghostClass: 'sortable-ghost',
-                dragClass: 'sortable-drag',
+                animation: 200, delay: 250, delayOnTouchOnly: true,
+                ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
                 onEnd: function (evt) {
                     const movedItem = cards.splice(evt.oldIndex, 1)[0];
                     cards.splice(evt.newIndex, 0, movedItem);
@@ -395,69 +370,66 @@
             document.getElementById('detailNumber').innerText = card.number;
             document.getElementById('deleteCardBtn').onclick = () => deleteCard(index);
             
-            const cardFormat = card.format || 'CODE128';
-            
-            // Logica di Condivisione Immagine + Testo
-            document.getElementById('shareCardBtn').onclick = () => {
+            const shareBtn = document.getElementById('shareCardBtn');
+            const shareTextSpan = shareBtn.querySelector('span');
+
+            // Logica di scatto screenshot con html2canvas
+            shareBtn.onclick = async () => {
                 try {
-                    let targetCanvas;
+                    // Feedback visivo
+                    shareBtn.disabled = true;
+                    const originalText = shareTextSpan.innerText;
+                    shareTextSpan.innerText = 'Generazione in corso...';
                     
-                    if (cardFormat === 'QR') {
-                        const tempDiv = document.createElement('div');
-                        new QRCode(tempDiv, {
-                            text: card.number, width: 300, height: 300,
-                            colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
-                        });
-                        targetCanvas = tempDiv.querySelector('canvas');
-                    } else {
-                        targetCanvas = document.createElement('canvas');
-                        JsBarcode(targetCanvas, card.number, {
-                            format: "CODE128", lineColor: "#000", background: "#ffffff",
-                            width: 4, height: 150, displayValue: true, fontSize: 24, margin: 20
-                        });
-                    }
-
-                    if (!targetCanvas) return alert("Errore di generazione dell'immagine.");
-
-                    // Converti in File sincrono per evitare blocchi da Safari iOS
-                    const dataUrl = targetCanvas.toDataURL('image/png');
-                    const arr = dataUrl.split(',');
-                    const mime = arr[0].match(/:(.*?);/)[1];
-                    const bstr = atob(arr[1]);
-                    let n = bstr.length;
-                    const u8arr = new Uint8Array(n);
-                    while(n--) { u8arr[n] = bstr.charCodeAt(n); }
+                    // Elemento da fotografare
+                    const captureTarget = document.getElementById('captureCard');
                     
-                    const fileName = `Carta_${card.name.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
-                    const file = new File([u8arr], fileName, { type: mime });
+                    // html2canvas fa uno screenshot del DOM
+                    const canvas = await html2canvas(captureTarget, {
+                        scale: 3, // Ottima risoluzione per essere letta dai laser
+                        backgroundColor: "#f9f9fb", // Evita sfondi neri su JPEG trasparenti
+                        logging: false
+                    });
 
-                    const shareData = {
-                        title: `Carta ${card.name}`,
-                        text: `Ecco la mia carta fedeltà ${card.name}.\nNumero: ${card.number}`,
-                        files: [file]
-                    };
+                    canvas.toBlob(async (blob) => {
+                        shareBtn.disabled = false;
+                        shareTextSpan.innerText = originalText;
 
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        navigator.share(shareData).catch(err => console.log('Condivisione annullata', err));
-                    } else if (navigator.share) {
-                        navigator.share({ title: shareData.title, text: shareData.text });
-                    } else {
-                        // Fallback Desktop
-                        const url = URL.createObjectURL(file);
-                        const a = document.createElement('a');
-                        a.href = url; a.download = file.name;
-                        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-                        navigator.clipboard.writeText(shareData.text);
-                        alert("Dispositivo non compatibile con la condivisione nativa.\nL'immagine è stata scaricata e il testo copiato negli appunti.");
-                    }
+                        if (!blob) return alert("Impossibile generare l'immagine.");
+
+                        const fileName = `Tessera_${card.name.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+                        const file = new File([blob], fileName, { type: 'image/png' });
+                        const shareData = {
+                            title: `Tessera ${card.name}`,
+                            text: `Ecco la mia carta fedeltà ${card.name}.`,
+                            files: [file]
+                        };
+
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            navigator.share(shareData).catch(e => console.log('Condivisione annullata.'));
+                        } else {
+                            // Fallback per PC/Browser non supportati: Scarica file e copia testo
+                            const url = URL.createObjectURL(file);
+                            const a = document.createElement('a');
+                            a.href = url; a.download = file.name;
+                            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                            if (navigator.clipboard) navigator.clipboard.writeText(`Tessera ${card.name}: ${card.number}`);
+                            alert("Dispositivo non compatibile con l'invio diretto dell'immagine sulle app di messaggistica.\nLo screenshot della tessera è stato scaricato sul tuo dispositivo.");
+                        }
+                    }, 'image/png');
+
                 } catch (e) {
-                    console.error("Errore durante la condivisione:", e);
+                    console.error(e);
+                    shareBtn.disabled = false;
+                    shareTextSpan.innerText = 'Condividi Carta';
+                    alert("Si è verificato un errore durante la generazione della foto.");
                 }
             };
             
             showView('detailView');
 
-            // Renderizza a schermo
+            // Generazione del codice visivo
+            const cardFormat = card.format || 'CODE128';
             const container = document.getElementById('barcodeContainerDiv');
             container.innerHTML = ''; 
 
@@ -470,10 +442,11 @@
                 } catch (e) { console.error("Errore QR Code:", e); }
             } else {
                 try {
-                    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    container.appendChild(svg);
-                    JsBarcode(svg, card.number, {
-                        format: "CODE128", lineColor: "#000", width: 3, height: 85, displayValue: false
+                    // Usiamo <img> invece di <svg> per garantire che html2canvas lo catturi
+                    const img = document.createElement("img");
+                    container.appendChild(img);
+                    JsBarcode(img, card.number, {
+                        format: "CODE128", lineColor: "#000", width: 3, height: 85, displayValue: false, background: "#ffffff"
                     });
                 } catch(e) { console.error("Errore Barcode:", e); }
             }
@@ -488,7 +461,10 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url; a.download = 'wallet_backup.json';
-            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function importData(event) {
