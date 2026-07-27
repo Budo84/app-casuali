@@ -226,7 +226,6 @@
     font-size:11px;
   }
   
-  /* STILI AGGIORNATI PER LA SELEZIONE DEGLI EVENTI */
   .ev-line{
     display: flex;
     align-items: flex-start;
@@ -316,8 +315,8 @@
 <div class="wrap">
 
   <div class="card">
-    <h2><span class="num">1</span>Mese e anno</h2>
-    <p class="sub">Indica a quale mese si riferisce il testo che incollerai o caricherai qui sotto.</p>
+    <h2><span class="num">1</span>Mese e anno (Automatico)</h2>
+    <p class="sub">Vengono rilevati in automatico dal PDF. Puoi correggerli manualmente se necessario.</p>
     <div class="row">
       <div>
         <label class="field-label">Mese</label>
@@ -385,6 +384,7 @@
 
 <script>
 const WEEKDAYS = ["LUNEDÌ","MARTEDÌ","MERCOLEDÌ","GIOVEDÌ","VENERDÌ","SABATO","DOMENICA"];
+const MONTH_NAMES = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 const CATEGORIES = ["ISTITUTO","INFANZIA","PRIMARIA","SEC. DI I GRADO","LICEI","CENTRO SPORTIVO"];
 const CAT_ALIASES = {
   "ISTITUTO":"ISTITUTO",
@@ -397,7 +397,8 @@ const CAT_ALIASES = {
   "CENTRO SPORTIVO":"CENTRO SPORTIVO"
 };
 
-const SAMPLE_TEXT = `MARTEDÌ 1
+const SAMPLE_TEXT = `SETTEMBRE 2026
+MARTEDÌ 1
 ISTITUTO
 Ore 9.00 Assemblea Plenaria - inizio nuovo anno scolastico
 Incontro con il Direttore
@@ -412,18 +413,7 @@ SEC. di I GRADO
 9.00 - 15.00 Ritiro libri e materiali scolastici presso la sala danza al piano -1
 11.00 COLLEGIO DOCENTI con la presenza del Direttore
 LICEI
-Ore 10.00 COLLEGIO DOCENTI con la presenza del Direttore
-
-MERCOLEDÌ 2
-SAN FR. SALOMONE LE CLERCQ E BEATI FR. RUGGERO, FR. ULDERICO E FR. LEONE
-INFANZIA
-14.00 COLLEGIO DOCENTI con la presenza del Direttore
-PRIMARIA
-9.00 - 13.00 Corso aggiornamento: Le nuove indicazioni nazionali per il curricolo della Scuola Primaria
-SEC. di I GRADO
-9.00 - 13.00 Corso aggiornamento: Le nuove indicazioni nazionali per il curricolo della Scuola Secondaria di Primo Grado
-LICEI
-Prove di Recupero - cfr calendario`;
+Ore 10.00 COLLEGIO DOCENTI con la presenza del Direttore`;
 
 let selectedCats = new Set(CATEGORIES);
 let includeHoliday = true;
@@ -498,8 +488,53 @@ function extractTime(line){
   return { startH, startM, endH, endM, rest: m[5].trim() };
 }
 
-function stripBullet(line){
-  return line.replace(/^[•\-\u2022\*]\s*/, '').trim();
+function checkBullet(line){
+  const m = line.match(/^[•\-\u2022\*]\s*(.*)/);
+  if(m) return { text: m[1].trim(), hasBullet: true };
+  return { text: line.trim(), hasBullet: false };
+}
+
+function autoDetectMonthYear(text) {
+  const lines = text.split('\n').slice(0, 20); // Controlla le prime 20 righe del file
+  let foundMonth = null;
+  let foundYear = null;
+
+  for (let line of lines) {
+    const lowerLine = line.toLowerCase();
+    
+    // Cerca il mese
+    if (!foundMonth) {
+      for (let i = 0; i < MONTH_NAMES.length; i++) {
+        const regex = new RegExp("\\b" + MONTH_NAMES[i] + "\\b", "i");
+        if (regex.test(lowerLine)) {
+          foundMonth = i + 1;
+          break;
+        }
+      }
+    }
+    
+    // Cerca l'anno (tra il 2020 e il 2029)
+    if (!foundYear) {
+      const yMatch = line.match(/\b(202\d)\b/);
+      if (yMatch) {
+        foundYear = parseInt(yMatch[1], 10);
+      }
+    }
+  }
+
+  // Aggiorna l'interfaccia se ha trovato corrispondenze
+  if (foundMonth) document.getElementById('monthSel').value = foundMonth;
+  if (foundYear) {
+    const yearSel = document.getElementById('yearSel');
+    let exists = Array.from(yearSel.options).some(opt => opt.value == foundYear);
+    if (!exists) {
+       const opt = document.createElement('option');
+       opt.value = foundYear; 
+       opt.textContent = foundYear;
+       yearSel.appendChild(opt);
+    }
+    yearSel.value = foundYear;
+  }
 }
 
 function parseCalendarText(text){
@@ -509,14 +544,16 @@ function parseCalendarText(text){
   let currentCat = null;
 
   for(let raw of lines){
-    const line = stripBullet(raw);
+    const bulletInfo = checkBullet(raw);
+    const line = bulletInfo.text;
+    
     const wd = parseWeekdayLine(line);
     if(wd){
       current = { 
         weekday: wd.weekday, 
         day: wd.day, 
         title: wd.rest || null, 
-        titleSelected: true, // Selezionato di default
+        titleSelected: true,
         sections: {} 
       };
       days.push(current);
@@ -533,21 +570,34 @@ function parseCalendarText(text){
     }
 
     if(!currentCat){
-      if(current.title) current.title += " — " + line;
+      // Evita di unire al titolo il nome del mese se viene catturato prima del primo giorno
+      const isMonthName = MONTH_NAMES.some(m => new RegExp("\\b" + m + "\\b", "i").test(line));
+      const isYear = /\b202\d\b/.test(line);
+      if(isMonthName || isYear) continue;
+
+      if(current.title) current.title += " " + line;
       else current.title = line;
       continue;
     }
 
     const t = extractTime(line);
-    current.sections[currentCat].push({
-      raw: line,
-      startH: t ? t.startH : null,
-      startM: t ? t.startM : null,
-      endH: t ? t.endH : null,
-      endM: t ? t.endM : null,
-      text: t ? t.rest : line,
-      selected: true // Selezionato di default
-    });
+    const sec = current.sections[currentCat];
+
+    if (t || bulletInfo.hasBullet || sec.length === 0) {
+      sec.push({
+        raw: line,
+        startH: t ? t.startH : null,
+        startM: t ? t.startM : null,
+        endH: t ? t.endH : null,
+        endM: t ? t.endM : null,
+        text: t ? t.rest : line,
+        selected: true 
+      });
+    } else {
+      let lastEv = sec[sec.length - 1];
+      lastEv.text += " " + line;
+      lastEv.raw += " " + line;
+    }
   }
   return days;
 }
@@ -560,6 +610,10 @@ function runParse(){
     status.className = "status err";
     return;
   }
+  
+  // Esegue l'auto-rilevamento del mese e anno
+  autoDetectMonthYear(text);
+
   parsedDays = parseCalendarText(text);
   if(parsedDays.length === 0){
     status.textContent = "Non ho trovato giorni riconoscibili. Verifica il formato del testo.";
@@ -568,14 +622,14 @@ function runParse(){
     return;
   }
   renderPreview();
-  status.textContent = `Trovati ${parsedDays.length} giorni nel testo.`;
+  status.textContent = `Trovati ${parsedDays.length} giorni nel testo. (Mese/Anno rilevati automaticamente)`;
   status.className = "status ok";
   document.getElementById('previewCard').style.display = 'block';
 }
 
 function renderPreview(){
   const box = document.getElementById('previewBox');
-  const scrollTop = box.scrollTop; // Salva la posizione dello scroll per non far saltare la pagina a ogni click
+  const scrollTop = box.scrollTop; 
   box.innerHTML = '';
   
   let count = 0;
@@ -595,7 +649,6 @@ function renderPreview(){
 
     let groupHasVisibleItems = false;
 
-    // Titolo della giornata (festività/ricorrenza)
     if(d.title && includeHoliday){
       totalVisible++;
       groupHasVisibleItems = true;
@@ -615,7 +668,6 @@ function renderPreview(){
       group.appendChild(tLine);
     }
 
-    // Eventi delle sezioni
     Object.keys(d.sections).forEach(cat=>{
       if(!selectedCats.has(cat)) return;
       
@@ -638,24 +690,23 @@ function renderPreview(){
         line.addEventListener('click', (e) => {
           if(e.target.tagName !== 'INPUT') ev.selected = !ev.selected;
           else ev.selected = e.target.checked;
-          renderPreview(); // Ridisegna per aggiornare stili e contatori
+          renderPreview(); 
         });
         
         group.appendChild(line);
       });
     });
     
-    // Mostra il giorno solo se c'è almeno un evento visibile (incluso o escluso non importa, basta che sia visibile in base ai chip in alto)
     if(groupHasVisibleItems) box.appendChild(group);
   });
 
   document.getElementById('evCount').textContent = `${count} eventi da esportare`;
   
   if(totalVisible === 0){
-    box.innerHTML = '<div class="empty">Nessun evento visibile. Cambia i filtri delle macro-sezioni in alto per visualizzarli.</div>';
+    box.innerHTML = '<div class="empty">Nessun evento visibile. Cambia i filtri in alto per visualizzarli.</div>';
   }
 
-  box.scrollTop = scrollTop; // Ripristina lo scroll
+  box.scrollTop = scrollTop; 
 }
 
 function pad2(n){ return String(n).padStart(2,'0'); }
@@ -693,7 +744,6 @@ function buildICS(){
   const stamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
 
   parsedDays.forEach(d=>{
-    // Esporta il titolo (festività) solo se incluso E NON deselezionato dall'utente
     if(d.title && includeHoliday && d.titleSelected !== false){
       uidCounter++;
       vevents.push([
@@ -707,12 +757,11 @@ function buildICS(){
       ].join('\r\n'));
     }
     
-    // Esporta gli eventi solo se la categoria è attiva E l'evento non è stato deselezionato
     Object.keys(d.sections).forEach(cat=>{
       if(!selectedCats.has(cat)) return;
       
       d.sections[cat].forEach(ev=>{
-        if(ev.selected === false) return; // SALTA L'EVENTO DESELEZIONATO!
+        if(ev.selected === false) return; 
         
         uidCounter++;
         const summary = `[${cat}] ${ev.text || ev.raw}`;
@@ -778,7 +827,6 @@ function downloadICS(){
   URL.revokeObjectURL(url);
 }
 
-// Estrazione testo PDF via PDF.js integrata in modo sicuro
 async function extractTextFromPDF(file) {
   const statusBox = document.getElementById('pdfStatus');
   statusBox.textContent = "Estrazione testo dal PDF in corso...";
