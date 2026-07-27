@@ -6,7 +6,13 @@
 <title>Calendario Villa Flaminia → Google Calendar</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  // Aggiriamo il problema del blocco CORS quando apri il file in locale (file://)
+  if (window.location.protocol !== 'file:') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  } else {
+    // In locale forziamo l'esecuzione sul main thread svuotando il workerSrc
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+  }
 </script>
 <style>
   :root{
@@ -309,7 +315,7 @@
 
   <div class="card">
     <h2><span class="num">2</span>Carica PDF o Incolla Testo</h2>
-    <p class="sub">Carica direttamente il file PDF del mese, oppure incolla il testo estratto manualmente.</p>
+    <p class="sub">Carica direttamente il file PDF del mese. Il testo verrà estratto in automatico.</p>
     
     <div style="margin-bottom: 16px; padding: 12px; background: #f0f2f6; border-radius: 4px; border: 1px dashed var(--navy);">
       <label class="field-label" for="pdfUpload" style="cursor:pointer; margin-bottom:0;">
@@ -319,7 +325,7 @@
       <div id="pdfStatus" class="status"></div>
     </div>
 
-    <textarea id="rawText" spellcheck="false" placeholder="Il testo estratto apparirà qui..."></textarea>
+    <textarea id="rawText" spellcheck="false" placeholder="Il testo estratto apparirà qui per essere elaborato..."></textarea>
   </div>
 
   <div class="card">
@@ -408,7 +414,7 @@ function normalizeCatLine(line){
 }
 
 function parseWeekdayLine(line){
-  const m = line.trim().match(/^(LUNEDÌ|MARTEDÌ|MERCOLEDÌ|GIOVEDÌ|VENERDÌ|SABATO|DOMENICA)\s+(\d{1,2})\b(.*)$/i);
+  const m = line.trim().match(/^(LUNEDÌ|MARTEDÌ|MERCOLEDÌ|GIOVEDÌ|VENERDÌ|SABATO|DOMENICA)\s+(\d{1,2})(.*)$/i);
   if(!m) return null;
   return { weekday: m[1].toUpperCase(), day: parseInt(m[2],10), rest: m[3].trim() };
 }
@@ -426,11 +432,12 @@ function extractTime(line){
 }
 
 function stripBullet(line){
-  return line.replace(/^[•\-\u2022\*]\s*/, '').trim();
+  return line.replace(/^[•\-•\*]\s*/, '').trim();
 }
 
 function parseCalendarText(text){
-  const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  const lines = text.split('
+').map(l=>l.trim()).filter(l=>l.length>0);
   const days = [];
   let current = null;
   let currentCat = null;
@@ -488,7 +495,7 @@ function runParse(){
     return;
   }
   renderPreview();
-  status.textContent = \`Trovati \${parsedDays.length} giorni nel testo.\`;
+  status.textContent = `Trovati ${parsedDays.length} giorni nel testo.`;
   status.className = "status ok";
   document.getElementById('previewCard').style.display = 'block';
 }
@@ -506,7 +513,7 @@ function renderPreview(){
     const head = document.createElement('div');
     head.className = 'day-head';
     const dateStr = String(d.day).padStart(2,'0') + '/' + String(month).padStart(2,'0') + '/' + year;
-    head.innerHTML = \`<span class="datebadge">\${dateStr}</span> \${d.weekday}\` + (d.title && includeHoliday ? \` <span class="day-title-tag">— \${escapeHtml(d.title)}</span>\` : '');
+    head.innerHTML = `<span class="datebadge">${dateStr}</span> ${d.weekday}` + (d.title && includeHoliday ? ` <span class="day-title-tag">— ${escapeHtml(d.title)}</span>` : '');
     group.appendChild(head);
 
     let any = false;
@@ -519,15 +526,15 @@ function renderPreview(){
         any = true; count++;
         const line = document.createElement('div');
         line.className = 'ev-line';
-        const timeStr = ev.startH !== null ? \`\${pad2(ev.startH)}:\${pad2(ev.startM)}\${ev.endH!==null? '–'+pad2(ev.endH)+':'+pad2(ev.endM):''}\` : '';
-        line.innerHTML = \`<span class="tag">\${cat}</span>\${timeStr?\`<span class="time">\${timeStr}</span>\`:-''}\${escapeHtml(ev.text)}\`;
+        const timeStr = ev.startH !== null ? `${pad2(ev.startH)}:${pad2(ev.startM)}${ev.endH!==null? '–'+pad2(ev.endH)+':'+pad2(ev.endM):''}` : '';
+        line.innerHTML = `<span class="tag">${cat}</span>${timeStr?`<span class="time">${timeStr}</span>`:''}${escapeHtml(ev.text)}`;
         group.appendChild(line);
       });
     });
     if(any) box.appendChild(group);
   });
 
-  document.getElementById('evCount').textContent = \`\${count} eventi selezionati\`;
+  document.getElementById('evCount').textContent = `${count} eventi selezionati`;
   if(count === 0){
     box.innerHTML = '<div class="empty">Nessun evento con i filtri correnti. Prova a selezionare più sezioni.</div>';
   }
@@ -541,20 +548,21 @@ function escapeHtml(s){
 function pad(n){ return String(n).padStart(2,'0'); }
 
 function icsDate(year, month, day, h, m){
-  return \`\${year}\${pad(month)}\${pad(day)}T\${pad(h)}\${pad(m)}00\`;
+  return `${year}${pad(month)}${pad(day)}T${pad(h)}${pad(m)}00`;
 }
 function icsDateOnly(year, month, day){
-  return \`\${year}\${pad(month)}\${pad(day)}\`;
+  return `${year}${pad(month)}${pad(day)}`;
 }
 function icsDateOnlyNext(year, month, day){
   const d = new Date(year, month-1, day+1);
-  return \`\${d.getFullYear()}\${pad(d.getMonth()+1)}\${pad(d.getDate())}\`;
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
 }
 
 function foldLine(line){
   let out = '';
   while(line.length > 73){
-    out += line.slice(0,73) + '\r\n ';
+    out += line.slice(0,73) + '
+ ';
     line = line.slice(73);
   }
   return out + line;
@@ -572,19 +580,20 @@ function buildICS(){
       uidCounter++;
       vevents.push([
         'BEGIN:VEVENT',
-        \`UID:vf-\${year}\${pad(month)}\${pad(d.day)}-holiday-\${uidCounter}@calendario\`,
-        \`DTSTAMP:\${stamp}\`,
-        \`DTSTART;VALUE=DATE:\${icsDateOnly(year,month,d.day)}\`,
-        \`DTEND;VALUE=DATE:\${icsDateOnlyNext(year,month,d.day)}\`,
-        foldLine(\`SUMMARY:\${escapeICS(d.title)}\`),
+        `UID:vf-${year}${pad(month)}${pad(d.day)}-holiday-${uidCounter}@calendario`,
+        `DTSTAMP:${stamp}`,
+        `DTSTART;VALUE=DATE:${icsDateOnly(year,month,d.day)}`,
+        `DTEND;VALUE=DATE:${icsDateOnlyNext(year,month,d.day)}`,
+        foldLine(`SUMMARY:${escapeICS(d.title)}`),
         'END:VEVENT'
-      ].join('\r\n'));
+      ].join('
+'));
     }
     Object.keys(d.sections).forEach(cat=>{
       if(!selectedCats.has(cat)) return;
       d.sections[cat].forEach(ev=>{
         uidCounter++;
-        const summary = \`[\${cat}] \${ev.text || ev.raw}\`;
+        const summary = `[${cat}] ${ev.text || ev.raw}`;
         let dtstart, dtend, allday=false;
         if(ev.startH !== null){
           dtstart = icsDate(year,month,d.day, ev.startH, ev.startM);
@@ -599,18 +608,19 @@ function buildICS(){
           allday = true;
         }
         const lines = ['BEGIN:VEVENT',
-          \`UID:vf-\${year}\${pad(month)}\${pad(d.day)}-\${uidCounter}@calendario\`,
-          \`DTSTAMP:\${stamp}\`];
+          `UID:vf-${year}${pad(month)}${pad(d.day)}-${uidCounter}@calendario`,
+          `DTSTAMP:${stamp}`];
         if(allday){
-          lines.push(\`DTSTART;VALUE=DATE:\${icsDateOnly(year,month,d.day)}\`);
-          lines.push(\`DTEND;VALUE=DATE:\${icsDateOnlyNext(year,month,d.day)}\`);
+          lines.push(`DTSTART;VALUE=DATE:${icsDateOnly(year,month,d.day)}`);
+          lines.push(`DTEND;VALUE=DATE:${icsDateOnlyNext(year,month,d.day)}`);
         } else {
-          lines.push(\`DTSTART:\${dtstart}\`);
-          lines.push(\`DTEND:\${dtend}\`);
+          lines.push(`DTSTART:${dtstart}`);
+          lines.push(`DTEND:${dtend}`);
         }
-        lines.push(foldLine(\`SUMMARY:\${escapeICS(summary)}\`));
+        lines.push(foldLine(`SUMMARY:${escapeICS(summary)}`));
         lines.push('END:VEVENT');
-        vevents.push(lines.join('\r\n'));
+        vevents.push(lines.join('
+'));
       });
     });
   });
@@ -623,12 +633,14 @@ function buildICS(){
     'METHOD:PUBLISH',
     ...vevents,
     'END:VCALENDAR'
-  ].join('\r\n');
+  ].join('
+');
   return ics;
 }
 
 function escapeICS(s){
-  return s.replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+  return s.replace(/\/g,'\\').replace(/;/g,'\;').replace(/,/g,'\,').replace(/
+/g,'\n');
 }
 
 function downloadICS(){
@@ -640,14 +652,14 @@ function downloadICS(){
   const year = document.getElementById('yearSel').value;
   const a = document.createElement('a');
   a.href = url;
-  a.download = \`calendario_villa_flaminia_\${year}-\${month}.ics\`;
+  a.download = `calendario_villa_flaminia_${year}-${month}.ics`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 
-// Integrazione PDF.js
+// Integrazione PDF.js CORRETTA e ROBUSTA
 document.getElementById('pdfUpload').addEventListener('change', async function(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -660,27 +672,49 @@ document.getElementById('pdfUpload').addEventListener('change', async function(e
   
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    // È fondamentale passare un Uint8Array invece del raw buffer
+    const uint8Array = new Uint8Array(arrayBuffer);
+    
+    const loadingTask = pdfjsLib.getDocument({ data: uint8Array });
+    const pdf = await loadingTask.promise;
     let fullText = "";
 
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
       const page = await pdf.getPage(pageNum);
       const textContent = await page.getTextContent();
-      const pageText = textContent.items.map(item => item.str).join(" ");
+      
+      let pageText = "";
+      let lastY = -1;
+
+      // Ricostruiamo la formattazione a righe controllando le coordinate Y del testo.
+      // Unire semplicemente con gli spazi distruggeva la logica del tuo parser.
+      for (let item of textContent.items) {
+        let currentY = item.transform[5]; // Coordinata verticale
+        
+        if (lastY !== -1 && Math.abs(currentY - lastY) > 3) {
+          // Se la Y cambia di più di 3 pixel, stiamo andando su una nuova riga
+          pageText += "\n";
+        }
+        
+        pageText += item.str;
+        lastY = currentY;
+      }
+
       fullText += pageText + "\n";
     }
 
-    const formattedText = fullText.replace(/(LUNEDÌ|MARTEDÌ|MERCOLEDÌ|GIOVEDÌ|VENERDÌ|SABATO|DOMENICA)/gi, '\n$1');
+    // Ulteriore forzatura: se trova un giorno della settimana senza a capo, lo divide per sicurezza
+    let formattedText = fullText.replace(/(LUNEDÌ|MARTEDÌ|MERCOLEDÌ|GIOVEDÌ|VENERDÌ|SABATO|DOMENICA)\s+(\d{1,2})/gi, '\n$1 $2');
 
     textArea.value = formattedText.trim();
-    status.textContent = "Testo estratto con successo!";
+    status.textContent = "Testo estratto con successo e pronto per l'anteprima!";
     status.className = "status ok";
     
     runParse();
 
   } catch (err) {
     console.error(err);
-    status.textContent = "Errore durante la lettura del PDF.";
+    status.textContent = "Errore durante la lettura del PDF: " + err.message;
     status.className = "status err";
   }
 });
