@@ -17,6 +17,7 @@
     --muted:#6b7280;
     --line:#e3e0d6;
     --gold:#b8935a;
+    --good:#1f7a3d;
   }
   *{box-sizing:border-box;}
   body{
@@ -58,7 +59,7 @@
     color:#c9d2e3;
   }
   .wrap{
-    max-width:920px;
+    max-width:960px;
     margin:0 auto;
     padding:32px clamp(16px,4vw,48px) 64px;
   }
@@ -118,19 +119,70 @@
     width:100%;
   }
   textarea{
-    min-height:220px;
+    min-height:160px;
     resize:vertical;
     line-height:1.5;
     font-family:'SF Mono','Consolas',monospace;
-    font-size:12.5px;
+    font-size:12px;
   }
   .row{
     display:flex;
     gap:16px;
     flex-wrap:wrap;
-    margin-bottom:16px;
+    margin-bottom:0;
   }
   .row > div{flex:1;min-width:140px;}
+
+  .dropzone{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border:2px dashed var(--line);
+    border-radius:6px;
+    padding:28px 20px;
+    text-align:center;
+    background:#fcfbf8;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .dropzone:hover, .dropzone.drag{
+    border-color:var(--maroon);
+    background:#fbf3f1;
+  }
+  .dropzone .dz-icon{
+    font-size:28px;
+    margin-bottom:6px;
+  }
+  .dropzone .dz-title{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-weight:700;
+    font-size:14px;
+    color:var(--navy);
+    margin-bottom:2px;
+  }
+  .dropzone .dz-sub{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:12.5px;
+    color:var(--muted);
+  }
+  input[type=file]{ display:none; }
+
+  .toggle-link{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:12.5px;
+    color:var(--navy);
+    text-decoration:underline;
+    cursor:pointer;
+    display:inline-block;
+    margin-top:14px;
+  }
+  .manual-box{
+    margin-top:14px;
+    display:none;
+  }
+  .manual-box.open{ display:block; }
+
   .chips{
     display:flex;
     flex-wrap:wrap;
@@ -154,10 +206,6 @@
     border-color:var(--navy);
     color:#fff;
   }
-  .chip.holiday.active{
-    background:var(--gold);
-    border-color:var(--gold);
-  }
   .actions{
     display:flex;
     gap:12px;
@@ -174,28 +222,28 @@
     cursor:pointer;
     letter-spacing:0.2px;
   }
-  button.primary{
-    background:var(--maroon);
-    color:#fff;
-  }
+  button.primary{ background:var(--maroon); color:#fff; }
   button.primary:hover{background:var(--maroon-bright);}
-  button.secondary{
-    background:#fff;
-    color:var(--navy);
-    border:1.5px solid var(--navy);
-  }
+  button.secondary{ background:#fff; color:var(--navy); border:1.5px solid var(--navy); }
   button.secondary:hover{background:#f0f2f6;}
+  button.small{
+    padding:6px 14px;
+    font-size:12.5px;
+  }
   button:disabled{opacity:0.45;cursor:not-allowed;}
+
   .status{
     font-family:'Helvetica Neue',Arial,sans-serif;
     font-size:13px;
     margin-top:12px;
     color:var(--muted);
   }
-  .status.ok{color:#1f7a3d;}
+  .status.ok{color:var(--good);}
   .status.err{color:var(--maroon-bright);}
+  .status.loading{color:var(--navy);}
+
   .preview{
-    max-height:500px;
+    max-height:460px;
     overflow-y:auto;
     border:1px solid var(--line);
     border-radius:3px;
@@ -213,58 +261,44 @@
     color:var(--navy);
     text-transform:uppercase;
     letter-spacing:0.5px;
-    margin-bottom:8px;
+    margin-bottom:6px;
     display:flex;
     align-items:baseline;
     gap:8px;
+    flex-wrap:wrap;
   }
   .day-head .datebadge{
     background:var(--navy);
     color:#fff;
     border-radius:3px;
-    padding:2px 8px;
+    padding:1px 8px;
     font-size:11px;
+    white-space:nowrap;
   }
-  
   .ev-line{
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 6px 10px;
-    border-left: 2px solid var(--line);
-    margin-bottom: 4px;
-    cursor: pointer;
-    border-radius: 0 4px 4px 0;
-    transition: background-color 0.15s, opacity 0.2s;
-  }
-  .ev-line:hover { background: #f0f2f6; }
-  .ev-line.unselected {
-    opacity: 0.45;
-  }
-  .ev-line.unselected .ev-text {
-    text-decoration: line-through;
-  }
-  .ev-line input[type="checkbox"] {
-    margin-top: 2px;
-    cursor: pointer;
-  }
-  .ev-text {
     font-family:'Helvetica Neue',Arial,sans-serif;
     font-size:13px;
     color:var(--ink);
-    flex: 1;
-    line-height: 1.4;
-    user-select: none;
+    padding:4px 0 4px 4px;
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
   }
-  .holiday-line {
-    border-left-color: var(--gold);
-    background: #fdfaf5;
+  .ev-line input[type=checkbox]{
+    margin-top:3px;
+    flex-shrink:0;
+    accent-color:var(--maroon);
+    width:14px;height:14px;
+    cursor:pointer;
   }
-  .holiday-line .ev-text {
-    font-family:'Georgia',serif;
-    font-style:italic;
-    color:var(--gold);
-    font-size: 13.5px;
+  .ev-line label{
+    cursor:pointer;
+    line-height:1.45;
+  }
+  .ev-line.unchecked label{
+    color:var(--muted);
+    text-decoration:line-through;
+    text-decoration-color:var(--line);
   }
   .ev-line .tag{
     display:inline-block;
@@ -277,7 +311,7 @@
   .ev-line .time{
     color:var(--muted);
     margin-right:6px;
-    font-weight: 600;
+    font-variant-numeric:tabular-nums;
   }
   .empty{
     font-family:'Helvetica Neue',Arial,sans-serif;
@@ -298,10 +332,13 @@
     font-size:12px;
     color:var(--muted);
     margin-left:auto;
-    background: var(--navy);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
+  }
+  .quickbar{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin-bottom:14px;
   }
 </style>
 </head>
@@ -309,71 +346,71 @@
 
 <div class="masthead">
   <h1>Calendario Villa Flaminia → Google Calendar</h1>
-  <p>Incolla il testo o carica il PDF mensile · seleziona i corsi · scarica il file .ics</p>
+  <p>Carica il PDF mensile · scegli quali eventi importare · scarica il file .ics</p>
 </div>
 
 <div class="wrap">
 
   <div class="card">
-    <h2><span class="num">1</span>Mese e anno (Automatico)</h2>
-    <p class="sub">Vengono rilevati in automatico dal PDF. Puoi correggerli manualmente se necessario.</p>
-    <div class="row">
-      <div>
-        <label class="field-label">Mese</label>
-        <select id="monthSel">
-          <option value="1">Gennaio</option><option value="2">Febbraio</option>
-          <option value="3">Marzo</option><option value="4">Aprile</option>
-          <option value="5">Maggio</option><option value="6">Giugno</option>
-          <option value="7">Luglio</option><option value="8">Agosto</option>
-          <option value="9" selected>Settembre</option><option value="10">Ottobre</option>
-          <option value="11">Novembre</option><option value="12">Dicembre</option>
-        </select>
+    <h2><span class="num">1</span>Carica il PDF</h2>
+    <p class="sub">Trascina qui il PDF del calendario mensile, oppure clicca per selezionarlo. Il testo viene estratto automaticamente nel browser — nulla viene inviato altrove.</p>
+    <label class="dropzone" id="dropzone" for="fileInput">
+      <div class="dz-icon">📄</div>
+      <div class="dz-title" id="dzTitle">Trascina il PDF qui, o clicca per scegliere il file</div>
+      <div class="dz-sub" id="dzSub">Formato .pdf</div>
+    </label>
+    <input type="file" id="fileInput" accept="application/pdf">
+    <div class="status" id="pdfStatus"></div>
+    <div class="toggle-link" id="manualToggle">Preferisco incollare il testo manualmente</div>
+    <div class="manual-box" id="manualBox">
+      <label class="field-label">Testo del calendario (incollato o estratto dal PDF — modificabile)</label>
+      <textarea id="rawText" spellcheck="false"></textarea>
+    </div>
+
+    <div style="margin-top:18px">
+      <label class="field-label">Mese del calendario</label>
+      <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span id="detectedLabel" style="font-weight:700;color:var(--navy);"></span>
+        <span class="toggle-link" id="correctToggle" style="margin-top:0;">correggi</span>
       </div>
-      <div>
-        <label class="field-label">Anno</label>
-        <select id="yearSel"></select>
+      <div class="manual-box" id="correctionBox">
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label class="field-label">Mese</label>
+            <select id="monthSel">
+              <option value="1">Gennaio</option><option value="2">Febbraio</option>
+              <option value="3">Marzo</option><option value="4">Aprile</option>
+              <option value="5">Maggio</option><option value="6">Giugno</option>
+              <option value="7">Luglio</option><option value="8">Agosto</option>
+              <option value="9" selected>Settembre</option><option value="10">Ottobre</option>
+              <option value="11">Novembre</option><option value="12">Dicembre</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Anno</label>
+            <select id="yearSel"></select>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="card">
-    <h2><span class="num">2</span>Testo o File PDF del calendario</h2>
-    <p class="sub">Carica direttamente il file PDF originale oppure incolla il testo estratto.</p>
-    
-    <div style="margin-bottom:16px; padding:14px; background:#f0f2f6; border-radius:4px; border:1.5px dashed var(--navy);">
-      <label class="field-label" for="pdfUpload" style="cursor:pointer; margin-bottom:4px;">
-        📁 Seleziona un file PDF dal tuo computer:
-      </label>
-      <input type="file" id="pdfUpload" accept="application/pdf" style="display:block; margin-top:6px;">
-      <div id="pdfStatus" class="status"></div>
-    </div>
-
-    <textarea id="rawText" spellcheck="false"></textarea>
-  </div>
-
-  <div class="card">
-    <h2><span class="num">3</span>Quali corsi ti interessano?</h2>
-    <p class="sub">Scegli le macro-sezioni da visualizzare. (Potrai poi deselezionare i singoli eventi uno per uno nell'anteprima in basso).</p>
-    <div class="chips" id="catChips"></div>
-    <div class="chips" style="margin-top:14px">
-      <div class="chip holiday active" data-holiday="1" id="holidayChip">+ Includi festività/ricorrenze del giorno</div>
-    </div>
     <div class="actions">
-      <button class="secondary" id="parseBtn">Genera Anteprima Eventi</button>
+      <button class="secondary" id="parseBtn">Analizza ed elenca gli eventi</button>
     </div>
     <div class="status" id="parseStatus"></div>
   </div>
 
   <div class="card" id="previewCard" style="display:none">
-    <h2>
-      <span class="num">4</span>Anteprima e Selezione 
-      <span class="badge-count" id="evCount"></span>
-    </h2>
-    <p class="sub"><strong>Clicca su un evento per escluderlo o includerlo dall'esportazione.</strong> Solo gli eventi con la spunta verranno salvati nel file.</p>
-    
+    <h2><span class="num">2</span>Scegli cosa importare <span class="badge-count" id="evCount"></span></h2>
+    <p class="sub">Clicca una sezione per accendere/spegnere tutti i suoi eventi in blocco, oppure spunta/despunta ogni singolo evento nell'elenco qui sotto.</p>
+    <div class="chips" id="catChips"></div>
+    <div class="quickbar" style="margin-top:14px">
+      <button class="secondary small" id="selectAllBtn">Seleziona tutti</button>
+      <button class="secondary small" id="selectNoneBtn">Deseleziona tutti</button>
+    </div>
     <div class="preview" id="previewBox"></div>
     <div class="actions">
-      <button class="primary" id="downloadBtn">Scarica file .ics con gli eventi selezionati</button>
+      <button class="primary" id="downloadBtn">Scarica file .ics</button>
     </div>
     <p class="footnote">
       Apri Google Calendar sul computer → icona ingranaggio → <b>Impostazioni</b> → <b>Importa ed esporta</b> → <b>Importa</b> → seleziona il file .ics scaricato e il calendario di destinazione.
@@ -384,8 +421,7 @@
 
 <script>
 const WEEKDAYS = ["LUNEDÌ","MARTEDÌ","MERCOLEDÌ","GIOVEDÌ","VENERDÌ","SABATO","DOMENICA"];
-const MONTH_NAMES = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
-const CATEGORIES = ["ISTITUTO","INFANZIA","PRIMARIA","SEC. DI I GRADO","LICEI","CENTRO SPORTIVO"];
+const MONTH_NAMES = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
 const CAT_ALIASES = {
   "ISTITUTO":"ISTITUTO",
   "INFANZIA":"INFANZIA",
@@ -396,29 +432,249 @@ const CAT_ALIASES = {
   "LICEI":"LICEI",
   "CENTRO SPORTIVO":"CENTRO SPORTIVO"
 };
+const CAT_ORDER = ["ISTITUTO","INFANZIA","PRIMARIA","SEC. DI I GRADO","LICEI","CENTRO SPORTIVO","GIORNO","SCADENZE"];
+const CAT_LABELS = {
+  "ISTITUTO":"ISTITUTO","INFANZIA":"INFANZIA","PRIMARIA":"PRIMARIA",
+  "SEC. DI I GRADO":"SEC. di I GRADO","LICEI":"LICEI","CENTRO SPORTIVO":"CENTRO SPORTIVO",
+  "GIORNO":"Festività / ricorrenze","SCADENZE":"Scadenze anno scolastico"
+};
 
-const SAMPLE_TEXT = `SETTEMBRE 2026
-MARTEDÌ 1
+const SAMPLE_TEXT = `MARTEDÌ 1
 ISTITUTO
-Ore 9.00 Assemblea Plenaria - inizio nuovo anno scolastico
-Incontro con il Direttore
-Informazione sicurezza sul lavoro (Arch. Graziano Tieri)
+• Ore 9.00 Assemblea Plenaria - inizio nuovo anno scolastico
+• Incontro con il Direttore
+• Informazione sicurezza sul lavoro (Arch. Graziano Tieri)
 INFANZIA
-Sistemazioni Classi - Programmazioni
+• Sistemazioni Classi - Programmazioni
 PRIMARIA
-9.00 - 15.00 Ritiro materiale scolastico presso la sala danza al piano -1
-Sistemazioni Classi - Programmazioni
-12.00 COLLEGIO DOCENTI
+• 9.00 - 15.00 Ritiro materiale scolastico presso la sala danza al piano -1
+• Sistemazioni Classi - Programmazioni
+• 12.00 COLLEGIO DOCENTI
 SEC. di I GRADO
-9.00 - 15.00 Ritiro libri e materiali scolastici presso la sala danza al piano -1
-11.00 COLLEGIO DOCENTI con la presenza del Direttore
+• 9.00 - 15.00 Ritiro libri e materiali scolastici presso la sala danza al piano -1
+• 11.00 COLLEGIO DOCENTI con la presenza del Direttore
 LICEI
-Ore 10.00 COLLEGIO DOCENTI con la presenza del Direttore`;
+• Ore 10.00 COLLEGIO DOCENTI con la presenza del Direttore
+MERCOLEDÌ 2
+SAN FR. SALOMONE LE CLERCQ E BEATI FR. RUGGERO, FR. ULDERICO E FR. LEONE
+INFANZIA
+• 14.00 COLLEGIO DOCENTI con la presenza del Direttore
+• 15.00 - 18.30 Corso aggiornamento: Le nuove indicazioni nazionali per il curricolo dell'Infanzia
+PRIMARIA
+• 9.00 - 15.00 Ritiro materiale scolastico presso la sala danza al piano -1
+LICEI
+• Prove di Recupero - cfr calendario
+GIOVEDÌ 3
+ISTITUTO
+• Ore 10.00 Incontro del Consiglio di Presidenza con gli Insegnanti di Sostegno
+SAVE THE DATE
+25/09 Inaugurazione dell'anno scolastico
+02/10 Festa degli ex-alunni
+23/12 - 6/01 Vacanze di Natale
+`;
 
-let selectedCats = new Set(CATEGORIES);
-let includeHoliday = true;
-let parsedDays = [];
+let parsedRows = [];   // flat list of selectable event rows
+let activeCats = new Set();
+let userOverrodeMonthYear = false;
 
+// ---------------------------------------------------------------
+// PARSER (validated against the real PDF text layout)
+// ---------------------------------------------------------------
+function normalizeCatLine(line){
+  const clean = line.trim().toUpperCase().replace(/\s+/g,' ').replace(/[:.]$/,'');
+  if(CAT_ALIASES[clean]) return CAT_ALIASES[clean];
+  if(/^SEC\.?\s*DI\s*I\s*GRADO$/.test(clean)) return "SEC. DI I GRADO";
+  return null;
+}
+function isWeekdayOnly(line){ return WEEKDAYS.includes(line.trim().toUpperCase()); }
+function parseWeekdayDayLine(line){
+  const m = line.trim().match(/^(LUNEDÌ|MARTEDÌ|MERCOLEDÌ|GIOVEDÌ|VENERDÌ|SABATO|DOMENICA)\s+(\d{1,2})\b\s*(.*)$/i);
+  if(!m) return null;
+  return { day: parseInt(m[2],10), rest: m[3].trim() };
+}
+function isTimeLike(line){ return /^(?:Ore\s+)?\d{1,2}\s*[.:]\s*\d{2}/i.test(line.trim()); }
+function isBulletLine(line){ return /^[•\-\*\u2022]/.test(line.trim()); }
+function parseFallbackDayLine(line, expectedDay){
+  const m = line.trim().match(/^(\d{1,2})\b(.*)$/);
+  if(!m) return null;
+  if(isTimeLike(line)) return null;
+  const day = parseInt(m[1],10);
+  if(day !== expectedDay) return null;
+  return { day, rest: m[2].trim() };
+}
+function stripBullet(line){ return line.replace(/^[•\-\*\u2022]\s*/, '').trim(); }
+function extractTime(line){
+  const m = line.match(/^(?:Ore\s+)?(\d{1,2})[.:](\d{2})\s*(?:-\s*(\d{1,2})[.:](\d{2}))?\s*(.*)$/i);
+  if(!m) return null;
+  const startH=parseInt(m[1],10), startM=parseInt(m[2],10);
+  if(startH>23||startM>59) return null;
+  let endH=null,endM=null;
+  if(m[3]!==undefined){ endH=parseInt(m[3],10); endM=parseInt(m[4],10); }
+  return {startH,startM,endH,endM,rest:m[5].trim()};
+}
+const startsUpper = l => /^[A-ZÀÈÉÌÒÙÁÂÍÓÚÜ]/.test(l.trim());
+
+function splitAtSaveTheDate(rawLines){
+  const idx = rawLines.findIndex(l => /SAVE\s+THE\s+DATE/i.test(l.trim()));
+  if(idx === -1) return { dayLines: rawLines, saveDateLines: [] };
+  return { dayLines: rawLines.slice(0, idx), saveDateLines: rawLines.slice(idx+1) };
+}
+
+function parseCalendarText(rawLines){
+  let lines = rawLines.map(l=>l.trim()).filter(l=>l.length>0 && l!=='--- PAGE BREAK ---');
+  lines = lines.filter(l=>!isWeekdayOnly(l));
+
+  const days = [];
+  let current = null;
+  let currentCat = null;
+  let expectedDay = 1;
+
+  function processContentLine(rawLine){
+    const hadBullet = isBulletLine(rawLine);
+    const strippedLine = stripBullet(rawLine);
+    const cat = normalizeCatLine(strippedLine);
+    if(cat){ currentCat = cat; if(!current.sections[cat]) current.sections[cat]=[]; return; }
+    const bulletOrTime = hadBullet || isTimeLike(strippedLine);
+    if(bulletOrTime){
+      if(!currentCat) currentCat = 'ISTITUTO';
+      if(!current.sections[currentCat]) current.sections[currentCat]=[];
+      const t = extractTime(strippedLine);
+      current.sections[currentCat].push({
+        raw: strippedLine, startH:t?t.startH:null, startM:t?t.startM:null,
+        endH:t?t.endH:null, endM:t?t.endM:null, text:t?t.rest:strippedLine
+      });
+      return;
+    }
+    if(!currentCat){
+      current.title = current.title ? current.title + ' — ' + strippedLine : strippedLine;
+    } else {
+      const arr = current.sections[currentCat];
+      if(arr && arr.length>0){
+        const last = arr[arr.length-1];
+        last.text = (last.text + ' ' + strippedLine).trim();
+        last.raw = (last.raw + ' ' + strippedLine).trim();
+      } else {
+        current.sections[currentCat].push({raw:strippedLine,startH:null,startM:null,endH:null,endM:null,text:strippedLine});
+      }
+    }
+  }
+
+  let pending = [];
+
+  for(let i=0;i<lines.length;i++){
+    const line = lines[i];
+    const wd = parseWeekdayDayLine(line);
+    let dayMatch = wd;
+    if(!dayMatch){
+      const fb = parseFallbackDayLine(line, expectedDay);
+      if(fb) dayMatch = fb;
+    }
+    if(dayMatch){
+      current = { day: dayMatch.day, title: null, sections: {} };
+      days.push(current);
+      currentCat = null;
+      expectedDay = dayMatch.day + 1;
+      const flushed = pending; pending = [];
+      flushed.forEach(pl => processContentLine(pl));
+      if(dayMatch.rest) processContentLine(dayMatch.rest);
+      continue;
+    }
+    if(!current) continue;
+
+    const stripped = stripBullet(line);
+    const isBulletOrTime = isBulletLine(line) || isTimeLike(stripped);
+    const nextLine = lines[i+1];
+    const nextIsWeekday = nextLine && parseWeekdayDayLine(nextLine);
+
+    const stillFormingOwnTitle = currentCat === null && current.title !== null;
+    const isCategoryCandidate = normalizeCatLine(stripped) !== null;
+    const eligibleToDefer = isCategoryCandidate ? true : !stillFormingOwnTitle;
+
+    if(!isBulletOrTime && startsUpper(stripped) && nextIsWeekday && eligibleToDefer){
+      pending.push(stripped);
+      continue;
+    }
+    processContentLine(line);
+  }
+  return days;
+}
+
+function parseSaveTheDate(lines, anchorMonth, anchorYear){
+  const out = [];
+  const re = /^(\d{1,2})\/(\d{1,2})(?:\s*-\s*(\d{1,2})\/(\d{1,2}))?\s+(.+)$/;
+  const yearFor = (m) => (m >= anchorMonth) ? anchorYear : anchorYear + 1;
+  lines.forEach(raw=>{
+    const line = raw.trim();
+    if(!line) return;
+    const m = line.match(re);
+    if(!m) return;
+    const day = parseInt(m[1],10), month = parseInt(m[2],10);
+    if(month < 1 || month > 12 || day < 1 || day > 31) return;
+    const year = yearFor(month);
+    let endDay=null, endMonth=null, endYear=null, isRange=false;
+    if(m[3] !== undefined){
+      isRange = true;
+      endDay = parseInt(m[3],10); endMonth = parseInt(m[4],10);
+      endYear = yearFor(endMonth);
+    }
+    out.push({ day, month, year, endDay, endMonth, endYear, isRange, label: m[5].trim() });
+  });
+  return out;
+}
+
+function detectMonthYear(lines){
+  // PDF text extraction sometimes inserts stray spaces inside words/numbers
+  // (e.g. "CALENDARIO" -> "CALE NDARIO", "2026" -> "202 6"). Comparing on a
+  // fully space-stripped string sidesteps that instead of relying on exact
+  // "MESE \d{4}" adjacency.
+  const joined = lines.slice(0, 30).join('').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  for(let i=0; i<MONTH_NAMES.length; i++){
+    const name = MONTH_NAMES[i];
+    const idx = joined.indexOf(name);
+    if(idx === -1) continue;
+    const after = joined.slice(idx + name.length, idx + name.length + 4);
+    if(/^\d{4}$/.test(after)){
+      return { month: i+1, year: parseInt(after, 10) };
+    }
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------
+// PDF TEXT EXTRACTION (browser, via pdf.js)
+// ---------------------------------------------------------------
+async function extractLinesFromPDF(file){
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+  let fullLines = [];
+  for(let p=1; p<=pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    const items = content.items
+      .map(it=>({str: it.str, x: it.transform[4], y: it.transform[5]}))
+      .filter(it=>it.str.trim().length>0);
+    items.sort((a,b)=> b.y - a.y || a.x - b.x);
+    const lines = [];
+    const tolerance = 2.5;
+    items.forEach(it=>{
+      let line = lines.find(l=> Math.abs(l.y - it.y) <= tolerance);
+      if(!line){ line = {y: it.y, items: []}; lines.push(line); }
+      line.items.push(it);
+    });
+    lines.sort((a,b)=> b.y - a.y);
+    lines.forEach(l=>{
+      l.items.sort((a,b)=>a.x-b.x);
+      fullLines.push(l.items.map(it=>it.str).join(' ').replace(/\s+/g,' ').trim());
+    });
+    fullLines.push('--- PAGE BREAK ---');
+  }
+  return fullLines;
+}
+
+// ---------------------------------------------------------------
+// UI WIRING
+// ---------------------------------------------------------------
 function initUI(){
   const yearSel = document.getElementById('yearSel');
   const now = new Date().getFullYear();
@@ -429,390 +685,335 @@ function initUI(){
     yearSel.appendChild(opt);
   }
   document.getElementById('rawText').value = SAMPLE_TEXT.trim();
+  updateDetectedLabel();
 
-  const chipBox = document.getElementById('catChips');
-  CATEGORIES.forEach(cat=>{
-    const chip = document.createElement('div');
-    chip.className = 'chip active';
-    chip.textContent = cat;
-    chip.dataset.cat = cat;
-    chip.addEventListener('click', ()=>{
-      if(selectedCats.has(cat)){ selectedCats.delete(cat); chip.classList.remove('active'); }
-      else { selectedCats.add(cat); chip.classList.add('active'); }
-      if(parsedDays.length > 0) renderPreview();
-    });
-    chipBox.appendChild(chip);
+  document.getElementById('manualToggle').addEventListener('click', ()=>{
+    const box = document.getElementById('manualBox');
+    box.classList.toggle('open');
   });
 
-  document.getElementById('holidayChip').addEventListener('click', function(){
-    includeHoliday = !includeHoliday;
-    this.classList.toggle('active', includeHoliday);
-    if(parsedDays.length > 0) renderPreview();
+  document.getElementById('correctToggle').addEventListener('click', ()=>{
+    document.getElementById('correctionBox').classList.toggle('open');
+  });
+  document.getElementById('monthSel').addEventListener('change', ()=>{
+    userOverrodeMonthYear = true;
+    updateDetectedLabel();
+  });
+  document.getElementById('yearSel').addEventListener('change', ()=>{
+    userOverrodeMonthYear = true;
+    updateDetectedLabel();
+  });
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  fileInput.addEventListener('change', e=>{
+    if(e.target.files && e.target.files[0]) handlePDFFile(e.target.files[0]);
+  });
+  dropzone.addEventListener('dragover', e=>{ e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', ()=> dropzone.classList.remove('drag'));
+  dropzone.addEventListener('drop', e=>{
+    e.preventDefault();
+    dropzone.classList.remove('drag');
+    if(e.dataTransfer.files && e.dataTransfer.files[0]) handlePDFFile(e.dataTransfer.files[0]);
   });
 
   document.getElementById('parseBtn').addEventListener('click', runParse);
   document.getElementById('downloadBtn').addEventListener('click', downloadICS);
-
-  const pdfInput = document.getElementById('pdfUpload');
-  if (pdfInput) {
-    pdfInput.addEventListener('change', (e) => {
-      if (e.target.files && e.target.files[0]) extractTextFromPDF(e.target.files[0]);
-    });
-  }
+  document.getElementById('selectAllBtn').addEventListener('click', ()=>{ setAllChecked(true); });
+  document.getElementById('selectNoneBtn').addEventListener('click', ()=>{ setAllChecked(false); });
 }
 
-function normalizeCatLine(line){
-  const clean = line.trim().toUpperCase().replace(/\s+/g,' ').replace(/\.$/,'');
-  for(const key in CAT_ALIASES){
-    if(clean === key || clean === key.replace('. DI','. DI')) return CAT_ALIASES[key];
-  }
-  if(/^SEC\.?\s*DI\s*I\s*GRADO$/.test(clean)) return "SEC. DI I GRADO";
-  return null;
+function updateDetectedLabel(){
+  const month = parseInt(document.getElementById('monthSel').value,10);
+  const year = document.getElementById('yearSel').value;
+  document.getElementById('detectedLabel').textContent = `${MONTH_NAMES[month-1][0] + MONTH_NAMES[month-1].slice(1).toLowerCase()} ${year}`;
 }
 
-function parseWeekdayLine(line){
-  const m = line.trim().match(/^(LUNEDÌ|MARTEDÌ|MERCOLEDÌ|GIOVEDÌ|VENERDÌ|SABATO|DOMENICA)\s+(\d{1,2})\b(.*)$/i);
-  if(!m) return null;
-  return { weekday: m[1].toUpperCase(), day: parseInt(m[2],10), rest: m[3].trim() };
-}
-
-function extractTime(line){
-  const m = line.match(/^(?:Ore\s+)?(\d{1,2})[.:](\d{2})\s*(?:-\s*(\d{1,2})[.:](\d{2}))?\s*(.*)$/i);
-  if(!m) return null;
-  const startH = parseInt(m[1],10), startM = parseInt(m[2],10);
-  if(startH > 23 || startM > 59) return null;
-  let endH = null, endM = null;
-  if(m[3] !== undefined){
-    endH = parseInt(m[3],10); endM = parseInt(m[4],10);
-  }
-  return { startH, startM, endH, endM, rest: m[5].trim() };
-}
-
-function checkBullet(line){
-  const m = line.match(/^[•\-\u2022\*]\s*(.*)/);
-  if(m) return { text: m[1].trim(), hasBullet: true };
-  return { text: line.trim(), hasBullet: false };
-}
-
-function autoDetectMonthYear(text) {
-  const lines = text.split('\n').slice(0, 20); // Controlla le prime 20 righe del file
-  let foundMonth = null;
-  let foundYear = null;
-
-  for (let line of lines) {
-    const lowerLine = line.toLowerCase();
-    
-    // Cerca il mese
-    if (!foundMonth) {
-      for (let i = 0; i < MONTH_NAMES.length; i++) {
-        const regex = new RegExp("\\b" + MONTH_NAMES[i] + "\\b", "i");
-        if (regex.test(lowerLine)) {
-          foundMonth = i + 1;
-          break;
-        }
+async function handlePDFFile(file){
+  const status = document.getElementById('pdfStatus');
+  document.getElementById('dzTitle').textContent = file.name;
+  document.getElementById('dzSub').textContent = 'Estrazione in corso…';
+  status.textContent = 'Lettura del PDF…';
+  status.className = 'status loading';
+  try{
+    const lines = await extractLinesFromPDF(file);
+    document.getElementById('rawText').value = lines.filter(l=>l!=='--- PAGE BREAK ---').join('\n');
+    const my = detectMonthYear(lines);
+    if(my && !userOverrodeMonthYear){
+      document.getElementById('monthSel').value = String(my.month);
+      const ys = document.getElementById('yearSel');
+      if(![...ys.options].some(o=>o.value===String(my.year))){
+        const opt = document.createElement('option');
+        opt.value = my.year; opt.textContent = my.year;
+        ys.appendChild(opt);
       }
+      ys.value = String(my.year);
+      updateDetectedLabel();
+      document.getElementById('correctionBox').classList.remove('open');
+    } else if(!my){
+      document.getElementById('correctionBox').classList.add('open');
     }
-    
-    // Cerca l'anno (tra il 2020 e il 2029)
-    if (!foundYear) {
-      const yMatch = line.match(/\b(202\d)\b/);
-      if (yMatch) {
-        foundYear = parseInt(yMatch[1], 10);
-      }
-    }
+    document.getElementById('dzSub').textContent = 'PDF caricato — controlla il testo estratto qui sotto se vuoi';
+    status.textContent = my
+      ? `Testo estratto da ${file.name}. Mese rilevato automaticamente.`
+      : `Testo estratto da ${file.name}. Non sono riuscito a rilevare mese e anno automaticamente: verificali qui sotto ("correggi").`;
+    status.className = 'status ok';
+  } catch(err){
+    console.error(err);
+    status.textContent = 'Non sono riuscito a leggere questo PDF. Prova a incollare il testo manualmente qui sotto.';
+    status.className = 'status err';
+    document.getElementById('manualBox').classList.add('open');
   }
-
-  // Aggiorna l'interfaccia se ha trovato corrispondenze
-  if (foundMonth) document.getElementById('monthSel').value = foundMonth;
-  if (foundYear) {
-    const yearSel = document.getElementById('yearSel');
-    let exists = Array.from(yearSel.options).some(opt => opt.value == foundYear);
-    if (!exists) {
-       const opt = document.createElement('option');
-       opt.value = foundYear; 
-       opt.textContent = foundYear;
-       yearSel.appendChild(opt);
-    }
-    yearSel.value = foundYear;
-  }
-}
-
-function parseCalendarText(text){
-  const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
-  const days = [];
-  let current = null;
-  let currentCat = null;
-
-  for(let raw of lines){
-    const bulletInfo = checkBullet(raw);
-    const line = bulletInfo.text;
-    
-    const wd = parseWeekdayLine(line);
-    if(wd){
-      current = { 
-        weekday: wd.weekday, 
-        day: wd.day, 
-        title: wd.rest || null, 
-        titleSelected: true,
-        sections: {} 
-      };
-      days.push(current);
-      currentCat = null;
-      continue;
-    }
-    if(!current) continue;
-
-    const cat = normalizeCatLine(line);
-    if(cat){
-      currentCat = cat;
-      if(!current.sections[cat]) current.sections[cat] = [];
-      continue;
-    }
-
-    if(!currentCat){
-      // Evita di unire al titolo il nome del mese se viene catturato prima del primo giorno
-      const isMonthName = MONTH_NAMES.some(m => new RegExp("\\b" + m + "\\b", "i").test(line));
-      const isYear = /\b202\d\b/.test(line);
-      if(isMonthName || isYear) continue;
-
-      if(current.title) current.title += " " + line;
-      else current.title = line;
-      continue;
-    }
-
-    const t = extractTime(line);
-    const sec = current.sections[currentCat];
-
-    if (t || bulletInfo.hasBullet || sec.length === 0) {
-      sec.push({
-        raw: line,
-        startH: t ? t.startH : null,
-        startM: t ? t.startM : null,
-        endH: t ? t.endH : null,
-        endM: t ? t.endM : null,
-        text: t ? t.rest : line,
-        selected: true 
-      });
-    } else {
-      let lastEv = sec[sec.length - 1];
-      lastEv.text += " " + line;
-      lastEv.raw += " " + line;
-    }
-  }
-  return days;
 }
 
 function runParse(){
   const text = document.getElementById('rawText').value;
   const status = document.getElementById('parseStatus');
   if(!text.trim()){
-    status.textContent = "Incolla prima il testo del calendario.";
-    status.className = "status err";
+    status.textContent = 'Carica un PDF o incolla il testo del calendario prima di continuare.';
+    status.className = 'status err';
     return;
   }
-  
-  // Esegue l'auto-rilevamento del mese e anno
-  autoDetectMonthYear(text);
+  if(!userOverrodeMonthYear){
+    const my = detectMonthYear(text.split('\n'));
+    if(my){
+      document.getElementById('monthSel').value = String(my.month);
+      const ys = document.getElementById('yearSel');
+      if(![...ys.options].some(o=>o.value===String(my.year))){
+        const opt = document.createElement('option');
+        opt.value = my.year; opt.textContent = my.year;
+        ys.appendChild(opt);
+      }
+      ys.value = String(my.year);
+      updateDetectedLabel();
+    }
+  }
+  const month = parseInt(document.getElementById('monthSel').value,10);
+  const year = parseInt(document.getElementById('yearSel').value,10);
 
-  parsedDays = parseCalendarText(text);
-  if(parsedDays.length === 0){
-    status.textContent = "Non ho trovato giorni riconoscibili. Verifica il formato del testo.";
-    status.className = "status err";
+  const allLines = text.split('\n');
+  const { dayLines, saveDateLines } = splitAtSaveTheDate(allLines);
+  const days = parseCalendarText(dayLines);
+  const saveDates = parseSaveTheDate(saveDateLines, month, year);
+
+  if(days.length === 0 && saveDates.length === 0){
+    status.textContent = "Non ho trovato giorni riconoscibili. Verifica che il testo contenga righe come 'MARTEDÌ 1'.";
+    status.className = 'status err';
     document.getElementById('previewCard').style.display = 'none';
     return;
   }
+
+  parsedRows = buildRows(days, saveDates, month, year);
+  activeCats = new Set(parsedRows.map(r=>r.type));
+  renderChips();
   renderPreview();
-  status.textContent = `Trovati ${parsedDays.length} giorni nel testo. (Mese/Anno rilevati automaticamente)`;
-  status.className = "status ok";
+  status.textContent = `Trovati ${days.length} giorni e ${saveDates.length} scadenze annuali. Scegli cosa importare qui sotto.`;
+  status.className = 'status ok';
   document.getElementById('previewCard').style.display = 'block';
+  document.getElementById('previewCard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+let rowIdCounter = 0;
+function buildRows(days, saveDates, month, year){
+  const rows = [];
+  days.forEach(d=>{
+    if(d.title){
+      rows.push({
+        id:'r'+(rowIdCounter++), type:'GIORNO', day:d.day, month, year,
+        label:d.title, checked:true, allDay:true
+      });
+    }
+    CAT_ORDER.forEach(cat=>{
+      if(!d.sections[cat]) return;
+      d.sections[cat].forEach(ev=>{
+        rows.push({
+          id:'r'+(rowIdCounter++), type:cat, day:d.day, month, year,
+          label: ev.text || ev.raw, checked:true,
+          startH:ev.startH, startM:ev.startM, endH:ev.endH, endM:ev.endM
+        });
+      });
+    });
+  });
+  saveDates.forEach(sd=>{
+    rows.push({
+      id:'r'+(rowIdCounter++), type:'SCADENZE',
+      day:sd.day, month:sd.month, year:sd.year,
+      endDay:sd.endDay, endMonth:sd.endMonth, endYear:sd.endYear, isRange:sd.isRange,
+      label: sd.label, checked:true, allDay:true
+    });
+  });
+  return rows;
+}
+
+function renderChips(){
+  const box = document.getElementById('catChips');
+  box.innerHTML = '';
+  const present = CAT_ORDER.filter(c => parsedRows.some(r=>r.type===c));
+  present.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.textContent = CAT_LABELS[cat] || cat;
+    chip.dataset.cat = cat;
+    chip.addEventListener('click', ()=>{
+      const rowsInCat = parsedRows.filter(r=>r.type===cat);
+      const allOn = rowsInCat.every(r=>r.checked);
+      rowsInCat.forEach(r=> r.checked = !allOn);
+      renderPreview();
+    });
+    box.appendChild(chip);
+  });
+}
+
+function setAllChecked(val){
+  parsedRows.forEach(r=> r.checked = val);
+  renderPreview();
+}
+
+function dateSortKey(r){
+  return r.year*10000 + r.month*100 + r.day;
+}
+
+function computeWeekdayLabel(year, month, day){
+  const d = new Date(year, month-1, day);
+  const names = ["Domenica","Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato"];
+  return names[d.getDay()];
 }
 
 function renderPreview(){
   const box = document.getElementById('previewBox');
-  const scrollTop = box.scrollTop; 
   box.innerHTML = '';
-  
-  let count = 0;
-  let totalVisible = 0;
-  const month = parseInt(document.getElementById('monthSel').value,10);
-  const year = parseInt(document.getElementById('yearSel').value,10);
 
-  parsedDays.forEach(d=>{
-    const group = document.createElement('div');
-    group.className = 'day-group';
-    
-    const head = document.createElement('div');
-    head.className = 'day-head';
-    const dateStr = String(d.day).padStart(2,'0') + '/' + String(month).padStart(2,'0') + '/' + year;
-    head.innerHTML = `<span class="datebadge">${dateStr}</span> ${d.weekday}`;
-    group.appendChild(head);
-
-    let groupHasVisibleItems = false;
-
-    if(d.title && includeHoliday){
-      totalVisible++;
-      groupHasVisibleItems = true;
-      if(d.titleSelected !== false) count++;
-      
-      const tLine = document.createElement('div');
-      tLine.className = 'ev-line holiday-line' + (d.titleSelected === false ? ' unselected' : '');
-      tLine.innerHTML = `
-        <input type="checkbox" ${d.titleSelected !== false ? 'checked' : ''}>
-        <div class="ev-text">${escapeHtml(d.title)}</div>
-      `;
-      tLine.addEventListener('click', (e) => {
-        if(e.target.tagName !== 'INPUT') d.titleSelected = !d.titleSelected;
-        else d.titleSelected = e.target.checked;
-        renderPreview();
-      });
-      group.appendChild(tLine);
+  const sorted = [...parsedRows].sort((a,b)=> dateSortKey(a) - dateSortKey(b));
+  const groups = [];
+  let lastKey = null, curGroup = null;
+  sorted.forEach(r=>{
+    const key = dateSortKey(r);
+    if(key !== lastKey){
+      curGroup = { year:r.year, month:r.month, day:r.day, rows:[] };
+      groups.push(curGroup);
+      lastKey = key;
     }
-
-    Object.keys(d.sections).forEach(cat=>{
-      if(!selectedCats.has(cat)) return;
-      
-      d.sections[cat].forEach(ev=>{
-        totalVisible++;
-        groupHasVisibleItems = true;
-        if(ev.selected !== false) count++;
-        
-        const line = document.createElement('div');
-        line.className = 'ev-line' + (ev.selected === false ? ' unselected' : '');
-        const timeStr = ev.startH !== null ? `${pad2(ev.startH)}:${pad2(ev.startM)}${ev.endH!==null? '–'+pad2(ev.endH)+':'+pad2(ev.endM):''}` : '';
-        
-        line.innerHTML = `
-          <input type="checkbox" ${ev.selected !== false ? 'checked' : ''}>
-          <div class="ev-text">
-            <span class="tag">${cat}</span>${timeStr?`<span class="time">${timeStr}</span>`:''}${escapeHtml(ev.text)}
-          </div>
-        `;
-        
-        line.addEventListener('click', (e) => {
-          if(e.target.tagName !== 'INPUT') ev.selected = !ev.selected;
-          else ev.selected = e.target.checked;
-          renderPreview(); 
-        });
-        
-        group.appendChild(line);
-      });
-    });
-    
-    if(groupHasVisibleItems) box.appendChild(group);
+    curGroup.rows.push(r);
   });
 
-  document.getElementById('evCount').textContent = `${count} eventi da esportare`;
-  
-  if(totalVisible === 0){
-    box.innerHTML = '<div class="empty">Nessun evento visibile. Cambia i filtri in alto per visualizzarli.</div>';
+  let checkedCount = 0;
+  parsedRows.forEach(r=>{ if(r.checked) checkedCount++; });
+
+  // update chip active state to reflect current selection
+  document.querySelectorAll('#catChips .chip').forEach(chip=>{
+    const cat = chip.dataset.cat;
+    const rowsInCat = parsedRows.filter(r=>r.type===cat);
+    const allOn = rowsInCat.length>0 && rowsInCat.every(r=>r.checked);
+    chip.classList.toggle('active', allOn);
+  });
+
+  if(groups.length === 0){
+    box.innerHTML = '<div class="empty">Nessun evento trovato.</div>';
+  } else {
+    groups.forEach(g=>{
+      const group = document.createElement('div');
+      group.className = 'day-group';
+      const head = document.createElement('div');
+      head.className = 'day-head';
+      const dateStr = String(g.day).padStart(2,'0') + '/' + String(g.month).padStart(2,'0') + '/' + g.year;
+      head.innerHTML = `<span class="datebadge">${dateStr}</span> ${computeWeekdayLabel(g.year,g.month,g.day)}`;
+      group.appendChild(head);
+
+      g.rows.forEach(r=>{
+        const line = document.createElement('div');
+        line.className = 'ev-line' + (r.checked ? '' : ' unchecked');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = r.checked;
+        cb.id = r.id;
+        cb.addEventListener('change', ()=>{
+          r.checked = cb.checked;
+          renderPreview();
+        });
+        const label = document.createElement('label');
+        label.setAttribute('for', r.id);
+        let timeStr = '';
+        if(r.startH !== null && r.startH !== undefined){
+          timeStr = `${pad2(r.startH)}:${pad2(r.startM)}` + (r.endH!==null && r.endH!==undefined ? `–${pad2(r.endH)}:${pad2(r.endM)}` : '');
+        } else if(r.isRange){
+          timeStr = `→ ${String(r.endDay).padStart(2,'0')}/${String(r.endMonth).padStart(2,'0')}`;
+        }
+        label.innerHTML = `<span class="tag">${CAT_LABELS[r.type]||r.type}</span>${timeStr?`<span class="time">${timeStr}</span>`:''}${escapeHtml(r.label)}`;
+        line.appendChild(cb);
+        line.appendChild(label);
+        group.appendChild(line);
+      });
+      box.appendChild(group);
+    });
   }
 
-  box.scrollTop = scrollTop; 
+  document.getElementById('evCount').textContent = `${checkedCount} di ${parsedRows.length} eventi selezionati`;
 }
 
 function pad2(n){ return String(n).padStart(2,'0'); }
-function escapeHtml(s){
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function pad(n){ return String(n).padStart(2,'0'); }
-
-function icsDate(year, month, day, h, m){
-  return `${year}${pad(month)}${pad(day)}T${pad(h)}${pad(m)}00`;
+// ---------------------------------------------------------------
+// ICS GENERATION
+// ---------------------------------------------------------------
+function icsDateTime(year, month, day, h, m){
+  return `${year}${pad2(month)}${pad2(day)}T${pad2(h)}${pad2(m)}00`;
 }
 function icsDateOnly(year, month, day){
-  return `${year}${pad(month)}${pad(day)}`;
+  return `${year}${pad2(month)}${pad2(day)}`;
 }
-function icsDateOnlyNext(year, month, day){
+function nextDayStr(year, month, day){
   const d = new Date(year, month-1, day+1);
-  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+  return `${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}`;
 }
-
 function foldLine(line){
   let out = '';
-  while(line.length > 73){
-    out += line.slice(0,73) + '\r\n ';
-    line = line.slice(73);
-  }
+  while(line.length > 73){ out += line.slice(0,73) + '\r\n '; line = line.slice(73); }
   return out + line;
+}
+function escapeICS(s){
+  return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
 }
 
 function buildICS(){
-  const month = parseInt(document.getElementById('monthSel').value,10);
-  const year = parseInt(document.getElementById('yearSel').value,10);
-  let vevents = [];
-  let uidCounter = 0;
   const stamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  let vevents = [];
+  let n = 0;
 
-  parsedDays.forEach(d=>{
-    if(d.title && includeHoliday && d.titleSelected !== false){
-      uidCounter++;
-      vevents.push([
-        'BEGIN:VEVENT',
-        `UID:vf-${year}${pad(month)}${pad(d.day)}-holiday-${uidCounter}@calendario`,
-        `DTSTAMP:${stamp}`,
-        `DTSTART;VALUE=DATE:${icsDateOnly(year,month,d.day)}`,
-        `DTEND;VALUE=DATE:${icsDateOnlyNext(year,month,d.day)}`,
-        foldLine(`SUMMARY:${escapeICS(d.title)}`),
-        'END:VEVENT'
-      ].join('\r\n'));
+  parsedRows.filter(r=>r.checked).forEach(r=>{
+    n++;
+    const summary = (r.type==='GIORNO' || r.type==='SCADENZE') ? r.label : `[${r.type}] ${r.label}`;
+    const lines = ['BEGIN:VEVENT', `UID:vf-${r.id}-${n}@calendario`, `DTSTAMP:${stamp}`];
+
+    if(r.type === 'SCADENZE' && r.isRange){
+      lines.push(`DTSTART;VALUE=DATE:${icsDateOnly(r.year,r.month,r.day)}`);
+      lines.push(`DTEND;VALUE=DATE:${nextDayStr(r.endYear,r.endMonth,r.endDay)}`);
+    } else if(r.allDay || r.startH === null || r.startH === undefined){
+      lines.push(`DTSTART;VALUE=DATE:${icsDateOnly(r.year,r.month,r.day)}`);
+      lines.push(`DTEND;VALUE=DATE:${nextDayStr(r.year,r.month,r.day)}`);
+    } else {
+      lines.push(`DTSTART:${icsDateTime(r.year,r.month,r.day,r.startH,r.startM)}`);
+      if(r.endH !== null && r.endH !== undefined){
+        lines.push(`DTEND:${icsDateTime(r.year,r.month,r.day,r.endH,r.endM)}`);
+      } else {
+        let eh = r.startH+1, em = r.startM;
+        if(eh>23){ eh=23; em=59; }
+        lines.push(`DTEND:${icsDateTime(r.year,r.month,r.day,eh,em)}`);
+      }
     }
-    
-    Object.keys(d.sections).forEach(cat=>{
-      if(!selectedCats.has(cat)) return;
-      
-      d.sections[cat].forEach(ev=>{
-        if(ev.selected === false) return; 
-        
-        uidCounter++;
-        const summary = `[${cat}] ${ev.text || ev.raw}`;
-        let dtstart, dtend, allday=false;
-        if(ev.startH !== null){
-          dtstart = icsDate(year,month,d.day, ev.startH, ev.startM);
-          if(ev.endH !== null){
-            dtend = icsDate(year,month,d.day, ev.endH, ev.endM);
-          } else {
-            let eh = ev.startH + 1, em = ev.startM;
-            if(eh > 23) eh = 23, em = 59;
-            dtend = icsDate(year,month,d.day, eh, em);
-          }
-        } else {
-          allday = true;
-        }
-        const lines = ['BEGIN:VEVENT',
-          `UID:vf-${year}${pad(month)}${pad(d.day)}-${uidCounter}@calendario`,
-          `DTSTAMP:${stamp}`];
-        if(allday){
-          lines.push(`DTSTART;VALUE=DATE:${icsDateOnly(year,month,d.day)}`);
-          lines.push(`DTEND;VALUE=DATE:${icsDateOnlyNext(year,month,d.day)}`);
-        } else {
-          lines.push(`DTSTART:${dtstart}`);
-          lines.push(`DTEND:${dtend}`);
-        }
-        lines.push(foldLine(`SUMMARY:${escapeICS(summary)}`));
-        lines.push('END:VEVENT');
-        vevents.push(lines.join('\r\n'));
-      });
-    });
+    lines.push(foldLine(`SUMMARY:${escapeICS(summary)}`));
+    lines.push('END:VEVENT');
+    vevents.push(lines.join('\r\n'));
   });
 
-  const ics = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Villa Flaminia//Calendario Import//IT',
-    'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
-    ...vevents,
-    'END:VCALENDAR'
+  return [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Villa Flaminia//Calendario Import//IT',
+    'CALSCALE:GREGORIAN','METHOD:PUBLISH', ...vevents, 'END:VCALENDAR'
   ].join('\r\n');
-  return ics;
-}
-
-function escapeICS(s){
-  return s.replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
 }
 
 function downloadICS(){
-  if(parsedDays.length === 0){ runParse(); if(parsedDays.length===0) return; }
+  if(parsedRows.length === 0) return;
   const ics = buildICS();
   const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
   const url = URL.createObjectURL(blob);
@@ -825,76 +1026,6 @@ function downloadICS(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-}
-
-async function extractTextFromPDF(file) {
-  const statusBox = document.getElementById('pdfStatus');
-  statusBox.textContent = "Estrazione testo dal PDF in corso...";
-  statusBox.className = "status";
-
-  try {
-    if (typeof pdfjsLib === 'undefined') {
-      throw new Error("Libreria PDF.js non caricata. Verifica la connessione internet.");
-    }
-
-    if (window.location.protocol !== 'file:') {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    } else {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = '';
-    }
-
-    const arrayBuffer = await file.arrayBuffer();
-    const typedarray = new Uint8Array(arrayBuffer);
-    
-    const loadingTask = pdfjsLib.getDocument({ data: typedarray });
-    const pdf = await loadingTask.promise;
-    
-    let extractedText = "";
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const textContent = await page.getTextContent();
-      
-      let lastY = null;
-      let pageLines = [];
-      let currentLine = "";
-
-      for (const item of textContent.items) {
-        if (!item.str || item.str.trim() === "") continue;
-        
-        const currentY = item.transform ? item.transform[5] : null;
-
-        if (lastY !== null && currentY !== null && Math.abs(currentY - lastY) > 4) {
-          pageLines.push(currentLine.trim());
-          currentLine = item.str;
-        } else {
-          currentLine += (currentLine ? " " : "") + item.str;
-        }
-        if (currentY !== null) lastY = currentY;
-      }
-      if (currentLine.trim()) {
-        pageLines.push(currentLine.trim());
-      }
-
-      extractedText += pageLines.join("\n") + "\n";
-    }
-
-    const weekdaysRegex = /(LUNEDÌ|MARTEDÌ|MERCOLEDÌ|GIOVEDÌ|VENERDÌ|SABATO|DOMENICA)\s+(\d{1,2})/gi;
-    let cleanText = extractedText.replace(weekdaysRegex, "\n$1 $2").trim();
-
-    const textarea = document.getElementById('rawText');
-    textarea.value = cleanText;
-
-    statusBox.textContent = "PDF estratto con successo!";
-    statusBox.className = "status ok";
-
-    runParse();
-
-  } catch (err) {
-    console.error("Errore estrazione PDF:", err);
-    statusBox.textContent = "Errore durante l'estrazione: " + err.message;
-    statusBox.className = "status err";
-  }
 }
 
 initUI();
