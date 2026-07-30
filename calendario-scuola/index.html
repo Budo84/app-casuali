@@ -194,17 +194,29 @@
     font-size:12.5px;
     border:1.5px solid var(--line);
     border-radius:20px;
-    padding:6px 14px;
+    padding:6px 14px 6px 10px;
     cursor:pointer;
     user-select:none;
     background:#fcfbf8;
     color:var(--navy);
     transition:all .12s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+  }
+  .chip .dot{
+    width:9px;height:9px;
+    border-radius:50%;
+    flex-shrink:0;
+    background:var(--dot-color, var(--navy));
   }
   .chip.active{
-    background:var(--navy);
-    border-color:var(--navy);
+    background:var(--dot-color, var(--navy));
+    border-color:var(--dot-color, var(--navy));
     color:#fff;
+  }
+  .chip.active .dot{
+    background:#fff;
   }
   .actions{
     display:flex;
@@ -279,10 +291,11 @@
     font-family:'Helvetica Neue',Arial,sans-serif;
     font-size:13px;
     color:var(--ink);
-    padding:4px 0 4px 4px;
+    padding:4px 0 4px 8px;
     display:flex;
     align-items:flex-start;
     gap:8px;
+    border-left:3px solid var(--row-color, var(--line));
   }
   .ev-line input[type=checkbox]{
     margin-top:3px;
@@ -300,12 +313,15 @@
     text-decoration:line-through;
     text-decoration-color:var(--line);
   }
+  .ev-line.unchecked{
+    border-left-color:var(--line);
+  }
   .ev-line .tag{
     display:inline-block;
     font-size:10px;
     font-weight:700;
     letter-spacing:0.5px;
-    color:var(--maroon);
+    color:var(--row-color, var(--maroon));
     margin-right:6px;
   }
   .ev-line .time{
@@ -402,7 +418,7 @@
 
   <div class="card" id="previewCard" style="display:none">
     <h2><span class="num">2</span>Scegli cosa importare <span class="badge-count" id="evCount"></span></h2>
-    <p class="sub">Clicca una sezione per accendere/spegnere tutti i suoi eventi in blocco, oppure spunta/despunta ogni singolo evento nell'elenco qui sotto.</p>
+    <p class="sub">Clicca una sezione per accendere/spegnere tutti i suoi eventi in blocco, oppure spunta/despunta ogni singolo evento nell'elenco qui sotto. Il colore accanto a ogni sezione è quello che ritroverai nell'anteprima qui sotto.</p>
     <div class="chips" id="catChips"></div>
     <div class="quickbar" style="margin-top:14px">
       <button class="secondary small" id="selectAllBtn">Seleziona tutti</button>
@@ -410,10 +426,12 @@
     </div>
     <div class="preview" id="previewBox"></div>
     <div class="actions">
-      <button class="primary" id="downloadBtn">Scarica file .ics</button>
+      <button class="primary" id="downloadBtn">Scarica un unico file .ics</button>
+      <button class="secondary" id="downloadPerCatBtn">Scarica un file .ics per categoria (colori diversi)</button>
     </div>
     <p class="footnote">
-      Apri Google Calendar sul computer → icona ingranaggio → <b>Impostazioni</b> → <b>Importa ed esporta</b> → <b>Importa</b> → seleziona il file .ics scaricato e il calendario di destinazione.
+      <b>Un unico file:</b> apri Google Calendar sul computer → icona ingranaggio → <b>Impostazioni</b> → <b>Importa ed esporta</b> → <b>Importa</b> → seleziona il file .ics e il calendario di destinazione. Tutti gli eventi finiranno in un solo calendario, con un unico colore.<br><br>
+      <b>Un file per categoria:</b> Google Calendar, quando importi un .ics, non permette di assegnare un colore diverso a ogni singolo evento — il colore in Google Calendar si imposta per <i>calendario</i>, non per evento (è una limitazione del formato, non di questo strumento). Per avere ISTITUTO, INFANZIA, PRIMARIA ecc. ciascuno con un colore diverso, l'unico modo è crearsi un calendario secondario per ciascuna categoria (in Google Calendar: "+" accanto ad "Altri calendari" → <b>Crea nuovo calendario</b>) e importare lì il file .ics corrispondente, poi assegnare un colore a ciascun calendario dal menu dei tre puntini nella barra laterale.
     </p>
   </div>
 
@@ -437,6 +455,19 @@ const CAT_LABELS = {
   "ISTITUTO":"ISTITUTO","INFANZIA":"INFANZIA","PRIMARIA":"PRIMARIA",
   "SEC. DI I GRADO":"SEC. di I GRADO","LICEI":"LICEI","CENTRO SPORTIVO":"CENTRO SPORTIVO",
   "GIORNO":"Festività / ricorrenze","SCADENZE":"Scadenze anno scolastico"
+};
+// hex used in our own preview UI; icsColorName is the closest RFC 7986 CSS3 color
+// keyword written into the .ics COLOR property (Apple Calendar, Thunderbird and a
+// few others read it — Google Calendar ignores it regardless, see note in the UI).
+const CAT_COLORS = {
+  "ISTITUTO":        { hex:"#2c3e6b", icsColorName:"midnightblue" },
+  "INFANZIA":        { hex:"#d9622b", icsColorName:"chocolate" },
+  "PRIMARIA":        { hex:"#2f9e6e", icsColorName:"seagreen" },
+  "SEC. DI I GRADO": { hex:"#7d5ba6", icsColorName:"mediumpurple" },
+  "LICEI":           { hex:"#a8283a", icsColorName:"firebrick" },
+  "CENTRO SPORTIVO": { hex:"#1f8fa3", icsColorName:"teal" },
+  "GIORNO":          { hex:"#8a5a3b", icsColorName:"sienna" },
+  "SCADENZE":        { hex:"#c2487a", icsColorName:"mediumvioletred" }
 };
 
 const SAMPLE_TEXT = `MARTEDÌ 1
@@ -719,6 +750,7 @@ function initUI(){
 
   document.getElementById('parseBtn').addEventListener('click', runParse);
   document.getElementById('downloadBtn').addEventListener('click', downloadICS);
+  document.getElementById('downloadPerCatBtn').addEventListener('click', downloadICSPerCategory);
   document.getElementById('selectAllBtn').addEventListener('click', ()=>{ setAllChecked(true); });
   document.getElementById('selectNoneBtn').addEventListener('click', ()=>{ setAllChecked(false); });
 }
@@ -852,7 +884,14 @@ function renderChips(){
   present.forEach(cat=>{
     const chip = document.createElement('div');
     chip.className = 'chip active';
-    chip.textContent = CAT_LABELS[cat] || cat;
+    const color = (CAT_COLORS[cat] && CAT_COLORS[cat].hex) || '#1c2b4a';
+    chip.style.setProperty('--dot-color', color);
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    const label = document.createElement('span');
+    label.textContent = CAT_LABELS[cat] || cat;
+    chip.appendChild(dot);
+    chip.appendChild(label);
     chip.dataset.cat = cat;
     chip.addEventListener('click', ()=>{
       const rowsInCat = parsedRows.filter(r=>r.type===cat);
@@ -922,6 +961,8 @@ function renderPreview(){
       g.rows.forEach(r=>{
         const line = document.createElement('div');
         line.className = 'ev-line' + (r.checked ? '' : ' unchecked');
+        const rowColor = (CAT_COLORS[r.type] && CAT_COLORS[r.type].hex) || '#7a1f2b';
+        line.style.setProperty('--row-color', rowColor);
         const cb = document.createElement('input');
         cb.type = 'checkbox';
         cb.checked = r.checked;
@@ -975,14 +1016,15 @@ function escapeICS(s){
   return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
 }
 
-function buildICS(){
+function buildICS(rows, calendarColorName){
   const stamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
   let vevents = [];
   let n = 0;
 
-  parsedRows.filter(r=>r.checked).forEach(r=>{
+  rows.forEach(r=>{
     n++;
     const summary = (r.type==='GIORNO' || r.type==='SCADENZE') ? r.label : `[${r.type}] ${r.label}`;
+    const colorName = (CAT_COLORS[r.type] && CAT_COLORS[r.type].icsColorName) || 'darkslategray';
     const lines = ['BEGIN:VEVENT', `UID:vf-${r.id}-${n}@calendario`, `DTSTAMP:${stamp}`];
 
     if(r.type === 'SCADENZE' && r.isRange){
@@ -1002,30 +1044,62 @@ function buildICS(){
       }
     }
     lines.push(foldLine(`SUMMARY:${escapeICS(summary)}`));
+    lines.push(`COLOR:${colorName}`);
     lines.push('END:VEVENT');
     vevents.push(lines.join('\r\n'));
   });
 
-  return [
-    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Villa Flaminia//Calendario Import//IT',
-    'CALSCALE:GREGORIAN','METHOD:PUBLISH', ...vevents, 'END:VCALENDAR'
-  ].join('\r\n');
+  const calLines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Villa Flaminia//Calendario Import//IT','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+  if(calendarColorName) calLines.push(`COLOR:${calendarColorName}`);
+  calLines.push(...vevents, 'END:VCALENDAR');
+  return calLines.join('\r\n');
 }
 
-function downloadICS(){
-  if(parsedRows.length === 0) return;
-  const ics = buildICS();
-  const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+function slugify(s){
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+}
+
+function triggerDownload(content, filename){
+  const blob = new Blob([content], {type:'text/calendar;charset=utf-8'});
   const url = URL.createObjectURL(blob);
-  const month = document.getElementById('monthSel').value.padStart(2,'0');
-  const year = document.getElementById('yearSel').value;
   const a = document.createElement('a');
   a.href = url;
-  a.download = `calendario_villa_flaminia_${year}-${month}.ics`;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+function downloadICS(){
+  if(parsedRows.length === 0) return;
+  const checked = parsedRows.filter(r=>r.checked);
+  if(checked.length === 0) return;
+  const ics = buildICS(checked);
+  const month = document.getElementById('monthSel').value.padStart(2,'0');
+  const year = document.getElementById('yearSel').value;
+  triggerDownload(ics, `calendario_villa_flaminia_${year}-${month}.ics`);
+}
+
+function downloadICSPerCategory(){
+  if(parsedRows.length === 0) return;
+  const month = document.getElementById('monthSel').value.padStart(2,'0');
+  const year = document.getElementById('yearSel').value;
+  const presentCats = CAT_ORDER.filter(cat => parsedRows.some(r=>r.type===cat && r.checked));
+  if(presentCats.length === 0) return;
+
+  presentCats.forEach((cat, i)=>{
+    const rows = parsedRows.filter(r=>r.type===cat && r.checked);
+    const colorName = (CAT_COLORS[cat] && CAT_COLORS[cat].icsColorName) || 'darkslategray';
+    const ics = buildICS(rows, colorName);
+    const filename = `calendario_villa_flaminia_${year}-${month}_${slugify(CAT_LABELS[cat]||cat)}.ics`;
+    // stagger downloads slightly so the browser doesn't block them as a batch
+    setTimeout(()=> triggerDownload(ics, filename), i * 350);
+  });
+
+  const status = document.getElementById('parseStatus');
+  status.textContent = `In scaricamento ${presentCats.length} file, uno per categoria — se il browser chiede il permesso di scaricare più file, consenti.`;
+  status.className = 'status ok';
 }
 
 initUI();
