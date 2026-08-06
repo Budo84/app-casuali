@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Irrigazione — Stato</title>
+<style>
+  :root{
+    --terra: #6b4226;
+    --terra-chiara: #a9744f;
+    --foglia: #4c7a3d;
+    --foglia-chiara: #7fae5f;
+    --sabbia: #f2ead9;
+    --carta: #fffaf0;
+    --inchiostro: #2b2620;
+    --grigio: #8a8175;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background: linear-gradient(180deg, var(--sabbia) 0%, #eae0c9 100%);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    color: var(--inchiostro);
+    display:flex;
+    justify-content:center;
+    padding: 32px 16px 60px;
+  }
+  .card{
+    width:100%;
+    max-width: 420px;
+  }
+  .eyebrow{
+    font-family: -apple-system, system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+    color: var(--foglia);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  h1{
+    font-size: 1.7rem;
+    margin: 0 0 28px;
+    font-weight: 700;
+    color: var(--terra);
+  }
+  .gauge-wrap{
+    background: var(--carta);
+    border: 1px solid rgba(107,66,38,0.15);
+    border-radius: 18px;
+    padding: 28px 24px;
+    box-shadow: 0 1px 3px rgba(107,66,38,0.08);
+    text-align:center;
+  }
+  .gauge{
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 12px;
+  }
+  .gauge svg{ transform: rotate(-90deg); }
+  .gauge-track{ fill:none; stroke:#e6dcc4; stroke-width:14; }
+  .gauge-fill{
+    fill:none;
+    stroke: var(--foglia);
+    stroke-width:14;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s ease;
+  }
+  .gauge-number{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .gauge-number .pct{
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--inchiostro);
+    line-height:1;
+  }
+  .gauge-number .label{
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.7rem;
+    color: var(--grigio);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+  .stato-msg{
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.95rem;
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    display:inline-block;
+  }
+  .stato-msg.ok{ background: #e7f0e0; color: #3f6330; }
+  .stato-msg.basso{ background: #f5e4dc; color: #9c4a24; }
+  .righe{
+    margin-top: 22px;
+    background: var(--carta);
+    border: 1px solid rgba(107,66,38,0.15);
+    border-radius: 18px;
+    overflow:hidden;
+  }
+  .riga{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 16px 20px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.92rem;
+  }
+  .riga + .riga{ border-top: 1px solid rgba(107,66,38,0.1); }
+  .riga .k{ color: var(--grigio); }
+  .riga .v{ font-weight: 600; text-align:right; }
+  .azione{
+    margin-top: 22px;
+    text-align:center;
+  }
+  .azione a{
+    display:inline-block;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+    background: var(--terra);
+    text-decoration:none;
+    padding: 13px 26px;
+    border-radius: 999px;
+    transition: background 0.2s ease;
+  }
+  .azione a:active{ background: var(--terra-chiara); }
+  .azione p{
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    color: var(--grigio);
+    margin: 10px 0 0;
+  }
+  .aggiorna{
+    text-align:center;
+    margin-top: 20px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.76rem;
+    color: var(--grigio);
+  }
+  .errore{
+    background: #f7e3e3;
+    color: #a13a3a;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.9rem;
+    text-align:center;
+    display:none;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow">Orto — sensore capacitivo</div>
+    <h1>Stato dell'irrigazione</h1>
+
+    <div class="gauge-wrap">
+      <div class="gauge">
+        <svg viewBox="0 0 180 180" width="180" height="180">
+          <circle class="gauge-track" cx="90" cy="90" r="78"></circle>
+          <circle id="gaugeFill" class="gauge-fill" cx="90" cy="90" r="78"
+                  stroke-dasharray="490" stroke-dashoffset="490"></circle>
+        </svg>
+        <div class="gauge-number">
+          <div class="pct" id="pctValue">--</div>
+          <div class="label">UMIDITÀ TERRENO</div>
+        </div>
+      </div>
+      <span class="stato-msg" id="statoMsg" style="display:none;"></span>
+    </div>
+
+    <div class="righe">
+      <div class="riga">
+        <span class="k">Ultima lettura</span>
+        <span class="v" id="orarioLettura">—</span>
+      </div>
+      <div class="riga">
+        <span class="k">Ultima annaffiatura</span>
+        <span class="v" id="ultimaAnnaffiatura">—</span>
+      </div>
+    </div>
+
+    <div class="azione">
+      <a id="editLink" href="#" target="_blank" rel="noopener">Comanda annaffiatura su GitHub →</a>
+      <p>Apre il file dei comandi: alza il numero e salva per far partire la pompa</p>
+    </div>
+
+    <div class="errore" id="erroreBox">Non riesco a leggere lo stato da GitHub. Controlla la connessione o riprova tra poco.</div>
+
+    <div class="aggiorna" id="ultimoAggiornamento">Aggiornamento in corso…</div>
+  </div>
+
+<script>
+  // ---------- CONFIGURAZIONE: MODIFICA QUI ----------
+  const GITHUB_OWNER = "Budo84";
+  const GITHUB_REPO  = "irrigazione-comandi";
+  const STATUS_PATH  = "stato.json";
+  const COMMAND_PATH = "annaffia.txt";
+  const SOGLIA_ALLARME = 30; // stessa soglia usata nello sketch ESP32
+  const INTERVALLO_AGGIORNAMENTO_MS = 30000; // ogni 30 secondi
+  // ----------------------------------------------------
+
+  const statusUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/${STATUS_PATH}`;
+  const editUrl = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/edit/main/${COMMAND_PATH}`;
+
+  document.getElementById('editLink').href = editUrl;
+
+  const CIRC = 2 * Math.PI * 78; // circonferenza del gauge
+
+  function aggiornaGauge(percent) {
+    const fill = document.getElementById('gaugeFill');
+    const offset = CIRC - (Math.max(0, Math.min(100, percent)) / 100) * CIRC;
+    fill.style.strokeDasharray = CIRC;
+    fill.style.strokeDashoffset = offset;
+    fill.style.stroke = percent < SOGLIA_ALLARME ? '#b5602f' : '#4c7a3d';
+  }
+
+  async function caricaStato() {
+    const erroreBox = document.getElementById('erroreBox');
+    try {
+      const res = await fetch(statusUrl + '?_=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) throw new Error('risposta non ok');
+      const dati = await res.json();
+
+      const percent = Number(dati.umidita);
+      document.getElementById('pctValue').textContent = isNaN(percent) ? '--' : percent + '%';
+      aggiornaGauge(isNaN(percent) ? 0 : percent);
+
+      document.getElementById('orarioLettura').textContent = dati.orario_lettura || '—';
+      document.getElementById('ultimaAnnaffiatura').textContent = dati.ultima_annaffiatura || '—';
+
+      const statoMsg = document.getElementById('statoMsg');
+      if (!isNaN(percent)) {
+        statoMsg.style.display = 'inline-block';
+        if (percent < SOGLIA_ALLARME) {
+          statoMsg.textContent = 'Sotto soglia — valuta di annaffiare';
+          statoMsg.className = 'stato-msg basso';
+        } else {
+          statoMsg.textContent = 'Livello ok';
+          statoMsg.className = 'stato-msg ok';
+        }
+      }
+
+      erroreBox.style.display = 'none';
+      document.getElementById('ultimoAggiornamento').textContent =
+        'Aggiornato alle ' + new Date().toLocaleTimeString('it-IT');
+    } catch (e) {
+      erroreBox.style.display = 'block';
+      document.getElementById('ultimoAggiornamento').textContent = 'Ultimo tentativo fallito';
+    }
+  }
+
+  caricaStato();
+  setInterval(caricaStato, INTERVALLO_AGGIORNAMENTO_MS);
+</script>
+</body>
+</html>
