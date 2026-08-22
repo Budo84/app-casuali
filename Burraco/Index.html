@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Burraco — Il Tavolo Verde</title>
+<meta name="description" content="Gioca a burraco contro l'IA, con regole e strategie spiegate passo passo.">
+<meta name="theme-color" content="#0d3b2e">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --felt-dark:#0a2f24;
+  --felt:#12523f;
+  --felt-light:#1a6b52;
+  --wood:#1f140d;
+  --wood-light:#3a2418;
+  --gold:#c9a24b;
+  --gold-light:#e9d38f;
+  --cream:#f4ecd8;
+  --card-bg:#fffdf7;
+  --red-suit:#a52d27;
+  --black-suit:#20201d;
+  --ink:#efe6d0;
+  --ink-dim:#c9bd9e;
+  --danger:#c0392b;
+  --ok:#4f9d69;
+  --radius:14px;
+  --shadow:0 8px 24px rgba(0,0,0,.45);
+  --shadow-soft:0 2px 8px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(233,211,143,.10), transparent 55%),
+    radial-gradient(ellipse at 50% 110%, rgba(0,0,0,.55), transparent 60%),
+    linear-gradient(160deg, var(--wood) 0%, #150d08 100%);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.display{ font-family:'Playfair Display',Georgia,serif; }
+
+/* ---------- Header ---------- */
+header.topbar{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px 18px; border-bottom:1px solid rgba(201,162,75,.35);
+  background:linear-gradient(180deg, rgba(0,0,0,.35), transparent);
+  position:sticky; top:0; z-index:40; backdrop-filter:blur(6px);
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand .mark{
+  width:38px;height:38px;border-radius:50%;
+  border:1.5px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold-light); font-size:18px; flex-shrink:0;
+  background:radial-gradient(circle at 30% 30%, rgba(233,211,143,.18), transparent 60%);
+}
+.brand h1{ font-size:20px; margin:0; letter-spacing:.3px; color:var(--gold-light); font-weight:700;}
+.brand .sub{ display:block; font-size:11px; color:var(--ink-dim); font-family:'Inter'; font-weight:500; letter-spacing:.6px; text-transform:uppercase;}
+
+nav.tabs{ display:flex; gap:4px; background:rgba(0,0,0,.28); border:1px solid rgba(201,162,75,.25); border-radius:999px; padding:4px; }
+nav.tabs button{
+  border:none; background:transparent; color:var(--ink-dim); padding:8px 16px; border-radius:999px;
+  font-family:'Inter'; font-weight:600; font-size:13px; cursor:pointer; transition:.2s;
+}
+nav.tabs button.active{ background:var(--gold); color:#1f140d; }
+nav.tabs button:hover:not(.active){ color:var(--gold-light); }
+
+main{ max-width:1180px; margin:0 auto; padding:18px; }
+section.page{ display:none; }
+section.page.active{ display:block; animation:fadein .35s ease; }
+@keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+/* ---------- Setup panel ---------- */
+.setup-card{
+  background:linear-gradient(160deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  border:1px solid rgba(201,162,75,.3); border-radius:var(--radius); padding:22px;
+  max-width:640px; margin:30px auto; text-align:center; box-shadow:var(--shadow);
+}
+.setup-card h2{ color:var(--gold-light); margin-top:0; font-size:26px;}
+.setup-card p{ color:var(--ink-dim); line-height:1.6; font-size:14.5px; }
+.diff-options{ display:flex; gap:10px; justify-content:center; margin:18px 0; flex-wrap:wrap;}
+.diff-btn{
+  flex:1 1 140px; max-width:170px; background:rgba(0,0,0,.25); border:1.5px solid rgba(201,162,75,.35);
+  border-radius:10px; padding:14px 10px; cursor:pointer; color:var(--ink); transition:.15s;
+}
+.diff-btn b{ display:block; color:var(--gold-light); font-family:'Playfair Display'; font-size:17px; margin-bottom:4px;}
+.diff-btn small{ color:var(--ink-dim); font-size:11.5px; line-height:1.4; display:block;}
+.diff-btn:hover{ border-color:var(--gold); transform:translateY(-2px); }
+.diff-btn.selected{ border-color:var(--gold); background:rgba(201,162,75,.14); box-shadow:0 0 0 1px var(--gold) inset; }
+.btn-primary{
+  background:linear-gradient(180deg, var(--gold-light), var(--gold)); color:#1f140d; border:none;
+  font-family:'Playfair Display'; font-weight:700; font-size:17px; padding:12px 30px; border-radius:999px;
+  cursor:pointer; box-shadow:var(--shadow-soft); transition:.15s;
+}
+.btn-primary:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.4); }
+.btn-primary:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+.btn-ghost{
+  background:transparent; border:1.5px solid rgba(201,162,75,.5); color:var(--gold-light);
+  font-family:'Inter'; font-weight:600; font-size:13px; padding:8px 16px; border-radius:999px; cursor:pointer; transition:.15s;
+}
+.btn-ghost:hover{ background:rgba(201,162,75,.12); }
+.btn-ghost:disabled{ opacity:.35; cursor:not-allowed; }
+
+/* ---------- Score strip ---------- */
+.score-strip{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  background:rgba(0,0,0,.3); border:1px solid rgba(201,162,75,.25); border-radius:12px;
+  padding:10px 16px; margin-bottom:14px; flex-wrap:wrap;
+}
+.score-item{ text-align:center; min-width:90px; }
+.score-item .label{ font-size:10.5px; text-transform:uppercase; letter-spacing:.8px; color:var(--ink-dim); }
+.score-item .val{ font-family:'Playfair Display'; font-size:22px; color:var(--gold-light); font-weight:700; }
+.turn-flag{ padding:5px 14px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.4px; }
+.turn-flag.you{ background:rgba(79,157,105,.22); color:#8fe0ab; border:1px solid rgba(79,157,105,.5);}
+.turn-flag.ai{ background:rgba(192,57,43,.2); color:#f0a99f; border:1px solid rgba(192,57,43,.45);}
+
+/* ---------- Table ---------- */
+.table-felt{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.05), transparent 60%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.015) 0 2px, transparent 2px 5px),
+    linear-gradient(160deg, var(--felt-light), var(--felt) 45%, var(--felt-dark) 100%);
+  border:10px solid var(--wood-light);
+  border-radius:20px;
+  box-shadow: inset 0 0 60px rgba(0,0,0,.55), var(--shadow);
+  padding:16px;
+  position:relative;
+}
+.zone-label{ font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--gold-light); opacity:.85; margin:2px 2px 6px; font-weight:600;}
+.opp-zone, .my-zone{ min-height:88px; }
+.melds-row{ display:flex; flex-wrap:wrap; gap:10px; padding:4px 0 10px; }
+.meld{
+  background:rgba(0,0,0,.22); border:1px solid rgba(201,162,75,.3); border-radius:10px;
+  padding:6px; display:flex; gap:0; cursor:pointer; transition:.15s; position:relative;
+}
+.meld:hover{ border-color:var(--gold); }
+.meld.targetable{ box-shadow:0 0 0 2px var(--gold-light); }
+.meld .badge{
+  position:absolute; top:-9px; right:6px; background:var(--gold); color:#1f140d; font-size:9.5px;
+  padding:1px 6px; border-radius:8px; font-weight:700; letter-spacing:.3px;
+}
+.meld .badge.clean{ background:#8fe0ab; }
+.meld-empty-hint{ color:rgba(244,236,216,.35); font-size:12.5px; font-style:italic; padding:8px 4px;}
+
+.center-strip{
+  display:flex; align-items:center; justify-content:center; gap:26px; padding:14px 0; margin:4px 0;
+  border-top:1px dashed rgba(201,162,75,.25); border-bottom:1px dashed rgba(201,162,75,.25);
+}
+.pile{ text-align:center; }
+.pile .pile-title{ font-size:10.5px; text-transform:uppercase; letter-spacing:1px; color:var(--ink-dim); margin-bottom:6px;}
+.pile .count{ font-size:11px; color:var(--ink-dim); margin-top:5px; }
+
+/* ---------- Cards ---------- */
+.card{
+  width:56px; height:80px; border-radius:7px; background:var(--card-bg);
+  box-shadow:0 2px 5px rgba(0,0,0,.4), 0 0 0 1px rgba(0,0,0,.15);
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding:4px 5px; font-family:'Inter'; font-weight:700; user-select:none;
+  position:relative; flex-shrink:0; transition:transform .15s, box-shadow .15s;
+}
+.card.red{ color:var(--red-suit); }
+.card.black{ color:var(--black-suit); }
+.card .rank{ font-size:15px; line-height:1; }
+.card .suit-top{ font-size:13px; line-height:1; }
+.card .suit-center{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:24px; opacity:.85;}
+.card .rank-bottom{ align-self:flex-end; transform:rotate(180deg); font-size:15px; }
+.card.jolly .suit-center{ font-size:11px; text-align:center; opacity:1; font-family:'Playfair Display'; color:var(--gold); line-height:1.15;}
+.card.jolly{ background:linear-gradient(160deg,#fffdf7,#f2e6c8); }
+.card.back{
+  background:
+    repeating-linear-gradient(45deg, var(--felt) 0 6px, var(--felt-light) 6px 12px);
+  border:2px solid var(--gold); position:relative;
+}
+.card.back::after{ content:'♣'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:rgba(233,211,143,.5); font-size:20px;}
+.card.mini{ width:42px; height:60px; }
+.card.mini .rank{ font-size:12px; } .card.mini .suit-top{ font-size:10px;} .card.mini .rank-bottom{ font-size:12px;} .card.mini .suit-center{ font-size:17px;}
+.card.selectable{ cursor:pointer; }
+.card.selectable:hover{ transform:translateY(-6px); }
+.card.selected{ transform:translateY(-14px); box-shadow:0 0 0 2px var(--gold), 0 8px 14px rgba(0,0,0,.5); }
+.card.clickable-discard{ cursor:pointer; }
+.card.disabled-take{ filter:grayscale(.6) brightness(.8); cursor:not-allowed; }
+.empty-slot{ width:56px; height:80px; border:1.5px dashed rgba(233,211,143,.25); border-radius:7px; display:flex; align-items:center; justify-content:center; color:rgba(233,211,143,.3); font-size:11px;}
+
+.hand-row{ display:flex; gap:8px; overflow-x:auto; padding:10px 4px 6px; }
+
+/* ---------- Action bar ---------- */
+.action-bar{
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between;
+  margin-top:12px; padding:12px; background:rgba(0,0,0,.25); border:1px solid rgba(201,162,75,.22); border-radius:12px;
+}
+.action-bar .left, .action-bar .right{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.hint{ font-size:12.5px; color:var(--ink-dim); }
+
+/* ---------- Log ---------- */
+.log-panel{
+  margin-top:14px; background:rgba(0,0,0,.28); border:1px solid rgba(201,162,75,.2); border-radius:12px;
+  padding:10px 14px; max-height:130px; overflow-y:auto; font-size:12.5px; color:var(--ink-dim); line-height:1.7;
+}
+.log-panel b{ color:var(--gold-light); }
+
+/* ---------- Modal ---------- */
+.modal-back{ position:fixed; inset:0; background:rgba(0,0,0,.65); display:none; align-items:center; justify-content:center; z-index:100; padding:16px;}
+.modal-back.show{ display:flex; }
+.modal{
+  background:linear-gradient(160deg, #1a3d30, #0f2a20); border:1px solid var(--gold); border-radius:16px;
+  padding:26px; max-width:480px; width:100%; box-shadow:var(--shadow); text-align:center;
+}
+.modal h2{ color:var(--gold-light); margin-top:0; }
+.modal table{ width:100%; border-collapse:collapse; margin:14px 0; font-size:14px; }
+.modal td{ padding:6px 4px; border-bottom:1px solid rgba(201,162,75,.15); text-align:left; }
+.modal td:last-child{ text-align:right; font-weight:700; color:var(--gold-light);}
+
+/* ---------- Rules / Strategy pages ---------- */
+.doc{ max-width:820px; margin:0 auto; }
+.doc h2.display{ color:var(--gold-light); font-size:28px; border-bottom:1px solid rgba(201,162,75,.3); padding-bottom:10px; }
+.doc h3{ color:var(--gold-light); font-size:18px; margin-top:26px; }
+.doc p, .doc li{ color:var(--ink); line-height:1.75; font-size:15px; }
+.doc ul{ padding-left:20px; }
+.card-chip{
+  display:inline-flex; align-items:center; justify-content:center; min-width:26px; padding:1px 6px; border-radius:5px;
+  background:var(--card-bg); color:var(--black-suit); font-weight:700; font-size:13px; margin:0 2px; box-shadow:var(--shadow-soft);
+}
+.card-chip.red{ color:var(--red-suit); }
+.callout{
+  background:rgba(201,162,75,.1); border-left:3px solid var(--gold); border-radius:6px; padding:12px 16px; margin:16px 0;
+  font-size:14px; color:var(--ink);
+}
+.callout.warn{ border-left-color:var(--danger); background:rgba(192,57,43,.1); }
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media (max-width:640px){ .grid-2{ grid-template-columns:1fr; } }
+.strategy-card{ background:rgba(0,0,0,.22); border:1px solid rgba(201,162,75,.25); border-radius:12px; padding:16px; }
+.strategy-card h4{ margin:0 0 6px; color:var(--gold-light); font-family:'Playfair Display'; font-size:16px;}
+.strategy-card p{ font-size:13.5px; margin:0; color:var(--ink-dim); line-height:1.6;}
+
+footer{ text-align:center; color:rgba(244,236,216,.35); font-size:12px; padding:26px 10px 40px; }
+
+@media (max-width:720px){
+  .brand h1{ font-size:16px; }
+  .card{ width:46px; height:66px; }
+  .card .rank, .card .rank-bottom{ font-size:12px; }
+  .card .suit-top{ font-size:10px; }
+  .card .suit-center{ font-size:19px; }
+  main{ padding:10px; }
+  .score-item .val{ font-size:18px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="mark">♠</div>
+    <div>
+      <h1>Il Tavolo Verde</h1>
+      <span class="sub">Burraco all'italiana</span>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button data-page="play" class="active">Gioca</button>
+    <button data-page="rules">Regole</button>
+    <button data-page="strategy">Strategie</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ================= PLAY PAGE ================= -->
+<section id="page-play" class="page active">
+
+  <!-- Setup -->
+  <div id="setup" class="setup-card">
+    <h2>Pronto per una mano?</h2>
+    <p>Sfida l'intelligenza artificiale in una partita di burraco a due giocatori, fino a 3000 punti. Scegli il livello di difficoltà dell'avversario.</p>
+    <div class="diff-options">
+      <div class="diff-btn" data-diff="facile">
+        <b>Facile</b>
+        <small>L'IA gioca in modo semplice e prevedibile. Ideale per imparare.</small>
+      </div>
+      <div class="diff-btn selected" data-diff="medio">
+        <b>Medio</b>
+        <small>L'IA forma combinazioni con criterio ed evita gli errori più ovvi.</small>
+      </div>
+      <div class="diff-btn" data-diff="difficile">
+        <b>Difficile</b>
+        <small>L'IA punta al burraco, conta le carte e scarta con cautela.</small>
+      </div>
+    </div>
+    <button class="btn-primary" id="startBtn">Inizia la partita</button>
+  </div>
+
+  <!-- Game area -->
+  <div id="gameArea" style="display:none;">
+    <div class="score-strip">
+      <div class="score-item"><div class="label">Tu · mano</div><div class="val" id="scoreYouRound">0</div></div>
+      <div class="score-item"><div class="label">Tu · partita</div><div class="val" id="scoreYouMatch">0</div></div>
+      <div id="turnFlag" class="turn-flag you">Il tuo turno</div>
+      <div class="score-item"><div class="label">IA · partita</div><div class="val" id="scoreAiMatch">0</div></div>
+      <div class="score-item"><div class="label">IA · mano</div><div class="val" id="scoreAiRound">0</div></div>
+    </div>
+
+    <div class="table-felt">
+      <div class="zone-label" id="aiZoneLabel">Combinazioni dell'IA (medio)</div>
+      <div class="opp-zone melds-row" id="aiMelds"></div>
+
+      <div class="center-strip">
+        <div class="pile">
+          <div class="pile-title">Mazzo</div>
+          <div id="stockPile" class="card back" title="Pesca una carta"></div>
+          <div class="count" id="stockCount">86 carte</div>
+        </div>
+        <div class="pile">
+          <div class="pile-title">Pozzo (scarti)</div>
+          <div id="discardPile"></div>
+          <div class="count" id="discardCount">vuoto</div>
+        </div>
+      </div>
+
+      <div class="zone-label">Le tue combinazioni</div>
+      <div class="my-zone melds-row" id="myMelds"></div>
+    </div>
+
+    <div class="action-bar">
+      <div class="left">
+        <button class="btn-ghost" id="btnNewMeld" disabled>Forma combinazione</button>
+        <button class="btn-ghost" id="btnAddToMeld" disabled>Aggiungi alla combinazione selezionata</button>
+        <button class="btn-ghost" id="btnDiscard" disabled>Scarta carta selezionata</button>
+      </div>
+      <div class="right">
+        <span class="hint" id="phaseHint">Pesca una carta dal mazzo, o prendi il pozzo se puoi.</span>
+      </div>
+    </div>
+
+    <div class="zone-label">La tua mano</div>
+    <div class="hand-row" id="myHand"></div>
+
+    <div class="log-panel" id="logPanel"></div>
+
+    <div style="text-align:center; margin-top:14px;">
+      <button class="btn-ghost" id="btnRestart">Ricomincia partita</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RULES PAGE ================= -->
+<section id="page-rules" class="page">
+  <div class="doc">
+    <h2 class="display">Le regole del burraco</h2>
+    <p>Il burraco si gioca con <b>due mazzi di carte francesi</b> da 54 carte ciascuno (52 carte più due jolly), per un totale di <b>108 carte</b>. In questa versione giochi in due, tu contro l'intelligenza artificiale: nella versione classica da tavolo si gioca spesso in quattro, a coppie, ma le regole di base sono le stesse.</p>
+
+    <h3>Obiettivo</h3>
+    <p>Formare <b>combinazioni di carte</b> (tris o scale) da appoggiare sul tavolo, accumulare più punti possibile e, quando puoi, essere il primo a rimanere senza carte in mano ("chiudere la mano"). Si gioca a manche successive fino a raggiungere <b>3000 punti</b>.</p>
+
+    <h3>Le carte jolly</h3>
+    <p>Sono carte "matte", che puoi usare al posto di qualunque altra carta per completare una combinazione:</p>
+    <ul>
+      <li>I due <b>jolly veri e propri</b> (le carte con il disegno del jolly).</li>
+      <li>Tutti i <b>2</b> (<span class="card-chip">2♠</span> <span class="card-chip red">2♥</span> <span class="card-chip red">2♦</span> <span class="card-chip">2♣</span>), che in questa versione sono sempre considerati carte jolly.</li>
+    </ul>
+    <div class="callout">In una combinazione, il numero di carte jolly non può mai superare il numero di carte "naturali" (non jolly). Una combinazione fatta solo di jolly non è valida: serve sempre almeno una carta vera a definirla.</div>
+
+    <h3>Le combinazioni</h3>
+    <p><b>Tris (o gruppo):</b> tre o più carte dello stesso valore, di seme uguale o diverso — ad esempio <span class="card-chip">7♠</span> <span class="card-chip red">7♥</span> <span class="card-chip">7♣</span>.</p>
+    <p><b>Scala:</b> tre o più carte dello stesso seme, in sequenza — ad esempio <span class="card-chip">5♦</span> <span class="card-chip red">6♦</span> <span class="card-chip red">7♦</span>. In questa versione l'asso vale come carta bassa, prima del 3 (il 2 essendo sempre jolly).</p>
+    <p><b>Burraco:</b> una combinazione che raggiunge <b>7 o più carte</b>. È il colpo più prezioso della partita:</p>
+    <ul>
+      <li><b>Burraco pulito</b> (senza jolly): vale <b>200 punti</b> di bonus.</li>
+      <li><b>Burraco misto</b> (con uno o più jolly): vale <b>100 punti</b> di bonus.</li>
+    </ul>
+
+    <h3>Come si svolge il turno</h3>
+    <p>Ogni turno si compone di tre fasi:</p>
+    <ul>
+      <li><b>1. Pesca.</b> Scegli tra pescare la prima carta dal mazzo coperto, oppure — se le condizioni lo permettono — <b>prendere l'intero pozzo degli scarti</b>. Puoi prendere il pozzo solo se la carta in cima non è un jolly e puoi usarla subito: o perché hai in mano due carte dello stesso valore (per formare un tris), o perché puoi aggiungerla a una tua combinazione già calata. Attenzione: prendere il pozzo ti dà molte carte, ma anche molti punti da "rischiare" se resti con carte in mano a fine manche.</li>
+      <li><b>2. Combinazioni.</b> Puoi calare nuove combinazioni sul tavolo, oppure aggiungere carte a combinazioni tue già esistenti (non puoi aggiungere carte alle combinazioni dell'avversario).</li>
+      <li><b>3. Scarto.</b> Concludi il turno scartando una carta a faccia in su, che finisce in cima al pozzo.</li>
+    </ul>
+
+    <h3>L'obbligo del burraco</h3>
+    <div class="callout warn">Non puoi restare senza carte in mano (chiudere) finché non hai completato almeno <b>un burraco</b>. Se le tue ultime carte formerebbero una combinazione valida ma non hai ancora un burraco, devi tenerne indietro almeno una da scartare.</div>
+
+    <h3>Fine della mano e punteggio</h3>
+    <p>La manche finisce quando un giocatore chiude (resta senza carte, avendo già fatto un burraco) oppure quando il mazzo si esaurisce. Il punteggio di ciascun giocatore si calcola così:</p>
+    <ul>
+      <li>+ punti di tutte le carte calate nelle proprie combinazioni</li>
+      <li>+ 200 o 100 punti per ogni burraco (pulito o misto)</li>
+      <li>+ 100 punti se sei tu ad aver chiuso la mano</li>
+      <li>− punti di tutte le carte ancora in mano a fine manche</li>
+    </ul>
+    <p>Valore delle carte: Jolly = 30, Asso = 15, il 2 (jolly) = 20, da 7 a Re = 10, da 3 a 6 = 5.</p>
+    <p>Si gioca a manche ripetute finché uno dei due giocatori non raggiunge o supera <b>3000 punti</b> a fine manche: quello è il vincitore della partita.</p>
+
+    <h3>Semplificazioni di questa versione</h3>
+    <p>Per restare giocabile su una singola pagina, questa app semplifica alcune regole avanzate del burraco da torneo: non ci sono i "pozzetti" di riserva, l'asso conta solo come carta bassa (mai dopo il Re) e non è possibile sostituire un jolly già calato con la carta naturale corrispondente. Le regole fondamentali — pesca, combinazioni, obbligo del burraco, punteggio — sono invece fedeli al gioco originale.</p>
+  </div>
+</section>
+
+<!-- ================= STRATEGY PAGE ================= -->
+<section id="page-strategy" class="page">
+  <div class="doc">
+    <h2 class="display">Strategie per giocare bene</h2>
+    <p>Il burraco premia chi sa aspettare il momento giusto. Ecco i principi che contano di più, in ordine di importanza.</p>
+
+    <div class="grid-2">
+      <div class="strategy-card">
+        <h4>1. Custodisci i jolly</h4>
+        <p>Jolly e 2 sono preziosissimi: usali solo quando servono davvero a completare o allungare una combinazione importante, idealmente verso un burraco. Scartarli o "sprecarli" presto è uno degli errori più comuni dei principianti.</p>
+      </div>
+      <div class="strategy-card">
+        <h4>2. Punta a un burraco il prima possibile</h4>
+        <p>Finché non hai fatto un burraco non puoi chiudere la mano: scegli presto una combinazione "candidata" (magari già a 4-5 carte) e concentra le pescate lì, invece di disperdere le carte su troppe combinazioni piccole.</p>
+      </div>
+      <div class="strategy-card">
+        <h4>3. Occhio a cosa scarti</h4>
+        <p>Prima di scartare, controlla le combinazioni già calate dall'avversario sul tavolo: evita di dargli carte che gli permettano di allungarle. Una carta "isolata", che non serve a nessuna sequenza visibile, è quasi sempre lo scarto più sicuro.</p>
+      </div>
+      <div class="strategy-card">
+        <h4>4. Valuta bene se prendere il pozzo</h4>
+        <p>Prendere l'intero pozzo ti dà tante carte extra, ma aumenta anche il rischio: se la mano finisce con carte ancora in mano, ogni carta ti costa punti. Prendilo solo se hai un piano chiaro per smaltirle in fretta.</p>
+      </div>
+      <div class="strategy-card">
+        <h4>5. Punta al burraco "pulito"</h4>
+        <p>Un burraco senza jolly vale il doppio (200 contro 100 punti). Se hai scelta, prova a completare la combinazione con carte naturali piuttosto che con un jolly, tenendo il jolly per un'altra combinazione.</p>
+      </div>
+      <div class="strategy-card">
+        <h4>6. Gestisci il finale di mazzo</h4>
+        <p>Quando il mazzo sta per esaurirsi, il punteggio delle carte rimaste in mano pesa molto: se non puoi chiudere, valuta se conviene scaricare le carte a valore più alto (Assi, 2, figure) mentre puoi ancora scegliere cosa scartare.</p>
+      </div>
+    </div>
+
+    <h3>Come cambia l'IA nei tre livelli</h3>
+    <p><b>Facile:</b> pesca quasi sempre dal mazzo, cala solo combinazioni ovvie e scarta in modo casuale: è pensata per farti fare pratica senza rischi.</p>
+    <p><b>Medio:</b> valuta se prendere il pozzo, cala tutte le combinazioni possibili ogni turno e cerca di non scartare carte che ti aiuterebbero direttamente.</p>
+    <p><b>Difficile:</b> gioca in modo simile a un giocatore esperto: dà priorità alle combinazioni vicine al burraco, trattiene i jolly, evita con attenzione qualunque scarto pericoloso e diventa più aggressiva quando il mazzo si sta esaurendo.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>Burraco — Il Tavolo Verde · gioco simulato, per uso personale e didattico.</footer>
+
+<!-- Round end modal -->
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <h2 id="modalTitle">Fine mano</h2>
+    <table id="modalTable"></table>
+    <p id="modalMatchNote" style="color:var(--ink-dim); font-size:13px;"></p>
+    <button class="btn-primary" id="modalContinue">Continua</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* =========================================================================
+   BURRACO — motore di gioco
+   ========================================================================= */
+
+// ---------- Costanti carte ----------
+const SUITS = ['S','H','D','C'];
+const SUIT_SYMBOL = {S:'♠',H:'♥',D:'♦',C:'♣'};
+const SUIT_COLOR = {S:'black',H:'red',D:'red',C:'black'};
+const RANK_ORDER = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const RANK_VALUE = {A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q:12,K:13};
+
+let idCounter = 1;
+function freshId(){ return idCounter++; }
+
+function buildDeck(){
+  const deck = [];
+  for(let d=0; d<2; d++){
+    for(const s of SUITS){
+      for(const r of ['A','2','3','4','5','6','7','8','9','10','J','Q','K']){
+        deck.push({id:freshId(), suit:s, rank:r});
+      }
+    }
+    deck.push({id:freshId(), suit:null, rank:'JOLLY'});
+    deck.push({id:freshId(), suit:null, rank:'JOLLY'});
+  }
+  return deck;
+}
+function isWild(c){ return c.rank === '2' || c.rank === 'JOLLY'; }
+function pointValue(c){
+  if(c.rank === 'JOLLY') return 30;
+  if(c.rank === 'A') return 15;
+  if(c.rank === '2') return 20;
+  if(['K','Q','J','10','9','8','7'].includes(c.rank)) return 10;
+  return 5;
+}
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+function cardText(c){ return c.rank==='JOLLY' ? 'JOLLY' : c.rank; }
+
+// ---------- Validazione combinazioni ----------
+// Analizza un insieme di carte e dice se formano un tris o una scala valida.
+function analyzeSelection(cards){
+  if(cards.length < 3) return null;
+  const naturals = cards.filter(c => !isWild(c));
+  const wilds = cards.filter(c => isWild(c));
+  if(naturals.length === 0) return null;
+  if(wilds.length > naturals.length) return null;
+
+  // Tentativo TRIS: tutte le naturali stesso valore
+  const ranks = new Set(naturals.map(c => c.rank));
+  if(ranks.size === 1){
+    return {type:'tris', rank:naturals[0].rank, naturalCount:naturals.length, wildCount:wilds.length};
+  }
+  // Tentativo SCALA: tutte le naturali stesso seme, valori distinti, campata = lunghezza totale
+  const suitsInvolved = new Set(naturals.map(c => c.suit));
+  if(suitsInvolved.size === 1){
+    const vals = naturals.map(c => RANK_VALUE[c.rank]);
+    const uniq = new Set(vals);
+    if(uniq.size === vals.length){
+      const min = Math.min(...vals), max = Math.max(...vals);
+      const span = max - min + 1;
+      if(span === cards.length){
+        return {type:'scala', suit:naturals[0].suit, min, max, naturalCount:naturals.length, wildCount:wilds.length};
+      }
+    }
+  }
+  return null;
+}
+function canAddCardToMeld(meld, card){
+  // Caso speciale: aggiungere un jolly "fluttuante" a una scala gia' completa
+  // (senza carte naturali che ne fissino subito la posizione esatta).
+  // In questo caso analyzeSelection non basta perche' non sa se il jolly
+  // estende in cima o in fondo alla sequenza: lo verifichiamo a parte.
+  if(meld.type === 'scala' && isWild(card)){
+    const meta = analyzeSelection(meld.cards);
+    if(!meta) return false;
+    if(meta.wildCount + 1 > meta.naturalCount) return false; // troppi jolly rispetto alle carte vere
+    if(meld.cards.length >= 13) return false; // sequenza gia' al massimo (A...K)
+    return true;
+  }
+  const test = analyzeSelection([...meld.cards, card]);
+  if(!test) return false;
+  if(meld.type !== test.type) return false;
+  if(meld.type === 'tris') return test.rank === meld.rankKey;
+  return test.suit === meld.suitKey;
+}
+function meldMeta(meld){
+  // Ricalcola i metadati (usato dopo l'aggiunta di carte)
+  const a = analyzeSelection(meld.cards);
+  return a;
+}
+function isBurraco(meld){ return meld.cards.length >= 7; }
+function isCleanBurraco(meld){
+  const a = analyzeSelection(meld.cards);
+  return isBurraco(meld) && a && a.wildCount === 0;
+}
+
+// ---------- Stato di gioco ----------
+let state = null;
+
+function newGameState(difficulty){
+  const deck = shuffle(buildDeck());
+  const you = deck.splice(0, 11);
+  const ai = deck.splice(0, 11);
+  const discard = [deck.shift()];
+  return {
+    difficulty,
+    stock: deck,
+    discard,
+    hands: { you, ai },
+    melds: { you: [], ai: [] },
+    matchScore: { you:0, ai:0 },
+    roundScore: { you:0, ai:0 },
+    turn: 'you',
+    phase: 'draw', // draw -> meld -> discard
+    selected: new Set(),
+    selectedMeldId: null,
+    tookPileThisTurn: false,
+    log: [],
+    over: false
+  };
+}
+
+function addLog(msg){
+  state.log.unshift(msg);
+  if(state.log.length > 40) state.log.pop();
+  renderLog();
+}
+
+// ---------- Regole di presa pozzo ----------
+function canTakePile(owner){
+  const top = state.discard[state.discard.length - 1];
+  if(!top) return false;
+  if(isWild(top)) return false;
+  const hand = state.hands[owner];
+  const melds = state.melds[owner];
+  // Opzione A: posso aggiungerla a una mia combinazione esistente
+  for(const m of melds){
+    if(canAddCardToMeld(m, top)) return true;
+  }
+  // Opzione B: ho almeno 2 carte naturali dello stesso valore in mano
+  const sameRank = hand.filter(c => !isWild(c) && c.rank === top.rank);
+  if(sameRank.length >= 2) return true;
+  return false;
+}
+
+// ---------- Render: carte ----------
+function cardEl(c, opts){
+  opts = opts || {};
+  const div = document.createElement('div');
+  div.className = 'card' + (c.rank==='JOLLY' ? ' jolly' : ' ' + SUIT_COLOR[c.suit]);
+  if(opts.mini) div.className += ' mini';
+  if(opts.selectable) div.className += ' selectable';
+  if(opts.selected) div.className += ' selected';
+  if(opts.extraClass) div.className += ' ' + opts.extraClass;
+  div.dataset.cardId = c.id;
+
+  if(c.rank === 'JOLLY'){
+    div.innerHTML = '<div class="rank">★</div><div class="suit-center">JOLLY</div><div class="rank-bottom">★</div>';
+  } else {
+    const sym = SUIT_SYMBOL[c.suit];
+    div.innerHTML =
+      '<div class="rank">'+c.rank+'<span class="suit-top">'+sym+'</span></div>' +
+      '<div class="suit-center">'+sym+'</div>' +
+      '<div class="rank-bottom">'+c.rank+'<span class="suit-top">'+sym+'</span></div>';
+  }
+  return div;
+}
+
+function meldEl(meld, owner){
+  const wrap = document.createElement('div');
+  wrap.className = 'meld';
+  wrap.dataset.meldId = meld.id;
+  if(owner === 'you' && state.selectedMeldId === meld.id) wrap.classList.add('targetable');
+  meld.cards.forEach((c,i) => {
+    const el = cardEl(c, {mini:true});
+    el.style.marginLeft = i===0 ? '0' : '-26px';
+    el.style.zIndex = i;
+    wrap.appendChild(el);
+  });
+  if(isBurraco(meld)){
+    const badge = document.createElement('div');
+    badge.className = 'badge' + (isCleanBurraco(meld) ? ' clean' : '');
+    badge.textContent = isCleanBurraco(meld) ? 'BURRACO PULITO' : 'BURRACO';
+    wrap.appendChild(badge);
+  }
+  if(owner === 'you'){
+    wrap.addEventListener('click', () => onMeldClick(meld.id));
+  }
+  return wrap;
+}
+
+// ---------- Render principale ----------
+function render(){
+  if(!state) return;
+  document.getElementById('scoreYouRound').textContent = computeLiveMeldPoints('you');
+  document.getElementById('scoreAiRound').textContent = computeLiveMeldPoints('ai');
+  document.getElementById('scoreYouMatch').textContent = state.matchScore.you;
+  document.getElementById('scoreAiMatch').textContent = state.matchScore.ai;
+
+  const flag = document.getElementById('turnFlag');
+  flag.textContent = state.turn === 'you' ? 'Il tuo turno' : "Turno dell'IA";
+  flag.className = 'turn-flag ' + (state.turn === 'you' ? 'you' : 'ai');
+
+  document.getElementById('aiZoneLabel').textContent = "Combinazioni dell'IA (" + state.difficulty + ")";
+
+  // Melds
+  const aiMeldsDiv = document.getElementById('aiMelds');
+  aiMeldsDiv.innerHTML = '';
+  if(state.melds.ai.length === 0){
+    aiMeldsDiv.innerHTML = '<div class="meld-empty-hint">Nessuna combinazione ancora calata</div>';
+  } else {
+    state.melds.ai.forEach(m => aiMeldsDiv.appendChild(meldEl(m,'ai')));
+  }
+  const myMeldsDiv = document.getElementById('myMelds');
+  myMeldsDiv.innerHTML = '';
+  if(state.melds.you.length === 0){
+    myMeldsDiv.innerHTML = '<div class="meld-empty-hint">Nessuna combinazione ancora calata — seleziona 3+ carte in mano e clicca "Forma combinazione"</div>';
+  } else {
+    state.melds.you.forEach(m => myMeldsDiv.appendChild(meldEl(m,'you')));
+  }
+
+  // Stock
+  document.getElementById('stockCount').textContent = state.stock.length + ' carte';
+  const stockEl = document.getElementById('stockPile');
+  stockEl.style.opacity = state.stock.length === 0 ? .3 : 1;
+
+  // Discard
+  const discardDiv = document.getElementById('discardPile');
+  discardDiv.innerHTML = '';
+  const top = state.discard[state.discard.length-1];
+  if(top){
+    const canTake = state.turn === 'you' && state.phase === 'draw' && canTakePile('you');
+    const el = cardEl(top, {extraClass: canTake ? 'clickable-discard' : (state.turn==='you' && state.phase==='draw' ? 'disabled-take':'')});
+    discardDiv.appendChild(el);
+  } else {
+    const empty = document.createElement('div');
+    empty.className = 'empty-slot';
+    empty.textContent = 'vuoto';
+    discardDiv.appendChild(empty);
+  }
+  document.getElementById('discardCount').textContent = state.discard.length + ' nel pozzo';
+
+  // Hand
+  const handDiv = document.getElementById('myHand');
+  handDiv.innerHTML = '';
+  const sortedHand = [...state.hands.you].sort(handSortOrder);
+  sortedHand.forEach(c => {
+    const el = cardEl(c, {selectable: state.turn==='you', selected: state.selected.has(c.id)});
+    if(state.turn === 'you'){
+      el.addEventListener('click', () => onHandCardClick(c.id));
+    }
+    handDiv.appendChild(el);
+  });
+
+  // Action bar
+  const myTurn = state.turn === 'you' && !state.over;
+  const selCards = [...state.selected].map(id => state.hands.you.find(c=>c.id===id)).filter(Boolean);
+
+  document.getElementById('btnNewMeld').disabled = !(myTurn && state.phase==='meld' && analyzeSelection(selCards));
+  document.getElementById('btnAddToMeld').disabled = !(myTurn && state.phase==='meld' && state.selectedMeldId && selCards.length===1 && canAddCardToMeld(state.melds.you.find(m=>m.id===state.selectedMeldId), selCards[0]));
+  document.getElementById('btnDiscard').disabled = !(myTurn && state.phase==='meld' && selCards.length===1);
+
+  stockEl.style.pointerEvents = (myTurn && state.phase==='draw') ? 'auto' : 'none';
+  stockEl.style.cursor = (myTurn && state.phase==='draw') ? 'pointer' : 'default';
+  discardDiv.style.pointerEvents = (myTurn && state.phase==='draw') ? 'auto' : 'none';
+
+  const hint = document.getElementById('phaseHint');
+  if(!myTurn){
+    hint.textContent = "L'IA sta pensando...";
+  } else if(state.phase === 'draw'){
+    hint.textContent = 'Pesca una carta dal mazzo, oppure prendi il pozzo se la carta in cima è evidenziata.';
+  } else if(state.phase === 'meld'){
+    hint.textContent = 'Seleziona carte per formare o allungare una combinazione, poi scarta per finire il turno.';
+  }
+}
+function handSortOrder(a,b){
+  const ka = a.rank==='JOLLY' ? -1 : (a.rank==='2' ? -0.5 : RANK_VALUE[a.rank]);
+  const kb = b.rank==='JOLLY' ? -1 : (b.rank==='2' ? -0.5 : RANK_VALUE[b.rank]);
+  if(a.suit !== b.suit) return (a.suit||'').localeCompare(b.suit||'');
+  return ka-kb;
+}
+function computeLiveMeldPoints(owner){
+  let pts = 0;
+  state.melds[owner].forEach(m => {
+    m.cards.forEach(c => pts += pointValue(c));
+    if(isBurraco(m)) pts += isCleanBurraco(m) ? 200 : 100;
+  });
+  return pts;
+}
+function renderLog(){
+  document.getElementById('logPanel').innerHTML = state.log.map(l => '<div>'+l+'</div>').join('');
+}
+
+// ---------- Interazioni utente ----------
+function onHandCardClick(id){
+  if(state.turn !== 'you' || state.phase !== 'meld') return;
+  if(state.selected.has(id)) state.selected.delete(id);
+  else state.selected.add(id);
+  render();
+}
+function onMeldClick(meldId){
+  if(state.turn !== 'you' || state.phase !== 'meld') return;
+  state.selectedMeldId = (state.selectedMeldId === meldId) ? null : meldId;
+  render();
+}
+
+document.getElementById('stockPile').addEventListener('click', () => {
+  if(state.turn!=='you' || state.phase!=='draw') return;
+  if(state.stock.length === 0){ endRoundNoStock(); return; }
+  const c = state.stock.shift();
+  state.hands.you.push(c);
+  state.phase = 'meld';
+  state.tookPileThisTurn = false;
+  addLog('Hai pescato una carta dal mazzo.');
+  render();
+});
+document.getElementById('discardPile').addEventListener('click', () => {
+  if(state.turn!=='you' || state.phase!=='draw') return;
+  if(!canTakePile('you')) return;
+  const taken = state.discard.splice(0, state.discard.length);
+  state.hands.you.push(...taken);
+  state.phase = 'meld';
+  state.tookPileThisTurn = true;
+  addLog("Hai preso l'intero pozzo (" + taken.length + ' carte).');
+  render();
+});
+document.getElementById('btnNewMeld').addEventListener('click', () => {
+  const selCards = [...state.selected].map(id => state.hands.you.find(c=>c.id===id)).filter(Boolean);
+  const meta = analyzeSelection(selCards);
+  if(!meta) return;
+  const meld = {
+    id: 'm' + freshId(),
+    type: meta.type,
+    rankKey: meta.type==='tris' ? meta.rank : null,
+    suitKey: meta.type==='scala' ? meta.suit : null,
+    cards: selCards
+  };
+  state.melds.you.push(meld);
+  state.hands.you = state.hands.you.filter(c => !state.selected.has(c.id));
+  state.selected.clear();
+  addLog('Hai calato ' + (meta.type==='tris' ? 'un tris' : 'una scala') + ' di ' + selCards.length + ' carte' + (isBurraco(meld) ? ' — <b>BURRACO!</b>' : '') + '.');
+  checkAutoClose();
+  render();
+});
+document.getElementById('btnAddToMeld').addEventListener('click', () => {
+  const selCards = [...state.selected].map(id => state.hands.you.find(c=>c.id===id)).filter(Boolean);
+  const meld = state.melds.you.find(m => m.id === state.selectedMeldId);
+  if(!meld || selCards.length!==1) return;
+  meld.cards.push(selCards[0]);
+  state.hands.you = state.hands.you.filter(c => c.id !== selCards[0].id);
+  state.selected.clear();
+  addLog('Hai aggiunto una carta a una tua combinazione' + (isBurraco(meld) ? ' — <b>BURRACO!</b>' : '') + '.');
+  checkAutoClose();
+  render();
+});
+document.getElementById('btnDiscard').addEventListener('click', () => {
+  const selCards = [...state.selected].map(id => state.hands.you.find(c=>c.id===id)).filter(Boolean);
+  if(selCards.length!==1) return;
+  const card = selCards[0];
+  if(state.hands.you.length === 1){
+    const hasBurraco = state.melds.you.some(isBurraco);
+    if(!hasBurraco){
+      addLog('Non puoi chiudere la mano: devi prima completare un burraco.');
+      return;
+    }
+  }
+  state.hands.you = state.hands.you.filter(c => c.id !== card.id);
+  state.discard.push(card);
+  state.selected.clear();
+  state.selectedMeldId = null;
+  addLog('Hai scartato ' + cardText(card) + (card.suit?SUIT_SYMBOL[card.suit]:'') + '.');
+  if(state.hands.you.length === 0){
+    finishRound('you');
+    return;
+  }
+  state.turn = 'ai';
+  state.phase = 'draw';
+  render();
+  setTimeout(aiTurn, 750);
+});
+document.getElementById('btnRestart').addEventListener('click', () => {
+  document.getElementById('gameArea').style.display = 'none';
+  document.getElementById('setup').style.display = 'block';
+});
+document.getElementById('startBtn').addEventListener('click', () => {
+  const diff = document.querySelector('.diff-btn.selected').dataset.diff;
+  state = newGameState(diff);
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('gameArea').style.display = 'block';
+  addLog('Nuova partita — difficoltà: <b>' + diff + '</b>. Le carte sono state distribuite.');
+  render();
+});
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+
+function checkAutoClose(){
+  // Se la mano resta vuota dopo un meld (chiusura senza scarto), verifica il burraco
+  if(state.turn === 'you' && state.hands.you.length === 0){
+    const hasBurraco = state.melds.you.some(isBurraco);
+    if(hasBurraco){
+      finishRound('you', true);
+    } else {
+      addLog('Attenzione: non puoi restare senza carte senza aver fatto un burraco. Riprendi una carta lasciandola da parte per lo scarto.');
+    }
+  }
+}
+
+// ---------- Tabs ----------
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('section.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-' + btn.dataset.page).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+/* =========================================================================
+   IA
+   ========================================================================= */
+function findAllMeldableCombos(hand){
+  // Ricerca euristica (non esaustiva ma efficace) di tris e scale disponibili in mano
+  const combos = [];
+  const naturals = hand.filter(c=>!isWild(c));
+  const wilds = hand.filter(c=>isWild(c));
+
+  // Tris per valore
+  const byRank = {};
+  naturals.forEach(c => { (byRank[c.rank] = byRank[c.rank]||[]).push(c); });
+  Object.keys(byRank).forEach(rank => {
+    const group = byRank[rank];
+    if(group.length >= 2 && wilds.length >= 1){
+      combos.push([...group.slice(0,3), ...wilds.slice(0, Math.max(0, 3-group.length))].slice(0,Math.max(3,group.length)));
+    }
+    if(group.length >= 3) combos.push(group.slice());
+  });
+
+  // Scale per seme
+  const bySuit = {};
+  naturals.forEach(c => { (bySuit[c.suit] = bySuit[c.suit]||[]).push(c); });
+  Object.keys(bySuit).forEach(suit => {
+    const cards = bySuit[suit].slice().sort((a,b)=>RANK_VALUE[a.rank]-RANK_VALUE[b.rank]);
+    for(let i=0;i<cards.length;i++){
+      let run = [cards[i]];
+      for(let j=i+1;j<cards.length;j++){
+        const gap = RANK_VALUE[cards[j].rank] - RANK_VALUE[run[run.length-1].rank] - 1;
+        if(gap === 0){ run.push(cards[j]); }
+        else if(gap > 0 && gap <= wilds.length - usedWildsIn(run,wilds)){
+          run.push(cards[j]);
+        } else break;
+      }
+      if(run.length >= 3) combos.push(fillGapsWithWilds(run, wilds));
+      else if(run.length===2 && wilds.length>=1) combos.push(fillGapsWithWilds(run, wilds));
+    }
+  });
+  return combos.map(c => ({cards:c, meta:analyzeSelection(c)})).filter(x => x.meta);
+}
+function usedWildsIn(run, wildsPool){
+  if(run.length<2) return 0;
+  let count=0;
+  for(let i=1;i<run.length;i++){
+    count += RANK_VALUE[run[i].rank]-RANK_VALUE[run[i-1].rank]-1;
+  }
+  return count;
+}
+function fillGapsWithWilds(run, wildsPool){
+  const out=[];
+  let wp = 0;
+  for(let i=0;i<run.length;i++){
+    out.push(run[i]);
+    if(i<run.length-1){
+      const gap = RANK_VALUE[run[i+1].rank]-RANK_VALUE[run[i].rank]-1;
+      for(let g=0; g<gap && wp<wildsPool.length; g++){ out.push(wildsPool[wp++]); }
+    }
+  }
+  return out;
+}
+
+function aiVisibleDanger(card, opponentMelds){
+  return opponentMelds.some(m => canAddCardToMeld(m, card));
+}
+
+function aiTurn(){
+  if(state.over) return;
+  const hand = state.hands.ai;
+  const diff = state.difficulty;
+
+  // --- FASE PESCA ---
+  let took = false;
+  if(diff === 'facile'){
+    if(Math.random() < 0.12 && canTakePile('ai')){
+      const taken = state.discard.splice(0, state.discard.length);
+      hand.push(...taken);
+      took = true;
+      addLog("L'IA prende il pozzo (" + taken.length + ' carte).');
+    }
+  } else {
+    if(canTakePile('ai')){
+      const top = state.discard[state.discard.length-1];
+      const worthIt = diff==='difficile' ? evaluatePileValue(hand, top) : true;
+      if(worthIt){
+        const taken = state.discard.splice(0, state.discard.length);
+        hand.push(...taken);
+        took = true;
+        addLog("L'IA prende il pozzo (" + taken.length + ' carte).');
+      }
+    }
+  }
+  if(!took){
+    if(state.stock.length === 0){ endRoundNoStock(); return; }
+    const c = state.stock.shift();
+    hand.push(c);
+    addLog("L'IA pesca una carta dal mazzo.");
+  }
+
+  // --- FASE COMBINAZIONI ---
+  aiMakeMelds(diff);
+
+  // --- CONTROLLO CHIUSURA SENZA SCARTO ---
+  if(hand.length === 0){
+    const hasBurraco = state.melds.ai.some(isBurraco);
+    if(hasBurraco){
+      finishRound('ai', true);
+      return;
+    }
+  }
+
+  // --- FASE SCARTO ---
+  const card = aiChooseDiscard(diff);
+  if(card){
+    state.hands.ai = hand.filter(c => c.id !== card.id);
+    state.discard.push(card);
+    addLog("L'IA scarta " + cardText(card) + (card.suit?SUIT_SYMBOL[card.suit]:'') + '.');
+  }
+
+  if(state.hands.ai.length === 0){
+    finishRound('ai');
+    return;
+  }
+
+  state.turn = 'you';
+  state.phase = 'draw';
+  render();
+}
+
+function evaluatePileValue(hand, top){
+  // difficile: prende solo se il pozzo non e' troppo grande rispetto al vantaggio ottenuto
+  const size = state.discard.length;
+  if(size > 6) return false;
+  return true;
+}
+
+function aiMakeMelds(diff){
+  const hand = state.hands.ai;
+  const melds = state.melds.ai;
+
+  // 1. Prova ad aggiungere carte singole a combinazioni esistenti (sempre conviene)
+  let addedSomething = true;
+  while(addedSomething){
+    addedSomething = false;
+    for(const m of melds){
+      for(const c of hand.slice()){
+        if(canAddCardToMeld(m, c)){
+          if(diff === 'facile' && Math.random() < 0.5) continue;
+          if(diff === 'difficile' && isWild(c) && m.cards.length < 6){
+            // in difficile risparmia i jolly per combinazioni vicine al burraco, a meno che questa lo raggiunga
+            const wouldReachBurraco = m.cards.length + 1 >= 7;
+            if(!wouldReachBurraco) continue;
+          }
+          m.cards.push(c);
+          state.hands.ai = hand.filter(x => x.id !== c.id);
+          addLog("L'IA allunga una combinazione" + (isBurraco(m) ? ' — <b>BURRACO!</b>' : '') + '.');
+          addedSomething = true;
+          break;
+        }
+      }
+      if(addedSomething) break;
+    }
+  }
+
+  if(diff === 'facile'){
+    // Solo combinazioni "pronte" senza jolly, senza ottimizzare
+    const combos = findAllMeldableCombos(state.hands.ai).filter(x => x.meta.wildCount===0);
+    if(combos.length){
+      const pick = combos[0];
+      layMeld(pick.cards, 'ai');
+    }
+    return;
+  }
+
+  // Medio e difficile: cala tutte le combinazioni valide che trova, iterando finche' ce ne sono
+  let more = true;
+  let guard = 0;
+  while(more && guard < 6){
+    guard++;
+    const combos = findAllMeldableCombos(state.hands.ai);
+    if(!combos.length){ more=false; break; }
+    let chosen = combos[0];
+    if(diff === 'difficile'){
+      // preferisci la combinazione piu' lunga (piu' vicina al burraco) e con meno jolly
+      combos.sort((a,b) => (b.cards.length - a.cards.length) || (a.meta.wildCount - b.meta.wildCount));
+      chosen = combos[0];
+      // in difficile, non calare una nuova combinazione minima (3 carte) se contiene un jolly e ci sono alternative senza jolly
+      const noWildAlt = combos.find(x => x.meta.wildCount===0);
+      if(chosen.meta.wildCount>0 && noWildAlt && chosen.cards.length<=3) chosen = noWildAlt;
+    }
+    layMeld(chosen.cards, 'ai');
+    more = state.hands.ai.length >= 3;
+  }
+}
+function layMeld(cards, owner){
+  const meta = analyzeSelection(cards);
+  if(!meta) return;
+  const ids = new Set(cards.map(c=>c.id));
+  const meld = {
+    id:'m'+freshId(),
+    type:meta.type,
+    rankKey: meta.type==='tris' ? meta.rank : null,
+    suitKey: meta.type==='scala' ? meta.suit : null,
+    cards: cards
+  };
+  state.melds[owner].push(meld);
+  state.hands[owner] = state.hands[owner].filter(c => !ids.has(c.id));
+  addLog((owner==='ai' ? "L'IA cala" : 'Hai calato') + ' ' + (meta.type==='tris'?'un tris':'una scala') + ' di ' + cards.length + ' carte' + (isBurraco(meld)?' — <b>BURRACO!</b>':'') + '.');
+}
+
+function aiChooseDiscard(diff){
+  const hand = state.hands.ai;
+  if(hand.length === 0) return null;
+
+  if(hand.length === 1){
+    const hasBurraco = state.melds.ai.some(isBurraco);
+    if(!hasBurraco){
+      // non dovrebbe capitare quasi mai perche' aiMakeMelds lascia sempre >=1 carta,
+      // ma per sicurezza scarta comunque (regola semplificata: consentito se e' l'unica scelta rimasta)
+    }
+  }
+
+  if(diff === 'facile'){
+    return hand[Math.floor(Math.random()*hand.length)];
+  }
+
+  const oppMelds = state.melds.you;
+  let candidates = hand.filter(c => !aiVisibleDanger(c, oppMelds));
+  if(candidates.length === 0) candidates = hand.slice();
+
+  if(diff === 'medio'){
+    candidates.sort((a,b) => pointValue(b)-pointValue(a));
+    // evita di scartare jolly se esiste alternativa
+    const nonWild = candidates.filter(c=>!isWild(c));
+    return (nonWild[0]) || candidates[0];
+  }
+
+  // difficile: non scarta mai jolly se esiste alternativa; preferisce carte "isolate"
+  const nonWild = candidates.filter(c => !isWild(c));
+  const pool = nonWild.length ? nonWild : candidates;
+  const isolated = pool.filter(c => !isUsefulToOwnHand(c, hand));
+  const finalPool = isolated.length ? isolated : pool;
+  finalPool.sort((a,b) => pointValue(b)-pointValue(a));
+  return finalPool[0];
+}
+function isUsefulToOwnHand(card, hand){
+  if(isWild(card)) return true;
+  const sameRankCount = hand.filter(c=>!isWild(c) && c.rank===card.rank).length;
+  if(sameRankCount >= 2) return true;
+  const sameSuitNear = hand.some(c => !isWild(c) && c.suit===card.suit && c.id!==card.id && Math.abs(RANK_VALUE[c.rank]-RANK_VALUE[card.rank])<=2);
+  return sameSuitNear;
+}
+
+/* =========================================================================
+   Fine manche / partita
+   ========================================================================= */
+function endRoundNoStock(){
+  addLog('Il mazzo è esaurito: la mano termina qui.');
+  finishRound(null);
+}
+function finishRound(winner, noDiscardBonus){
+  state.over = true;
+  const you = scoreFor('you', winner==='you', winner==='you' && noDiscardBonus);
+  const ai = scoreFor('ai', winner==='ai', winner==='ai' && noDiscardBonus);
+  state.matchScore.you += you.total;
+  state.matchScore.ai += ai.total;
+
+  showRoundModal(you, ai, winner);
+}
+function scoreFor(owner, wentOut, noDiscard){
+  let meldPts = 0, burracoBonus = 0;
+  state.melds[owner].forEach(m => {
+    m.cards.forEach(c => meldPts += pointValue(c));
+    if(isBurraco(m)) burracoBonus += isCleanBurraco(m) ? 200 : 100;
+  });
+  let handPenalty = 0;
+  state.hands[owner].forEach(c => handPenalty += pointValue(c));
+  const outBonus = wentOut ? 100 : 0;
+  const noDiscardBonus = noDiscard ? 50 : 0;
+  const total = meldPts + burracoBonus + outBonus + noDiscardBonus - handPenalty;
+  return {meldPts, burracoBonus, handPenalty, outBonus, noDiscardBonus, total};
+}
+function showRoundModal(you, ai, winner){
+  const title = document.getElementById('modalTitle');
+  if(winner==='you') title.textContent = 'Hai chiuso la mano!';
+  else if(winner==='ai') title.textContent = "L'IA ha chiuso la mano";
+  else title.textContent = 'Mazzo esaurito — mano pari';
+
+  const rows = [
+    ['Punti combinazioni (tu)', you.meldPts],
+    ['Bonus burraco (tu)', you.burracoBonus],
+    ['Bonus chiusura (tu)', you.outBonus + you.noDiscardBonus],
+    ['Penalità carte in mano (tu)', -you.handPenalty],
+    ['Totale mano — Tu', you.total],
+    ['—','—'],
+    ['Punti combinazioni (IA)', ai.meldPts],
+    ['Bonus burraco (IA)', ai.burracoBonus],
+    ['Bonus chiusura (IA)', ai.outBonus + ai.noDiscardBonus],
+    ['Penalità carte in mano (IA)', -ai.handPenalty],
+    ['Totale mano — IA', ai.total],
+  ];
+  document.getElementById('modalTable').innerHTML = rows.map(r =>
+    '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('');
+
+  const matchOver = state.matchScore.you >= 3000 || state.matchScore.ai >= 3000;
+  const note = document.getElementById('modalMatchNote');
+  if(matchOver){
+    const w = state.matchScore.you > state.matchScore.ai ? 'Hai vinto la partita! 🎉' :
+              state.matchScore.ai > state.matchScore.you ? "L'IA ha vinto la partita." : 'Partita in perfetta parità!';
+    note.textContent = w + ' Punteggio finale — Tu: ' + state.matchScore.you + ' · IA: ' + state.matchScore.ai;
+    document.getElementById('modalContinue').textContent = 'Nuova partita';
+  } else {
+    note.textContent = 'Punteggio partita — Tu: ' + state.matchScore.you + ' · IA: ' + state.matchScore.ai + ' (si vince a 3000 punti)';
+    document.getElementById('modalContinue').textContent = 'Prossima mano';
+  }
+  document.getElementById('modalBack').classList.add('show');
+
+  document.getElementById('modalContinue').onclick = () => {
+    document.getElementById('modalBack').classList.remove('show');
+    if(matchOver){
+      document.getElementById('gameArea').style.display = 'none';
+      document.getElementById('setup').style.display = 'block';
+    } else {
+      const keepMatch = state.matchScore;
+      const diff = state.difficulty;
+      state = newGameState(diff);
+      state.matchScore = keepMatch;
+      addLog('Nuova mano distribuita.');
+      render();
+    }
+  };
+}
+
+// ---------- PWA: registra service worker ----------
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
