@@ -21,9 +21,12 @@
     <span class="blaze" aria-hidden="true"><span></span><span></span><span></span></span>
     <h1>Cammini d'Italia</h1>
   </div>
-  <div class="status-pill" id="connStatus">
-    <span class="dot" id="connDot"></span>
-    <span id="connText">Online</span>
+  <div class="topbar-azioni">
+    <button class="theme-toggle" id="btnTema" title="Cambia tema" aria-label="Cambia tema chiaro/scuro">🌙</button>
+    <div class="status-pill" id="connStatus">
+      <span class="dot" id="connDot"></span>
+      <span id="connText">Online</span>
+    </div>
   </div>
 </header>
 
@@ -31,6 +34,7 @@
   <button class="tab active" data-tab="esplora" role="tab" aria-selected="true">Esplora</button>
   <button class="tab" data-tab="pianifica" role="tab" aria-selected="false">Pianifica</button>
   <button class="tab" data-tab="gpx" role="tab" aria-selected="false">Traccia GPX</button>
+  <button class="tab" data-tab="registra" role="tab" aria-selected="false">Registra</button>
   <button class="tab" data-tab="consigli" role="tab" aria-selected="false">Consigli</button>
   <button class="tab" data-tab="dati" role="tab" aria-selected="false">Dati</button>
 </nav>
@@ -58,6 +62,13 @@
         <option value="facile-media">Facile / media</option>
       </select>
     </div>
+    <div class="btn-row" style="margin-bottom:.8rem">
+      <button class="btn-secondary" id="btnVicinoAMe">📍 Vicino a me</button>
+      <button class="btn-secondary" id="btnSoloPreferiti">☆ Solo preferiti</button>
+      <button class="btn-secondary" id="btnModoConfronta">⚖️ Confronta</button>
+    </div>
+    <p class="empty-note" id="vicinoAMeNota"></p>
+    <div id="barraConfronta"></div>
 
     <div id="camminiList" class="cammini-grid"></div>
   </section>
@@ -114,9 +125,40 @@
     <div id="gpxSalvati" class="saved-list"></div>
   </section>
 
+  <!-- REGISTRA GPS -->
+  <section class="panel" id="panel-registra">
+    <h2 class="section-title">Registra il tuo percorso</h2>
+    <p class="section-sub">Usa il GPS del telefono per registrare davvero il percorso mentre cammini. Tieni lo schermo attivo e l'app aperta in primo piano per una registrazione affidabile.</p>
+
+    <div class="rec-stats" id="recStats">
+      <div class="stat-box"><span class="stat-num" id="recDistanza">0.0</span><span class="stat-label">km percorsi</span></div>
+      <div class="stat-box"><span class="stat-num" id="recTempo">00:00</span><span class="stat-label">tempo</span></div>
+      <div class="stat-box"><span class="stat-num" id="recPunti">0</span><span class="stat-label">punti GPS</span></div>
+    </div>
+
+    <div class="btn-row" style="margin-top:1rem">
+      <button class="btn-primary" id="btnRecAvvia">▶️ Avvia registrazione</button>
+      <button class="btn-secondary" id="btnRecPausa" disabled>⏸️ Pausa</button>
+      <button class="btn-danger" id="btnRecStop" disabled>⏹️ Ferma e salva</button>
+    </div>
+    <p class="empty-note" id="recStato"></p>
+    <div id="recMappa" class="map-box"></div>
+  </section>
+
   <!-- CONSIGLI -->
   <section class="panel" id="panel-consigli">
     <h2 class="section-title">Consigli per il cammino</h2>
+
+    <details class="advice-card" open>
+      <summary>✅ Checklist zaino (interattiva)</summary>
+      <p class="section-sub">Spunta quello che hai già preparato: resta salvato sul dispositivo.</p>
+      <div id="checklistZaino" class="checklist"></div>
+      <div class="btn-row" style="margin-top:.6rem">
+        <input type="text" id="checklistNuovaVoce" placeholder="Aggiungi un oggetto…" style="flex:1">
+        <button class="btn-secondary" id="btnChecklistAggiungi">Aggiungi</button>
+        <button class="btn-secondary" id="btnChecklistReset">Ripristina lista predefinita</button>
+      </div>
+    </details>
 
     <details class="advice-card" open>
       <summary>Zaino e attrezzatura essenziale</summary>
@@ -170,6 +212,30 @@
     <p class="section-sub">L'app funziona anche senza connessione dopo il primo caricamento: la pagina, lo stile e il database dei cammini vengono salvati sul dispositivo.</p>
 
     <div class="data-card">
+      <h3>Passo di marcia (per il tempo di percorrenza stimato)</h3>
+      <p class="section-sub">Usato per calcolare il tempo stimato di ogni tappa (regola di Naismith: velocità in piano + tempo aggiuntivo per il dislivello in salita).</p>
+      <div class="planner-form">
+        <label>Velocità media in piano (km/h)
+          <input type="number" id="impVelocita" min="1" max="8" step="0.5">
+        </label>
+        <label>Minuti aggiuntivi ogni 100 m di salita
+          <input type="number" id="impSalita" min="0" max="30" step="1">
+        </label>
+        <button class="btn-secondary" id="btnSalvaImpostazioni">Salva</button>
+      </div>
+    </div>
+
+    <div class="data-card">
+      <h3>Le tue statistiche</h3>
+      <div class="stats-grid" id="statsPersonali"></div>
+    </div>
+
+    <div class="data-card">
+      <h3>Traguardi</h3>
+      <div class="badge-grid" id="badgeGrid"></div>
+    </div>
+
+    <div class="data-card">
       <h3>Database cammini</h3>
       <p>Versione <span id="dbVersion">—</span>, aggiornato al <span id="dbUpdated">—</span>.</p>
       <div class="btn-row">
@@ -182,7 +248,7 @@
 
     <div class="data-card">
       <h3>I tuoi dati personali</h3>
-      <p>Itinerari pianificati e tracce GPX caricate, salvati solo su questo dispositivo.</p>
+      <p>Itinerari pianificati, tracce GPX, diario di viaggio, checklist e statistiche, salvati solo su questo dispositivo.</p>
       <div class="btn-row">
         <button class="btn-secondary" id="btnExportUser">Esporta i miei dati</button>
         <label class="btn-secondary file-btn">Importa i miei dati
@@ -190,6 +256,15 @@
         </label>
         <button class="btn-danger" id="btnResetUser">Cancella i miei dati</button>
       </div>
+    </div>
+
+    <div class="data-card">
+      <h3>Cammino condiviso da un amico</h3>
+      <p class="section-sub">Se qualcuno ti ha mandato un file di un suo cammino personalizzato, importalo qui: comparirà tra le tue tile in Esplora.</p>
+      <label class="btn-secondary file-btn">Importa cammino condiviso
+        <input type="file" id="importCamminoCondiviso" accept=".json" hidden>
+      </label>
+      <p class="empty-note" id="importCondivisoFeedback"></p>
     </div>
 
     <div class="data-card">
@@ -205,6 +280,8 @@
 <script src="js/gpx.js"></script>
 <script src="js/strutture.js"></script>
 <script src="js/geocode.js"></script>
+<script src="js/osmtracce.js"></script>
+<script src="js/meteo.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
