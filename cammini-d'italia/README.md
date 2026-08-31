@@ -6,7 +6,7 @@ Web app statica (HTML/CSS/JS puro, nessun backend) per esplorare cammini e trail
 
 - **Esplora**: elenco di cammini con tappe, km, dislivelli, difficoltà (cammini italiani più il Cammino di Santiago).
 - **Pianifica**: genera un itinerario giorno per giorno in base al tuo ritmo di marcia, con data di partenza; salva i piani sul dispositivo.
-- **Traccia GPX**: carica un file `.gpx` (scaricato ad es. da Wikiloc, dal sito ufficiale del cammino o dal CAI) e visualizzalo su mappa con statistiche di distanza e dislivello. I punti di interesse (waypoint) presenti nel file — rifugi, fontane, chiese, panorami — vengono riconosciuti e mostrati con nome e descrizione, e il link alla pagina originale (es. su Wikiloc) viene conservato. Da ogni traccia caricata puoi creare un **cammino personalizzato**, che compare tra le tile in Esplora esattamente come i cammini ufficiali (con ricerca strutture, punti di interesse e link alla traccia originale inclusi), oppure aggiungerla come nuova tappa a un cammino personalizzato già creato in precedenza.
+- **Traccia GPX**: carica un file `.gpx` (scaricato ad es. da Wikiloc, dal sito ufficiale del cammino o dal CAI) e visualizzalo su mappa con statistiche di distanza e dislivello. I punti di interesse (waypoint) presenti nel file — rifugi, fontane, chiese, panorami — vengono riconosciuti e mostrati con nome e descrizione, e il link alla pagina originale (es. su Wikiloc) viene conservato. Da ogni traccia caricata puoi creare un **cammino personalizzato**: nome dei luoghi di partenza/arrivo, tipologia e difficoltà vengono **rilevati automaticamente** (geocodifica inversa via OpenStreetMap Nominatim per i nomi dei luoghi, parole chiave per tipologia/difficoltà), ma **restano tutti modificabili** prima di salvare e anche in seguito, dal dettaglio del cammino ("Modifica"). Il cammino compare tra le tile in Esplora esattamente come i cammini ufficiali (con ricerca strutture, punti di interesse e link alla traccia originale inclusi), oppure puoi aggiungere la traccia come nuova tappa a un cammino personalizzato già creato in precedenza.
 - **Strutture ricettive**: per ogni tappa con coordinate, un pulsante "Cerca strutture vicino all'arrivo" interroga OpenStreetMap (Overpass API) e mostra hotel, ostelli, B&B, agriturismi, campeggi e rifugi nel raggio di 3 km, con indirizzo, telefono e sito quando disponibili. I risultati vengono salvati sul dispositivo per essere consultati anche offline.
 - **Consigli**: zaino, sicurezza in montagna, organizzazione delle tappe, link a fonti ufficiali (CAI, Vie Francigene, Wikiloc).
 - **Dati**: esporta/importa il database dei cammini e i tuoi dati personali in JSON; funziona come PWA installabile e offline.
@@ -22,6 +22,8 @@ I tuoi itinerari pianificati, le tracce GPX caricate, le strutture ricettive tro
 Il file `data/db.json` contiene un database curato a mano con informazioni pubbliche generali su alcuni cammini italiani noti (Via Francigena, Cammino di Francesco, Via degli Dei, Alta Via 1 delle Dolomiti, Cammino Materano, un tratto d'esempio del Sentiero Italia CAI) e sul Cammino di Santiago (Camino Francés, Francia-Spagna), incluso su richiesta pur non essendo un cammino italiano.
 
 Le strutture ricettive mostrate nel dettaglio di ogni tappa provengono da **OpenStreetMap**, tramite la **Overpass API** pubblica (`https://overpass-api.de`), gratuita e senza chiave di accesso. Sono dati contribuiti dalla comunità OSM: possono essere incompleti, specialmente in zone remote di montagna, e vanno sempre verificati contattando direttamente la struttura o consultando altri portali di prenotazione prima di partire.
+
+Il riconoscimento automatico dei nomi di partenza/arrivo quando crei un cammino da una traccia GPX usa la **Nominatim API** di OpenStreetMap (`https://nominatim.openstreetmap.org`), anch'essa gratuita e senza chiave. Tipologia e difficoltà proposte automaticamente sono invece stimate con semplici parole chiave e statistiche della traccia (km, dislivello): sono solo un punto di partenza, sempre correggibile a mano nel form o in seguito dal pulsante "Modifica" nel dettaglio del cammino.
 
 **Importante**: le distanze, i dislivelli e i tempi sono indicativi. Prima di partire, verifica sempre:
 - il sito ufficiale del cammino (link presente in ogni scheda),
@@ -66,7 +68,8 @@ cammini-italia/
 │   ├── app.js        # logica interfaccia
 │   ├── db.js         # caricamento/salvataggio database e dati utente
 │   ├── gpx.js        # parsing dei file GPX
-│   └── strutture.js  # ricerca strutture ricettive via Overpass API (OpenStreetMap)
+│   ├── strutture.js  # ricerca strutture ricettive via Overpass API (OpenStreetMap)
+│   └── geocode.js    # geocodifica inversa (Nominatim) e classificazione automatica tipo/difficoltà
 ├── data/
 │   └── db.json      # database dei cammini
 └── icons/
