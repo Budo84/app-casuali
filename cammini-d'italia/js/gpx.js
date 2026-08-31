@@ -6,8 +6,17 @@ const GPX = {
     const err = xml.querySelector('parsererror');
     if (err) throw new Error('File GPX non valido o corrotto.');
 
-    const nameEl = xml.querySelector('trk > name, metadata > name');
-    const name = nameEl ? nameEl.textContent.trim() : 'Traccia senza nome';
+    // Preferisci il nome della traccia (trk > name); altrimenti quello dei metadati del file
+    const trkNameEl = xml.querySelector('trk > name');
+    const metaNameEl = xml.querySelector('metadata > name');
+    const nameEl = trkNameEl || metaNameEl;
+    let name = nameEl ? nameEl.textContent.trim() : 'Traccia senza nome';
+    // Wikiloc antepone "Wikiloc - " al nome nei metadati: lo rimuoviamo per un titolo più pulito
+    name = name.replace(/^Wikiloc\s*-\s*/i, '').trim() || 'Traccia senza nome';
+
+    // Link alla pagina di origine (es. la pagina del percorso su Wikiloc), se presente
+    const linkEl = xml.querySelector('metadata > link[href], trk > link[href]');
+    const sourceUrl = linkEl ? linkEl.getAttribute('href') : null;
 
     const points = [];
     const trkpts = xml.querySelectorAll('trkpt, rtept');
@@ -21,8 +30,25 @@ const GPX = {
 
     if (points.length === 0) throw new Error('Nessun punto traccia trovato nel file GPX.');
 
+    // Punti di interesse (waypoint): tappe intermedie, rifugi, fontane, chiese ecc.
+    // segnalati da chi ha registrato la traccia (molto comuni nei GPX scaricati da Wikiloc)
+    const waypoints = [];
+    xml.querySelectorAll('wpt').forEach(wp => {
+      const lat = parseFloat(wp.getAttribute('lat'));
+      const lon = parseFloat(wp.getAttribute('lon'));
+      if (isNaN(lat) || isNaN(lon)) return;
+      const nomeEl = wp.querySelector('name');
+      const descEl = wp.querySelector('desc');
+      const cmtEl = wp.querySelector('cmt');
+      waypoints.push({
+        nome: nomeEl && nomeEl.textContent.trim() ? nomeEl.textContent.trim() : 'Punto di interesse',
+        descrizione: (descEl && descEl.textContent.trim()) || (cmtEl && cmtEl.textContent.trim()) || '',
+        lat, lon
+      });
+    });
+
     const stats = this.computeStats(points);
-    return { name, points, stats };
+    return { name, points, stats, waypoints, sourceUrl };
   },
 
   computeStats(points) {
