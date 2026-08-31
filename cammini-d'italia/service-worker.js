@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cammini-italia-v4';
+const CACHE_NAME = 'cammini-italia-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const APP_SHELL = [
   './js/db.js',
   './js/gpx.js',
   './js/strutture.js',
+  './js/geocode.js',
   './data/db.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
@@ -40,10 +41,10 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Ricerca strutture ricettive (Overpass API): sempre e solo rete, mai cache.
+  // Ricerca strutture ricettive (Overpass API) e geocodifica inversa (Nominatim): sempre e solo rete, mai cache.
   // I dati cambiano nel tempo e i risultati vengono già salvati separatamente in localStorage
   // dal modulo js/strutture.js per la consultazione offline.
-  if (req.url.includes('overpass-api.de')) {
+  if (req.url.includes('overpass-api.de') || req.url.includes('nominatim.openstreetmap.org')) {
     event.respondWith(fetch(req));
     return;
   }
