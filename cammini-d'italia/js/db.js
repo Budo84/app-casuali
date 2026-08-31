@@ -61,19 +61,56 @@ const DB = {
     localStorage.setItem(this.KEY_GPX, JSON.stringify(tracks));
   },
 
+  /* ---- Cammini personalizzati creati dall'utente a partire da tracce GPX ----
+     Salvati separatamente dal database ufficiale, così sopravvivono agli
+     aggiornamenti del database (vedi load()) e possono essere esportati/importati
+     insieme agli altri dati personali. */
+  KEY_CUSTOM_CAMMINI: 'cammini_custom_v1',
+
+  getCustomCammini() {
+    try { return JSON.parse(localStorage.getItem(this.KEY_CUSTOM_CAMMINI)) || []; }
+    catch (e) { return []; }
+  },
+  saveCustomCammini(list) {
+    localStorage.setItem(this.KEY_CUSTOM_CAMMINI, JSON.stringify(list));
+  },
+  addCustomCammino(cammino) {
+    const list = this.getCustomCammini();
+    list.push(cammino);
+    this.saveCustomCammini(list);
+    return list;
+  },
+  aggiungiTappaACustomCammino(camminoId, tappa) {
+    const list = this.getCustomCammini();
+    const c = list.find(x => x.id === camminoId);
+    if (!c) return list;
+    tappa.n = c.tappe.length + 1;
+    c.tappe.push(tappa);
+    this.saveCustomCammini(list);
+    return list;
+  },
+  eliminaCustomCammino(camminoId) {
+    const list = this.getCustomCammini().filter(c => c.id !== camminoId);
+    this.saveCustomCammini(list);
+    return list;
+  },
+
   exportUserData() {
     return {
       esportato: new Date().toISOString(),
       itinerari: this.getPlans(),
-      tracceGpx: this.getGpxTracks()
+      tracceGpx: this.getGpxTracks(),
+      camminiPersonalizzati: this.getCustomCammini()
     };
   },
   importUserData(obj) {
     if (obj.itinerari) this.savePlans(obj.itinerari);
     if (obj.tracceGpx) this.saveGpxTracks(obj.tracceGpx);
+    if (obj.camminiPersonalizzati) this.saveCustomCammini(obj.camminiPersonalizzati);
   },
   resetUserData() {
     localStorage.removeItem(this.KEY_PLANS);
     localStorage.removeItem(this.KEY_GPX);
+    localStorage.removeItem(this.KEY_CUSTOM_CAMMINI);
   }
 };
