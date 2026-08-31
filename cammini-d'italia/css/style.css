@@ -127,6 +127,9 @@ main{max-width:760px;margin:0 auto;padding:0 1rem;}
 .stage-row{display:flex;gap:.8rem;padding:.8rem 0;border-bottom:1px solid var(--line);}
 .stage-row:last-child{border-bottom:none;}
 .stage-n{font-family:var(--font-mono);font-weight:700;color:#fff;background:var(--segnavia);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+.stage-n.completata{background:var(--pine);}
+.stage-completa-label{display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--ink-soft);margin-top:.3rem;cursor:pointer;}
+.stage-check{width:1.1rem;height:1.1rem;accent-color:var(--pine);cursor:pointer;}
 .stage-body{flex:1;}
 .stage-route{font-weight:600;font-size:.92rem;}
 .stage-meta{font-family:var(--font-mono);font-size:.78rem;color:var(--pine-light);margin:.2rem 0;}
@@ -161,6 +164,45 @@ main{max-width:760px;margin:0 auto;padding:0 1rem;}
 .edit-tappa-fields input[type=number]{width:70px;}
 .edit-tappa-fields input,.edit-tappa-fields select{padding:.35rem .5rem;border:1px solid var(--line-strong);border-radius:6px;background:#fff;font-family:var(--font-body);font-size:.8rem;}
 .edit-azioni{display:flex;gap:.6rem;margin-top:1rem;}
+
+.osm-cerca-box{margin:.8rem 0;padding:.8rem;background:var(--paper-2);border:1px dashed var(--line-strong);border-radius:10px;}
+.osm-candidato{display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--line);font-size:.85rem;}
+.osm-candidato:last-child{border-bottom:none;}
+#dettMappaNota{margin-top:.4rem;}
+
+.stage-azioni-riga{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem;}
+.stage-azioni-riga button{background:var(--paper-2);border:1px solid var(--line-strong);color:var(--pine);font-size:.76rem;font-weight:600;padding:.35rem .6rem;border-radius:20px;cursor:pointer;}
+.stage-azioni-riga button:hover{background:var(--pine);color:#fff;border-color:var(--pine);}
+.stage-n{display:flex;align-items:center;justify-content:center;}
+
+.meteo-giorni{display:flex;gap:.5rem;overflow-x:auto;margin-top:.5rem;padding-bottom:.2rem;}
+.meteo-giorno{background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:.4rem .6rem;display:flex;flex-direction:column;align-items:center;gap:.15rem;min-width:64px;font-size:.72rem;flex-shrink:0;}
+.meteo-emoji{font-size:1.1rem;}
+.meteo-temp{font-family:var(--font-mono);}
+.meteo-pioggia{color:var(--pine-light);}
+
+.diario-box{margin-top:.5rem;}
+.diario-form{background:var(--paper-2);border:1px dashed var(--line-strong);border-radius:10px;padding:.7rem;margin-bottom:.6rem;}
+.diario-form textarea{width:100%;padding:.5rem;border:1px solid var(--line-strong);border-radius:8px;font-family:var(--font-body);font-size:.85rem;resize:vertical;}
+.diario-foto-nome{display:block;margin-top:.3rem;}
+.diario-lista{display:flex;flex-direction:column;gap:.5rem;}
+.diario-voce{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:.6rem .7rem;font-size:.85rem;}
+.diario-voce-head{display:flex;justify-content:space-between;color:var(--ink-soft);font-size:.72rem;margin-bottom:.3rem;font-family:var(--font-mono);}
+.diario-elimina{background:none;border:none;color:var(--segnavia);cursor:pointer;font-size:.8rem;}
+.diario-foto{width:100%;border-radius:8px;margin-bottom:.4rem;display:block;}
+
+.checklist{display:flex;flex-direction:column;gap:.4rem;}
+.checklist-item{display:flex;align-items:center;gap:.6rem;padding:.35rem 0;border-bottom:1px solid var(--line);font-size:.88rem;}
+.checklist-item:last-child{border-bottom:none;}
+.checklist-item input[type=checkbox]{width:1.1rem;height:1.1rem;accent-color:var(--segnavia);flex-shrink:0;}
+.checklist-item span{flex:1;}
+.checklist-fatto{text-decoration:line-through;color:var(--ink-soft);}
+.checklist-rimuovi{background:none;border:none;color:var(--ink-soft);cursor:pointer;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;margin-top:.6rem;}
+.stat-box{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:.8rem;text-align:center;}
+.stat-num{display:block;font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--pine);}
+.stat-label{font-size:.72rem;color:var(--ink-soft);}
 
 .section-title{font-size:1.25rem;margin-bottom:.3rem;}
 .section-title.small{font-size:1.05rem;margin-top:1.6rem;}
