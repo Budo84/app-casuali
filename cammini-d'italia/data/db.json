@@ -1,0 +1,1379 @@
+{
+  "versione": 2,
+  "aggiornato": "2026-08-31",
+  "nota": "Dati indicativi raccolti da fonti pubbliche generali (associazioni di cammino, CAI, enti regionali). Le distanze e i dislivelli possono variare secondo la fonte e le condizioni del sentiero: verificare sempre sul sito ufficiale del cammino e su una traccia GPX aggiornata prima di partire.",
+  "cammini": [
+    {
+      "id": "via-francigena-toscana-lazio",
+      "nome": "Via Francigena (tratto Toscana - Lazio)",
+      "tipo": "religioso-storico",
+      "regioni": [
+        "Toscana",
+        "Lazio"
+      ],
+      "difficoltaGenerale": "media",
+      "descrizione": "L'antica via di pellegrinaggio verso Roma. Il tratto qui proposto attraversa la Val d'Orcia e l'Alta Tuscia fino alla Città Eterna, alternando strade bianche, boschi e borghi medievali.",
+      "sitoUfficiale": "https://www.viefrancigene.org",
+      "wikilocRicerca": "https://www.wikiloc.com/wikiloc/find.do?q=via%20francigena",
+      "segnaletica": "Segnavia bianco-rosso con pellegrino stilizzato",
+      "tappe": [
+        {
+          "n": 1,
+          "da": "Siena",
+          "a": "Ponte d'Arbia",
+          "km": 24,
+          "dislivelloSalita": 210,
+          "dislivelloDiscesa": 260,
+          "difficolta": "facile",
+          "note": "Percorso pianeggiante lungo la Via Cassia, ottimo primo giorno di ambientamento.",
+          "coordDa": [
+            43.3188,
+            11.3308
+          ],
+          "coordA": [
+            43.1667,
+            11.4667
+          ]
+        },
+        {
+          "n": 2,
+          "da": "Ponte d'Arbia",
+          "a": "San Quirico d'Orcia",
+          "km": 21,
+          "dislivelloSalita": 380,
+          "dislivelloDiscesa": 190,
+          "difficolta": "media",
+          "note": "Attraversa le crete senesi, poca ombra: portare acqua abbondante in estate.",
+          "coordDa": [
+            43.1667,
+            11.4667
+          ],
+          "coordA": [
+            43.0586,
+            11.6094
+          ]
+        },
+        {
+          "n": 3,
+          "da": "San Quirico d'Orcia",
+          "a": "Radicofani",
+          "km": 33,
+          "dislivelloSalita": 850,
+          "dislivelloDiscesa": 480,
+          "difficolta": "impegnativa",
+          "note": "Tappa lunga con salita finale alla rocca di Radicofani; si può spezzare a Bagno Vignoni.",
+          "coordDa": [
+            43.0586,
+            11.6094
+          ],
+          "coordA": [
+            42.9008,
+            11.7719
+          ]
+        },
+        {
+          "n": 4,
+          "da": "Radicofani",
+          "a": "Acquapendente",
+          "km": 24,
+          "dislivelloSalita": 320,
+          "dislivelloDiscesa": 600,
+          "difficolta": "media",
+          "note": "Si passa il confine regionale Toscana-Lazio, bei tratti nel bosco.",
+          "coordDa": [
+            42.9008,
+            11.7719
+          ],
+          "coordA": [
+            42.7392,
+            11.8608
+          ]
+        },
+        {
+          "n": 5,
+          "da": "Acquapendente",
+          "a": "Bolsena",
+          "km": 23,
+          "dislivelloSalita": 280,
+          "dislivelloDiscesa": 310,
+          "difficolta": "facile",
+          "note": "Arrivo sul lago di Bolsena, tappa panoramica.",
+          "coordDa": [
+            42.7392,
+            11.8608
+          ],
+          "coordA": [
+            42.6444,
+            11.9889
+          ]
+        },
+        {
+          "n": 6,
+          "da": "Bolsena",
+          "a": "Montefiascone",
+          "km": 17,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 90,
+          "difficolta": "media",
+          "note": "Salita costante verso il belvedere sul lago.",
+          "coordDa": [
+            42.6444,
+            11.9889
+          ],
+          "coordA": [
+            42.5386,
+            12.0328
+          ]
+        },
+        {
+          "n": 7,
+          "da": "Montefiascone",
+          "a": "Viterbo",
+          "km": 18,
+          "dislivelloSalita": 150,
+          "dislivelloDiscesa": 380,
+          "difficolta": "facile",
+          "note": "Tratti di basolato romano dell'antica via Cassia.",
+          "coordDa": [
+            42.5386,
+            12.0328
+          ],
+          "coordA": [
+            42.4207,
+            12.1069
+          ]
+        },
+        {
+          "n": 8,
+          "da": "Viterbo",
+          "a": "Vetralla",
+          "km": 17,
+          "dislivelloSalita": 300,
+          "dislivelloDiscesa": 260,
+          "difficolta": "media",
+          "note": "Boschi della Tuscia, sentiero ben ombreggiato.",
+          "coordDa": [
+            42.4207,
+            12.1069
+          ],
+          "coordA": [
+            42.3239,
+            12.0625
+          ]
+        },
+        {
+          "n": 9,
+          "da": "Vetralla",
+          "a": "Sutri",
+          "km": 23,
+          "dislivelloSalita": 400,
+          "dislivelloDiscesa": 420,
+          "difficolta": "media",
+          "note": "Anfiteatro etrusco di Sutri all'arrivo.",
+          "coordDa": [
+            42.3239,
+            12.0625
+          ],
+          "coordA": [
+            42.2456,
+            12.2144
+          ]
+        },
+        {
+          "n": 10,
+          "da": "Sutri",
+          "a": "Campagnano di Roma",
+          "km": 24,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 300,
+          "difficolta": "media",
+          "note": "Ultimi borghi prima dell'avvicinamento a Roma.",
+          "coordDa": [
+            42.2456,
+            12.2144
+          ],
+          "coordA": [
+            42.1417,
+            12.4
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cammino-francesco-la-verna-assisi",
+      "nome": "Cammino di Francesco (La Verna - Assisi)",
+      "tipo": "religioso-storico",
+      "regioni": [
+        "Toscana",
+        "Umbria"
+      ],
+      "difficoltaGenerale": "media",
+      "descrizione": "Sulle orme di San Francesco tra Casentino, Valtiberina e Umbria, dal santuario della Verna alla basilica di Assisi.",
+      "sitoUfficiale": "https://www.viadifrancesco.it",
+      "wikilocRicerca": "https://www.wikiloc.com/wikiloc/find.do?q=cammino%20di%20francesco",
+      "segnaletica": "Segnavia bianco-rosso con tau francescano",
+      "tappe": [
+        {
+          "n": 1,
+          "da": "La Verna",
+          "a": "Caprese Michelangelo",
+          "km": 18,
+          "dislivelloSalita": 300,
+          "dislivelloDiscesa": 750,
+          "difficolta": "media",
+          "note": "Discesa dal santuario nei boschi del Casentino.",
+          "coordDa": [
+            43.6975,
+            11.9264
+          ],
+          "coordA": [
+            43.6417,
+            11.9694
+          ]
+        },
+        {
+          "n": 2,
+          "da": "Caprese Michelangelo",
+          "a": "Sansepolcro",
+          "km": 20,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 550,
+          "difficolta": "media",
+          "note": "Ingresso in Valtiberina, terra natale di Piero della Francesca.",
+          "coordDa": [
+            43.6417,
+            11.9694
+          ],
+          "coordA": [
+            43.5722,
+            12.1417
+          ]
+        },
+        {
+          "n": 3,
+          "da": "Sansepolcro",
+          "a": "Citerna",
+          "km": 14,
+          "dislivelloSalita": 380,
+          "dislivelloDiscesa": 180,
+          "difficolta": "facile",
+          "note": "Tappa breve, ideale per recuperare energie.",
+          "coordDa": [
+            43.5722,
+            12.1417
+          ],
+          "coordA": [
+            43.4917,
+            12.1194
+          ]
+        },
+        {
+          "n": 4,
+          "da": "Citerna",
+          "a": "Città di Castello",
+          "km": 13,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 320,
+          "difficolta": "facile",
+          "note": "Ingresso ufficiale in Umbria.",
+          "coordDa": [
+            43.4917,
+            12.1194
+          ],
+          "coordA": [
+            43.4531,
+            12.2358
+          ]
+        },
+        {
+          "n": 5,
+          "da": "Città di Castello",
+          "a": "Pietralunga",
+          "km": 27,
+          "dislivelloSalita": 750,
+          "dislivelloDiscesa": 550,
+          "difficolta": "impegnativa",
+          "note": "Tappa lunga e isolata nell'Appennino umbro, pochi punti di rifornimento.",
+          "coordDa": [
+            43.4531,
+            12.2358
+          ],
+          "coordA": [
+            43.4497,
+            12.4272
+          ]
+        },
+        {
+          "n": 6,
+          "da": "Pietralunga",
+          "a": "Gubbio",
+          "km": 26,
+          "dislivelloSalita": 600,
+          "dislivelloDiscesa": 700,
+          "difficolta": "impegnativa",
+          "note": "Arrivo nella splendida Gubbio medievale.",
+          "coordDa": [
+            43.4497,
+            12.4272
+          ],
+          "coordA": [
+            43.3506,
+            12.5761
+          ]
+        },
+        {
+          "n": 7,
+          "da": "Gubbio",
+          "a": "Valfabbrica",
+          "km": 26,
+          "dislivelloSalita": 550,
+          "dislivelloDiscesa": 500,
+          "difficolta": "media",
+          "note": "Attraversa il Parco del Monte Cucco.",
+          "coordDa": [
+            43.3506,
+            12.5761
+          ],
+          "coordA": [
+            43.2231,
+            12.6
+          ]
+        },
+        {
+          "n": 8,
+          "da": "Valfabbrica",
+          "a": "Assisi",
+          "km": 13,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 250,
+          "difficolta": "media",
+          "note": "Ultima tappa, vista sulla Basilica di San Francesco in avvicinamento.",
+          "coordDa": [
+            43.2231,
+            12.6
+          ],
+          "coordA": [
+            43.0707,
+            12.6197
+          ]
+        }
+      ]
+    },
+    {
+      "id": "via-degli-dei",
+      "nome": "Via degli Dei",
+      "tipo": "trekking-storico",
+      "regioni": [
+        "Emilia-Romagna",
+        "Toscana"
+      ],
+      "difficoltaGenerale": "impegnativa",
+      "descrizione": "Antico collegamento tra Bologna e Firenze lungo crinali appenninici con toponimi di divinità romane (Monte Adone, Monzuno, Monte Venere). Molto frequentata anche in mountain bike.",
+      "sitoUfficiale": "https://www.viadeglidei.it",
+      "wikilocRicerca": "https://www.wikiloc.com/wikiloc/find.do?q=via%20degli%20dei",
+      "segnaletica": "Segnavia bianco-rosso con simbolo dedicato",
+      "tappe": [
+        {
+          "n": 1,
+          "da": "Bologna",
+          "a": "Badolo",
+          "km": 19,
+          "dislivelloSalita": 600,
+          "dislivelloDiscesa": 150,
+          "difficolta": "media",
+          "note": "Uscita dalla città verso i primi crinali, vista su Bologna.",
+          "coordDa": [
+            44.4949,
+            11.3426
+          ],
+          "coordA": [
+            44.4058,
+            11.3308
+          ]
+        },
+        {
+          "n": 2,
+          "da": "Badolo",
+          "a": "Madonna dei Fornelli",
+          "km": 20,
+          "dislivelloSalita": 750,
+          "dislivelloDiscesa": 500,
+          "difficolta": "impegnativa",
+          "note": "Si passa Monte Adone, tratto panoramico e ventoso.",
+          "coordDa": [
+            44.4058,
+            11.3308
+          ],
+          "coordA": [
+            44.1667,
+            11.2333
+          ]
+        },
+        {
+          "n": 3,
+          "da": "Madonna dei Fornelli",
+          "a": "San Piero a Sieve",
+          "km": 32,
+          "dislivelloSalita": 700,
+          "dislivelloDiscesa": 950,
+          "difficolta": "impegnativa",
+          "note": "Tappa regina, attraversa il Passo della Futa e il Monte Gazzaro: molti la spezzano in due.",
+          "coordDa": [
+            44.1667,
+            11.2333
+          ],
+          "coordA": [
+            43.9167,
+            11.35
+          ]
+        },
+        {
+          "n": 4,
+          "da": "San Piero a Sieve",
+          "a": "Fiesole",
+          "km": 21,
+          "dislivelloSalita": 550,
+          "dislivelloDiscesa": 500,
+          "difficolta": "media",
+          "note": "Ultimi crinali con vista su Firenze.",
+          "coordDa": [
+            43.9167,
+            11.35
+          ],
+          "coordA": [
+            43.8069,
+            11.2939
+          ]
+        },
+        {
+          "n": 5,
+          "da": "Fiesole",
+          "a": "Firenze",
+          "km": 8,
+          "dislivelloSalita": 50,
+          "dislivelloDiscesa": 350,
+          "difficolta": "facile",
+          "note": "Discesa finale nel centro di Firenze.",
+          "coordDa": [
+            43.8069,
+            11.2939
+          ],
+          "coordA": [
+            43.7696,
+            11.2558
+          ]
+        }
+      ]
+    },
+    {
+      "id": "alta-via-1-dolomiti",
+      "nome": "Alta Via 1 delle Dolomiti",
+      "tipo": "trekking-montagna",
+      "regioni": [
+        "Veneto",
+        "Trentino-Alto Adige"
+      ],
+      "difficoltaGenerale": "impegnativa",
+      "descrizione": "Il trekking d'alta quota più celebre delle Dolomiti, dal Lago di Braies ad Alleghe/Belluno, tra rifugi CAI, ferrate facoltative e paesaggi spettacolari.",
+      "sitoUfficiale": "https://www.dolomiti.org",
+      "wikilocRicerca": "https://www.wikiloc.com/wikiloc/find.do?q=alta%20via%201%20dolomiti",
+      "segnaletica": "Segnavia CAI bianco-rosso numero 1",
+      "tappe": [
+        {
+          "n": 1,
+          "da": "Lago di Braies",
+          "a": "Rifugio Biella",
+          "km": 12,
+          "dislivelloSalita": 950,
+          "dislivelloDiscesa": 100,
+          "difficolta": "impegnativa",
+          "note": "Salita decisa alla Croda del Becco, quota oltre 2300 m.",
+          "coordDa": [
+            46.6944,
+            12.0864
+          ],
+          "coordA": [
+            46.6403,
+            12.0917
+          ]
+        },
+        {
+          "n": 2,
+          "da": "Rifugio Biella",
+          "a": "Rifugio Sennes/Fanes",
+          "km": 14,
+          "dislivelloSalita": 400,
+          "dislivelloDiscesa": 350,
+          "difficolta": "media",
+          "note": "Altopiano di Fanes, ambiente d'alta quota poco tecnico.",
+          "coordDa": [
+            46.6403,
+            12.0917
+          ],
+          "coordA": [
+            46.6083,
+            12.0389
+          ]
+        },
+        {
+          "n": 3,
+          "da": "Rifugio Fanes",
+          "a": "Passo Falzarego / Rifugio Lagazuoi",
+          "km": 16,
+          "dislivelloSalita": 700,
+          "dislivelloDiscesa": 400,
+          "difficolta": "impegnativa",
+          "note": "Possibile variante ferrata al Lagazuoi (richiede kit da ferrata).",
+          "coordDa": [
+            46.6083,
+            12.0389
+          ],
+          "coordA": [
+            46.5183,
+            12.0294
+          ]
+        },
+        {
+          "n": 4,
+          "da": "Rifugio Lagazuoi",
+          "a": "Rifugio Averau",
+          "km": 11,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 400,
+          "difficolta": "media",
+          "note": "Vista panoramica sul gruppo del Nuvolau.",
+          "coordDa": [
+            46.5183,
+            12.0294
+          ],
+          "coordA": [
+            46.5089,
+            12.0092
+          ]
+        },
+        {
+          "n": 5,
+          "da": "Rifugio Averau",
+          "a": "Passo Staulanza / San Vito",
+          "km": 18,
+          "dislivelloSalita": 300,
+          "dislivelloDiscesa": 900,
+          "difficolta": "media",
+          "note": "Discesa nella conca di San Vito di Cadore.",
+          "coordDa": [
+            46.5089,
+            12.0092
+          ],
+          "coordA": [
+            46.4522,
+            12.1131
+          ]
+        },
+        {
+          "n": 6,
+          "da": "Passo Staulanza",
+          "a": "Rifugio Coldai",
+          "km": 10,
+          "dislivelloSalita": 750,
+          "dislivelloDiscesa": 100,
+          "difficolta": "impegnativa",
+          "note": "Salita al Civetta, uno dei tratti più scenografici.",
+          "coordDa": [
+            46.4522,
+            12.1131
+          ],
+          "coordA": [
+            46.4297,
+            12.0656
+          ]
+        },
+        {
+          "n": 7,
+          "da": "Rifugio Coldai",
+          "a": "Alleghe",
+          "km": 9,
+          "dislivelloSalita": 50,
+          "dislivelloDiscesa": 1100,
+          "difficolta": "media",
+          "note": "Lunga discesa finale al lago di Alleghe.",
+          "coordDa": [
+            46.4297,
+            12.0656
+          ],
+          "coordA": [
+            46.4053,
+            12.0264
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cammino-materano",
+      "nome": "Cammino Materano (Via Peuceta)",
+      "tipo": "religioso-storico",
+      "regioni": [
+        "Puglia",
+        "Basilicata"
+      ],
+      "difficoltaGenerale": "facile-media",
+      "descrizione": "Da Bari a Matera attraverso l'entroterra pugliese e lucano, tra masserie, gravine e paesaggi rurali del Sud Italia.",
+      "sitoUfficiale": "https://www.camminomaterano.it",
+      "wikilocRicerca": "https://www.wikiloc.com/wikiloc/find.do?q=cammino%20materano",
+      "segnaletica": "Segnavia giallo-blu con simbolo del cammino",
+      "tappe": [
+        {
+          "n": 1,
+          "da": "Bari",
+          "a": "Bitetto",
+          "km": 21,
+          "dislivelloSalita": 120,
+          "dislivelloDiscesa": 20,
+          "difficolta": "facile",
+          "note": "Uscita dalla città verso la campagna pugliese, percorso pianeggiante.",
+          "coordDa": [
+            41.1171,
+            16.8719
+          ],
+          "coordA": [
+            41.0522,
+            16.7383
+          ]
+        },
+        {
+          "n": 2,
+          "da": "Bitetto",
+          "a": "Sannicandro di Bari",
+          "km": 14,
+          "dislivelloSalita": 150,
+          "dislivelloDiscesa": 80,
+          "difficolta": "facile",
+          "note": "Uliveti secolari e muretti a secco.",
+          "coordDa": [
+            41.0522,
+            16.7383
+          ],
+          "coordA": [
+            41.0286,
+            16.7908
+          ]
+        },
+        {
+          "n": 3,
+          "da": "Sannicandro",
+          "a": "Altamura",
+          "km": 24,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 100,
+          "difficolta": "media",
+          "note": "Ingresso nell'Alta Murgia, poca ombra, portare acqua.",
+          "coordDa": [
+            41.0286,
+            16.7908
+          ],
+          "coordA": [
+            40.8281,
+            16.5539
+          ]
+        },
+        {
+          "n": 4,
+          "da": "Altamura",
+          "a": "Gravina in Puglia",
+          "km": 22,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 250,
+          "difficolta": "media",
+          "note": "Paesaggio carsico della Murgia, gravine spettacolari.",
+          "coordDa": [
+            40.8281,
+            16.5539
+          ],
+          "coordA": [
+            40.8189,
+            16.4194
+          ]
+        },
+        {
+          "n": 5,
+          "da": "Gravina in Puglia",
+          "a": "Matera",
+          "km": 25,
+          "dislivelloSalita": 300,
+          "dislivelloDiscesa": 350,
+          "difficolta": "media",
+          "note": "Ultima tappa: arrivo tra i Sassi di Matera.",
+          "coordDa": [
+            40.8189,
+            16.4194
+          ],
+          "coordA": [
+            40.6664,
+            16.6043
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sentiero-italia-esempio-cai",
+      "nome": "Sentiero Italia CAI (tratto d'esempio: Appennino Ligure)",
+      "tipo": "trekking-montagna",
+      "regioni": [
+        "Liguria"
+      ],
+      "difficoltaGenerale": "media",
+      "descrizione": "Il Sentiero Italia CAI attraversa l'intero Paese per oltre 7000 km in oltre 350 tappe: qui è incluso solo un tratto esemplificativo ligure. Per l'itinerario completo consultare il sito ufficiale del CAI, suddiviso per regione e settore.",
+      "sitoUfficiale": "https://www.sentieroitalia.cai.it",
+      "wikilocRicerca": "https://www.wikiloc.com/wikiloc/find.do?q=sentiero%20italia%20cai",
+      "segnaletica": "Segnavia bianco-rosso-bianco con logo SI CAI",
+      "tappe": [
+        {
+          "n": 1,
+          "da": "Ventimiglia",
+          "a": "Rifugio Grai",
+          "km": 15,
+          "dislivelloSalita": 1100,
+          "dislivelloDiscesa": 100,
+          "difficolta": "impegnativa",
+          "note": "Prima tappa del tratto ligure, salita continua dall'Alta Via dei Monti Liguri.",
+          "coordDa": [
+            43.7911,
+            7.6083
+          ],
+          "coordA": [
+            43.9333,
+            7.6167
+          ]
+        },
+        {
+          "n": 2,
+          "da": "Rifugio Grai",
+          "a": "Colla Melosa",
+          "km": 13,
+          "dislivelloSalita": 500,
+          "dislivelloDiscesa": 400,
+          "difficolta": "media",
+          "note": "Cresta panoramica sul Mar Ligure.",
+          "coordDa": [
+            43.9333,
+            7.6167
+          ],
+          "coordA": [
+            44.0167,
+            7.7
+          ]
+        },
+        {
+          "n": 3,
+          "da": "Colla Melosa",
+          "a": "Monesi",
+          "km": 16,
+          "dislivelloSalita": 450,
+          "dislivelloDiscesa": 600,
+          "difficolta": "media",
+          "note": "Bosco misto e alpeggi.",
+          "coordDa": [
+            44.0167,
+            7.7
+          ],
+          "coordA": [
+            44.0797,
+            7.7756
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cammino-santiago-francese",
+      "nome": "Camino de Santiago - Camino Francés",
+      "tipo": "cammino-storico-religioso",
+      "regioni": [
+        "Francia",
+        "Spagna (Navarra, La Rioja, Castiglia e León, Galizia)"
+      ],
+      "difficoltaGenerale": "media-impegnativa",
+      "descrizione": "Il Camino Francés è l'itinerario più celebre e frequentato del Cammino di Santiago: da Saint-Jean-Pied-de-Port, ai piedi dei Pirenei francesi, attraversa il nord della Spagna per circa 780 km fino alla Cattedrale di Santiago de Compostela, dove sono conservate le reliquie dell'apostolo Giacomo. Riconosciuto dall'UNESCO come Patrimonio dell'Umanità. Tappe indicative secondo la suddivisione classica in circa 33 giorni; ogni pellegrino può accorciare o allungare le tappe secondo il proprio ritmo. Molti percorrono solo l'ultimo tratto da Sarria (minimo 100 km richiesti per ottenere la Compostela, il certificato di pellegrinaggio).",
+      "sitoUfficiale": "https://www.caminodesantiago.gal",
+      "wikilocRicerca": "https://www.wikiloc.com/wikiloc/find.do?q=camino%20frances%20santiago",
+      "segnaletica": "Conchiglia gialla su sfondo blu e frecce gialle dipinte lungo tutto il percorso.",
+      "nota": "Percorso internazionale (Francia-Spagna) incluso su richiesta esplicita, non italiano. Dati di tappe/km sono indicativi secondo la suddivisione classica delle guide: verificare sempre con fonti ufficiali e con l'Ufficio del Pellegrino di Santiago prima della partenza.",
+      "tappe": [
+        {
+          "n": 1,
+          "da": "Saint-Jean-Pied-de-Port",
+          "a": "Roncisvalle",
+          "km": 25,
+          "dislivelloSalita": 1250,
+          "dislivelloDiscesa": 500,
+          "difficolta": "molto impegnativa",
+          "note": "Prima tappa, valico dei Pirenei; molto dura per dislivello e lunghezza, meteo spesso avverso.",
+          "coordDa": [
+            43.1633,
+            -1.2378
+          ],
+          "coordA": [
+            43.0089,
+            -1.3197
+          ]
+        },
+        {
+          "n": 2,
+          "da": "Roncisvalle",
+          "a": "Zubiri",
+          "km": 22,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 700,
+          "difficolta": "media",
+          "note": "Discesa nella valle navarra attraverso boschi di faggi.",
+          "coordDa": [
+            43.0089,
+            -1.3197
+          ],
+          "coordA": [
+            42.9333,
+            -1.5028
+          ]
+        },
+        {
+          "n": 3,
+          "da": "Zubiri",
+          "a": "Pamplona",
+          "km": 20,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 150,
+          "difficolta": "facile",
+          "note": "Tappa pianeggiante lungo il fiume Arga, arrivo nella capitale della Navarra.",
+          "coordDa": [
+            42.9333,
+            -1.5028
+          ],
+          "coordA": [
+            42.8125,
+            -1.6458
+          ]
+        },
+        {
+          "n": 4,
+          "da": "Pamplona",
+          "a": "Puente la Reina",
+          "km": 24,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 400,
+          "difficolta": "media",
+          "note": "Si supera l'Alto del Perdón con le celebri sagome di pellegrini in ferro.",
+          "coordDa": [
+            42.8125,
+            -1.6458
+          ],
+          "coordA": [
+            42.6714,
+            -1.8158
+          ]
+        },
+        {
+          "n": 5,
+          "da": "Puente la Reina",
+          "a": "Estella",
+          "km": 22,
+          "dislivelloSalita": 250,
+          "dislivelloDiscesa": 200,
+          "difficolta": "media",
+          "note": "Storico ponte romanico all'inizio tappa; passa per Villatuerta.",
+          "coordDa": [
+            42.6714,
+            -1.8158
+          ],
+          "coordA": [
+            42.6714,
+            -2.0328
+          ]
+        },
+        {
+          "n": 6,
+          "da": "Estella",
+          "a": "Los Arcos",
+          "km": 21,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 250,
+          "difficolta": "media",
+          "note": "Si passa dalla Fuente del Vino di Irache, fontana di vino gratuito per i pellegrini.",
+          "coordDa": [
+            42.6714,
+            -2.0328
+          ],
+          "coordA": [
+            42.5711,
+            -2.1917
+          ]
+        },
+        {
+          "n": 7,
+          "da": "Los Arcos",
+          "a": "Logroño",
+          "km": 28,
+          "dislivelloSalita": 300,
+          "dislivelloDiscesa": 250,
+          "difficolta": "impegnativa",
+          "note": "Tappa lunga, si entra in Rioja passando Viana.",
+          "coordDa": [
+            42.5711,
+            -2.1917
+          ],
+          "coordA": [
+            42.465,
+            -2.4456
+          ]
+        },
+        {
+          "n": 8,
+          "da": "Logroño",
+          "a": "Nájera",
+          "km": 29,
+          "dislivelloSalita": 300,
+          "dislivelloDiscesa": 250,
+          "difficolta": "impegnativa",
+          "note": "Attraversa vigneti della Rioja, tappa lunga e assolata.",
+          "coordDa": [
+            42.465,
+            -2.4456
+          ],
+          "coordA": [
+            42.4158,
+            -2.7306
+          ]
+        },
+        {
+          "n": 9,
+          "da": "Nájera",
+          "a": "Santo Domingo de la Calzada",
+          "km": 21,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 150,
+          "difficolta": "media",
+          "note": "Cittadina legata alla leggenda del gallo e della gallina.",
+          "coordDa": [
+            42.4158,
+            -2.7306
+          ],
+          "coordA": [
+            42.4419,
+            -2.9556
+          ]
+        },
+        {
+          "n": 10,
+          "da": "Santo Domingo de la Calzada",
+          "a": "Belorado",
+          "km": 23,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 150,
+          "difficolta": "media",
+          "note": "Attraversa piccoli borghi rurali castigliani.",
+          "coordDa": [
+            42.4419,
+            -2.9556
+          ],
+          "coordA": [
+            42.4197,
+            -3.1878
+          ]
+        },
+        {
+          "n": 11,
+          "da": "Belorado",
+          "a": "San Juan de Ortega",
+          "km": 24,
+          "dislivelloSalita": 450,
+          "dislivelloDiscesa": 300,
+          "difficolta": "impegnativa",
+          "note": "Salita verso i Montes de Oca, tratto boschivo isolato.",
+          "coordDa": [
+            42.4197,
+            -3.1878
+          ],
+          "coordA": [
+            42.3789,
+            -3.4392
+          ]
+        },
+        {
+          "n": 12,
+          "da": "San Juan de Ortega",
+          "a": "Burgos",
+          "km": 26,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 350,
+          "difficolta": "impegnativa",
+          "note": "Arrivo nella storica Burgos con la sua cattedrale gotica.",
+          "coordDa": [
+            42.3789,
+            -3.4392
+          ],
+          "coordA": [
+            42.3439,
+            -3.6969
+          ]
+        },
+        {
+          "n": 13,
+          "da": "Burgos",
+          "a": "Hornillos del Camino",
+          "km": 21,
+          "dislivelloSalita": 150,
+          "dislivelloDiscesa": 100,
+          "difficolta": "media",
+          "note": "Inizio della Meseta, paesaggio aperto e pianeggiante.",
+          "coordDa": [
+            42.3439,
+            -3.6969
+          ],
+          "coordA": [
+            42.3389,
+            -3.9139
+          ]
+        },
+        {
+          "n": 14,
+          "da": "Hornillos del Camino",
+          "a": "Castrojeriz",
+          "km": 20,
+          "dislivelloSalita": 150,
+          "dislivelloDiscesa": 150,
+          "difficolta": "media",
+          "note": "Meseta castigliana, poca ombra, tappa esposta al sole.",
+          "coordDa": [
+            42.3389,
+            -3.9139
+          ],
+          "coordA": [
+            42.2872,
+            -4.1381
+          ]
+        },
+        {
+          "n": 15,
+          "da": "Castrojeriz",
+          "a": "Frómista",
+          "km": 25,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 250,
+          "difficolta": "media",
+          "note": "Si supera l'Alto de Mostelares; arrivo alla chiesa romanica di San Martín.",
+          "coordDa": [
+            42.2872,
+            -4.1381
+          ],
+          "coordA": [
+            42.2664,
+            -4.4056
+          ]
+        },
+        {
+          "n": 16,
+          "da": "Frómista",
+          "a": "Carrión de los Condes",
+          "km": 19,
+          "dislivelloSalita": 100,
+          "dislivelloDiscesa": 50,
+          "difficolta": "facile",
+          "note": "Tappa pianeggiante lungo il Canal de Castilla.",
+          "coordDa": [
+            42.2664,
+            -4.4056
+          ],
+          "coordA": [
+            42.3378,
+            -4.6031
+          ]
+        },
+        {
+          "n": 17,
+          "da": "Carrión de los Condes",
+          "a": "Terradillos de los Templarios",
+          "km": 27,
+          "dislivelloSalita": 150,
+          "dislivelloDiscesa": 100,
+          "difficolta": "impegnativa",
+          "note": "Lunga tappa nella Meseta, quasi priva di paesi intermedi.",
+          "coordDa": [
+            42.3378,
+            -4.6031
+          ],
+          "coordA": [
+            42.3167,
+            -4.8667
+          ]
+        },
+        {
+          "n": 18,
+          "da": "Terradillos de los Templarios",
+          "a": "El Burgo Ranero",
+          "km": 30,
+          "dislivelloSalita": 100,
+          "dislivelloDiscesa": 100,
+          "difficolta": "impegnativa",
+          "note": "Tappa molto lunga e piatta, terreno aperto.",
+          "coordDa": [
+            42.3167,
+            -4.8667
+          ],
+          "coordA": [
+            42.4167,
+            -5.2167
+          ]
+        },
+        {
+          "n": 19,
+          "da": "El Burgo Ranero",
+          "a": "León",
+          "km": 37,
+          "dislivelloSalita": 150,
+          "dislivelloDiscesa": 150,
+          "difficolta": "molto impegnativa",
+          "note": "Tappa molto lunga fino alla città di León; spesso divisa in due giorni.",
+          "coordDa": [
+            42.4167,
+            -5.2167
+          ],
+          "coordA": [
+            42.5987,
+            -5.5671
+          ]
+        },
+        {
+          "n": 20,
+          "da": "León",
+          "a": "San Martín del Camino",
+          "km": 25,
+          "dislivelloSalita": 100,
+          "dislivelloDiscesa": 100,
+          "difficolta": "media",
+          "note": "Uscita dalla città, tappa pianeggiante e poco panoramica.",
+          "coordDa": [
+            42.5987,
+            -5.5671
+          ],
+          "coordA": [
+            42.5167,
+            -5.7333
+          ]
+        },
+        {
+          "n": 21,
+          "da": "San Martín del Camino",
+          "a": "Astorga",
+          "km": 24,
+          "dislivelloSalita": 150,
+          "dislivelloDiscesa": 100,
+          "difficolta": "media",
+          "note": "Arrivo ad Astorga con il Palazzo Episcopale di Gaudí.",
+          "coordDa": [
+            42.5167,
+            -5.7333
+          ],
+          "coordA": [
+            42.4553,
+            -6.0533
+          ]
+        },
+        {
+          "n": 22,
+          "da": "Astorga",
+          "a": "Rabanal del Camino",
+          "km": 20,
+          "dislivelloSalita": 500,
+          "dislivelloDiscesa": 100,
+          "difficolta": "media",
+          "note": "Inizio della salita verso i Montes de León.",
+          "coordDa": [
+            42.4553,
+            -6.0533
+          ],
+          "coordA": [
+            42.4833,
+            -6.2833
+          ]
+        },
+        {
+          "n": 23,
+          "da": "Rabanal del Camino",
+          "a": "Ponferrada",
+          "km": 32,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 900,
+          "difficolta": "molto impegnativa",
+          "note": "Si passa la Cruz de Ferro, punto più alto del cammino (1505 m).",
+          "coordDa": [
+            42.4833,
+            -6.2833
+          ],
+          "coordA": [
+            42.5461,
+            -6.5964
+          ]
+        },
+        {
+          "n": 24,
+          "da": "Ponferrada",
+          "a": "Villafranca del Bierzo",
+          "km": 24,
+          "dislivelloSalita": 200,
+          "dislivelloDiscesa": 250,
+          "difficolta": "media",
+          "note": "Attraversa vigneti del Bierzo.",
+          "coordDa": [
+            42.5461,
+            -6.5964
+          ],
+          "coordA": [
+            42.6072,
+            -6.8092
+          ]
+        },
+        {
+          "n": 25,
+          "da": "Villafranca del Bierzo",
+          "a": "O Cebreiro",
+          "km": 28,
+          "dislivelloSalita": 1000,
+          "dislivelloDiscesa": 100,
+          "difficolta": "molto impegnativa",
+          "note": "Dura salita verso la Galizia, borgo di pallozas in pietra.",
+          "coordDa": [
+            42.6072,
+            -6.8092
+          ],
+          "coordA": [
+            42.7075,
+            -7.0439
+          ]
+        },
+        {
+          "n": 26,
+          "da": "O Cebreiro",
+          "a": "Triacastela",
+          "km": 21,
+          "dislivelloSalita": 100,
+          "dislivelloDiscesa": 700,
+          "difficolta": "media",
+          "note": "Discesa panoramica in Galizia tra boschi e prati.",
+          "coordDa": [
+            42.7075,
+            -7.0439
+          ],
+          "coordA": [
+            42.755,
+            -7.2394
+          ]
+        },
+        {
+          "n": 27,
+          "da": "Triacastela",
+          "a": "Sarria",
+          "km": 18,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 400,
+          "difficolta": "media",
+          "note": "Punto di partenza classico per chi fa gli ultimi 100 km.",
+          "coordDa": [
+            42.755,
+            -7.2394
+          ],
+          "coordA": [
+            42.7797,
+            -7.4142
+          ]
+        },
+        {
+          "n": 28,
+          "da": "Sarria",
+          "a": "Portomarín",
+          "km": 22,
+          "dislivelloSalita": 400,
+          "dislivelloDiscesa": 300,
+          "difficolta": "media",
+          "note": "Attraversamento di piccoli borghi galiziani, molto frequentato.",
+          "coordDa": [
+            42.7797,
+            -7.4142
+          ],
+          "coordA": [
+            42.8069,
+            -7.6156
+          ]
+        },
+        {
+          "n": 29,
+          "da": "Portomarín",
+          "a": "Palas de Rei",
+          "km": 25,
+          "dislivelloSalita": 400,
+          "dislivelloDiscesa": 350,
+          "difficolta": "media",
+          "note": "Saliscendi tipico della Galizia rurale.",
+          "coordDa": [
+            42.8069,
+            -7.6156
+          ],
+          "coordA": [
+            42.8733,
+            -7.8686
+          ]
+        },
+        {
+          "n": 30,
+          "da": "Palas de Rei",
+          "a": "Arzúa",
+          "km": 29,
+          "dislivelloSalita": 350,
+          "dislivelloDiscesa": 400,
+          "difficolta": "impegnativa",
+          "note": "Tappa lunga tra boschi di eucalipto e querce.",
+          "coordDa": [
+            42.8733,
+            -7.8686
+          ],
+          "coordA": [
+            42.9294,
+            -8.16
+          ]
+        },
+        {
+          "n": 31,
+          "da": "Arzúa",
+          "a": "O Pedrouzo",
+          "km": 19,
+          "dislivelloSalita": 250,
+          "dislivelloDiscesa": 200,
+          "difficolta": "facile",
+          "note": "Penultima tappa, breve e agevole.",
+          "coordDa": [
+            42.9294,
+            -8.16
+          ],
+          "coordA": [
+            42.9078,
+            -8.3606
+          ]
+        },
+        {
+          "n": 32,
+          "da": "O Pedrouzo",
+          "a": "Santiago de Compostela",
+          "km": 20,
+          "dislivelloSalita": 250,
+          "dislivelloDiscesa": 300,
+          "difficolta": "media",
+          "note": "Tappa finale: arrivo alla Cattedrale di Santiago e Piazza dell'Obradoiro.",
+          "coordDa": [
+            42.9078,
+            -8.3606
+          ],
+          "coordA": [
+            42.8805,
+            -8.5456
+          ]
+        }
+      ]
+    }
+  ]
+}
