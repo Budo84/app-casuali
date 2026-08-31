@@ -113,8 +113,10 @@ main{max-width:760px;margin:0 auto;padding:0 1rem;}
 .tile-visual.tipo-cammino-storico-religioso{background:linear-gradient(135deg, var(--segnavia), #8A2A20);}
 .tile-visual.tipo-religioso-storico{background:linear-gradient(135deg, var(--segnavia), #8A2A20);}
 .tile-visual.tipo-trekking-storico{background:linear-gradient(135deg, var(--ochre), #8A5A0B);}
+.tile-visual.tipo-personalizzato{background:linear-gradient(135deg, #6B6152, #332B22);}
 .tile-visual.tipo-default{background:linear-gradient(135deg, var(--pine-light), var(--ink-soft));}
 .tile-visual svg{fill:none;stroke:#fff;stroke-width:1.6;}
+.tile-mine{position:absolute;bottom:.4rem;left:.4rem;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.04em;text-transform:uppercase;background:rgba(255,255,255,.9);color:var(--ink);padding:.15rem .4rem;border-radius:5px;}
 
 .back-btn{background:none;border:none;color:var(--pine);font-weight:600;font-size:.9rem;padding:0;margin-bottom:1rem;cursor:pointer;}
 
