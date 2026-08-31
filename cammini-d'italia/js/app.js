@@ -37,11 +37,31 @@ function totaleKm(cammino) {
   return cammino.tappe.reduce((s, t) => s + (t.km || 0), 0);
 }
 
+// Icona SVG semplice associata al tipo di cammino (nessuna immagine esterna: tutto inline, funziona offline)
+const ICONE_TIPO = {
+  'trekking-montagna': '<svg viewBox="0 0 24 24"><path d="M3 20L9 8l4 6 2-3 6 9H3z"/><circle cx="18" cy="6" r="2"/></svg>',
+  'cammino-storico-religioso': '<svg viewBox="0 0 24 24"><path d="M12 2v20M6 7h12M8 12h8"/></svg>',
+  'religioso-storico': '<svg viewBox="0 0 24 24"><path d="M12 2v20M6 7h12M8 12h8"/></svg>',
+  'trekking-storico': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 6v6l4 2"/></svg>',
+  'default': '<svg viewBox="0 0 24 24"><path d="M4 18l6-12 4 7 2-4 4 9H4z"/></svg>'
+};
+function iconaTipo(tipo) {
+  return ICONE_TIPO[tipo] || ICONE_TIPO.default;
+}
+function classeTipo(tipo) {
+  return ICONE_TIPO[tipo] ? `tipo-${tipo}` : 'tipo-default';
+}
+
 function renderLista() {
   const q = ($('#searchInput').value || '').toLowerCase();
   const tipoFiltro = $('#filterTipo').value;
   const list = $('#camminiList');
   list.innerHTML = '';
+
+  if (!CAMMINI || !CAMMINI.cammini) {
+    list.innerHTML = '<p class="empty-note">Database non disponibile: prova a ricaricare la pagina.</p>';
+    return;
+  }
 
   const filtrati = CAMMINI.cammini.filter(c => {
     const testo = (c.nome + ' ' + c.regioni.join(' ') + ' ' + c.descrizione).toLowerCase();
@@ -56,24 +76,24 @@ function renderLista() {
   }
 
   filtrati.forEach(c => {
-    const card = document.createElement('div');
-    card.className = 'cammino-card';
-    card.innerHTML = `
-      <div class="cc-top">
-        <div>
-          <div class="cc-name">${c.nome}</div>
-          <div class="cc-region">${c.regioni.join(' · ')}</div>
+    const tile = document.createElement('div');
+    tile.className = 'cammino-tile';
+    tile.innerHTML = `
+      <div class="tile-visual ${classeTipo(c.tipo)}">
+        ${iconaTipo(c.tipo)}
+        <span class="tile-badge">${difficoltaBadge(c.difficoltaGenerale)}</span>
+      </div>
+      <div class="tile-body">
+        <div class="tile-name">${c.nome}</div>
+        <div class="tile-region">${c.regioni.join(' · ')}</div>
+        <div class="tile-stats">
+          <span>${totaleKm(c)} km</span>
+          <span>${c.tappe.length} tappe</span>
         </div>
-        ${difficoltaBadge(c.difficoltaGenerale)}
       </div>
-      <div class="cc-stats">
-        <span>${totaleKm(c)} km totali</span>
-        <span>${c.tappe.length} tappe</span>
-      </div>
-      <div class="cc-desc">${c.descrizione}</div>
     `;
-    card.addEventListener('click', () => apriDettaglio(c.id));
-    list.appendChild(card);
+    tile.addEventListener('click', () => apriDettaglio(c.id));
+    list.appendChild(tile);
   });
 }
 
