@@ -136,3 +136,75 @@ const STRUTTURE = {
     localStorage.removeItem(this.KEY_CACHE);
   }
 };
+
+/* Ricerca punti acqua (fontanelle, sorgenti, fontane pubbliche) vicino a una tappa,
+   stesso motore (Overpass API di OpenStreetMap), utile specialmente d'estate o su tappe lunghe. */
+const ACQUA = {
+  KEY_CACHE: 'cammini_acqua_v1',
+  ENDPOINT: 'https://overpass-api.de/api/interpreter',
+  RAGGIO_DEFAULT: 3000,
+  TAG_QUERY: [
+    ['amenity', 'drinking_water'],
+    ['natural', 'spring'],
+    ['man_made', 'water_tap'],
+    ['man_made', 'water_well'],
+  ],
+
+  _cache() {
+    try { return JSON.parse(localStorage.getItem(this.KEY_CACHE)) || {}; }
+    catch (e) { return {}; }
+  },
+  _saveCache(cache) { localStorage.setItem(this.KEY_CACHE, JSON.stringify(cache)); },
+  _chiave(camminoId, tappaN) { return `${camminoId}__tappa${tappaN}`; },
+  getSalvate(camminoId, tappaN) { return this._cache()[this._chiave(camminoId, tappaN)] || null; },
+
+  _costruisciQuery(punti, raggio) {
+    const filtri = this.TAG_QUERY.map(([k, v]) => `["${k}"="${v}"]`);
+    let corpo = '[out:json][timeout:25];(';
+    for (const [lat, lon] of punti) {
+      for (const f of filtri) corpo += `node${f}(around:${raggio},${lat},${lon});`;
+    }
+    corpo += ');out;';
+    return corpo;
+  },
+
+  async cerca(camminoId, tappa, opzioni = {}) {
+    const raggio = opzioni.raggio || this.RAGGIO_DEFAULT;
+    const punti = [];
+    if (tappa.coordA) punti.push(tappa.coordA);
+    if (tappa.coordDa) punti.push(tappa.coordDa);
+    if (punti.length === 0) throw new Error('Questa tappa non ha coordinate geografiche.');
+
+    const res = await fetch(this.ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: this._costruisciQuery(punti, raggio)
+    });
+    if (!res.ok) throw new Error(`Overpass API ha risposto con errore ${res.status}.`);
+
+    const data = await res.json();
+    const tipoMap = { drinking_water: 'Fontanella', spring: 'Sorgente', water_tap: 'Rubinetto', water_well: 'Pozzo' };
+    const risultati = (data.elements || [])
+      .filter(el => el.lat != null && el.lon != null)
+      .map(el => ({
+        nome: (el.tags && (el.tags.name || el.tags['name:it'])) || tipoMap[(el.tags || {}).amenity || (el.tags || {}).natural || (el.tags || {})['man_made']] || 'Punto acqua',
+        lat: el.lat, lon: el.lon,
+        osmId: `node/${el.id}`
+      }));
+
+    const viste = new Set();
+    const uniche = risultati.filter(r => {
+      const k = `${r.lat.toFixed(4)}_${r.lon.toFixed(4)}`;
+      if (viste.has(k)) return false;
+      viste.add(k);
+      return true;
+    });
+
+    const cache = this._cache();
+    cache[this._chiave(camminoId, tappa.n)] = { cercatoIl: new Date().toISOString(), raggio, punti: uniche };
+    this._saveCache(cache);
+    return uniche;
+  },
+
+  reset() { localStorage.removeItem(this.KEY_CACHE); }
+};
