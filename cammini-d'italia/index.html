@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cammini d'Italia — Pianificatore offline</title>
+<meta name="description" content="Pianifica cammini e trail italiani, consulta le tappe, importa tracce GPX e usa l'app anche senza connessione.">
+<meta name="theme-color" content="#1F3A2E">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="blaze" aria-hidden="true"><span></span><span></span><span></span></span>
+    <h1>Cammini d'Italia</h1>
+  </div>
+  <div class="status-pill" id="connStatus">
+    <span class="dot" id="connDot"></span>
+    <span id="connText">Online</span>
+  </div>
+</header>
+
+<nav class="tabbar" role="tablist" aria-label="Sezioni">
+  <button class="tab active" data-tab="esplora" role="tab" aria-selected="true">Esplora</button>
+  <button class="tab" data-tab="pianifica" role="tab" aria-selected="false">Pianifica</button>
+  <button class="tab" data-tab="gpx" role="tab" aria-selected="false">Traccia GPX</button>
+  <button class="tab" data-tab="consigli" role="tab" aria-selected="false">Consigli</button>
+  <button class="tab" data-tab="dati" role="tab" aria-selected="false">Dati</button>
+</nav>
+
+<main id="app">
+
+  <!-- ESPLORA -->
+  <section class="panel active" id="panel-esplora">
+    <div class="hero">
+      <svg class="ridge" viewBox="0 0 800 120" preserveAspectRatio="none" aria-hidden="true">
+        <polyline points="0,110 60,70 120,95 180,40 240,80 300,20 360,60 420,30 480,75 540,45 600,90 660,55 720,85 800,50 800,120 0,120" />
+      </svg>
+      <p class="hero-kicker">Database di cammini e trail italiani</p>
+      <h2 class="hero-title">Dove ti portano i tuoi passi?</h2>
+      <p class="hero-sub">Sfoglia le tappe, pianifica il tuo itinerario e portalo con te anche senza rete.</p>
+    </div>
+
+    <div class="search-row">
+      <input type="search" id="searchInput" placeholder="Cerca un cammino, una regione, una tappa…" aria-label="Cerca">
+      <select id="filterTipo" aria-label="Filtra per tipo">
+        <option value="">Tutti i tipi</option>
+        <option value="religioso-storico">Religioso / storico</option>
+        <option value="trekking-storico">Trekking storico</option>
+        <option value="trekking-montagna">Trekking di montagna</option>
+        <option value="facile-media">Facile / media</option>
+      </select>
+    </div>
+
+    <div id="camminiList" class="cammini-grid"></div>
+  </section>
+
+  <!-- DETTAGLIO CAMMINO (overlay a scomparsa dentro esplora) -->
+  <section class="panel" id="panel-dettaglio">
+    <button class="back-btn" id="backFromDettaglio">← torna all'elenco</button>
+    <div id="dettaglioContent"></div>
+  </section>
+
+  <!-- PIANIFICA -->
+  <section class="panel" id="panel-pianifica">
+    <h2 class="section-title">Pianifica il tuo cammino</h2>
+    <p class="section-sub">Scegli un cammino, la data di partenza e il tuo ritmo: costruiamo l'itinerario giorno per giorno.</p>
+
+    <div class="planner-form">
+      <label>Cammino
+        <select id="plannerCammino"></select>
+      </label>
+      <label>Data di partenza
+        <input type="date" id="plannerData">
+      </label>
+      <label>Km medi al giorno desiderati
+        <input type="number" id="plannerRitmo" value="20" min="5" max="45">
+      </label>
+      <button class="btn-primary" id="plannerGenera">Genera itinerario</button>
+    </div>
+
+    <div id="plannerRisultato"></div>
+
+    <h3 class="section-title small">I tuoi itinerari salvati</h3>
+    <div id="plannerSalvati" class="saved-list"></div>
+  </section>
+
+  <!-- GPX -->
+  <section class="panel" id="panel-gpx">
+    <h2 class="section-title">Visualizza una traccia GPX</h2>
+    <p class="section-sub">Scarica il file GPX da Wikiloc, dal sito ufficiale del cammino o dal CAI, poi caricalo qui: la traccia resta salvata sul dispositivo e resta consultabile offline.</p>
+
+    <div class="gpx-upload">
+      <label class="upload-box" for="gpxFile">
+        <i class="upload-icon" aria-hidden="true">⤒</i>
+        <span>Tocca per caricare un file .gpx</span>
+        <input type="file" id="gpxFile" accept=".gpx" hidden>
+      </label>
+      <a class="ext-link" href="https://www.wikiloc.com" target="_blank" rel="noopener">Cerca tracce su Wikiloc ↗</a>
+    </div>
+
+    <div id="gpxInfo"></div>
+    <div id="gpxMap" class="map-box"></div>
+
+    <h3 class="section-title small">Tracce salvate</h3>
+    <div id="gpxSalvati" class="saved-list"></div>
+  </section>
+
+  <!-- CONSIGLI -->
+  <section class="panel" id="panel-consigli">
+    <h2 class="section-title">Consigli per il cammino</h2>
+
+    <details class="advice-card" open>
+      <summary>Zaino e attrezzatura essenziale</summary>
+      <ul>
+        <li>Scarponi o scarpe da trekking già rodati, mai nuovi al primo giorno.</li>
+        <li>Zaino 30-40L per cammini di più giorni con appoggio bagagli, 45-55L se porti tutto tu.</li>
+        <li>Strato a cipolla: traspirante, isolante, antipioggia. In montagna anche in estate porta un pile.</li>
+        <li>Bastoncini da trekking: riducono il carico su ginocchia e schiena in discesa.</li>
+        <li>Kit pronto soccorso con cerotti per vesciche, disinfettante, farmaci personali.</li>
+        <li>Frontalino, power bank, borraccia da almeno 1,5 L o sistema di idratazione.</li>
+      </ul>
+    </details>
+
+    <details class="advice-card">
+      <summary>Sicurezza in montagna e sui cammini</summary>
+      <ul>
+        <li>Controlla sempre il meteo delle 48h prima di partire, soprattutto in quota (temporali pomeridiani in estate).</li>
+        <li>Comunica a qualcuno il tuo itinerario e l'orario previsto di arrivo in tappa.</li>
+        <li>Scarica la traccia GPX offline prima di partire: in molte zone di montagna non c'è campo.</li>
+        <li>Parti presto la mattina, specialmente su tappe con dislivello importante o esposizione al sole.</li>
+        <li>Numero unico di emergenza in Italia: 112.</li>
+        <li>Su tratti attrezzati o ferrate verifica sempre la necessità di kit da ferrata e casco.</li>
+      </ul>
+    </details>
+
+    <details class="advice-card">
+      <summary>Organizzazione delle tappe</summary>
+      <ul>
+        <li>Per i cammini religiosi (Francigena, Cammino di Francesco) informati su ostelli e strutture per pellegrini: spesso richiedono la credenziale del cammino.</li>
+        <li>Per i trekking in rifugio (es. Alta Via 1) prenota con largo anticipo in alta stagione: molti rifugi si riempiono mesi prima.</li>
+        <li>Considera una tappa di riposo ogni 5-7 giorni sui cammini lunghi.</li>
+        <li>Verifica sempre i punti acqua e i negozi lungo la tappa, specialmente in Puglia, Basilicata e Val d'Orcia dove possono essere radi.</li>
+      </ul>
+    </details>
+
+    <details class="advice-card">
+      <summary>Dove trovare informazioni affidabili</summary>
+      <ul>
+        <li><a href="https://www.cai.it" target="_blank" rel="noopener">Club Alpino Italiano (CAI)</a> — rifugi, sentieri, bollettini valanghe e meteo di montagna.</li>
+        <li><a href="https://www.sentieroitalia.cai.it" target="_blank" rel="noopener">Sentiero Italia CAI</a> — il grande cammino che attraversa l'Italia.</li>
+        <li><a href="https://www.viefrancigene.org" target="_blank" rel="noopener">Associazione Europea Vie Francigene</a> — tappe ufficiali e credenziale del pellegrino.</li>
+        <li><a href="https://www.wikiloc.com" target="_blank" rel="noopener">Wikiloc</a> — tracce GPX condivise dalla community, utili come riscontro ma da verificare.</li>
+        <li>Bollettino meteo di montagna: <a href="https://www.mountain-forecast.com" target="_blank" rel="noopener">Mountain-Forecast</a> o il servizio meteo regionale della zona.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- DATI -->
+  <section class="panel" id="panel-dati">
+    <h2 class="section-title">Database e funzionamento offline</h2>
+    <p class="section-sub">L'app funziona anche senza connessione dopo il primo caricamento: la pagina, lo stile e il database dei cammini vengono salvati sul dispositivo.</p>
+
+    <div class="data-card">
+      <h3>Database cammini</h3>
+      <p>Versione <span id="dbVersion">—</span>, aggiornato al <span id="dbUpdated">—</span>.</p>
+      <div class="btn-row">
+        <button class="btn-secondary" id="btnExportDb">Scarica database (JSON)</button>
+        <label class="btn-secondary file-btn">Importa database aggiornato
+          <input type="file" id="importDbFile" accept=".json" hidden>
+        </label>
+      </div>
+    </div>
+
+    <div class="data-card">
+      <h3>I tuoi dati personali</h3>
+      <p>Itinerari pianificati e tracce GPX caricate, salvati solo su questo dispositivo.</p>
+      <div class="btn-row">
+        <button class="btn-secondary" id="btnExportUser">Esporta i miei dati</button>
+        <label class="btn-secondary file-btn">Importa i miei dati
+          <input type="file" id="importUserFile" accept=".json" hidden>
+        </label>
+        <button class="btn-danger" id="btnResetUser">Cancella i miei dati</button>
+      </div>
+    </div>
+
+    <div class="data-card">
+      <h3>Stato app installabile</h3>
+      <p id="pwaStatusText">Puoi aggiungere questa app alla schermata home dal menu del browser per usarla come un'app nativa, offline.</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="js/db.js"></script>
+<script src="js/gpx.js"></script>
+<script src="js/strutture.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
