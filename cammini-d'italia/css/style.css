@@ -151,6 +151,17 @@ main{max-width:760px;margin:0 auto;padding:0 1rem;}
 .poi-nome{font-weight:600;color:var(--pine);}
 .poi-desc{color:var(--ink-soft);font-size:.76rem;}
 
+.dett-azioni-custom{display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap;}
+.edit-box{background:var(--paper-2);border:1px solid var(--line-strong);border-radius:12px;padding:1rem;margin-top:1rem;}
+.edit-tappa{display:flex;gap:.5rem;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--line);}
+.edit-tappa:last-of-type{border-bottom:none;}
+.edit-tappa-n{width:1.6rem;height:1.6rem;border-radius:50%;background:var(--segnavia);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;}
+.edit-tappa-fields{display:flex;flex-wrap:wrap;gap:.4rem;flex:1;align-items:center;}
+.edit-tappa-fields input[type=text]{flex:1;min-width:90px;}
+.edit-tappa-fields input[type=number]{width:70px;}
+.edit-tappa-fields input,.edit-tappa-fields select{padding:.35rem .5rem;border:1px solid var(--line-strong);border-radius:6px;background:#fff;font-family:var(--font-body);font-size:.8rem;}
+.edit-azioni{display:flex;gap:.6rem;margin-top:1rem;}
+
 .section-title{font-size:1.25rem;margin-bottom:.3rem;}
 .section-title.small{font-size:1.05rem;margin-top:1.6rem;}
 .section-sub{color:var(--ink-soft);font-size:.88rem;margin:0 0 1rem;}
