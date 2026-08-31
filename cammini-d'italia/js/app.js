@@ -114,7 +114,7 @@ function apriDettaglio(id) {
     </div>
     <div class="dett-links">
       ${c.sitoUfficiale ? `<a href="${c.sitoUfficiale}" target="_blank" rel="noopener">Sito ufficiale ↗</a>` : ''}
-      ${c.wikilocRicerca ? `<a href="${c.wikilocRicerca}" target="_blank" rel="noopener">Cerca tracce su Wikiloc ↗</a>` : ''}
+      ${c.wikilocRicerca ? `<a href="${c.wikilocRicerca}" target="_blank" rel="noopener">${c.personalizzato ? 'Vedi la traccia originale ↗' : 'Cerca tracce su Wikiloc ↗'}</a>` : ''}
     </div>
     <div class="cc-stats" style="margin-bottom:1rem">
       <span>${totaleKm(c)} km totali</span>
@@ -128,6 +128,11 @@ function apriDettaglio(id) {
             <div class="stage-route">${t.da} → ${t.a}</div>
             <div class="stage-meta">${t.km} km · ↑${t.dislivelloSalita}m ↓${t.dislivelloDiscesa}m · ${t.difficolta}</div>
             <div class="stage-note">${t.note || ''}</div>
+            ${t.puntiInteresse && t.puntiInteresse.length ? `
+              <div class="poi-list poi-list-compact">
+                ${t.puntiInteresse.map(w => `<div class="poi-item"><span class="poi-nome">📍 ${w.nome}</span>${w.descrizione ? `<span class="poi-desc">${w.descrizione}</span>` : ''}</div>`).join('')}
+              </div>
+            ` : ''}
             ${t.coordA ? `
               <div class="stage-strutture">
                 <button class="btn-strutture" data-cammino="${c.id}" data-tappa="${t.n}">🏠 Cerca strutture vicino all'arrivo</button>
@@ -331,7 +336,19 @@ function mostraTraccia(parsed) {
       <span>↓ ${parsed.stats.descent} m</span>
       ${parsed.stats.minEle != null ? `<span>${parsed.stats.minEle}–${parsed.stats.maxEle} m slm</span>` : ''}
     </div>
-    <button class="btn-secondary" id="btnSalvaGpx" style="margin-top:.6rem">Salva traccia sul dispositivo</button>
+    ${parsed.sourceUrl ? `<p class="section-sub" style="margin-top:.4rem"><a href="${parsed.sourceUrl}" target="_blank" rel="noopener">Apri la pagina originale della traccia ↗</a></p>` : ''}
+    ${parsed.waypoints && parsed.waypoints.length ? `
+      <h4 class="section-title small" style="margin-top:.9rem;font-size:.92rem">Punti di interesse rilevati (${parsed.waypoints.length})</h4>
+      <div class="poi-list">
+        ${parsed.waypoints.map(w => `
+          <div class="poi-item">
+            <span class="poi-nome">📍 ${w.nome}</span>
+            ${w.descrizione ? `<span class="poi-desc">${w.descrizione}</span>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    ` : '<p class="empty-note" style="margin-top:.6rem">Nessun punto di interesse (waypoint) nel file GPX: solo il tracciato.</p>'}
+    <button class="btn-secondary" id="btnSalvaGpx" style="margin-top:.9rem">Salva traccia sul dispositivo</button>
   `;
 
   $('#btnSalvaGpx').addEventListener('click', () => {
@@ -341,6 +358,8 @@ function mostraTraccia(parsed) {
       nome: parsed.name,
       stats: parsed.stats,
       points: parsed.points,
+      waypoints: parsed.waypoints || [],
+      sourceUrl: parsed.sourceUrl || null,
       salvato: new Date().toISOString()
     });
     DB.saveGpxTracks(tracks);
@@ -357,6 +376,9 @@ function mostraTraccia(parsed) {
     const latlngs = parsed.points.map(p => [p.lat, p.lon]);
     leafletLayer = L.polyline(latlngs, { color: '#B23A2E', weight: 4 }).addTo(leafletMap);
     leafletMap.fitBounds(leafletLayer.getBounds(), { padding: [20, 20] });
+    (parsed.waypoints || []).forEach(w => {
+      L.marker([w.lat, w.lon]).addTo(leafletMap).bindPopup(`<strong>${w.nome}</strong>${w.descrizione ? '<br>' + w.descrizione : ''}`);
+    });
   } catch (e) {
     console.warn('Mappa non disponibile:', e.message);
   }
@@ -370,7 +392,7 @@ function renderFormNuovoCammino(parsed) {
   const cont = $('#gpxToCammino');
   cont.innerHTML = `
     <h3 class="section-title small">Trasforma in un cammino</h3>
-    <p class="section-sub">Aggiungi questa traccia come nuovo cammino personalizzato (o come nuova tappa di uno già creato): comparirà tra le tile in Esplora, con ricerca strutture inclusa.</p>
+    <p class="section-sub">Aggiungi questa traccia come nuovo cammino personalizzato (o come nuova tappa di uno già creato): comparirà tra le tile in Esplora, con ricerca strutture inclusa${parsed.sourceUrl ? ' e link diretto alla pagina originale' : ''}${parsed.waypoints && parsed.waypoints.length ? ', punti di interesse conservati' : ''}.</p>
     <div class="planner-form">
       <label>Aggiungi a
         <select id="cammSelTarget">
@@ -379,7 +401,7 @@ function renderFormNuovoCammino(parsed) {
         </select>
       </label>
       <label id="cammNomeWrap">Nome del cammino
-        <input type="text" id="cammNomeInput" placeholder="Es. Il mio giro delle colline">
+        <input type="text" id="cammNomeInput" placeholder="Es. Il mio giro delle colline" value="${parsed.name || ''}">
       </label>
       <label>Nome tappa — Partenza
         <input type="text" id="cammTappaDa" placeholder="Partenza" value="Partenza">
@@ -410,7 +432,8 @@ function renderFormNuovoCammino(parsed) {
       difficolta: parsed.stats.ascent > 800 ? 'impegnativa' : parsed.stats.distanceKm > 22 ? 'media' : 'facile',
       note: `Tappa creata da traccia GPX "${parsed.name}".`,
       coordDa: [primoPunto.lat, primoPunto.lon],
-      coordA: [ultimoPunto.lat, ultimoPunto.lon]
+      coordA: [ultimoPunto.lat, ultimoPunto.lon],
+      puntiInteresse: parsed.waypoints || []
     };
 
     let messaggio;
@@ -424,7 +447,7 @@ function renderFormNuovoCammino(parsed) {
         difficoltaGenerale: tappa.difficolta,
         descrizione: 'Cammino creato da una traccia GPX personale, non fa parte del database ufficiale.',
         sitoUfficiale: '',
-        wikilocRicerca: '',
+        wikilocRicerca: parsed.sourceUrl || '',
         segnaletica: '',
         personalizzato: true,
         tappe: [{ n: 1, ...tappa }]
@@ -433,6 +456,15 @@ function renderFormNuovoCammino(parsed) {
       messaggio = `Fatto! "${nome}" è stato aggiunto alle tue tile in Esplora.`;
     } else {
       DB.aggiungiTappaACustomCammino(target, tappa);
+      // Se il cammino non aveva ancora un link alla traccia originale, lo aggiunge ora
+      if (parsed.sourceUrl) {
+        const list = DB.getCustomCammini();
+        const c2 = list.find(x => x.id === target);
+        if (c2 && !c2.wikilocRicerca) {
+          c2.wikilocRicerca = parsed.sourceUrl;
+          DB.saveCustomCammini(list);
+        }
+      }
       messaggio = 'Fatto! Nuova tappa aggiunta al cammino personalizzato.';
     }
 
@@ -474,7 +506,7 @@ function renderGpxSalvati() {
   `).join('');
   $$('.load-gpx').forEach(btn => btn.addEventListener('click', () => {
     const t = DB.getGpxTracks().find(x => x.id === btn.dataset.id);
-    if (t) mostraTraccia({ name: t.nome, points: t.points, stats: t.stats });
+    if (t) mostraTraccia({ name: t.nome, points: t.points, stats: t.stats, waypoints: t.waypoints || [], sourceUrl: t.sourceUrl || null });
   }));
   $$('.del-gpx').forEach(btn => btn.addEventListener('click', () => {
     DB.saveGpxTracks(DB.getGpxTracks().filter(x => x.id !== btn.dataset.id));
