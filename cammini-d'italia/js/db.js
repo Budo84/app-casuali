@@ -2,32 +2,47 @@
 
 const DB = {
   KEY_DB: 'cammini_db_v1',
+  KEY_CUSTOM: 'cammini_db_custom_v1', // impostato a '1' solo se l'utente importa un database personalizzato
   KEY_PLANS: 'cammini_plans_v1',
   KEY_GPX: 'cammini_gpx_v1',
 
   async load() {
-    // 1. prova la copia salvata localmente (funziona offline e con import personalizzati)
-    const local = localStorage.getItem(this.KEY_DB);
-    if (local) {
-      try { return JSON.parse(local); } catch (e) { /* copia corrotta, ricarica */ }
+    const isCustom = localStorage.getItem(this.KEY_CUSTOM) === '1';
+    let local = null;
+    try { local = JSON.parse(localStorage.getItem(this.KEY_DB)); } catch (e) { local = null; }
+
+    // Se l'utente ha importato un database personalizzato, rispettalo sempre e non sovrascriverlo
+    if (isCustom && local) return local;
+
+    // Altrimenti confronta la versione del file incluso nell'app con quella salvata:
+    // così chi ha già usato l'app riceve automaticamente nuovi cammini aggiunti negli aggiornamenti.
+    try {
+      const res = await fetch('data/db.json', { cache: 'no-store' });
+      const fresh = await res.json();
+      if (!local || (fresh.versione || 0) > (local.versione || 0)) {
+        localStorage.setItem(this.KEY_DB, JSON.stringify(fresh));
+        return fresh;
+      }
+      return local;
+    } catch (e) {
+      // offline al primo avvio o rete assente: usa la copia salvata se c'è
+      if (local) return local;
+      throw e;
     }
-    // 2. altrimenti scarica il file incluso nell'app
-    const res = await fetch('data/db.json');
-    const data = await res.json();
-    localStorage.setItem(this.KEY_DB, JSON.stringify(data));
-    return data;
   },
 
   async refreshFromFile() {
-    // forza il ricaricamento dal file dell'app (utile dopo un aggiornamento dell'app)
+    // forza il ricaricamento dal file dell'app, ignorando eventuale database personalizzato importato
     const res = await fetch('data/db.json', { cache: 'no-store' });
     const data = await res.json();
     localStorage.setItem(this.KEY_DB, JSON.stringify(data));
+    localStorage.removeItem(this.KEY_CUSTOM);
     return data;
   },
 
   importDb(jsonObj) {
     localStorage.setItem(this.KEY_DB, JSON.stringify(jsonObj));
+    localStorage.setItem(this.KEY_CUSTOM, '1');
   },
 
   getPlans() {
