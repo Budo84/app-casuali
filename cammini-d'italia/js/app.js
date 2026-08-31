@@ -43,6 +43,7 @@ const ICONE_TIPO = {
   'cammino-storico-religioso': '<svg viewBox="0 0 24 24"><path d="M12 2v20M6 7h12M8 12h8"/></svg>',
   'religioso-storico': '<svg viewBox="0 0 24 24"><path d="M12 2v20M6 7h12M8 12h8"/></svg>',
   'trekking-storico': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 6v6l4 2"/></svg>',
+  'personalizzato': '<svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
   'default': '<svg viewBox="0 0 24 24"><path d="M4 18l6-12 4 7 2-4 4 9H4z"/></svg>'
 };
 function iconaTipo(tipo) {
@@ -82,6 +83,7 @@ function renderLista() {
       <div class="tile-visual ${classeTipo(c.tipo)}">
         ${iconaTipo(c.tipo)}
         <span class="tile-badge">${difficoltaBadge(c.difficoltaGenerale)}</span>
+        ${c.personalizzato ? '<span class="tile-mine">tuo</span>' : ''}
       </div>
       <div class="tile-body">
         <div class="tile-name">${c.nome}</div>
@@ -105,14 +107,14 @@ function apriDettaglio(id) {
   const cont = $('#dettaglioContent');
   cont.innerHTML = `
     <div class="dett-header">
-      <div class="cc-region">${c.regioni.join(' · ')} — ${difficoltaBadge(c.difficoltaGenerale)}</div>
+      <div class="cc-region">${c.regioni.join(' · ')} — ${difficoltaBadge(c.difficoltaGenerale)} ${c.personalizzato ? '<span class="badge">tuo cammino</span>' : ''}</div>
       <h2 class="hero-title" style="color:var(--pine)">${c.nome}</h2>
       <p class="section-sub">${c.descrizione}</p>
       <p class="section-sub"><strong>Segnaletica:</strong> ${c.segnaletica || 'verificare sul sito ufficiale'}</p>
     </div>
     <div class="dett-links">
-      <a href="${c.sitoUfficiale}" target="_blank" rel="noopener">Sito ufficiale ↗</a>
-      <a href="${c.wikilocRicerca}" target="_blank" rel="noopener">Cerca tracce su Wikiloc ↗</a>
+      ${c.sitoUfficiale ? `<a href="${c.sitoUfficiale}" target="_blank" rel="noopener">Sito ufficiale ↗</a>` : ''}
+      ${c.wikilocRicerca ? `<a href="${c.wikilocRicerca}" target="_blank" rel="noopener">Cerca tracce su Wikiloc ↗</a>` : ''}
     </div>
     <div class="cc-stats" style="margin-bottom:1rem">
       <span>${totaleKm(c)} km totali</span>
@@ -136,6 +138,7 @@ function apriDettaglio(id) {
         </div>
       `).join('')}
     </div>
+    ${c.personalizzato ? `<button class="btn-danger" id="btnEliminaCammino" style="margin-top:1.2rem">Elimina questo cammino personalizzato</button>` : ''}
   `;
   $$('.panel').forEach(p => p.classList.remove('active'));
   $('#panel-dettaglio').classList.add('active');
@@ -149,6 +152,17 @@ function apriDettaglio(id) {
   cont.querySelectorAll('.btn-strutture').forEach(btn => {
     btn.addEventListener('click', () => cercaStruttureTappa(btn.dataset.cammino, parseInt(btn.dataset.tappa, 10)));
   });
+
+  if (c.personalizzato) {
+    $('#btnEliminaCammino').addEventListener('click', () => {
+      if (confirm(`Eliminare "${c.nome}" dalle tue tile? L'azione non è reversibile.`)) {
+        DB.eliminaCustomCammino(c.id);
+        integraCamminiPersonalizzati();
+        switchTab('esplora');
+        renderLista();
+      }
+    });
+  }
 }
 $('#backFromDettaglio').addEventListener('click', () => switchTab('esplora'));
 
@@ -308,12 +322,7 @@ function initMap() {
 }
 
 function mostraTraccia(parsed) {
-  initMap();
-  if (leafletLayer) leafletMap.removeLayer(leafletLayer);
-  const latlngs = parsed.points.map(p => [p.lat, p.lon]);
-  leafletLayer = L.polyline(latlngs, { color: '#B23A2E', weight: 4 }).addTo(leafletMap);
-  leafletMap.fitBounds(leafletLayer.getBounds(), { padding: [20, 20] });
-
+  // Info e form di conversione in cammino: sempre mostrati, indipendentemente dalla mappa
   $('#gpxInfo').innerHTML = `
     <h3 class="section-title small" style="margin-top:.4rem">${parsed.name}</h3>
     <div class="gpx-stats">
@@ -336,6 +345,102 @@ function mostraTraccia(parsed) {
     });
     DB.saveGpxTracks(tracks);
     renderGpxSalvati();
+  });
+
+  renderFormNuovoCammino(parsed);
+
+  // La mappa (Leaflet, richiede la libreria da CDN) è un arricchimento visivo:
+  // se non si carica (rete assente o CDN irraggiungibile) il resto della funzione resta comunque utilizzabile.
+  try {
+    initMap();
+    if (leafletLayer) leafletMap.removeLayer(leafletLayer);
+    const latlngs = parsed.points.map(p => [p.lat, p.lon]);
+    leafletLayer = L.polyline(latlngs, { color: '#B23A2E', weight: 4 }).addTo(leafletMap);
+    leafletMap.fitBounds(leafletLayer.getBounds(), { padding: [20, 20] });
+  } catch (e) {
+    console.warn('Mappa non disponibile:', e.message);
+  }
+}
+
+function renderFormNuovoCammino(parsed) {
+  const primoPunto = parsed.points[0];
+  const ultimoPunto = parsed.points[parsed.points.length - 1];
+  const camminiPersonalizzatiEsistenti = DB.getCustomCammini();
+
+  const cont = $('#gpxToCammino');
+  cont.innerHTML = `
+    <h3 class="section-title small">Trasforma in un cammino</h3>
+    <p class="section-sub">Aggiungi questa traccia come nuovo cammino personalizzato (o come nuova tappa di uno già creato): comparirà tra le tile in Esplora, con ricerca strutture inclusa.</p>
+    <div class="planner-form">
+      <label>Aggiungi a
+        <select id="cammSelTarget">
+          <option value="__nuovo__">➕ Crea un nuovo cammino</option>
+          ${camminiPersonalizzatiEsistenti.map(c => `<option value="${c.id}">${c.nome}</option>`).join('')}
+        </select>
+      </label>
+      <label id="cammNomeWrap">Nome del cammino
+        <input type="text" id="cammNomeInput" placeholder="Es. Il mio giro delle colline">
+      </label>
+      <label>Nome tappa — Partenza
+        <input type="text" id="cammTappaDa" placeholder="Partenza" value="Partenza">
+      </label>
+      <label>Nome tappa — Arrivo
+        <input type="text" id="cammTappaA" placeholder="Arrivo" value="Arrivo">
+      </label>
+      <button class="btn-primary" id="btnCreaCammino">Aggiungi alle tue tile</button>
+      <p class="empty-note" id="cammFeedback"></p>
+    </div>
+  `;
+
+  const selTarget = $('#cammSelTarget');
+  const nomeWrap = $('#cammNomeWrap');
+  selTarget.addEventListener('change', () => {
+    nomeWrap.style.display = selTarget.value === '__nuovo__' ? 'flex' : 'none';
+  });
+
+  $('#btnCreaCammino').addEventListener('click', () => {
+    const target = selTarget.value;
+    const da = ($('#cammTappaDa').value || 'Partenza').trim();
+    const a = ($('#cammTappaA').value || 'Arrivo').trim();
+    const tappa = {
+      da, a,
+      km: parsed.stats.distanceKm,
+      dislivelloSalita: parsed.stats.ascent,
+      dislivelloDiscesa: parsed.stats.descent,
+      difficolta: parsed.stats.ascent > 800 ? 'impegnativa' : parsed.stats.distanceKm > 22 ? 'media' : 'facile',
+      note: `Tappa creata da traccia GPX "${parsed.name}".`,
+      coordDa: [primoPunto.lat, primoPunto.lon],
+      coordA: [ultimoPunto.lat, ultimoPunto.lon]
+    };
+
+    let messaggio;
+    if (target === '__nuovo__') {
+      const nome = ($('#cammNomeInput').value || parsed.name || 'Nuovo cammino').trim();
+      const nuovo = {
+        id: 'personalizzato_' + Date.now(),
+        nome,
+        tipo: 'personalizzato',
+        regioni: ['Personalizzato'],
+        difficoltaGenerale: tappa.difficolta,
+        descrizione: 'Cammino creato da una traccia GPX personale, non fa parte del database ufficiale.',
+        sitoUfficiale: '',
+        wikilocRicerca: '',
+        segnaletica: '',
+        personalizzato: true,
+        tappe: [{ n: 1, ...tappa }]
+      };
+      DB.addCustomCammino(nuovo);
+      messaggio = `Fatto! "${nome}" è stato aggiunto alle tue tile in Esplora.`;
+    } else {
+      DB.aggiungiTappaACustomCammino(target, tappa);
+      messaggio = 'Fatto! Nuova tappa aggiunta al cammino personalizzato.';
+    }
+
+    integraCamminiPersonalizzati();
+    renderLista();
+    popolaSelectPianificatore();
+    renderFormNuovoCammino(parsed); // ricostruisce il form con l'elenco aggiornato dei cammini personalizzati
+    $('#cammFeedback').textContent = messaggio;
   });
 }
 
@@ -398,6 +503,7 @@ $('#importDbFile').addEventListener('change', async e => {
     if (!obj.cammini) throw new Error('Il file non contiene un database valido.');
     DB.importDb(obj);
     CAMMINI = obj;
+    integraCamminiPersonalizzati();
     renderLista(); popolaSelectPianificatore(); renderInfoDb();
   } catch (err) { alert('Errore importazione: ' + err.message); }
 });
@@ -408,14 +514,16 @@ $('#importUserFile').addEventListener('change', async e => {
   try {
     const obj = JSON.parse(await file.text());
     DB.importUserData(obj);
-    renderPianiSalvati(); renderGpxSalvati();
+    integraCamminiPersonalizzati();
+    renderPianiSalvati(); renderGpxSalvati(); renderLista();
   } catch (err) { alert('Errore importazione: ' + err.message); }
 });
 
 $('#btnResetUser').addEventListener('click', () => {
-  if (confirm('Cancellare tutti gli itinerari e le tracce salvate su questo dispositivo? L\'azione non è reversibile.')) {
+  if (confirm('Cancellare tutti gli itinerari, le tracce e i cammini personalizzati salvati su questo dispositivo? L\'azione non è reversibile.')) {
     DB.resetUserData();
-    renderPianiSalvati(); renderGpxSalvati();
+    integraCamminiPersonalizzati();
+    renderPianiSalvati(); renderGpxSalvati(); renderLista();
   }
 });
 
@@ -429,9 +537,17 @@ $('#searchInput').addEventListener('input', renderLista);
 $('#filterTipo').addEventListener('change', renderLista);
 
 /* ---------- Avvio ---------- */
+function integraCamminiPersonalizzati() {
+  // Riparte sempre dai cammini ufficiali del database caricato, poi aggiunge
+  // in coda i cammini creati dall'utente da tracce GPX (salvati a parte).
+  const ufficiali = CAMMINI.cammini.filter(c => !c.personalizzato);
+  CAMMINI.cammini = [...ufficiali, ...DB.getCustomCammini()];
+}
+
 async function init() {
   updateConnStatus();
   CAMMINI = await DB.load();
+  integraCamminiPersonalizzati();
   renderLista();
   popolaSelectPianificatore();
   renderPianiSalvati();
