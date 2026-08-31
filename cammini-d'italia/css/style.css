@@ -77,12 +77,23 @@ main{max-width:760px;margin:0 auto;padding:0 1rem;}
 }
 .search-row input{flex:1;min-width:0;}
 
-.cammini-grid{display:flex;flex-direction:column;gap:.7rem;}
-.cammino-card{
-  background:var(--paper-2);border:1px solid var(--line);border-radius:14px;
-  padding:1rem 1.1rem;cursor:pointer;transition:border-color .15s;
+.cammini-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:.8rem;}
+.cammino-tile{
+  background:var(--paper-2);border:1px solid var(--line);border-radius:16px;
+  padding:0;cursor:pointer;transition:border-color .15s, transform .1s;overflow:hidden;
+  display:flex;flex-direction:column;
 }
-.cammino-card:active{border-color:var(--segnavia);}
+.cammino-tile:active{border-color:var(--segnavia);transform:scale(.98);}
+.tile-visual{
+  height:78px;display:flex;align-items:center;justify-content:center;position:relative;
+}
+.tile-visual svg{width:38px;height:38px;}
+.tile-badge{position:absolute;top:.4rem;right:.4rem;}
+.tile-body{padding:.7rem .8rem .9rem;flex:1;display:flex;flex-direction:column;}
+.tile-name{font-family:var(--font-display);font-size:.95rem;font-weight:600;line-height:1.2;margin-bottom:.25rem;}
+.tile-region{font-size:.72rem;color:var(--ink-soft);margin-bottom:.5rem;}
+.tile-stats{display:flex;gap:.7rem;font-family:var(--font-mono);font-size:.72rem;color:var(--pine-light);margin-top:auto;}
+
 .cc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem;}
 .cc-name{font-family:var(--font-display);font-size:1.05rem;font-weight:600;margin-bottom:.2rem;}
 .cc-region{font-size:.78rem;color:var(--ink-soft);}
@@ -92,6 +103,18 @@ main{max-width:760px;margin:0 auto;padding:0 1rem;}
 .badge.diff-facile{background:#DCEBDD;color:#2C5C34;}
 .badge.diff-media{background:#F4E6C7;color:#8A5A0B;}
 .badge.diff-impegnativa{background:#F3D9D5;color:#8A2A20;}
+
+@media (max-width:420px){
+  .cammini-grid{grid-template-columns:repeat(auto-fill, minmax(130px, 1fr));}
+}
+
+/* Sfondo colorato della tile per tipo di cammino */
+.tile-visual.tipo-trekking-montagna{background:linear-gradient(135deg, var(--pine), var(--pine-light));}
+.tile-visual.tipo-cammino-storico-religioso{background:linear-gradient(135deg, var(--segnavia), #8A2A20);}
+.tile-visual.tipo-religioso-storico{background:linear-gradient(135deg, var(--segnavia), #8A2A20);}
+.tile-visual.tipo-trekking-storico{background:linear-gradient(135deg, var(--ochre), #8A5A0B);}
+.tile-visual.tipo-default{background:linear-gradient(135deg, var(--pine-light), var(--ink-soft));}
+.tile-visual svg{fill:none;stroke:#fff;stroke-width:1.6;}
 
 .back-btn{background:none;border:none;color:var(--pine);font-weight:600;font-size:.9rem;padding:0;margin-bottom:1rem;cursor:pointer;}
 
