@@ -6,7 +6,7 @@ Web app statica (HTML/CSS/JS puro, nessun backend) per esplorare cammini e trail
 
 - **Esplora**: elenco di cammini con tappe, km, dislivelli, difficoltà (cammini italiani più il Cammino di Santiago).
 - **Pianifica**: genera un itinerario giorno per giorno in base al tuo ritmo di marcia, con data di partenza; salva i piani sul dispositivo.
-- **Traccia GPX**: carica un file `.gpx` (scaricato ad es. da Wikiloc, dal sito ufficiale del cammino o dal CAI) e visualizzalo su mappa con statistiche di distanza e dislivello.
+- **Traccia GPX**: carica un file `.gpx` (scaricato ad es. da Wikiloc, dal sito ufficiale del cammino o dal CAI) e visualizzalo su mappa con statistiche di distanza e dislivello. Da ogni traccia caricata puoi creare un **cammino personalizzato**, che compare tra le tile in Esplora esattamente come i cammini ufficiali (con ricerca strutture inclusa), oppure aggiungerla come nuova tappa a un cammino personalizzato già creato in precedenza.
 - **Strutture ricettive**: per ogni tappa con coordinate, un pulsante "Cerca strutture vicino all'arrivo" interroga OpenStreetMap (Overpass API) e mostra hotel, ostelli, B&B, agriturismi, campeggi e rifugi nel raggio di 3 km, con indirizzo, telefono e sito quando disponibili. I risultati vengono salvati sul dispositivo per essere consultati anche offline.
 - **Consigli**: zaino, sicurezza in montagna, organizzazione delle tappe, link a fonti ufficiali (CAI, Vie Francigene, Wikiloc).
 - **Dati**: esporta/importa il database dei cammini e i tuoi dati personali in JSON; funziona come PWA installabile e offline.
@@ -15,7 +15,7 @@ Web app statica (HTML/CSS/JS puro, nessun backend) per esplorare cammini e trail
 
 Un *service worker* (`service-worker.js`) mette in cache l'intera app (HTML, CSS, JS, il database `data/db.json`) al primo caricamento. Da quel momento l'app si apre e resta utilizzabile anche senza rete. Le tile della mappa (OpenStreetMap) e la ricerca strutture (Overpass API) richiedono connessione al momento della richiesta; le tile già visitate e le strutture già cercate restano disponibili offline.
 
-I tuoi itinerari pianificati, le tracce GPX caricate e le strutture ricettive trovate sono salvati in `localStorage`, quindi restano sul dispositivo anche offline.
+I tuoi itinerari pianificati, le tracce GPX caricate, le strutture ricettive trovate e i cammini personalizzati creati dalle tue tracce sono salvati in `localStorage`, quindi restano sul dispositivo anche offline e sopravvivono agli aggiornamenti futuri del database ufficiale.
 
 ## Fonte dei dati
 
