@@ -38,6 +38,14 @@ function totaleKm(cammino) {
 }
 
 // Icona SVG semplice associata al tipo di cammino (nessuna immagine esterna: tutto inline, funziona offline)
+const OPZIONI_TIPO_CAMMINO = [
+  ['trekking-montagna', 'Trekking di montagna'],
+  ['religioso-storico', 'Cammino storico-religioso'],
+  ['trekking-storico', 'Trekking storico-culturale'],
+  ['personalizzato', 'Altro / personalizzato']
+];
+const OPZIONI_DIFFICOLTA = ['facile', 'media', 'impegnativa', 'molto impegnativa'];
+
 const ICONE_TIPO = {
   'trekking-montagna': '<svg viewBox="0 0 24 24"><path d="M3 20L9 8l4 6 2-3 6 9H3z"/><circle cx="18" cy="6" r="2"/></svg>',
   'cammino-storico-religioso': '<svg viewBox="0 0 24 24"><path d="M12 2v20M6 7h12M8 12h8"/></svg>',
@@ -143,7 +151,13 @@ function apriDettaglio(id) {
         </div>
       `).join('')}
     </div>
-    ${c.personalizzato ? `<button class="btn-danger" id="btnEliminaCammino" style="margin-top:1.2rem">Elimina questo cammino personalizzato</button>` : ''}
+    ${c.personalizzato ? `
+      <div class="dett-azioni-custom">
+        <button class="btn-secondary" id="btnModificaCammino">✏️ Modifica</button>
+        <button class="btn-danger" id="btnEliminaCammino">Elimina questo cammino personalizzato</button>
+      </div>
+    ` : ''}
+    <div id="modificaCamminoWrap"></div>
   `;
   $$('.panel').forEach(p => p.classList.remove('active'));
   $('#panel-dettaglio').classList.add('active');
@@ -167,9 +181,92 @@ function apriDettaglio(id) {
         renderLista();
       }
     });
+    $('#btnModificaCammino').addEventListener('click', () => renderModificaCammino(c));
   }
 }
 $('#backFromDettaglio').addEventListener('click', () => switchTab('esplora'));
+
+/* ---------- Modifica di un cammino personalizzato (tutti i campi sono modificabili) ---------- */
+function renderModificaCammino(c) {
+  const wrap = $('#modificaCamminoWrap');
+  wrap.innerHTML = `
+    <div class="edit-box">
+      <h3 class="section-title small">Modifica cammino</h3>
+      <div class="planner-form">
+        <label>Nome del cammino
+          <input type="text" id="editNome" value="${c.nome.replace(/"/g, '&quot;')}">
+        </label>
+        <label>Tipologia
+          <select id="editTipo">
+            ${OPZIONI_TIPO_CAMMINO.map(([v, l]) => `<option value="${v}" ${v === c.tipo ? 'selected' : ''}>${l}</option>`).join('')}
+          </select>
+        </label>
+        <label>Zona / regione
+          <input type="text" id="editRegione" value="${(c.regioni || []).join(', ').replace(/"/g, '&quot;')}">
+        </label>
+        <label>Difficoltà generale
+          <select id="editDifficolta">
+            ${OPZIONI_DIFFICOLTA.map(v => `<option value="${v}" ${v === c.difficoltaGenerale ? 'selected' : ''}>${v}</option>`).join('')}
+          </select>
+        </label>
+        <label>Descrizione
+          <input type="text" id="editDescrizione" value="${(c.descrizione || '').replace(/"/g, '&quot;')}">
+        </label>
+      </div>
+
+      <h4 class="section-title small" style="margin-top:1rem">Tappe</h4>
+      ${c.tappe.map((t, i) => `
+        <div class="edit-tappa">
+          <div class="edit-tappa-n">${t.n}</div>
+          <div class="edit-tappa-fields">
+            <input type="text" class="edit-t-da" data-i="${i}" value="${t.da.replace(/"/g, '&quot;')}" placeholder="Partenza">
+            <span>→</span>
+            <input type="text" class="edit-t-a" data-i="${i}" value="${t.a.replace(/"/g, '&quot;')}" placeholder="Arrivo">
+            <input type="number" class="edit-t-km" data-i="${i}" value="${t.km}" step="0.1" min="0" title="km">
+            <select class="edit-t-diff" data-i="${i}">
+              ${OPZIONI_DIFFICOLTA.map(v => `<option value="${v}" ${v === t.difficolta ? 'selected' : ''}>${v}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      `).join('')}
+
+      <div class="edit-azioni">
+        <button class="btn-primary" id="btnSalvaModifiche">Salva modifiche</button>
+        <button class="btn-secondary" id="btnAnnullaModifiche">Annulla</button>
+      </div>
+    </div>
+  `;
+
+  $('#btnAnnullaModifiche').addEventListener('click', () => { wrap.innerHTML = ''; });
+
+  $('#btnSalvaModifiche').addEventListener('click', () => {
+    const list = DB.getCustomCammini();
+    const target = list.find(x => x.id === c.id);
+    if (!target) return;
+
+    target.nome = ($('#editNome').value || target.nome).trim();
+    target.tipo = $('#editTipo').value;
+    target.regioni = ($('#editRegione').value || 'Personalizzato').split(',').map(s => s.trim()).filter(Boolean);
+    target.difficoltaGenerale = $('#editDifficolta').value;
+    target.descrizione = $('#editDescrizione').value.trim();
+
+    target.tappe.forEach((t, i) => {
+      const da = wrap.querySelector(`.edit-t-da[data-i="${i}"]`);
+      const a = wrap.querySelector(`.edit-t-a[data-i="${i}"]`);
+      const km = wrap.querySelector(`.edit-t-km[data-i="${i}"]`);
+      const diff = wrap.querySelector(`.edit-t-diff[data-i="${i}"]`);
+      if (da) t.da = da.value.trim() || t.da;
+      if (a) t.a = a.value.trim() || t.a;
+      if (km) t.km = parseFloat(km.value) || t.km;
+      if (diff) t.difficolta = diff.value;
+    });
+
+    DB.saveCustomCammini(list);
+    integraCamminiPersonalizzati();
+    renderLista();
+    apriDettaglio(c.id);
+  });
+}
 
 /* ---------- Ricerca strutture ricettive per tappa ---------- */
 async function cercaStruttureTappa(camminoId, tappaN) {
@@ -389,10 +486,19 @@ function renderFormNuovoCammino(parsed) {
   const ultimoPunto = parsed.points[parsed.points.length - 1];
   const camminiPersonalizzatiEsistenti = DB.getCustomCammini();
 
+  // Rilevamento automatico di tipo e difficoltà da nome traccia + punti di interesse + statistiche.
+  // Restano comunque tutti modificabili nel form qui sotto.
+  const testoPerClassificazione = [parsed.name, ...(parsed.waypoints || []).map(w => w.nome + ' ' + w.descrizione)].join(' ');
+  const tipoRilevato = CLASSIFICA.tipo(testoPerClassificazione);
+  const difficoltaRilevata = CLASSIFICA.difficolta(parsed.stats.distanceKm, parsed.stats.ascent);
+
+  const OPZIONI_TIPO = OPZIONI_TIPO_CAMMINO;
+  const OPZIONI_DIFF = OPZIONI_DIFFICOLTA;
+
   const cont = $('#gpxToCammino');
   cont.innerHTML = `
     <h3 class="section-title small">Trasforma in un cammino</h3>
-    <p class="section-sub">Aggiungi questa traccia come nuovo cammino personalizzato (o come nuova tappa di uno già creato): comparirà tra le tile in Esplora, con ricerca strutture inclusa${parsed.sourceUrl ? ' e link diretto alla pagina originale' : ''}${parsed.waypoints && parsed.waypoints.length ? ', punti di interesse conservati' : ''}.</p>
+    <p class="section-sub">Nome dei luoghi, tipologia e difficoltà vengono rilevati automaticamente dalla traccia: controlla e correggi pure tutto prima di salvare.</p>
     <div class="planner-form">
       <label>Aggiungi a
         <select id="cammSelTarget">
@@ -400,14 +506,29 @@ function renderFormNuovoCammino(parsed) {
           ${camminiPersonalizzatiEsistenti.map(c => `<option value="${c.id}">${c.nome}</option>`).join('')}
         </select>
       </label>
-      <label id="cammNomeWrap">Nome del cammino
-        <input type="text" id="cammNomeInput" placeholder="Es. Il mio giro delle colline" value="${parsed.name || ''}">
+      <div id="cammNuovoWrap">
+        <label>Nome del cammino
+          <input type="text" id="cammNomeInput" placeholder="Es. Il mio giro delle colline" value="${parsed.name || ''}">
+        </label>
+        <label>Tipologia
+          <select id="cammTipoInput">
+            ${OPZIONI_TIPO.map(([v, l]) => `<option value="${v}" ${v === tipoRilevato ? 'selected' : ''}>${l}</option>`).join('')}
+          </select>
+        </label>
+        <label>Zona / regione
+          <input type="text" id="cammRegioneInput" placeholder="Rilevamento in corso…" value="">
+        </label>
+      </div>
+      <label>Difficoltà
+        <select id="cammDiffInput">
+          ${OPZIONI_DIFF.map(v => `<option value="${v}" ${v === difficoltaRilevata ? 'selected' : ''}>${v}</option>`).join('')}
+        </select>
       </label>
       <label>Nome tappa — Partenza
-        <input type="text" id="cammTappaDa" placeholder="Partenza" value="Partenza">
+        <input type="text" id="cammTappaDa" placeholder="Rilevamento in corso…" value="">
       </label>
       <label>Nome tappa — Arrivo
-        <input type="text" id="cammTappaA" placeholder="Arrivo" value="Arrivo">
+        <input type="text" id="cammTappaA" placeholder="Rilevamento in corso…" value="">
       </label>
       <button class="btn-primary" id="btnCreaCammino">Aggiungi alle tue tile</button>
       <p class="empty-note" id="cammFeedback"></p>
@@ -415,21 +536,44 @@ function renderFormNuovoCammino(parsed) {
   `;
 
   const selTarget = $('#cammSelTarget');
-  const nomeWrap = $('#cammNomeWrap');
+  const nuovoWrap = $('#cammNuovoWrap');
   selTarget.addEventListener('change', () => {
-    nomeWrap.style.display = selTarget.value === '__nuovo__' ? 'flex' : 'none';
+    nuovoWrap.style.display = selTarget.value === '__nuovo__' ? 'block' : 'none';
   });
+
+  // Rilevamento automatico dei nomi di partenza/arrivo (e della regione) tramite geocodifica inversa.
+  // Richiede connessione: se non disponibile, restano da compilare a mano.
+  const inputDa = $('#cammTappaDa');
+  const inputA = $('#cammTappaA');
+  const inputRegione = $('#cammRegioneInput');
+  if (navigator.onLine) {
+    GEOCODE.nomeLuogo(primoPunto.lat, primoPunto.lon).then(res => {
+      inputDa.value = res ? res.nome : '';
+      inputDa.placeholder = 'Partenza';
+      if (res && res.regione) inputRegione.value = res.regione;
+      else inputRegione.placeholder = 'Es. Veneto';
+    });
+    GEOCODE.nomeLuogo(ultimoPunto.lat, ultimoPunto.lon).then(res => {
+      inputA.value = res ? res.nome : '';
+      inputA.placeholder = 'Arrivo';
+    });
+  } else {
+    inputDa.placeholder = 'Partenza'; inputDa.value = '';
+    inputA.placeholder = 'Arrivo'; inputA.value = '';
+    inputRegione.placeholder = 'Es. Veneto';
+  }
 
   $('#btnCreaCammino').addEventListener('click', () => {
     const target = selTarget.value;
     const da = ($('#cammTappaDa').value || 'Partenza').trim();
     const a = ($('#cammTappaA').value || 'Arrivo').trim();
+    const difficoltaScelta = $('#cammDiffInput').value;
     const tappa = {
       da, a,
       km: parsed.stats.distanceKm,
       dislivelloSalita: parsed.stats.ascent,
       dislivelloDiscesa: parsed.stats.descent,
-      difficolta: parsed.stats.ascent > 800 ? 'impegnativa' : parsed.stats.distanceKm > 22 ? 'media' : 'facile',
+      difficolta: difficoltaScelta,
       note: `Tappa creata da traccia GPX "${parsed.name}".`,
       coordDa: [primoPunto.lat, primoPunto.lon],
       coordA: [ultimoPunto.lat, ultimoPunto.lon],
@@ -439,12 +583,14 @@ function renderFormNuovoCammino(parsed) {
     let messaggio;
     if (target === '__nuovo__') {
       const nome = ($('#cammNomeInput').value || parsed.name || 'Nuovo cammino').trim();
+      const tipoScelto = $('#cammTipoInput').value;
+      const regioneScelta = ($('#cammRegioneInput').value || 'Personalizzato').trim();
       const nuovo = {
         id: 'personalizzato_' + Date.now(),
         nome,
-        tipo: 'personalizzato',
-        regioni: ['Personalizzato'],
-        difficoltaGenerale: tappa.difficolta,
+        tipo: tipoScelto,
+        regioni: [regioneScelta],
+        difficoltaGenerale: difficoltaScelta,
         descrizione: 'Cammino creato da una traccia GPX personale, non fa parte del database ufficiale.',
         sitoUfficiale: '',
         wikilocRicerca: parsed.sourceUrl || '',
