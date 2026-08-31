@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cammini-italia-v3';
+const CACHE_NAME = 'cammini-italia-v4';
 const APP_SHELL = [
   './',
   './index.html',
