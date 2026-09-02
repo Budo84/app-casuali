@@ -18,6 +18,12 @@ Web app statica (HTML/CSS/JS puro, nessun backend) per esplorare cammini e trail
 - **Preferiti**: stella su ogni tile, con filtro "Solo preferiti".
 - **Confronto cammini**: seleziona fino a 3 cammini per confrontarli fianco a fianco (km, dislivello, difficoltà, tempo stimato, regioni).
 - **Traguardi**: piccoli obiettivi sbloccabili in base alle tue statistiche (km percorsi, tappe completate, dislivello, cammini creati), visibili nella scheda Dati.
+- **Giochi per bambini**: nel dettaglio di ogni cammino, sezione "🎮 Giochi di questo cammino" con quattro mini-giochi generati sui dati reali di quel cammino:
+  - **Quiz** — 5 domande su tappe, km, regione, difficoltà
+  - **Memory** — abbina partenza e arrivo di ogni tappa
+  - **Caccia al tesoro** — cose da scoprire camminando, con i punti di interesse reali quando disponibili
+  - **Salto del Pellegrino** — un vero mini-gioco platform (canvas 2D), con **un livello per ogni tappa** generato dalla sua difficoltà/dislivello reale, **4 personaggi sbloccabili** man mano che si accumulano punti o si completa un cammino, controlli touch a schermo, e fino a 3 stelle per livello in base ai tesori raccolti
+- **Sistema di medaglie "da bambini"**: traguardi mostrati come un album di adesivi (sbloccati dorati, ancora da sbloccare tratteggiati), con un'animazione di festa (confetti) alla prima sblocco di ognuno, un **forziere a sorpresa** che si apre ogni 50 punti gioco, e un **diploma stampabile** per ogni medaglia (con il nome di chi l'ha vinta).
 - **Pianifica**: genera un itinerario giorno per giorno in base al tuo ritmo di marcia, con data di partenza e tempo stimato; salva i piani sul dispositivo o esportali come **PDF stampabile**.
 - **Traccia GPX**: carica un file `.gpx` (scaricato ad es. da Wikiloc, dal sito ufficiale del cammino o dal CAI) e visualizzalo su mappa con statistiche di distanza e dislivello. I punti di interesse (waypoint) presenti nel file — rifugi, fontane, chiese, panorami — vengono riconosciuti e mostrati con nome e descrizione, e il link alla pagina originale (es. su Wikiloc) viene conservato. Da ogni traccia caricata puoi creare un **cammino personalizzato**: nome dei luoghi di partenza/arrivo, tipologia e difficoltà vengono **rilevati automaticamente** (geocodifica inversa via OpenStreetMap Nominatim per i nomi dei luoghi, parole chiave per tipologia/difficoltà), ma **restano tutti modificabili** prima di salvare e anche in seguito, dal dettaglio del cammino ("Modifica"). Il cammino compare tra le tile in Esplora esattamente come i cammini ufficiali (con ricerca strutture, punti di interesse e link alla traccia originale inclusi), oppure puoi aggiungere la traccia come nuova tappa a un cammino personalizzato già creato in precedenza. Puoi anche **condividere** un tuo cammino personalizzato come file, da mandare a un amico che potrà importarlo nella sua app.
 - **Strutture ricettive**: per ogni tappa con coordinate, un pulsante "Cerca strutture vicino all'arrivo" interroga OpenStreetMap (Overpass API) e mostra hotel, ostelli, B&B, agriturismi, campeggi e rifugi nel raggio di 3 km, con indirizzo, telefono e sito quando disponibili. I risultati vengono salvati sul dispositivo per essere consultati anche offline.
@@ -86,7 +92,9 @@ cammini-italia/
 │   ├── strutture.js  # ricerca strutture ricettive via Overpass API (OpenStreetMap)
 │   ├── geocode.js    # geocodifica inversa (Nominatim) e classificazione automatica tipo/difficoltà
 │   ├── osmtracce.js  # ricerca e importazione di tracciati reali da OpenStreetMap (Overpass API)
-│   └── meteo.js      # previsioni meteo per tappa (Open-Meteo)
+│   ├── meteo.js      # previsioni meteo per tappa (Open-Meteo)
+│   ├── giochi.js     # generazione di quiz, memory e caccia al tesoro su misura per ogni cammino
+│   └── platform.js   # motore del gioco platform "Salto del Pellegrino" (canvas 2D, livelli, personaggi)
 ├── data/
 │   └── db.json      # database dei cammini
 └── icons/
