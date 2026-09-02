@@ -213,6 +213,75 @@ const DB = {
     return lista.includes(camminoId);
   },
 
+  /* ---- Giochi per cammino (quiz, memory, caccia al tesoro) e punti/medaglie collegate ---- */
+  KEY_GIOCHI: 'cammini_giochi_v1',
+  getGiochi() {
+    try { return JSON.parse(localStorage.getItem(this.KEY_GIOCHI)) || {}; }
+    catch (e) { return {}; }
+  },
+  getGiocoCammino(camminoId) {
+    const tutti = this.getGiochi();
+    return tutti[camminoId] || { punti: 0, quiz: false, memory: false, caccia: false, cacciaSpuntati: [] };
+  },
+  aggiornaGiocoCammino(camminoId, patchFn) {
+    const tutti = this.getGiochi();
+    const attuale = tutti[camminoId] || { punti: 0, quiz: false, memory: false, caccia: false, cacciaSpuntati: [] };
+    tutti[camminoId] = patchFn({ ...attuale });
+    localStorage.setItem(this.KEY_GIOCHI, JSON.stringify(tutti));
+    return tutti[camminoId];
+  },
+  puntiGiocoTotali() {
+    const tutti = this.getGiochi();
+    return Object.values(tutti).reduce((s, g) => s + (g.punti || 0), 0);
+  },
+
+  /* ---- Gioco platform: personaggio scelto, livelli completati, forzieri aperti, medaglie già mostrate ---- */
+  KEY_PLATFORM: 'cammini_platform_v1',
+  getPlatformState() {
+    try { return JSON.parse(localStorage.getItem(this.KEY_PLATFORM)) || { personaggio: 0, livelli: {} }; }
+    catch (e) { return { personaggio: 0, livelli: {} }; }
+  },
+  savePlatformState(stato) { localStorage.setItem(this.KEY_PLATFORM, JSON.stringify(stato)); },
+  segnaLivelloCompletato(camminoId, tappaN, stelle) {
+    const stato = this.getPlatformState();
+    const chiave = `${camminoId}__${tappaN}`;
+    const precedente = stato.livelli[chiave];
+    if (!precedente || stelle > precedente.stelle) {
+      stato.livelli[chiave] = { stelle, data: new Date().toISOString() };
+    }
+    this.savePlatformState(stato);
+  },
+  getStelleLivello(camminoId, tappaN) {
+    const stato = this.getPlatformState();
+    const v = stato.livelli[`${camminoId}__${tappaN}`];
+    return v ? v.stelle : 0;
+  },
+  sceglierPersonaggio(indice) {
+    const stato = this.getPlatformState();
+    stato.personaggio = indice;
+    this.savePlatformState(stato);
+  },
+
+  KEY_FORZIERI: 'cammini_forzieri_v1',
+  getForzieriAperti() {
+    try { return JSON.parse(localStorage.getItem(this.KEY_FORZIERI)) || []; }
+    catch (e) { return []; }
+  },
+  apriForziere(soglia) {
+    const aperti = this.getForzieriAperti();
+    if (!aperti.includes(soglia)) { aperti.push(soglia); localStorage.setItem(this.KEY_FORZIERI, JSON.stringify(aperti)); }
+  },
+
+  KEY_BADGE_VISTI: 'cammini_badge_visti_v1',
+  getBadgeVisti() {
+    try { return JSON.parse(localStorage.getItem(this.KEY_BADGE_VISTI)) || []; }
+    catch (e) { return []; }
+  },
+  segnaBadgeVisto(id) {
+    const visti = this.getBadgeVisti();
+    if (!visti.includes(id)) { visti.push(id); localStorage.setItem(this.KEY_BADGE_VISTI, JSON.stringify(visti)); }
+  },
+
   exportUserData() {
     return {
       esportato: new Date().toISOString(),
@@ -224,7 +293,11 @@ const DB = {
       diario: this.getDiario(),
       checklist: this.getChecklist(),
       tappeCompletate: this.getTappeCompletate(),
-      preferiti: this.getPreferiti()
+      preferiti: this.getPreferiti(),
+      giochi: this.getGiochi(),
+      platform: this.getPlatformState(),
+      forzieri: this.getForzieriAperti(),
+      badgeVisti: this.getBadgeVisti()
     };
   },
   importUserData(obj) {
@@ -237,6 +310,10 @@ const DB = {
     if (obj.checklist) this.saveChecklist(obj.checklist);
     if (obj.tappeCompletate) localStorage.setItem(this.KEY_COMPLETATE, JSON.stringify(obj.tappeCompletate));
     if (obj.preferiti) localStorage.setItem(this.KEY_PREFERITI, JSON.stringify(obj.preferiti));
+    if (obj.giochi) localStorage.setItem(this.KEY_GIOCHI, JSON.stringify(obj.giochi));
+    if (obj.platform) this.savePlatformState(obj.platform);
+    if (obj.forzieri) localStorage.setItem(this.KEY_FORZIERI, JSON.stringify(obj.forzieri));
+    if (obj.badgeVisti) localStorage.setItem(this.KEY_BADGE_VISTI, JSON.stringify(obj.badgeVisti));
   },
   resetUserData() {
     localStorage.removeItem(this.KEY_PLANS);
@@ -248,6 +325,10 @@ const DB = {
     localStorage.removeItem(this.KEY_CHECKLIST);
     localStorage.removeItem(this.KEY_COMPLETATE);
     localStorage.removeItem(this.KEY_PREFERITI);
+    localStorage.removeItem(this.KEY_GIOCHI);
+    localStorage.removeItem(this.KEY_PLATFORM);
+    localStorage.removeItem(this.KEY_FORZIERI);
+    localStorage.removeItem(this.KEY_BADGE_VISTI);
     localStorage.removeItem('cammini_strutture_v1');
     localStorage.removeItem('cammini_acqua_v1');
   }
