@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cammini-italia-v8';
+const CACHE_NAME = 'cammini-italia-v10';
 const APP_SHELL = [
   './',
   './index.html',
@@ -11,6 +11,8 @@ const APP_SHELL = [
   './js/geocode.js',
   './js/osmtracce.js',
   './js/meteo.js',
+  './js/giochi.js',
+  './js/platform.js',
   './data/db.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
