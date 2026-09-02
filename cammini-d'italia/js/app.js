@@ -9,6 +9,7 @@ const $$ = sel => Array.from(document.querySelectorAll(sel));
 
 /* ---------- Navigazione tab ---------- */
 function switchTab(name) {
+  if (typeof PLATFORM !== 'undefined') PLATFORM.ferma();
   $$('.tab').forEach(t => {
     const active = t.dataset.tab === name;
     t.classList.toggle('active', active);
@@ -16,6 +17,7 @@ function switchTab(name) {
   });
   $$('.panel').forEach(p => p.classList.remove('active'));
   $('#panel-' + name).classList.add('active');
+  if (name === 'dati' && CAMMINI) renderStatistiche();
 }
 $$('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
@@ -234,6 +236,7 @@ function linkRicercaEsterni(c) {
 }
 
 function apriDettaglio(id) {
+  if (typeof PLATFORM !== 'undefined') PLATFORM.ferma(); // ferma un'eventuale partita rimasta in corso
   currentDettaglioId = id;
   const c = CAMMINI.cammini.find(x => x.id === id);
   if (!c) return;
@@ -263,6 +266,7 @@ function apriDettaglio(id) {
       <span>${tempoStimatoTesto(totaleKm(c), c.tappe.reduce((s, t) => s + t.dislivelloSalita, 0))} stimate</span>
     </div>
     <div id="profiloAltimetrico"></div>
+    <div id="giochiCammino"></div>
     <div class="stage-list">
       ${c.tappe.map(t => `
         <div class="stage-row">
@@ -309,6 +313,7 @@ function apriDettaglio(id) {
   renderDettMappa(c, tracciatoOsm);
   renderPannelloOsm(c, tracciatoOsm);
   renderProfiloAltimetrico(c);
+  renderGiochiCammino(c);
 
   // Mostra eventuali risultati già salvati in precedenza (offline-friendly)
   c.tappe.forEach(t => {
@@ -491,6 +496,350 @@ function comprimiImmagine(file, maxLato, qualita) {
     };
     reader.onerror = reject;
     reader.readAsDataURL(file);
+  });
+}
+
+/* ---------- Sezione Giochi del cammino (quiz, memory, caccia al tesoro) ---------- */
+function renderGiochiCammino(c) {
+  const cont = $('#giochiCammino');
+  if (!cont) return;
+  const stato = DB.getGiocoCammino(c.id);
+  const tutteFatte = stato.quiz && stato.memory && stato.caccia;
+
+  cont.innerHTML = `
+    <div class="giochi-box">
+      <div class="giochi-head">
+        <h3 class="section-title small">🎮 Giochi di questo cammino</h3>
+        <span class="giochi-punti">⭐ ${stato.punti} punti</span>
+      </div>
+      <p class="section-sub">Pensati apposta per questo cammino: utili per intrattenere i più piccoli lungo il percorso.</p>
+      <div class="griglia-giochi">
+        <button class="gioco-tile ${stato.quiz ? 'fatto' : ''}" id="btnGiocoQuiz">
+          <span class="em">❓</span>
+          <span class="nm">Quiz del cammino</span>
+          <span class="ds">5 domande su questo percorso</span>
+          ${stato.quiz ? '<span class="gioco-ok">✓ fatto</span>' : ''}
+        </button>
+        <button class="gioco-tile ${stato.memory ? 'fatto' : ''}" id="btnGiocoMemory">
+          <span class="em">🧠</span>
+          <span class="nm">Memory delle tappe</span>
+          <span class="ds">Abbina partenza e arrivo</span>
+          ${stato.memory ? '<span class="gioco-ok">✓ fatto</span>' : ''}
+        </button>
+        <button class="gioco-tile ${stato.caccia ? 'fatto' : ''}" id="btnGiocoCaccia">
+          <span class="em">🔎</span>
+          <span class="nm">Caccia al tesoro</span>
+          <span class="ds">Cose da scoprire camminando</span>
+          ${stato.caccia ? '<span class="gioco-ok">✓ fatto</span>' : ''}
+        </button>
+        <button class="gioco-tile avventura" id="btnGiocoPlatform">
+          <span class="em">🕹️</span>
+          <span class="nm">Salto del Pellegrino</span>
+          <span class="ds">Un livello per ogni tappa</span>
+        </button>
+      </div>
+      ${tutteFatte ? '<p class="giochi-medaglia">🏅 Medaglia sbloccata: Esploratore di questo cammino!</p>' : ''}
+      <div id="giocoAttivo"></div>
+    </div>
+  `;
+
+  $('#btnGiocoQuiz').addEventListener('click', () => avviaQuiz(c));
+  $('#btnGiocoMemory').addEventListener('click', () => avviaMemory(c));
+  $('#btnGiocoCaccia').addEventListener('click', () => avviaCaccia(c));
+  $('#btnGiocoPlatform').addEventListener('click', () => renderSelezionePersonaggio(c));
+}
+
+function avviaQuiz(c) {
+  const box = $('#giocoAttivo');
+  const domande = GIOCHI.generaQuiz(c);
+  let indice = 0, corrette = 0;
+
+  function mostraDomanda() {
+    if (indice >= domande.length) {
+      const punti = corrette * GIOCHI.PUNTI_RISPOSTA_QUIZ;
+      DB.aggiornaGiocoCammino(c.id, g => { g.quiz = true; g.punti += punti; return g; });
+      box.innerHTML = `
+        <div class="mini-gioco">
+          <p class="giochi-esito">Hai risposto bene a ${corrette} domande su ${domande.length}!<br>+${punti} punti ⭐</p>
+          <button class="btn-secondary" id="btnChiudiGioco">Chiudi</button>
+        </div>
+      `;
+      $('#btnChiudiGioco').addEventListener('click', () => { box.innerHTML = ''; renderGiochiCammino(c); renderStatistiche(); });
+      return;
+    }
+    const d = domande[indice];
+    box.innerHTML = `
+      <div class="mini-gioco">
+        <p class="quiz-progress">Domanda ${indice + 1} di ${domande.length}</p>
+        <p class="quiz-domanda">${d.domanda}</p>
+        <div class="quiz-opzioni">
+          ${d.opzioni.map((o, i) => `<button class="quiz-opzione" data-i="${i}">${o}</button>`).join('')}
+        </div>
+      </div>
+    `;
+    box.querySelectorAll('.quiz-opzione').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const scelto = parseInt(btn.dataset.i, 10);
+        box.querySelectorAll('.quiz-opzione').forEach(b => b.disabled = true);
+        if (scelto === d.corretta) {
+          btn.classList.add('giusta');
+          corrette++;
+        } else {
+          btn.classList.add('sbagliata');
+          box.querySelectorAll('.quiz-opzione')[d.corretta].classList.add('giusta');
+        }
+        setTimeout(() => { indice++; mostraDomanda(); }, 900);
+      });
+    });
+  }
+  mostraDomanda();
+}
+
+function avviaMemory(c) {
+  const box = $('#giocoAttivo');
+  const carte = GIOCHI.generaMemory(c);
+  if (carte.length < 4) {
+    box.innerHTML = '<p class="empty-note">Questo cammino ha troppe poche tappe per il memory.</p>';
+    return;
+  }
+  let apertaIdx = null;
+  let bloccato = false;
+  let coppieTrovate = 0;
+
+  box.innerHTML = `
+    <div class="mini-gioco">
+      <p class="quiz-progress">Trova tutte le coppie partenza/arrivo</p>
+      <div class="memory-grid">
+        ${carte.map((_, i) => `<button class="carta-memory" data-i="${i}">?</button>`).join('')}
+      </div>
+    </div>
+  `;
+
+  const bottoni = box.querySelectorAll('.carta-memory');
+  bottoni.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = parseInt(btn.dataset.i, 10);
+      if (bloccato || btn.classList.contains('presa') || btn.classList.contains('aperta')) return;
+      btn.classList.add('aperta');
+      btn.textContent = carte[i].testo;
+
+      if (apertaIdx === null) {
+        apertaIdx = i;
+        return;
+      }
+      bloccato = true;
+      const primaBtn = bottoni[apertaIdx];
+      if (carte[apertaIdx].coppia === carte[i].coppia && apertaIdx !== i) {
+        setTimeout(() => {
+          primaBtn.classList.add('presa'); btn.classList.add('presa');
+          apertaIdx = null; bloccato = false; coppieTrovate++;
+          if (coppieTrovate === carte.length / 2) {
+            const punti = GIOCHI.PUNTI_MEMORY;
+            DB.aggiornaGiocoCammino(c.id, g => { g.memory = true; g.punti += punti; return g; });
+            setTimeout(() => {
+              box.innerHTML = `<div class="mini-gioco"><p class="giochi-esito">Complimenti! Tutte le coppie trovate!<br>+${punti} punti ⭐</p><button class="btn-secondary" id="btnChiudiGioco">Chiudi</button></div>`;
+              $('#btnChiudiGioco').addEventListener('click', () => { box.innerHTML = ''; renderGiochiCammino(c); renderStatistiche(); });
+            }, 400);
+          }
+        }, 500);
+      } else {
+        setTimeout(() => {
+          primaBtn.classList.remove('aperta'); primaBtn.textContent = '?';
+          btn.classList.remove('aperta'); btn.textContent = '?';
+          apertaIdx = null; bloccato = false;
+        }, 750);
+      }
+    });
+  });
+}
+
+function avviaCaccia(c) {
+  const box = $('#giocoAttivo');
+  const oggetti = GIOCHI.generaCaccia(c);
+  const stato = DB.getGiocoCammino(c.id);
+  const spuntati = new Set(stato.cacciaSpuntati || []);
+
+  box.innerHTML = `
+    <div class="mini-gioco">
+      <p class="quiz-progress">Spunta quello che riconosci lungo il cammino</p>
+      <div class="checklist" id="cacciaLista">
+        ${oggetti.map((o, i) => `
+          <label class="checklist-item">
+            <input type="checkbox" data-i="${i}" ${spuntati.has(i) ? 'checked' : ''}>
+            <span class="${spuntati.has(i) ? 'checklist-fatto' : ''}">${o}</span>
+          </label>
+        `).join('')}
+      </div>
+      <button class="btn-secondary" id="btnChiudiCaccia" style="margin-top:.6rem">Chiudi</button>
+    </div>
+  `;
+
+  box.querySelectorAll('#cacciaLista input').forEach(chk => {
+    chk.addEventListener('change', () => {
+      const i = parseInt(chk.dataset.i, 10);
+      const giaSpuntato = spuntati.has(i);
+      if (chk.checked && !giaSpuntato) {
+        spuntati.add(i);
+        DB.aggiornaGiocoCammino(c.id, g => {
+          g.cacciaSpuntati = Array.from(spuntati);
+          g.punti += GIOCHI.PUNTI_OGGETTO_CACCIA;
+          if (spuntati.size === oggetti.length) g.caccia = true;
+          return g;
+        });
+      } else if (!chk.checked && giaSpuntato) {
+        spuntati.delete(i);
+        DB.aggiornaGiocoCammino(c.id, g => {
+          g.cacciaSpuntati = Array.from(spuntati);
+          g.punti = Math.max(0, g.punti - GIOCHI.PUNTI_OGGETTO_CACCIA);
+          g.caccia = spuntati.size === oggetti.length;
+          return g;
+        });
+      }
+      chk.nextElementSibling.classList.toggle('checklist-fatto', chk.checked);
+      renderStatistiche();
+    });
+  });
+
+  $('#btnChiudiCaccia').addEventListener('click', () => { box.innerHTML = ''; renderGiochiCammino(c); });
+}
+
+/* ---------- Salto del Pellegrino: selezione personaggio, livelli, partita ---------- */
+function calcolaStelle(raccolte, totali) {
+  if (totali === 0) return 3;
+  const perc = raccolte / totali;
+  if (perc >= 0.99) return 3;
+  if (perc >= 0.5) return 2;
+  return 1;
+}
+function disegnaStelle(n) {
+  return '⭐'.repeat(n) + '☆'.repeat(3 - n);
+}
+
+function renderSelezionePersonaggio(c) {
+  const box = $('#giocoAttivo');
+  const statoPlatform = DB.getPlatformState();
+
+  box.innerHTML = `
+    <div class="mini-gioco">
+      <p class="quiz-progress">Scegli il tuo pellegrino</p>
+      <div class="personaggi-grid">
+        ${PERSONAGGI.map((p, i) => {
+          const sbloccato = p.sblocco();
+          return `
+            <button class="personaggio-tile ${!sbloccato ? 'bloccato' : ''} ${statoPlatform.personaggio === i ? 'scelto' : ''}" data-i="${i}" ${!sbloccato ? 'disabled' : ''}>
+              <canvas class="personaggio-anteprima" width="60" height="60" data-i="${i}"></canvas>
+              <span class="personaggio-nome">${p.nome}</span>
+              <span class="personaggio-desc">${sbloccato ? (statoPlatform.personaggio === i ? 'In uso' : '') : '🔒 ' + p.descrizione}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+      <button class="btn-secondary" id="btnChiudiSelezione" style="margin-top:.6rem">Chiudi</button>
+    </div>
+  `;
+
+  // Piccola anteprima disegnata di ogni personaggio
+  box.querySelectorAll('.personaggio-anteprima').forEach(canvas => {
+    const idx = parseInt(canvas.dataset.i, 10);
+    const pers = PERSONAGGI[idx];
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = pers.vestito; ctx.fillRect(20, 26, 20, 26);
+    ctx.fillStyle = pers.pelle; ctx.beginPath(); ctx.arc(30, 20, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = pers.accessorio; ctx.fillRect(20, 12, 20, 5);
+  });
+
+  box.querySelectorAll('.personaggio-tile').forEach(btn => {
+    if (btn.disabled) return;
+    btn.addEventListener('click', () => {
+      DB.sceglierPersonaggio(parseInt(btn.dataset.i, 10));
+      renderSelezioneLivelli(c);
+    });
+  });
+  $('#btnChiudiSelezione').addEventListener('click', () => { box.innerHTML = ''; });
+}
+
+function renderSelezioneLivelli(c) {
+  const box = $('#giocoAttivo');
+  box.innerHTML = `
+    <div class="mini-gioco">
+      <p class="quiz-progress">Un livello per ogni tappa — scegline uno</p>
+      <div class="livelli-lista">
+        ${c.tappe.map((t, i) => {
+          const stelle = DB.getStelleLivello(c.id, t.n);
+          const fattaDavvero = DB.isTappaCompletata(c.id, t.n);
+          return `
+            <button class="livello-item" data-i="${i}">
+              <span class="livello-n">${t.n}</span>
+              <span class="livello-nome">${t.da} → ${t.a}${fattaDavvero ? ' <span class="livello-fatta">✓ tappa fatta</span>' : ''}</span>
+              <span class="livello-stelle">${disegnaStelle(stelle)}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+      <button class="btn-secondary" id="btnCambiaPersonaggio" style="margin-top:.6rem">Cambia personaggio</button>
+    </div>
+  `;
+  box.querySelectorAll('.livello-item').forEach(btn => {
+    btn.addEventListener('click', () => avviaLivelloGioco(c, parseInt(btn.dataset.i, 10)));
+  });
+  $('#btnCambiaPersonaggio').addEventListener('click', () => renderSelezionePersonaggio(c));
+}
+
+function avviaLivelloGioco(c, indiceTappa) {
+  const box = $('#giocoAttivo');
+  const t = c.tappe[indiceTappa];
+  const livello = PLATFORM.generaLivello(t, indiceTappa);
+  const statoPlatform = DB.getPlatformState();
+
+  box.innerHTML = `
+    <div class="mini-gioco">
+      <p class="quiz-progress">${livello.nome}</p>
+      <canvas id="canvasPlatform" width="${PLATFORM.W}" height="${PLATFORM.H}"></canvas>
+      <div class="comandi-platform">
+        <button class="tasto-platform" id="btnSinistra">◀️</button>
+        <button class="tasto-platform" id="btnDestra">▶️</button>
+        <button class="tasto-platform salta" id="btnSalta">⤴️</button>
+      </div>
+      <button class="btn-secondary" id="btnEsciLivello" style="margin-top:.5rem">Esci dal livello</button>
+    </div>
+  `;
+
+  $('#btnEsciLivello').addEventListener('click', () => { PLATFORM.ferma(); renderSelezioneLivelli(c); });
+
+  const canvas = $('#canvasPlatform');
+  const collega = (id, tasto) => {
+    const el = $(id);
+    const giu = ev => { ev.preventDefault(); PLATFORM.premi(tasto, true); };
+    const su = ev => { ev.preventDefault(); PLATFORM.premi(tasto, false); };
+    el.addEventListener('pointerdown', giu);
+    el.addEventListener('pointerup', su);
+    el.addEventListener('pointerleave', su);
+    el.addEventListener('pointercancel', su);
+  };
+  collega('#btnSinistra', 'sinistra');
+  collega('#btnDestra', 'destra');
+  collega('#btnSalta', 'salto');
+
+  PLATFORM.avvia(canvas, livello, statoPlatform.personaggio || 0, (raccolte, totali) => {
+    const stelle = calcolaStelle(raccolte, totali);
+    const puntiPrima = DB.getStelleLivello(c.id, t.n);
+    DB.segnaLivelloCompletato(c.id, t.n, stelle);
+    const puntiGuadagnati = 15 + raccolte * 5;
+    DB.aggiornaGiocoCammino(c.id, g => { g.punti += puntiGuadagnati; return g; });
+
+    box.innerHTML = `
+      <div class="mini-gioco esito-platform">
+        <div class="confetti-emoji">🎉 🌟 🎉</div>
+        <p class="giochi-esito">Livello completato!<br>${disegnaStelle(stelle)}<br>Hai raccolto ${raccolte} di ${totali} tesori.<br>+${puntiGuadagnati} punti ⭐</p>
+        <div class="btn-row">
+          <button class="btn-primary" id="btnRigioca">Rigioca</button>
+          <button class="btn-secondary" id="btnAltroLivello">Altri livelli</button>
+        </div>
+      </div>
+    `;
+    $('#btnRigioca').addEventListener('click', () => avviaLivelloGioco(c, indiceTappa));
+    $('#btnAltroLivello').addEventListener('click', () => { renderSelezioneLivelli(c); renderStatistiche(); });
+    renderStatistiche();
   });
 }
 
@@ -1536,7 +1885,11 @@ const DEFINIZIONI_BADGE = [
   { id: 'dieci_tappe', icona: '🔟', label: '10 tappe completate', cond: s => s.tappeCompletateCount >= 10 },
   { id: 'dislivello_1000', icona: '⛰️', label: '1000 m di dislivello', cond: s => s.dislivelloTotale >= 1000 },
   { id: 'primo_cammino', icona: '🏆', label: 'Primo cammino completato', cond: s => s.camminiCompletatiCount >= 1 },
-  { id: 'esploratore', icona: '🗺️', label: 'Hai creato un tuo cammino', cond: s => DB.getCustomCammini().length >= 1 }
+  { id: 'esploratore', icona: '🗺️', label: 'Hai creato un tuo cammino', cond: s => DB.getCustomCammini().length >= 1 },
+  { id: 'primo_quiz', icona: '❓', label: 'Primo quiz completato', cond: () => Object.values(DB.getGiochi()).some(g => g.quiz) },
+  { id: 'giocatore_completo', icona: '🎮', label: 'Tutti i giochi di un cammino', cond: () => Object.values(DB.getGiochi()).some(g => g.quiz && g.memory && g.caccia) },
+  { id: 'giochi_100', icona: '⭐', label: '100 punti gioco', cond: () => DB.puntiGiocoTotali() >= 100 },
+  { id: 'livello_perfetto', icona: '🌟', label: 'Un livello a 3 stelle', cond: () => Object.values(DB.getPlatformState().livelli || {}).some(l => l.stelle === 3) }
 ];
 
 function renderStatistiche() {
@@ -1565,19 +1918,109 @@ function renderStatistiche() {
     <div class="stat-box"><span class="stat-num">${Math.round(dislivelloTotale)}</span><span class="stat-label">m di dislivello</span></div>
     <div class="stat-box"><span class="stat-num">${tappeCompletateCount}</span><span class="stat-label">tappe completate</span></div>
     <div class="stat-box"><span class="stat-num">${camminiCompletatiCount}</span><span class="stat-label">cammini completati</span></div>
+    <div class="stat-box"><span class="stat-num">${DB.puntiGiocoTotali()}</span><span class="stat-label">punti gioco ⭐</span></div>
   `;
 
   const badgeGrid = $('#badgeGrid');
   if (badgeGrid) {
-    badgeGrid.innerHTML = DEFINIZIONI_BADGE.map(b => {
+    const giaVisti = DB.getBadgeVisti();
+    const nuoviSbloccati = [];
+    badgeGrid.innerHTML = DEFINIZIONI_BADGE.map((b, i) => {
       const sbloccato = b.cond(stats);
+      if (sbloccato && !giaVisti.includes(b.id)) nuoviSbloccati.push(b);
       return `
-        <div class="badge-item ${sbloccato ? 'sbloccato' : ''}" title="${sbloccato ? 'Sbloccato!' : 'Ancora da sbloccare'}">
+        <div class="badge-item ${sbloccato ? 'sbloccato' : ''}" style="--rot:${(i % 5 - 2) * 2.5}deg" title="${sbloccato ? 'Sbloccato!' : 'Ancora da sbloccare'}">
           <span class="badge-icona">${b.icona}</span>
           <span>${b.label}</span>
+          ${sbloccato ? `<button class="badge-diploma" data-id="${b.id}" data-icona="${b.icona}" data-label="${b.label}">🖨️ Diploma</button>` : ''}
         </div>
       `;
     }).join('');
+
+    badgeGrid.querySelectorAll('.badge-diploma').forEach(btn => {
+      btn.addEventListener('click', () => stampaDiploma(btn.dataset.label, btn.dataset.icona));
+    });
+
+    // Festeggia (una sola volta) le medaglie appena sbloccate da quando non si guardava la scheda Dati
+    if (nuoviSbloccati.length) {
+      nuoviSbloccati.forEach(b => DB.segnaBadgeVisto(b.id));
+      festeggiaMedaglia(nuoviSbloccati[0]);
+    }
+  }
+
+  renderForziere();
+}
+
+/* ---------- Festa alla sblocco di una nuova medaglia ---------- */
+function festeggiaMedaglia(b) {
+  document.querySelectorAll('.festa-overlay').forEach(el => el.remove()); // evita sovrapposizioni se scattano più feste in rapida successione
+  const pop = document.createElement('div');
+  pop.className = 'festa-overlay';
+  pop.innerHTML = `
+    <div class="festa-box">
+      <div class="festa-confetti">🎉✨🎊✨🎉</div>
+      <div class="festa-icona">${b.icona}</div>
+      <h3>Nuova medaglia!</h3>
+      <p>${b.label}</p>
+      <button class="btn-primary" id="btnChiudiFesta">Evviva!</button>
+    </div>
+  `;
+  document.body.appendChild(pop);
+  $('#btnChiudiFesta').addEventListener('click', () => pop.remove());
+}
+
+/* ---------- Diploma stampabile per una medaglia ---------- */
+function stampaDiploma(nomeMedaglia, icona) {
+  const nomeBambino = prompt('Come si chiama chi ha vinto questa medaglia?', '') || '';
+  const finestra = window.open('', '_blank');
+  if (!finestra) { alert('Il browser ha bloccato la finestra di stampa: consenti i popup per questo sito.'); return; }
+  finestra.document.write(`
+    <!doctype html><html lang="it"><head><meta charset="UTF-8"><title>Diploma</title>
+    <style>
+      body{font-family:Georgia,serif;text-align:center;padding:3rem 2rem;color:#332B22;}
+      .cornice{border:6px double #C98A2B;padding:3rem 2rem;border-radius:16px;max-width:520px;margin:0 auto;}
+      .icona{font-size:4rem;}
+      h1{font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:#B23A2E;margin:1rem 0 .3rem;}
+      h2{font-size:1.6rem;margin:.3rem 0 1.2rem;}
+      .nome{font-size:1.8rem;color:#1F3A2E;margin:1rem 0;border-bottom:2px solid #C98A2B;display:inline-block;padding:0 1rem .3rem;}
+      .data{margin-top:2rem;font-size:.85rem;color:#6B6152;}
+      @media print{ button{display:none;} }
+    </style></head><body>
+    <div class="cornice">
+      <div class="icona">${icona}</div>
+      <h1>Diploma del Cammino</h1>
+      <h2>${nomeMedaglia}</h2>
+      <p>assegnato con merito a</p>
+      <div class="nome">${nomeBambino || '________________'}</div>
+      <p class="data">${new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+    </div>
+    <p style="text-align:center;margin-top:1.5rem"><button onclick="window.print()" style="padding:.6rem 1.2rem;">Stampa</button></p>
+    </body></html>
+  `);
+  finestra.document.close();
+}
+
+/* ---------- Forziere a sorpresa: si apre ogni 50 punti gioco ---------- */
+function renderForziere() {
+  const cont = $('#forziereBox');
+  if (!cont) return;
+  const punti = DB.puntiGiocoTotali();
+  const sogliaProssima = Math.floor(punti / 50) * 50;
+  const aperti = DB.getForzieriAperti();
+  const daAprire = sogliaProssima >= 50 && !aperti.includes(sogliaProssima);
+
+  cont.innerHTML = daAprire ? `
+    <button class="forziere-btn" id="btnApriForziere">📦 Hai un forziere da aprire! (${sogliaProssima} punti)</button>
+  ` : `<p class="empty-note">Prossimo forziere a ${sogliaProssima + 50} punti gioco (ne hai ${punti}).</p>`;
+
+  if (daAprire) {
+    $('#btnApriForziere').addEventListener('click', () => {
+      DB.apriForziere(sogliaProssima);
+      const premi = ['Un applauso speciale! 👏', 'Sei un vero esploratore! 🧭', 'Continua così, pellegrino! 🥾', 'Hai stupito tutti! 🌟'];
+      const premio = premi[Math.floor(Math.random() * premi.length)];
+      festeggiaMedaglia({ icona: '📦', label: premio });
+      renderForziere();
+    });
   }
 }
 
