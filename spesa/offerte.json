@@ -1,7 +1,7 @@
 {
     "Eurospin": [
         {
-            "name": "FICHI NERI 55 g",
+            "name": "FICHI NERI",
             "price": 0.49
         },
         {
@@ -13,23 +13,23 @@
             "price": 0.99
         },
         {
-            "name": "MAIS FRESCO 450 g",
+            "name": "MAIS FRESCO",
             "price": 2.69
         },
         {
-            "name": "FUNGHI CHAMPIGNON 750 g",
+            "name": "FUNGHI CHAMPIGNON",
             "price": 2.49
         },
         {
-            "name": "FAGIOLINI BOBY 1 kg",
+            "name": "FAGIOLINI BOBY",
             "price": 2.99
         },
         {
-            "name": "CIPOLLE DORATE 2 kg",
+            "name": "CIPOLLE DORATE",
             "price": 0.99
         },
         {
-            "name": "PEPERONI MISTI 900 g",
+            "name": "PEPERONI MISTI",
             "price": 1.99
         },
         {
@@ -39,315 +39,15 @@
     ],
     "Conad": [
         {
-            "name": "BASTONCINI CAPITAN FINDUS",
-            "price": 3.39
-        },
-        {
-            "name": "NUTELLA FERRERO",
-            "price": 4.49
-        },
-        {
-            "name": "BIRRA HEINEKEN",
-            "price": 0.89
-        },
-        {
-            "name": "PISELLINI PRIMAVERA FINDUS",
-            "price": 4.95
-        },
-        {
-            "name": "YOGURT VIPITENO",
-            "price": 0.59
-        },
-        {
-            "name": "CRODINO",
-            "price": 4.99
-        },
-        {
-            "name": "SOFFICINI FINDUS",
-            "price": 1.85
-        },
-        {
-            "name": "POLPA DI POMODORO MUTTI",
-            "price": 1.29
-        },
-        {
-            "name": "BIRRA PERONI",
-            "price": 1.79
-        },
-        {
-            "name": "PESCHE NETTARINE A PASTA GIALLA CONAD",
-            "price": 2.49
-        },
-        {
-            "name": "UVA BIANCA ITALIA CONAD",
-            "price": 2.29
-        },
-        {
-            "name": "UVA BIANCA BIOLOGICA CONAD",
-            "price": 3.49
-        },
-        {
-            "name": "MELE ROYAL GALA E MELINDA",
-            "price": 1.49
-        },
-        {
-            "name": "BANANE BIOLOGICHE VERSO NATURA CONAD",
-            "price": 1.89
-        },
-        {
-            "name": "SUSINE DI REGINA NERA SAPORI & DINTORNI CONAD",
-            "price": 1.89
-        },
-        {
-            "name": "ANGURIE NERE MIOI KOKONEMO",
-            "price": 0.99
-        },
-        {
-            "name": "FAGIOLINI CONAD PERCORSO QUALITÀ",
-            "price": 1.89
-        },
-        {
-            "name": "CAVOLINI DI BRUXELLES CONAD",
-            "price": 1.99
-        },
-        {
-            "name": "PRUGNE DENOCCIOLATE CONAD",
-            "price": 2.89
-        },
-        {
-            "name": "INSALATA ORIENTALE CONAD PERCORSO QUALITÀ",
-            "price": 0.99
-        },
-        {
-            "name": "INSALATA RICETTA CENA BONDUELLE",
-            "price": 1.49
-        },
-        {
-            "name": "INSALATA JULIENNE BONDUELLE",
-            "price": 1.49
-        },
-        {
-            "name": "PIANTA BASILICO",
-            "price": 1.38
-        },
-        {
-            "name": "PATATINE AL FORNO COOP COZPOLA",
-            "price": 0.99
-        },
-        {
-            "name": "POMODORINO CILIEGINO CONAD PERCORSO QUALITÀ",
-            "price": 1.79
-        },
-        {
-            "name": "MIRTILLI CONAD",
-            "price": 1.79
-        },
-        {
-            "name": "MOUSSE MELINDA",
-            "price": 0.59
-        },
-        {
-            "name": "BISTECCA CON OSSO DI BOVINO ADULTO",
-            "price": 16.9
-        },
-        {
-            "name": "ARACHIDE DI SUINO CONAD PERCORSO QUALITÀ",
-            "price": 5.9
-        },
-        {
-            "name": "FETTINE COSCIA DI BOVINO ADULTO",
-            "price": 15.9
-        },
-        {
-            "name": "PETTO DI POLLO A FETTE CONAD PERCORSO QUALITÀ",
-            "price": 9.9
-        },
-        {
-            "name": "FORMAGGIO A PASTA FILATA VALVO",
-            "price": 0.99
-        },
-        {
-            "name": "FETTINE E LOMBATINE DI VITELLO CONAD PERCORSO QUALITÀ",
-            "price": 17.9
-        },
-        {
-            "name": "MACINATO DI POLLO/TACCHINO CONAD PERCORSO QUALITÀ",
-            "price": 2.89
-        },
-        {
-            "name": "FUSI/SOVRACOSCE DI POLLO CONAD PERCORSO QUALITÀ",
-            "price": 3.99
-        },
-        {
-            "name": "MACINATO MISTO SUINO/BOVINO",
-            "price": 8.9
-        },
-        {
-            "name": "SALAME GALBANI",
-            "price": 1.59
-        },
-        {
-            "name": "KEBAB DI POLLO AIA",
-            "price": 3.99
-        },
-        {
-            "name": "COTOLETTA ALLA MILANESE AIA",
-            "price": 3.59
-        },
-        {
-            "name": "ROLLINI DI POLLO AVMEC",
-            "price": 8.9
-        },
-        {
-            "name": "SALAME FELINO IGP VERONI",
-            "price": 2.99
-        },
-        {
-            "name": "HAMBURGER CLASSICO AIA",
-            "price": 2.29
-        },
-        {
-            "name": "SPINACINA GRANA PADANO AIA",
-            "price": 3.59
-        },
-        {
-            "name": "BARS DI POLLO AMADORI",
-            "price": 2.59
-        },
-        {
-            "name": "HAMBURGER DI SOTTILONA SAPORI & IDEE CONAD",
-            "price": 3.9
-        },
-        {
-            "name": "ALETTE DI SUINO AIA",
-            "price": 3.99
-        },
-        {
-            "name": "ROSTÌ DELL'EST AIA",
-            "price": 3.99
-        },
-        {
-            "name": "FORMAGGIO PRIMO SALE VALVO",
-            "price": 0.99
-        },
-        {
-            "name": "CACIOCAVALLO/STAGIONATO",
-            "price": 1.29
-        },
-        {
-            "name": "PARMIGIANO REGGIANO",
-            "price": 2.19
-        },
-        {
-            "name": "EDAMER",
-            "price": 0.59
-        },
-        {
-            "name": "CAMOSCIO D'ORO",
-            "price": 1.59
-        },
-        {
-            "name": "PROVOLONE DOLCE AURICCHIO",
-            "price": 1.35
-        },
-        {
-            "name": "SCAMORZA CIANIELLA BELLUOSA",
-            "price": 1.49
-        },
-        {
-            "name": "MORTADELLA CONAD",
-            "price": 1.09
-        },
-        {
-            "name": "PROSCIUTTO COTTO GRAN BISCOTTO ROVAGNATI",
-            "price": 1.99
-        },
-        {
-            "name": "PROSCIUTTO DI PARMA DOP SAPORI & DINTORNI CONAD",
-            "price": 3.59
-        },
-        {
-            "name": "SPECK IBERETTA",
-            "price": 1.79
-        },
-        {
-            "name": "PETTO DI TACCHINO ARROSTO CONAD PERCORSO QUALITÀ",
-            "price": 2.19
-        },
-        {
-            "name": "PANCETTA COPPA VERONI",
-            "price": 2.09
-        },
-        {
-            "name": "BRESAOLA RIGAMONTI BLU",
-            "price": 3.89
-        },
-        {
-            "name": "MOZZARELLA NATURA SINCERA",
-            "price": 2.39
-        },
-        {
-            "name": "YOGURT MIX VELLUTÈ",
-            "price": 0.95
-        },
-        {
-            "name": "FRUTTOLO",
-            "price": 2.19
-        },
-        {
-            "name": "MIO DANONE",
-            "price": 1.49
-        },
-        {
-            "name": "MOZZARELLA NUVOLÉTTTA SOLE",
-            "price": 2.79
-        },
-        {
-            "name": "PHILADELPHIA CLASSICA",
-            "price": 2.39
-        },
-        {
-            "name": "MASCARPONE CONAD",
-            "price": 2.89
-        },
-        {
-            "name": "CERTOSA GALBANI",
-            "price": 1.99
-        },
-        {
-            "name": "GALBANINO GALBANI l'originale",
-            "price": 2.85
-        },
-        {
-            "name": "SQUACQUERONE D.O.P SAPORI & DINTORNI",
-            "price": 2.19
-        },
-        {
-            "name": "LATTE DI MONTAGNA SAPORI & DINTORNI CONAD",
-            "price": 1.49
-        },
-        {
-            "name": "FORMAGGIO A FETTE EMMENTAL CONAD",
-            "price": 2.69
-        },
-        {
-            "name": "SOTTILETTE CLASSICHE",
-            "price": 1.69
-        },
-        {
-            "name": "STRACCIATELLA SAPORI & DINTORNI CONAD",
-            "price": 2.79
-        },
-        {
             "name": "SUCCHI PFANNER vari gusti 2L",
             "price": 2.59
         },
         {
-            "name": "BIBITE ZERO ZUCCHERI CONAD vari gusti 1L",
+            "name": "BIBITE ZERO ZUCCHERI CONAD aranciata/cocktail/limonata/cola: zero/limone 1L",
             "price": 0.49
         },
         {
-            "name": "SCIROPPI CONAD vari gusti 560ml",
+            "name": "SCIROPPI CONAD amarena/limone/menta verde/menta senza zucc./orzata 560ml",
             "price": 2.99
         },
         {
@@ -355,7 +55,7 @@
             "price": 1.99
         },
         {
-            "name": "ACQUA BRIO ROCCHETTA 1,5L",
+            "name": "ACQUA BRIO ROCCHETTA blu leggermente frizzante/rossa più frizzante 1,5L",
             "price": 0.45
         },
         {
@@ -363,11 +63,11 @@
             "price": 0.32
         },
         {
-            "name": "ACQUA TONICA SAPORI & IDEE CONAD 4x200ml",
+            "name": "ACQUA TONICA SAPORI & IDEE CONAD indian/mediterranean 4x200ml",
             "price": 2.59
         },
         {
-            "name": "SUCCO SENZA ZUCCHERI DOLCE DI NATURA SANTAL 6x200ml",
+            "name": "SUCCO SENZA ZUCCHERI DOLCE DI NATURA SANTAL pesca/pera/ace 6x200ml",
             "price": 1.79
         },
         {
@@ -447,16 +147,16 @@
             "price": 0.75
         },
         {
+            "name": "PURÈ DI PATATE CONAD in fiocchi 225g",
+            "price": 1.49
+        },
+        {
             "name": "BISCOTTI AI CEREALI CONAD 500g",
             "price": 1.89
         },
         {
             "name": "MISCELA DI FARINE PER PIZZA CONAD 1kg",
             "price": 1.19
-        },
-        {
-            "name": "PURÈ DI PATATE CONAD in fiocchi 225g",
-            "price": 1.49
         },
         {
             "name": "ACETO DI MELE CONAD 500ml",
@@ -471,12 +171,12 @@
             "price": 5.69
         },
         {
-            "name": "BITTER CONAD 70cl",
-            "price": 5.99
-        },
-        {
             "name": "CIALDE CAFFÈ BORBONE miscela decisa 50 cialde",
             "price": 7.49
+        },
+        {
+            "name": "BITTER CONAD 70cl",
+            "price": 5.99
         },
         {
             "name": "POLPABELLA STAR polpa a pezzetti 3x400g",
@@ -487,7 +187,7 @@
             "price": 9.99
         },
         {
-            "name": "PASTA BARILLA vari formati classici 1kg",
+            "name": "PASTA BARILLA vari formati classici 1Kg",
             "price": 0.95
         },
         {
@@ -499,925 +199,1237 @@
             "price": 1.79
         },
         {
-            "name": "Fette Xtra Sottili Leerdammer",
-            "price": 1.59
+            "name": "Bastoncini Capitan Findus x18 450g",
+            "price": 3.39
         },
         {
-            "name": "Provolone Auricchio",
-            "price": 2.59
+            "name": "Nutella Ferrero 750g",
+            "price": 4.49
         },
         {
-            "name": "Margarina Naturalmente Vallè",
-            "price": 1.39
+            "name": "Birra Heineken 66cl",
+            "price": 0.89
         },
         {
-            "name": "Bresaola della Valtellina IGP Rigamonti",
-            "price": 3.29
+            "name": "Pisellini Primavera Findus 1,2kg",
+            "price": 4.95
         },
         {
-            "name": "Pancetta a cubetti Beretta",
-            "price": 2.29
+            "name": "Yogurt Vipiteno vari gusti interi 2x125g",
+            "price": 0.59
         },
         {
-            "name": "Pasta Fresca ripiena Rana",
-            "price": 2.69
-        },
-        {
-            "name": "Merenda Unduetris! Citterio",
-            "price": 1.79
-        },
-        {
-            "name": "Wurstel Wudy AIA",
-            "price": 1.29
-        },
-        {
-            "name": "Linea fresca salumeria Beretta",
-            "price": 1.99
-        },
-        {
-            "name": "Salmone affumicato Riunione",
-            "price": 6.79
-        },
-        {
-            "name": "Conserve Costanza",
-            "price": 1.99
-        },
-        {
-            "name": "Piselli Fini Biologici Verso Natura Conad",
-            "price": 1.99
-        },
-        {
-            "name": "Petto arrosto Aequilibruim AIA",
-            "price": 2.99
-        },
-        {
-            "name": "Actimel Danone",
-            "price": 2.99
-        },
-        {
-            "name": "Yogurt bianco biologico Verso Natura Conad",
-            "price": 1.69
-        },
-        {
-            "name": "Gelato senza zuccheri aggiunti Piacersi Conad",
-            "price": 2.49
-        },
-        {
-            "name": "Latte Stella multivitaminico",
-            "price": 1.39
-        },
-        {
-            "name": "Bevande vegetali Alpro",
-            "price": 2.49
-        },
-        {
-            "name": "Latte Tre Valli",
-            "price": 1.19
-        },
-        {
-            "name": "Tisana Piacersi Conad",
-            "price": 1.79
-        },
-        {
-            "name": "Barretta proteica Piacersi Conad",
-            "price": 1.29
-        },
-        {
-            "name": "Kefir cremoso Milk",
-            "price": 1.29
-        },
-        {
-            "name": "Mix di frutta secca Longevimix Mister Nut",
-            "price": 2.29
-        },
-        {
-            "name": "Gallette di mais biologiche Verso Natura Conad",
-            "price": 1.19
-        },
-        {
-            "name": "Barretta Pesoforma",
-            "price": 10.99
-        },
-        {
-            "name": "Stecco Pralinato Amarena Conad",
-            "price": 3.19
-        },
-        {
-            "name": "Gelato Carte d'Or Algida",
-            "price": 2.79
-        },
-        {
-            "name": "Stecco Gelato Magnum Algida",
-            "price": 3.49
-        },
-        {
-            "name": "Minestrone Leggerezza Orogel",
-            "price": 2.39
-        },
-        {
-            "name": "Cuori di filetti di nasello Frosta",
-            "price": 5.59
-        },
-        {
-            "name": "Pizza Ristorante Cameo",
-            "price": 2.49
-        },
-        {
-            "name": "Mini Stecchi Conad",
-            "price": 3.29
-        },
-        {
-            "name": "Hamburger di scottona Sapori & Idee Conad",
-            "price": 3.49
-        },
-        {
-            "name": "Tartare di scottona Sapori & Idee Conad",
-            "price": 5.9
-        },
-        {
-            "name": "Mango Palmer Sapori & Idee Conad",
-            "price": 1.89
-        },
-        {
-            "name": "Patate viola Sapori & Idee Conad",
-            "price": 0.99
-        },
-        {
-            "name": "Formaggio Trentingrana DOP Sapori & Dintorni Conad",
-            "price": 1.99
-        },
-        {
-            "name": "Pecorino Dolce Sardo Sapori & Dintorni Conad",
-            "price": 1.69
-        },
-        {
-            "name": "Formaggio Grottone Bianco",
-            "price": 2.29
-        },
-        {
-            "name": "Asiago DOP Sapori & Dintorni Conad",
-            "price": 1.09
-        },
-        {
-            "name": "Parmigiano Reggiano DOP Sapori & Dintorni Conad",
-            "price": 3.49
-        },
-        {
-            "name": "Prosciutto cotto al tartufo Leoncini",
-            "price": 1.79
-        },
-        {
-            "name": "Finocchiona Sapori & Dintorni Conad",
-            "price": 1.59
-        },
-        {
-            "name": "Guanciale stagionato Bisanzio",
-            "price": 1.69
-        },
-        {
-            "name": "Bocconcini di mozzarella di bufala campana Sapori & Dintorni Conad",
-            "price": 3.79
-        },
-        {
-            "name": "Burro salato Sapori & Idee Conad",
-            "price": 1.19
-        },
-        {
-            "name": "Stracchino cremoso Sapori & Idee Conad",
-            "price": 2.99
-        },
-        {
-            "name": "Olive verdi ripiene Lo Monaco Li Castri",
-            "price": 1.19
-        },
-        {
-            "name": "Bresaola di Angus Sapori & Idee Conad",
-            "price": 5.29
-        },
-        {
-            "name": "Jamon Iberico Sapori & Idee Conad",
-            "price": 6.49
-        },
-        {
-            "name": "Salsiccia curva piccante Sapori & Dintorni Conad",
-            "price": 4.79
-        },
-        {
-            "name": "Wurstel Sapori & Dintorni Conad",
-            "price": 1.69
-        },
-        {
-            "name": "Pasta fresca all'uovo Sapori & Idee Conad",
-            "price": 1.99
-        },
-        {
-            "name": "Pasta fresca ripiena Sapori & Dintorni Conad",
-            "price": 2.59
-        },
-        {
-            "name": "Chicche di patate fresche Sapori & Idee Conad",
-            "price": 1.49
-        },
-        {
-            "name": "Gnocchi di patate fresche Sapori & Idee Conad",
-            "price": 1.89
-        },
-        {
-            "name": "Pesto fresco genovese Sapori & Dintorni Conad",
-            "price": 2.29
-        },
-        {
-            "name": "Salmone affumicato a caldo Sapori & Idee Conad",
-            "price": 4.59
-        },
-        {
-            "name": "Sashimi di salmone Sapori & Idee Conad",
-            "price": 5.99
-        },
-        {
-            "name": "Salmone selvaggio d'Alaska Sockeye Icelander",
+            "name": "Crodino classico/arancia rossa 10x10cl",
             "price": 4.99
         },
         {
-            "name": "Sandwich Sapori & Idee Conad",
-            "price": 2.79
+            "name": "Sofficini Findus varie ricette 250g",
+            "price": 1.85
         },
         {
-            "name": "Piadina Romagnola IGP Sapori & Dintorni Conad",
+            "name": "Polpa di Pomodoro Mutti 2x400g",
             "price": 1.29
         },
         {
-            "name": "Croissant Sapori & Idee Conad",
-            "price": 2.99
+            "name": "Birra Peroni 3x33cl",
+            "price": 1.79
         },
         {
-            "name": "Miele di arancio Sapori & Idee Conad",
-            "price": 5.99
-        },
-        {
-            "name": "Olive in salamoia Sapori & Dintorni Conad",
+            "name": "Pesche nettarine a pasta gialla Conad Percorso Qualità",
             "price": 2.49
         },
         {
-            "name": "Pomodori secchi di Calabria Sapori & Dintorni Conad",
-            "price": 2.99
+            "name": "Uva bianca Italia Conad Percorso Qualità",
+            "price": 2.29
         },
         {
-            "name": "I cotti a vapore pronti da gustare Sapori & Idee Conad",
+            "name": "Uva bianca biologica senza semi Alce Nero 750g",
+            "price": 3.49
+        },
+        {
+            "name": "Mele Royal Gala Melinda 750g",
             "price": 1.49
         },
         {
-            "name": "Pasta Sapori & Idee Conad",
-            "price": 0.75
+            "name": "Banane biologiche Verso Natura Conad 620g",
+            "price": 1.89
         },
         {
-            "name": "Patè per crostino toscano Sapori & Idee Conad",
-            "price": 2.49
+            "name": "Susine di Vignola nere Sapori & Dintorni Conad 650g",
+            "price": 1.89
         },
         {
-            "name": "Ragù di carne Sapori & Idee Conad",
+            "name": "Angurie nere midi Kokomero",
+            "price": 0.99
+        },
+        {
+            "name": "Fagiolini Conad Percorso Qualità 500g",
+            "price": 1.89
+        },
+        {
+            "name": "Cavolini di Bruxelles Conad 370g",
+            "price": 1.99
+        },
+        {
+            "name": "Prugne denocciolate Conad 250g",
             "price": 2.89
         },
         {
-            "name": "Salsa di soia Sapori & Idee Conad",
-            "price": 2.49
-        },
-        {
-            "name": "Olio extra vergine di oliva IGP Sicilia Sapori & Dintorni Conad",
-            "price": 12.99
-        },
-        {
-            "name": "Vino Muller Thurgau Trentino DOC Costalta",
-            "price": 4.99
-        },
-        {
-            "name": "Latte Granarolo parzialmente scremato",
-            "price": 0.89
-        },
-        {
-            "name": "Cereali cioccolato Fitness Nestlè",
-            "price": 2.99
-        },
-        {
-            "name": "Cereali Kit Kat Nestlè",
-            "price": 2.99
-        },
-        {
-            "name": "Cereali Lion Nestlè",
-            "price": 2.49
-        },
-        {
-            "name": "Kellogg's Special K classic",
-            "price": 2.49
-        },
-        {
-            "name": "Frollini BuoniCosì Galbusera",
-            "price": 2.49
-        },
-        {
-            "name": "Biscotti Zuppalatte Colussi",
-            "price": 1.79
-        },
-        {
-            "name": "Kinder Brioss",
-            "price": 2.25
-        },
-        {
-            "name": "Barrette Kellogg's Special K",
-            "price": 1.99
-        },
-        {
-            "name": "Nesquik Nestlè classico",
-            "price": 5.59
-        },
-        {
-            "name": "Latte e cacao Nesquik Nestlè",
-            "price": 2.59
-        },
-        {
-            "name": "Fisarmoniche Mulino Bianco",
-            "price": 1.79
-        },
-        {
-            "name": "Macine Mulino Bianco",
-            "price": 2.49
-        },
-        {
-            "name": "Plumcake Mulino Bianco classico",
-            "price": 1.25
-        },
-        {
-            "name": "Ringo Pavesi",
-            "price": 1.99
-        },
-        {
-            "name": "Biscotti Faccine Balocco",
-            "price": 2.49
-        },
-        {
-            "name": "Biscotti Oro Ciok Saiwa",
-            "price": 1.99
-        },
-        {
-            "name": "Snack Loacker Break 3",
-            "price": 1.99
-        },
-        {
-            "name": "Linea biscotti Milka",
-            "price": 2.79
-        },
-        {
-            "name": "Buondì Bauli classico",
+            "name": "Insalata orientale Conad Percorso Qualità 125g",
             "price": 0.99
         },
         {
-            "name": "Barrette snack Mars/Twix/Snickers",
-            "price": 2.59
-        },
-        {
-            "name": "M&M's",
-            "price": 3.49
-        },
-        {
-            "name": "Confettura Zuegg",
-            "price": 1.99
-        },
-        {
-            "name": "Capsule caffè Kimbo",
-            "price": 8.99
-        },
-        {
-            "name": "Caramelle gommose Mario Kart Haribo",
+            "name": "Insalata ricetta oliva Carta delle Insalate Bonduelle 140g",
             "price": 1.49
         },
         {
-            "name": "Tè Lipton",
-            "price": 1.99
+            "name": "Insalata Iceberg Bonduelle 200g",
+            "price": 1.49
         },
         {
-            "name": "Caffè qualità espresso bar Conad",
-            "price": 14.99
+            "name": "Pianta Basilico vaso 14cm",
+            "price": 1.38
         },
         {
-            "name": "Cialde caffè Morettino",
-            "price": 11.99
-        },
-        {
-            "name": "Cannucce magic milk Polaretti",
+            "name": "Patatine al forno bocconci patate Coppola 1kg",
             "price": 0.99
         },
         {
-            "name": "Orzo Bimbo solubile",
+            "name": "Pomodoro rosso ciliegino Conad Percorso Qualità 500g",
             "price": 1.79
         },
         {
-            "name": "Caffè solubile Conad decaffeinato",
-            "price": 3.99
+            "name": "Mirtilli Conad 125g",
+            "price": 1.79
         },
         {
-            "name": "Pan di Spagna Paneangeli",
-            "price": 1.39
+            "name": "Mousse Melinda vari gusti 100g",
+            "price": 0.59
         },
         {
-            "name": "Pan Bauletto Mulino Bianco",
-            "price": 0.89
+            "name": "Bistecca con osso di bovino adulto",
+            "price": 16.9
         },
         {
-            "name": "Pastina biologica Conad Baby",
+            "name": "Braciole di suino Conad Percorso Qualità",
+            "price": 5.9
+        },
+        {
+            "name": "Fettine scelte di bovino adulto",
+            "price": 15.9
+        },
+        {
+            "name": "Petto di pollo a fette Conad Percorso Qualità",
+            "price": 9.9
+        },
+        {
+            "name": "Formaggio a pasta filata Valvo bianco/affumicato",
             "price": 0.99
         },
         {
-            "name": "Latte crescita 3 Conad Baby",
-            "price": 0.85
+            "name": "Treccione Valvo affumicato",
+            "price": 0.99
         },
         {
-            "name": "Biscotto biologico Conad Baby",
-            "price": 4.59
+            "name": "Fettine e lombatine di vitello Conad Percorso Qualità",
+            "price": 17.9
         },
         {
-            "name": "Succo 100% frutta biologica Conad Baby",
-            "price": 0.65
+            "name": "Macinato di pollo/tacchino Conad Percorso Qualità 300g",
+            "price": 2.89
         },
         {
-            "name": "Omogeneizzati Plasmon",
+            "name": "Fusi/sovracosce di pollo Conad Percorso Qualità",
             "price": 3.99
         },
         {
-            "name": "Patatine Conad",
-            "price": 1.89
+            "name": "Macinato misto suino/bovino",
+            "price": 8.9
         },
         {
-            "name": "Patatine Pai classiche",
-            "price": 1.79
+            "name": "Salame Galbani vari tipi",
+            "price": 1.59
         },
         {
-            "name": "Maionese Heinz originale",
+            "name": "Salame Felino IGP Veroni",
             "price": 2.99
         },
         {
-            "name": "Ketchup Mato Mato",
-            "price": 1.79
+            "name": "Rollini di pollo Avimecc",
+            "price": 8.9
         },
         {
-            "name": "Salse Calvè",
-            "price": 1.99
+            "name": "Kebab di pollo 300g",
+            "price": 3.99
         },
         {
-            "name": "Crackers Gran Pavesi",
-            "price": 1.79
-        },
-        {
-            "name": "Filetti di tonno Mareblu",
-            "price": 2.99
-        },
-        {
-            "name": "Tonno Rio Mare filo d'olio",
-            "price": 4.79
-        },
-        {
-            "name": "Tonno Mare Aperto",
+            "name": "Hamburger classico di pollo 200g",
             "price": 2.29
         },
         {
-            "name": "Filetti di sgombro Nostromo",
-            "price": 2.49
+            "name": "Alette Durango varie ricette 400g",
+            "price": 3.99
         },
         {
-            "name": "Mais Valfrutta",
-            "price": 2.49
+            "name": "Cotoletta alla viennese 300g",
+            "price": 3.59
         },
         {
-            "name": "Verdure all'aceto di vino Ponti",
-            "price": 1.59
+            "name": "Spinacine Grancroccanti 300g",
+            "price": 3.59
         },
         {
-            "name": "Condiverde Riso Saclà classico",
-            "price": 3.29
+            "name": "Bon Roll Easy varie ricette 300g",
+            "price": 3.99
         },
         {
-            "name": "I grigliati sottolio Conad",
+            "name": "Birbe di pollo Amadori 270g",
             "price": 2.59
         },
         {
-            "name": "Legumi Valfrutta",
-            "price": 0.89
+            "name": "Hamburger di scottona Sapori & Idee Conad 180g",
+            "price": 3.9
         },
         {
-            "name": "Pasta integrale De Cecco",
-            "price": 1.19
+            "name": "Formaggio Primo Sale Valvo",
+            "price": 0.99
         },
         {
-            "name": "Risotto Knorr",
+            "name": "Cacio fresco/stagionato",
+            "price": 1.29
+        },
+        {
+            "name": "Parmigiano Reggiano stagionato 16 mesi spicchio",
+            "price": 2.19
+        },
+        {
+            "name": "Edamer",
+            "price": 0.59
+        },
+        {
+            "name": "Camoscio d'Oro l'originale",
             "price": 1.59
         },
         {
-            "name": "Olio classico Sagra",
-            "price": 4.99
+            "name": "Provolone dolce Auricchio",
+            "price": 1.35
         },
         {
-            "name": "Pelati Mutti",
+            "name": "Scamorza ciambella Deliziosa",
+            "price": 1.49
+        },
+        {
+            "name": "Mortadella Conad con pistacchi",
+            "price": 1.09
+        },
+        {
+            "name": "Prosciutto cotto Gran Biscotto Deli Rovagnati",
             "price": 1.99
         },
         {
-            "name": "Pesto di pomodoro Mutti",
-            "price": 2.49
+            "name": "Prosciutto di Parma DOP Sapori & Dintorni Conad",
+            "price": 3.59
         },
         {
-            "name": "Sugo Barilla",
+            "name": "Speck Beretta",
             "price": 1.79
         },
         {
-            "name": "Dado Knorr classico/vegetale",
+            "name": "Petto di tacchino arrosto Conad Percorso Qualità",
+            "price": 2.19
+        },
+        {
+            "name": "Pancetta coppata Veroni",
+            "price": 2.09
+        },
+        {
+            "name": "Bresaola Rigamonti Blu",
+            "price": 3.89
+        },
+        {
+            "name": "Mozzarella Natura Sincera 4x100g",
+            "price": 2.39
+        },
+        {
+            "name": "Yogurt Mix Muller vari gusti",
+            "price": 0.95
+        },
+        {
+            "name": "Fruttolo Nestlé gusti assortiti 6x50g",
+            "price": 2.19
+        },
+        {
+            "name": "Formaggino Mio Nestlé classico 125g",
+            "price": 1.49
+        },
+        {
+            "name": "Mozzarella Nuvoletta Sole 400g",
+            "price": 2.79
+        },
+        {
+            "name": "Philadelphia classica 250g",
+            "price": 2.39
+        },
+        {
+            "name": "Mascarpone Conad 500g",
+            "price": 2.89
+        },
+        {
+            "name": "Certosa Galbani classica 165g",
             "price": 1.99
         },
         {
-            "name": "Olio Gran Fruttato Monini",
+            "name": "Galbanino Galbani l'originale 270g",
+            "price": 2.85
+        },
+        {
+            "name": "Squacquerone di Romagna DOP Sapori & Dintorni Conad 200g",
+            "price": 2.19
+        },
+        {
+            "name": "Latte di montagna Sapori & Dintorni Conad 1L",
+            "price": 1.49
+        },
+        {
+            "name": "Formaggio a fette emmental president/galbanone 140g",
+            "price": 2.69
+        },
+        {
+            "name": "Sottilette classiche 200g",
+            "price": 1.69
+        },
+        {
+            "name": "Stracciatella Sapori & Dintorni Conad 250g",
+            "price": 2.79
+        },
+        {
+            "name": "FETTE XTRA SOTTILI LEERDAMMER gusto/leggere 80g",
+            "price": 1.59
+        },
+        {
+            "name": "PROVOLONE AURICCHIO fetta 200g",
+            "price": 2.59
+        },
+        {
+            "name": "MARGARINA NATURALMENTE VALLÈ 250g",
+            "price": 1.39
+        },
+        {
+            "name": "BRESAOLA DELLA VALTELLINA IGP RIGAMONTI punta d'anca 70g",
+            "price": 3.29
+        },
+        {
+            "name": "PANCETTA A CUBETTI BERETTA affumicata/dolce 2x75g",
+            "price": 2.29
+        },
+        {
+            "name": "PASTA FRESCA RIPIENA RANA sfogliagrezza/sfogliavelo/gioiaverde/duetto varie ricette 250g",
+            "price": 2.69
+        },
+        {
+            "name": "MERENDA UNDUETRIS! CITTERIO salame/prosc. cotto 100g/senza lattosio e glutine 80g",
+            "price": 1.79
+        },
+        {
+            "name": "WURSTEL WUDY AIA classico 300g",
+            "price": 1.29
+        },
+        {
+            "name": "LINEA FRESCA SALUMERIA BERETTA",
+            "price": 1.99
+        },
+        {
+            "name": "SALMONE AFFUMICATO RIUNIONE 250g",
+            "price": 6.79
+        },
+        {
+            "name": "CONSERVE COSTANZA funghi/olive varie ricette/carciofi a metà 200g",
+            "price": 1.99
+        },
+        {
+            "name": "PISELLI FINI BIOLOGICI VERSO NATURA CONAD 450g",
+            "price": 1.99
+        },
+        {
+            "name": "PETTO ARROSTO AEQUILIBRIUM AIA tacchino/pollo 2x100g",
+            "price": 2.99
+        },
+        {
+            "name": "ACTIMEL DANONE vari gusti 6x100g",
+            "price": 2.99
+        },
+        {
+            "name": "YOGURT BIANCO BIOLOGICO VERSO NATURA CONAD intero/magro 500g",
+            "price": 1.69
+        },
+        {
+            "name": "GELATO SENZA ZUCCHERI AGGIUNTI PIACERSI CONAD crema/pistacchio/cacao/yogurt 250g",
+            "price": 2.49
+        },
+        {
+            "name": "LATTE STELLA multivitaminico per sistema immunitario 1L",
+            "price": 1.39
+        },
+        {
+            "name": "BEVANDE VEGETALI ALPRO vari tipi 1L",
+            "price": 2.49
+        },
+        {
+            "name": "LATTE TRE VALLI vivi leggero/vivi digeribile/vivi sano/protein+calcio 1L",
+            "price": 1.19
+        },
+        {
+            "name": "TISANA PIACERSI CONAD equilibrio/energia/difese immunitarie 20 filtri",
+            "price": 1.79
+        },
+        {
+            "name": "BARRETTA PROTEICA PIACERSI CONAD vari gusti 55g/66g",
+            "price": 1.29
+        },
+        {
+            "name": "KEFIR CREMOSO MILK bianco/avena e noci 400g",
+            "price": 1.29
+        },
+        {
+            "name": "LONGEVIMIX MISTER NUT benessere ossa/colesterolo balance/protezione cellulare 125g",
+            "price": 2.29
+        },
+        {
+            "name": "GALLETTE DI MAIS BIOLOGICHE VERSO NATURA CONAD 150g",
+            "price": 1.19
+        },
+        {
+            "name": "BARRETTA PESOFORMA vari tipi 372g",
+            "price": 10.99
+        },
+        {
+            "name": "STECCO PRALINATO AMARENA CONAD 360g",
+            "price": 3.19
+        },
+        {
+            "name": "GELATO CARTE D'OR ALGIDA linea classica vari gusti 500g",
+            "price": 2.79
+        },
+        {
+            "name": "STECCO GELATO MAGNUM ALGIDA vari gusti x3/x4",
+            "price": 3.49
+        },
+        {
+            "name": "MINESTRONE LEGGEREZZA OROGEL 750g",
+            "price": 2.39
+        },
+        {
+            "name": "CUORI DI FILETTI DI NASELLO FROSTA 300g",
+            "price": 5.59
+        },
+        {
+            "name": "PIZZA RISTORANTE CAMEO varie ricette",
+            "price": 2.49
+        },
+        {
+            "name": "MINI STECCO CONAD gusti assortiti x6 300g",
+            "price": 3.29
+        },
+        {
+            "name": "HAMBURGER DI SCOTTONA SAPORI & IDEE CONAD gusto raffinato/con bacon 180g",
+            "price": 3.49
+        },
+        {
+            "name": "TARTARE DI SCOTTONA SAPORI & IDEE CONAD pronta da gustare 2x105g",
+            "price": 5.9
+        },
+        {
+            "name": "MANGO PALMER SAPORI & IDEE CONAD cat. 1, prov. Estera, 380g circa",
+            "price": 1.89
+        },
+        {
+            "name": "PATATE VIOLA SAPORI & IDEE CONAD prov. Italia, 600g",
+            "price": 0.99
+        },
+        {
+            "name": "FORMAGGIO TRENTINGRANA DOP SAPORI & DINTORNI CONAD stagionato 20 mesi spicchio - all'etto",
+            "price": 1.99
+        },
+        {
+            "name": "PECORINO DOLCE SARDO SAPORI & DINTORNI CONAD all'etto",
+            "price": 1.69
+        },
+        {
+            "name": "FORMAGGIO GROTTONE BIANCO all'etto",
+            "price": 2.29
+        },
+        {
+            "name": "ASIAGO DOP SAPORI & DINTORNI CONAD all'etto",
+            "price": 1.09
+        },
+        {
+            "name": "PARMIGIANO REGGIANO DOP SAPORI & DINTORNI CONAD stagionato 30 mesi spicchio - all'etto",
+            "price": 3.49
+        },
+        {
+            "name": "PROSCIUTTO COTTO AL TARTUFO LEONCINI all'etto",
+            "price": 1.79
+        },
+        {
+            "name": "FINOCCHIONA SAPORI & DINTORNI CONAD all'etto",
+            "price": 1.59
+        },
+        {
+            "name": "GUANCIALE STAGIONATO BISANZIO affinato al gin all'etto",
+            "price": 1.69
+        },
+        {
+            "name": "BOCCONCINI DI MOZZARELLA DI BUFALA CAMPANA SAPORI & DINTORNI CONAD 270g",
+            "price": 3.79
+        },
+        {
+            "name": "BURRO SALATO SAPORI & IDEE CONAD 125g",
+            "price": 1.19
+        },
+        {
+            "name": "STRACCHINO CREMOSO SAPORI & IDEE CONAD 250g",
+            "price": 2.99
+        },
+        {
+            "name": "OLIVE VERDI RIPIENE LO MONACO LI CASTRI all'etto",
+            "price": 1.19
+        },
+        {
+            "name": "BRESAOLA DI ANGUS SAPORI & IDEE CONAD 100g",
+            "price": 5.29
+        },
+        {
+            "name": "JAMON IBERICO SAPORI & IDEE CONAD 80g",
+            "price": 6.49
+        },
+        {
+            "name": "SALSICCIA CURVA PICCANTE SAPORI & DINTORNI CONAD 300g",
+            "price": 4.79
+        },
+        {
+            "name": "WURSTEL SAPORI & DINTORNI CONAD",
+            "price": 1.69
+        },
+        {
+            "name": "PASTA FRESCA ALL'UOVO SAPORI & IDEE CONAD lasagne verdi/tagliatelline/fettuccine 250g",
+            "price": 1.99
+        },
+        {
+            "name": "PASTA FRESCA RIPIENA SAPORI & DINTORNI CONAD varie ricette 250g",
+            "price": 2.59
+        },
+        {
+            "name": "CHICCHE DI PATATE FRESCHE SAPORI & IDEE CONAD 500g",
+            "price": 1.49
+        },
+        {
+            "name": "GNOCCHI DI PATATE FRESCHE SAPORI & IDEE CONAD rigati/con zucca 400g",
+            "price": 1.89
+        },
+        {
+            "name": "PESTO FRESCO GENOVESE SAPORI & DINTORNI CONAD classico/senza aglio 90g",
+            "price": 2.29
+        },
+        {
+            "name": "SALMONE AFFUMICATO A CALDO SAPORI & IDEE CONAD all'aneto/al pepe 125g",
+            "price": 4.59
+        },
+        {
+            "name": "SASHIMI DI SALMONE SAPORI & IDEE CONAD limone e pepe rosa 100g",
+            "price": 5.99
+        },
+        {
+            "name": "SALMONE SELVAGGIO D'ALASKA SOCKEYE ICELANDER affumicato 100g",
+            "price": 4.99
+        },
+        {
+            "name": "SANDWICH SAPORI & IDEE CONAD varie ricette 160g",
+            "price": 2.79
+        },
+        {
+            "name": "PIADINA ROMAGNOLA IGP SAPORI & DINTORNI CONAD alla Riminese x3 360g",
+            "price": 1.29
+        },
+        {
+            "name": "CROISSANT SAPORI & IDEE CONAD al pistacchio 305g/alla francese 255g",
+            "price": 2.99
+        },
+        {
+            "name": "MIELE DI ARANCIO SAPORI & IDEE CONAD 500g",
+            "price": 5.99
+        },
+        {
+            "name": "OLIVE IN SALAMOIA SAPORI & DINTORNI CONAD di Itrana denocciolate 285g/Nocellara di Sicilia intere 285g",
+            "price": 2.49
+        },
+        {
+            "name": "POMODORI SECCHI DI CALABRIA SAPORI & DINTORNI CONAD in olio d'oliva 270g",
+            "price": 2.99
+        },
+        {
+            "name": "I COTTI A VAPORE PRONTI DA GUSTARE SAPORI & IDEE CONAD riso vari tipi/mix 3 cereali 250g/220g",
+            "price": 1.49
+        },
+        {
+            "name": "PASTA SAPORI & IDEE CONAD vari formati classici 500g",
+            "price": 0.75
+        },
+        {
+            "name": "PATÈ PER CROSTINO TOSCANO SAPORI & IDEE CONAD con fegatini 180g",
+            "price": 2.49
+        },
+        {
+            "name": "RAGÙ DI CARNE SAPORI & IDEE CONAD cinghiale/capriolo/lepre/chianina 180g",
+            "price": 2.89
+        },
+        {
+            "name": "SALSA DI SOIA SAPORI & IDEE CONAD classica/meno sale 150ml",
+            "price": 2.49
+        },
+        {
+            "name": "OLIO EXTRA VERGINE DI OLIVA IGP SICILIA SAPORI & DINTORNI CONAD 75cl",
+            "price": 12.99
+        },
+        {
+            "name": "VINO MULLER THURGAU TRENTINO DOC COSTALTA 75cl",
+            "price": 4.99
+        },
+        {
+            "name": "LATTE GRANAROLO parzialmente scremato UHT 1L",
+            "price": 0.89
+        },
+        {
+            "name": "CEREALI CIOCCOLATO FITNESS NESTLÉ latte/fondente 375g",
+            "price": 2.99
+        },
+        {
+            "name": "CEREALI KIT KAT NESTLÉ 330g",
+            "price": 2.99
+        },
+        {
+            "name": "CEREALI LION NESTLÉ 400g",
+            "price": 2.49
+        },
+        {
+            "name": "KELLOGG'S SPECIAL K classic 450g",
+            "price": 2.49
+        },
+        {
+            "name": "FROLLINI BUONICOSÌ GALBUSERA bontà integrale/avena e riso 300g/classico 330g",
+            "price": 2.49
+        },
+        {
+            "name": "BISCOTTI ZUPPALATTE COLUSSI 2x250g",
+            "price": 1.79
+        },
+        {
+            "name": "KINDER BRIOSS latte/latte e cacao x10",
+            "price": 2.25
+        },
+        {
+            "name": "BARRETTE KELLOGG'S SPECIAL K frutti rossi/cioccolato x6/con mandorla x4",
+            "price": 1.99
+        },
+        {
+            "name": "NESQUIK NESTLÉ classico 500g",
+            "price": 5.59
+        },
+        {
+            "name": "LATTE E CACAO NESQUIK NESTLÉ classico/senza lattosio 3x180ml",
+            "price": 2.59
+        },
+        {
+            "name": "FISARMONICHE MULINO BIANCO cereali/cioccolato x8 296g",
+            "price": 1.79
+        },
+        {
+            "name": "MACINE MULINO BIANCO 700g/800g",
+            "price": 2.49
+        },
+        {
+            "name": "PLUMCAKE MULINO BIANCO classico x10 330g",
+            "price": 1.25
+        },
+        {
+            "name": "RINGO PAVESI nocciola/cacao/vaniglia 330g",
+            "price": 1.99
+        },
+        {
+            "name": "BISCOTTI FACCINE BALOCCO 700g",
+            "price": 2.49
+        },
+        {
+            "name": "BISCOTTI ORO CIOK SAIWA fondente 200g/classico/nocciola 250g/bianco 150g",
+            "price": 1.99
+        },
+        {
+            "name": "SNACK LOACKER BREAK 3 alla nocciola x4 76g",
+            "price": 1.99
+        },
+        {
+            "name": "LINEA BISCOTTI MILKA vari tipi",
+            "price": 2.79
+        },
+        {
+            "name": "BUONDÌ BAULI classico x5 165g",
+            "price": 0.99
+        },
+        {
+            "name": "BARRETTE SNACK Mars/Twix/Snickers x3",
+            "price": 2.59
+        },
+        {
+            "name": "M&M'S crispy 187g/arachidi/choco 200g/minis 176g",
+            "price": 3.49
+        },
+        {
+            "name": "CONFETTURA ZUEGG albicocche/ciliegie/fragole/pesche 320g/marmellata arance 330g",
+            "price": 1.99
+        },
+        {
+            "name": "CAPSULE CAFFÈ KIMBO comp. Nespresso spacca Napoli x40",
+            "price": 8.99
+        },
+        {
+            "name": "CARAMELLE GOMMOSE MARIO KART HARIBO vari tipi 160g",
+            "price": 1.49
+        },
+        {
+            "name": "TÈ LIPTON yellow label/verde 25 filtri",
+            "price": 1.99
+        },
+        {
+            "name": "CAFFÈ QUALITÀ ESPRESSO BAR CONAD in grani 1kg",
+            "price": 14.99
+        },
+        {
+            "name": "CIALDE CAFFÈ MORETTINO qualità bar x72",
+            "price": 11.99
+        },
+        {
+            "name": "CANNUCCE MAGIC MILK POLARETTI cioccolato/fragola x7",
+            "price": 0.99
+        },
+        {
+            "name": "ORZO BIMBO solubile 120g",
+            "price": 1.79
+        },
+        {
+            "name": "CAFFÈ SOLUBILE CONAD decaffeinato 100g",
+            "price": 3.99
+        },
+        {
+            "name": "PAN DI SPAGNA PANEANGELI 3 buste",
+            "price": 1.39
+        },
+        {
+            "name": "PAN BAULETTO MULINO BIANCO bianco 400g",
+            "price": 0.89
+        },
+        {
+            "name": "PASTINA BIOLOGICA CONAD BABY gemmine/stelline/anellini 340g",
+            "price": 0.99
+        },
+        {
+            "name": "LATTE CRESCITA 3 CONAD BABY 500ml",
+            "price": 0.85
+        },
+        {
+            "name": "BISCOTTO BIOLOGICO CONAD BABY 640g",
+            "price": 4.59
+        },
+        {
+            "name": "SUCCO 100% FRUTTA BIOLOGICA CONAD BABY frutta mista/pera/pesca/mela 90g",
+            "price": 0.65
+        },
+        {
+            "name": "OMOGENEIZZATI PLASMON manzo/prosciutto/vitello/pollo 2x120g",
+            "price": 3.99
+        },
+        {
+            "name": "PATATINE CONAD classiche/rustiche 6x25g",
+            "price": 1.89
+        },
+        {
+            "name": "PATATINE PAI classiche 300g",
+            "price": 1.79
+        },
+        {
+            "name": "MAIONESE HEINZ originale 460g",
+            "price": 2.99
+        },
+        {
+            "name": "KETCHUP MATO MATO classico/piccante 390g",
+            "price": 1.79
+        },
+        {
+            "name": "SALSE CALVÉ cheddar 240ml/vari gusti 250ml",
+            "price": 1.99
+        },
+        {
+            "name": "CRACKERS GRAN PAVESI salati/non salati 560g",
+            "price": 1.79
+        },
+        {
+            "name": "FILETTI DI TONNO MAREBLU in olio di oliva/extra vergine/al naturale/delicato 180g",
+            "price": 2.99
+        },
+        {
+            "name": "TONNO RIO MARE filo d'olio 4x65g",
+            "price": 4.79
+        },
+        {
+            "name": "TONNO MARE APERTO all'olio di oliva 3x70g/al naturale 3x80g/leggero 3x60g",
+            "price": 2.29
+        },
+        {
+            "name": "FILETTI DI SGOMBRO NOSTROMO al naturale/all'olio di oliva 120g",
+            "price": 2.49
+        },
+        {
+            "name": "MAIS VALFRUTTA 3x160g + 1 omaggio",
+            "price": 2.49
+        },
+        {
+            "name": "VERDURE ALL'ACETO DI VINO PONTI insalatina/giardiniera 290g",
+            "price": 1.59
+        },
+        {
+            "name": "CONDIVERDERISO SACLÀ classico 2x290g",
+            "price": 3.29
+        },
+        {
+            "name": "I GRIGLIATI SOTTOLIO CONAD vari tipi 320g",
+            "price": 2.59
+        },
+        {
+            "name": "LEGUMI VALFRUTTA lenticchie/ceci/fagioli: cannellini/borlotti 360g",
+            "price": 0.89
+        },
+        {
+            "name": "PASTA INTEGRALE DE CECCO vari formati 500g",
+            "price": 1.19
+        },
+        {
+            "name": "RISOTTO KNORR vari tipi 175g",
+            "price": 1.59
+        },
+        {
+            "name": "OLIO CLASSICO SAGRA extra vergine di oliva 1L",
+            "price": 4.99
+        },
+        {
+            "name": "PELATI MUTTI 2x400g",
+            "price": 1.99
+        },
+        {
+            "name": "PESTO DI POMODORO MUTTI rosso/verde 180g",
+            "price": 2.49
+        },
+        {
+            "name": "SUGO BARILLA amatriciana/montanaro/bolognese/contadino 300g",
+            "price": 1.79
+        },
+        {
+            "name": "DADO KNORR classico/vegetale x20",
+            "price": 1.99
+        },
+        {
+            "name": "OLIO GRAN FRUTTATO MONINI 100% Italiano extra vergine di oliva 75cl",
             "price": 6.99
         },
         {
-            "name": "Olio Sagra girasole/fri-max",
+            "name": "OLIO SAGRA girasole/fri-max 2L",
             "price": 3.59
         }
     ],
     "Pewex": [
         {
-            "name": "Barilla pasta di semola 500g",
+            "name": "BARILLA PASTA DI SEMOLA 500G",
             "price": 0.59
         },
         {
-            "name": "Sangiorgio olio extra vergine di oliva 1l",
+            "name": "SANGIORGIO OLIO EXTRA VERGINE DI OLIVA 1L",
             "price": 5.49
         },
         {
-            "name": "Peroni birra 66cl",
+            "name": "PERONI BIRRA 66CL",
             "price": 0.99
         },
         {
-            "name": "Perugina baci scatola cuore 100/87,5g",
+            "name": "PERUGINA BACI SCATOLA CUORE 100/87,5G",
             "price": 6.99
         },
         {
-            "name": "Cime di rapa e bieta",
-            "price": 1.49
-        },
-        {
-            "name": "Ostriche",
+            "name": "OSTRICHE",
             "price": 5.99
         },
         {
-            "name": "Arista suino trancio",
+            "name": "CIME DI RAPA E BIETA",
+            "price": 1.49
+        },
+        {
+            "name": "ARISTA SUINO TRANCIO",
             "price": 4.99
         },
         {
-            "name": "Pollo senza petto",
+            "name": "POLLO SENZA PETTO",
             "price": 1.99
         },
         {
-            "name": "Vitella porchettata",
+            "name": "CRUDO VIANI NAZIONALE",
+            "price": 5.0
+        },
+        {
+            "name": "VITELLA PORCHETTATA",
             "price": 15.99
         },
         {
-            "name": "Ossobuchi di vitella",
+            "name": "OSSOBUCHI DI VITELLA",
             "price": 13.99
         },
         {
-            "name": "Farcitella di vitella",
+            "name": "FARCITELLA DI VITELLA",
             "price": 14.99
         },
         {
-            "name": "Fracostina con osso di vitella",
+            "name": "FRACOSTINA CON OSSO DI VITELLA",
             "price": 11.99
         },
         {
-            "name": "Fettine scelte di vitella",
+            "name": "FETTINE SCELTE DI VITELLA",
             "price": 18.99
         },
         {
-            "name": "Lombatine di vitella",
+            "name": "LOMBATINE DI VITELLA",
             "price": 19.99
         },
         {
-            "name": "Abbacchio Nazionale",
+            "name": "ABBACCHIO NAZIONALE intero o metà testa o corata",
             "price": 10.99
         },
         {
-            "name": "Bistecche di lombo suino",
+            "name": "BISTECCHE DI LOMBO SUINO",
             "price": 3.99
         },
         {
-            "name": "Macinato suino",
+            "name": "MACINATO SUINO",
             "price": 3.99
         },
         {
-            "name": "Fettine suino",
+            "name": "FETTINE SUINO",
             "price": 4.99
         },
         {
-            "name": "Bistecche di collo suino",
+            "name": "BISTECCHE DI COLLO SUINO",
             "price": 3.99
         },
         {
-            "name": "Spuntature di suino",
+            "name": "SPUNTATURE DI SUINO",
             "price": 5.99
         },
         {
-            "name": "Bocconcini di suino",
+            "name": "BOCCONCINI DI SUINO",
             "price": 4.99
         },
         {
-            "name": "Fettine suino panate",
+            "name": "FETTINE SUINO PANATE",
             "price": 4.99
         },
         {
-            "name": "Arrosti suino",
+            "name": "ARROSTI SUINO",
             "price": 4.99
         },
         {
-            "name": "Braciole di maialino",
+            "name": "BRACIOLE DI MAIALINO",
             "price": 6.99
         },
         {
-            "name": "Trancio di prosciutto di maialino",
+            "name": "TRANCIO DI PROSCIUTTO DI MAIALINO",
             "price": 5.99
         },
         {
-            "name": "Trance spalla di maialino",
+            "name": "TRANCE SPALLA DI MAIALINO",
             "price": 4.99
         },
         {
-            "name": "Petto di pollo intero",
+            "name": "PETTO DI POLLO INTERO",
             "price": 6.99
         },
         {
-            "name": "Cosce di pollo",
+            "name": "COSCE DI POLLO",
             "price": 2.99
         },
         {
-            "name": "Straccetti di pollo",
+            "name": "STRACCETTI DI POLLO",
             "price": 9.99
         },
         {
-            "name": "Cotoletta di pollo",
+            "name": "COTOLETTA DI POLLO",
             "price": 7.99
         },
         {
-            "name": "Tagliata di pollo",
+            "name": "POLLO ZENZA PETTO",
+            "price": 1.99
+        },
+        {
+            "name": "TAGLIATA DI POLLO",
             "price": 7.99
         },
         {
-            "name": "Cosce di pollo panate",
+            "name": "COSCE DI POLLO PANATE",
             "price": 7.99
         },
         {
-            "name": "Ali di pollo",
+            "name": "ALI DI POLLO",
             "price": 3.99
         },
         {
-            "name": "Petto di pollo panato",
+            "name": "PETTO DI POLLO PANATO",
             "price": 9.99
         },
         {
-            "name": "Cotolette di pollo/agli spinaci 200g",
+            "name": "cotolette di pollo/ agli spinaci 200g",
             "price": 0.99
         },
         {
-            "name": "Salsiccia pollo fam 770g c.a.",
+            "name": "salsiccia pollo fam 770g c.a.",
             "price": 6.99
         },
         {
-            "name": "Martini cordon bleu pollo/tacchino 220 g",
+            "name": "martini cordon bleu pollo/tacchino 220 g",
             "price": 1.49
         },
         {
-            "name": "Martini bocconcini pollo 250g",
+            "name": "martini bocconcini pollo 250g",
             "price": 1.49
         },
         {
-            "name": "Martini valdostana suino pizzaiola 200 g",
+            "name": "martini valdostana suino pizzaiola 200 g",
             "price": 1.99
         },
         {
-            "name": "Martini storti-bastoncini pollo 250g",
+            "name": "martini storti-bastoncini pollo 250g",
             "price": 1.99
         },
         {
-            "name": "Spigole 400/600",
+            "name": "SPIGOLE 400/600",
             "price": 9.99
         },
         {
-            "name": "Vongole lupino",
+            "name": "VONGOLE LUPINO",
             "price": 3.99
         },
         {
-            "name": "Filetto di salmone",
+            "name": "FILETTO DI SALMONE",
             "price": 16.99
         },
         {
-            "name": "Salmone intero 1-3",
+            "name": "SALMONE INTERO 1-3",
             "price": 9.99
         },
         {
-            "name": "Dentice gibboso 1/2",
+            "name": "OSTICHE",
+            "price": 5.99
+        },
+        {
+            "name": "DENTICE GIBBOSO 1/2",
             "price": 19.99
         },
         {
-            "name": "Scorfano 500/1000",
+            "name": "SCORFANO 500/1000",
             "price": 19.99
         },
         {
-            "name": "Seppie",
+            "name": "SEPPIE",
             "price": 12.99
         },
         {
-            "name": "Scampi 30/40",
+            "name": "SCAMPI 30/40",
             "price": 10.99
         },
         {
-            "name": "Filetto di tonno decongelato",
+            "name": "FILETTO DI TONNO",
             "price": 12.99
         },
         {
-            "name": "Gamberoni argentini decongelati",
+            "name": "GAMBERONI ARGENTINI",
             "price": 14.99
         },
         {
-            "name": "Fiorucci salame corallina corta",
+            "name": "FIORUCCI SALAME CORALLINA CORTA",
             "price": 1.19
         },
         {
-            "name": "Fiorucci fiordicotto",
+            "name": "FIORUCCI FIORDICOTTO",
             "price": 0.99
         },
         {
-            "name": "Speck cotto alto adige",
+            "name": "SPECK COTTO ALTO ADIGE",
             "price": 1.29
         },
         {
-            "name": "Lenti prosciutto cotto grigliato rustico",
+            "name": "LENTI PROSCIUTTO COTTO GRIGLIATO RUSTICO",
             "price": 1.39
         },
         {
-            "name": "Casamodena cotto rustico",
+            "name": "CASAMODENA COTTO RUSTICO",
             "price": 0.99
         },
         {
-            "name": "King's granspeck con fesa",
+            "name": "KING'S GRANSPECK CON FESA",
             "price": 1.69
         },
         {
-            "name": "Bisanzio pancetta copp. oro",
-            "price": 1.69
-        },
-        {
-            "name": "Citterio salamino citterino",
+            "name": "CITTERIO SALAMINO CITTERINO",
             "price": 1.99
         },
         {
-            "name": "Mec Palmieri mortadelle italiana",
+            "name": "MEC PALMIERI MORTADELLE ITALIANA CON E SENZA PISATCCHI",
             "price": 0.99
         },
         {
-            "name": "Incarlopsa jamon serrano tagliere + coltello",
+            "name": "INCARLOPSA JAMON SERRANO TAGLIERE +COLTELLO",
             "price": 59.9
         },
         {
-            "name": "Al.ve.re.se salsiccia t. siena",
+            "name": "AL.VE.RE.SE SALSICCIA T.SIENA",
             "price": 1.29
         },
         {
-            "name": "Clai salame spianata / picc 100% ita",
+            "name": "CLAI SALAME SPIANATA / PICC 100% ITA",
             "price": 1.69
         },
         {
-            "name": "Cavazzuti salame aquilano p.s. schiacciato",
+            "name": "CAVAZZUTI SALAME AQUILANO P.S. SCHIACCIATO",
             "price": 1.79
         },
         {
-            "name": "Recla pancetta affumicata trancio 300 g",
+            "name": "RECLA PANCETTA AFFUMICATA TRANCIO 300 g",
             "price": 4.99
         },
         {
-            "name": "San Carlo coppa piacentina dop",
+            "name": "SAN CARLO COPPA PIACENTINA DOP",
             "price": 2.69
         },
         {
-            "name": "Cavazzuti salame cacciatore del bambino dop",
+            "name": "CAVAZZUTI SALAME CACCIATORE DEL BAMBINO DOP",
             "price": 1.99
         },
         {
-            "name": "Montevecchio fior di fesa",
+            "name": "MONTEVECCHIO FIOR DI FESA",
             "price": 1.69
         },
         {
-            "name": "Aia Aequillibrium petto pollo al forno/tarky",
+            "name": "AIA AEQUILIBRIUM PETTO POLLO AL FORNO/TARKY PETTO TACCHINO ARROSTO",
             "price": 1.09
         },
         {
-            "name": "Parmacotto prosciutto cotto",
+            "name": "PARMACOTTO PROSCIUTTO COTTO",
             "price": 1.49
         },
         {
-            "name": "Fiorucci prosciutto cotto vellutato",
+            "name": "FIORUCCI PROSCIUTTO COTTO VELLUTATO",
             "price": 0.79
         },
         {
-            "name": "Sorrentino salame milano - ungherese",
-            "price": 0.99
-        },
-        {
-            "name": "Ferrari prosciutto di parma 24 mesi",
+            "name": "FERRARI PROSCIUTTO DI PARMA 24 MESI",
             "price": 2.99
         },
         {
-            "name": "Primo sale boccea pecora",
-            "price": 1.29
-        },
-        {
-            "name": "Santa Maria primo sale",
-            "price": 1.19
-        },
-        {
-            "name": "Vallelata fiordilatte",
+            "name": "SORRENTINO SALAME MILANO-UNGHERESE",
             "price": 0.99
         },
         {
-            "name": "Camoscio d'oro",
+            "name": "PRIMO SALE BOCCEA PECORA",
+            "price": 1.29
+        },
+        {
+            "name": "SANTA MARIA PRIMO SALE",
+            "price": 1.19
+        },
+        {
+            "name": "VALLELATA FIORDILATTE",
+            "price": 0.99
+        },
+        {
+            "name": "CAMOSCIO D'ORO",
             "price": 1.59
         },
         {
-            "name": "Igor Leonardi gorgonzola dolce gran riserva",
+            "name": "IGOR LEONARDI GORGONZOLA DOLCE GRAN RISERVA",
             "price": 1.29
         },
         {
-            "name": "Taleggio Cademartori",
+            "name": "TALEGGIO CADEMARTORI",
             "price": 1.39
         },
         {
-            "name": "Robiola Nonno Nanni",
+            "name": "ROBIOLA NONNO NANNI",
             "price": 1.29
         },
         {
-            "name": "Busti tartufo di pecora",
+            "name": "BUSTI TARTUFO DI PECORA",
             "price": 1.99
         },
         {
-            "name": "Busti pecorino Chianti",
+            "name": "BUSTI PECORINO CHIANTI",
             "price": 1.69
         },
         {
-            "name": "Pecorino Toscano Dop Fam. Busti",
+            "name": "PECORINO TOSCANO DOP FAM.BUSTI",
             "price": 1.99
         },
         {
-            "name": "Stracciatella Andriese",
+            "name": "STRACCIATELLA ANDRIESE",
             "price": 1.49
         },
         {
-            "name": "Caciotta dolcecassia sini",
+            "name": "CACIOTTA DOLCECASSIA SINI",
             "price": 0.99
         },
         {
-            "name": "Cao ricotta salata",
+            "name": "CAO RICOTTA SALATA",
             "price": 0.79
         },
         {
-            "name": "Spinosa ricotta di bufala",
+            "name": "SPINOSA RICOTTA DI BUFALA",
             "price": 0.59
         },
         {
-            "name": "Provola bianca/affumicata San Vincenzo",
+            "name": "PROVOLA BIANCA/AFFUMICATA SAN VINCENZO",
             "price": 1.19
         },
         {
-            "name": "Mancin fantasia di mare naturale",
+            "name": "MANCIN FANTASIA DI MARE NATURALE",
             "price": 1.49
         },
         {
-            "name": "Gargani crostata visciole/frutti bosco/albicocca",
+            "name": "GARGANI CROSTATA VISCIOLE/ FRUTTI BOSCO/ ALBICOCCA",
             "price": 0.99
         },
         {
-            "name": "Garofolive olive nere forno",
+            "name": "GAROFOLIVE OLIVE NERE FORNO",
             "price": 0.99
         },
         {
-            "name": "Ortoetruria pomodori secchi",
+            "name": "ORTOETRURIA POMODORI SECCHI",
             "price": 1.29
         },
         {
-            "name": "Ficacci olive giganti dolci",
+            "name": "FICACCI OLIVE GIGANTI DOLCI",
             "price": 0.89
         },
         {
-            "name": "Toniolo asiago fresco",
+            "name": "TONIOLO ASIAGO FRESCO",
             "price": 1.09
         },
         {
-            "name": "Ricotta vaccina",
+            "name": "RICOTTA VACCINA",
             "price": 0.49
         },
         {
-            "name": "Jagibo maasdam olanda",
+            "name": "JAGIBO MAASDAM OLANDA",
             "price": 0.89
         },
         {
@@ -1425,907 +1437,103 @@
             "price": 2.99
         },
         {
-            "name": "Consilia crudo estero 100 g",
+            "name": "pizza alla pala o teglia",
+            "price": 11.9
+        },
+        {
+            "name": "CONSILIA CRUDO ESTERO 100 g",
             "price": 2.49
         },
         {
-            "name": "Consilia miele di acacia liquido 500 g",
+            "name": "CONSILIA MIELE DI ACACIA LIQUIDO 500 g",
             "price": 4.99
         },
         {
-            "name": "Consilia latte microfiltrato senza lattosio ps 1l",
+            "name": "CONSILIA LATTE MICROFILTRATO SENZA LATTOSIO PS 1 L",
             "price": 1.19
         },
         {
-            "name": "Consilia chicche di patate 500 g",
+            "name": "CONSILIA CHICCHE DI PATATE 500 g",
             "price": 1.69
         },
         {
-            "name": "Consilia salmone aff. scoz. 100g",
+            "name": "CONSILIA SALMONE AFF. SCOZ. 100g",
             "price": 5.99
         },
         {
-            "name": "Consilia mix sfiziosa 200 g",
+            "name": "CONSILIA MIX SFIZIOSA 200 g",
             "price": 1.39
         },
         {
-            "name": "Consilia zuppa legumi e cereali toscana",
+            "name": "CONSILIA ZUPPA LEGUMI E CEREALI TOSCANA/ORTOLANA/LENTIC./FAGIOLI/FARRO 620g",
             "price": 2.49
         },
         {
-            "name": "Consilia s/s mix orientale 100 g",
+            "name": "CONSILIA S/S MIX ORIENTALE 100 g",
             "price": 1.19
         },
         {
-            "name": "Consilia valeriana 100 g",
+            "name": "CONSILIA VALERIANA 100 g",
             "price": 1.19
         },
         {
-            "name": "Consilia mix da cuocere busta 500 g",
+            "name": "CONSILIA MIX DA CUOCERE BUSTA 500 g",
             "price": 2.49
         },
         {
-            "name": "Ventura anacardi sgusc. tost. sal 150 g",
+            "name": "VENTURA ANACARDI SGUSC. TOST.SAL. 150 g",
             "price": 2.99
         },
         {
-            "name": "Ventura anacardi sgusciati 150 g",
+            "name": "VENTURA ANACARDI SGUSCIATI 150 g",
             "price": 2.99
         },
         {
-            "name": "Ventura farina di cocco essiccato 250 g",
+            "name": "VENTURA FARINA DI COCCO ESSICCATO 250 g",
             "price": 1.99
         },
         {
-            "name": "Fr. better mandorle sgusc. 100 g",
+            "name": "FR.BETTER MANDORLE SGUSC. 100 g",
             "price": 1.69
         },
         {
-            "name": "Consilia rucola 100 g",
+            "name": "CONSILIA RUCOLA 100 g",
             "price": 0.99
         },
         {
-            "name": "Ficacci orto olive di gaeta dop 225 g",
+            "name": "FICACCI ORTO OLIVE DI GAETA DOP 225 g",
             "price": 2.99
         },
         {
-            "name": "Frulla' fragola e mirtilli",
+            "name": "FRULLA' FRAGOLA E MIRTILLI / MELA E PERA / MELA BANANA / PERA E BANANA / PINK LADY DOYPACK g 100",
             "price": 0.69
         },
         {
-            "name": "Melinda pro doypack 100 g",
+            "name": "MELINDA PRO DOYPACK 100 g MELA/BAN./FRAG. - MELA/FR.BOSCO",
             "price": 0.99
         },
         {
-            "name": "Madama oliva olive verdi denocc. condite 200 g",
+            "name": "MADAMA OLIVA OLIVE VERDI DENOCC.CONDITE 200 g",
             "price": 2.49
         },
         {
-            "name": "Colfiorito ceci decorticati italia 400 g",
+            "name": "COLFIORITO CECI DECORTICATI ITALIA 400 g",
             "price": 1.99
         },
         {
-            "name": "Ficacci olive dolci giganti 225 g",
+            "name": "FICACCI OLIVE DOLCI GIGANTI 225 g",
             "price": 2.49
         },
         {
-            "name": "FINDUS BASTONCINI X 12 g 300",
-            "price": 2.99
-        },
-        {
-            "name": "FINDUS CROCCOLE SENZA GLUTINE 250 g",
-            "price": 4.99
-        },
-        {
-            "name": "FINDUS FILETTI DI MERLUZZO IN PORZIONI 360 g",
-            "price": 6.99
-        },
-        {
-            "name": "FINDUS FIORI DI MERLUZZO POMOD. E OLIVE 300 g",
-            "price": 3.99
-        },
-        {
-            "name": "FINDUS FILETTI PLATESSA ALLA MUGNAIA g 250",
-            "price": 4.99
-        },
-        {
-            "name": "FINDUS BURGER DI MERLUZZO D'ALASKA PREZZEMOLO/LIMONE 170 g",
-            "price": 2.99
-        },
-        {
-            "name": "FINDUS BURGER DI SALMONE X 2 170 g",
-            "price": 3.99
-        },
-        {
-            "name": "ITALPIZZA PIZZA MARGHERITA 26X38 CM 485 g",
-            "price": 3.69
-        },
-        {
-            "name": "FROSTA FILETTI DI NASELLO 300 g",
-            "price": 4.99
-        },
-        {
-            "name": "OROGEL ZUCCHINE A FETTE g 450",
-            "price": 1.29
-        },
-        {
-            "name": "FROSTA PLATESSA CROCCANTE 230 g",
-            "price": 3.99
-        },
-        {
-            "name": "FINDUS SOFFICINI S/LATTOSIO MOZZ/POM 250 g",
-            "price": 2.99
-        },
-        {
-            "name": "FINDUS PASSATO MINESTRONE TRADIZIONE 5 MINUTI 600 g",
-            "price": 2.99
-        },
-        {
-            "name": "FINDUS MINESTRONE TRADIZIONALE CON LEGUMI/CON PASTA 450 g",
-            "price": 2.99
-        },
-        {
-            "name": "PISELLINI PRIMAVERA FINDUS 1200 g",
-            "price": 4.99
-        },
-        {
-            "name": "OROGEL SPINACI CUBELLO FOGLIA PIU' 900 g",
-            "price": 1.99
-        },
-        {
-            "name": "ARBI GAMBERI ARGENTINI SGUSC. XXL 250 g",
-            "price": 6.99
-        },
-        {
-            "name": "BUITONI SURG. PIZZA BELLA NAPOLI PROSCIUTTO E FUNGHI 375g",
-            "price": 2.49
-        },
-        {
-            "name": "PIZZA CAMEO MARGHERITA GRAN GUSTO 350 g",
-            "price": 2.99
-        },
-        {
-            "name": "ACQUARIO CREMA DI SCAMPI 320 g",
-            "price": 3.99
-        },
-        {
-            "name": "OROGEL CAPONATA DI VERDURE GUSTO RICCO 250 g",
-            "price": 1.99
-        },
-        {
-            "name": "MISTO FUNGHI CON PORCINI FILOTEI g 450",
-            "price": 2.79
-        },
-        {
-            "name": "VALLE ORTI CONTORNO ORTOLANO 400 g",
-            "price": 1.99
-        },
-        {
-            "name": "ASIAGO FOOD FUNGHI PORCINI SURGEL. 750 g",
-            "price": 9.99
-        },
-        {
-            "name": "BUITONI SURG. PIZZA TRANCI MARGHERITA 650 g",
-            "price": 3.99
-        },
-        {
-            "name": "GARBO FILETTI BACCALA' PASTELLATI g 275",
-            "price": 4.99
-        },
-        {
-            "name": "GARBO FIORI DI ZUCCA CON ALICI g 275",
-            "price": 2.99
-        },
-        {
-            "name": "AIA SOTTILISSIME POLLO SURGELATE 280 g",
-            "price": 2.49
-        },
-        {
-            "name": "MC CAIN POTATO PETALS 500 g",
-            "price": 2.39
-        },
-        {
-            "name": "PIZZOLI PATATE WE LOVE EXTRA FINI 750 g",
-            "price": 1.99
-        },
-        {
-            "name": "MAGNUM X 4 ASSORTITI",
-            "price": 3.99
-        },
-        {
-            "name": "CARTE D' OR AFFOGATI ASSORTITI g 500",
-            "price": 4.49
-        },
-        {
-            "name": "CARTE D' OR TORTA ROMANTICA 575 g",
-            "price": 6.99
-        },
-        {
-            "name": "ALGIDA VIENNETTA 320 g ASSORTITA",
-            "price": 3.99
-        },
-        {
-            "name": "MOTTA MAXIBON x4 384 g",
-            "price": 2.99
-        },
-        {
-            "name": "BARATTOLINO SAMMONTANA ASSORTITO 500 g",
-            "price": 2.99
-        },
-        {
-            "name": "COPPA ORO SAMMONTANA x 4 g 360 ASSORTITA",
-            "price": 2.99
-        },
-        {
-            "name": "RANA GNOCCHI ALLA ROMANA g 500",
-            "price": 1.49
-        },
-        {
-            "name": "RANA SFOGLIAGREZZA g 250",
-            "price": 1.99
-        },
-        {
-            "name": "TORTUOVO TAGLIATELLE 500 g",
-            "price": 0.99
-        },
-        {
-            "name": "FINI ANTICA BOTTEGA PASTA FRESCA ASSORTITA 250 g",
-            "price": 1.99
-        },
-        {
-            "name": "FINI NUOVE TRADIZIONI PASTA FRESCA ASSORTITA 250g",
-            "price": 2.19
-        },
-        {
-            "name": "MAFFEI SFOGLIA LASAGNE RUSTICA 500 g",
-            "price": 1.49
-        },
-        {
-            "name": "GAROFALO GNOCCHETTI DI PATATE 500 g",
-            "price": 1.29
-        },
-        {
-            "name": "RANA LASAGNE ASSORTITE 350 g",
-            "price": 2.99
-        },
-        {
-            "name": "RANA PARMIGIANA MELANZANE 300 g",
-            "price": 2.99
-        },
-        {
-            "name": "RANA SPADELLINI ASSORTITI 280 g",
-            "price": 1.59
-        },
-        {
-            "name": "VIVA LA MAMMA COUS COUS 200 g",
-            "price": 2.99
-        },
-        {
-            "name": "VIVA LA MAMMA NOODLES/RISO ASSORTITI 220g",
-            "price": 2.99
-        },
-        {
-            "name": "BIFFI SUGO 4 FORMAGGI 150 g",
-            "price": 1.99
-        },
-        {
-            "name": "VOGLIAZZI INSALATA RUSSA CONF. FAM. 350 g",
+            "name": "MELINDA MELE RED DELICIOUS",
             "price": 1.69
         },
         {
-            "name": "SUGHI RANA ASSORTITI g 150",
-            "price": 2.49
-        },
-        {
-            "name": "BIFFI SUGO FRESCO BIANCO RAD.SPECK 150 g",
-            "price": 1.99
-        },
-        {
-            "name": "TRITICUM PINSA CESARE 2x250 g",
-            "price": 2.49
-        },
-        {
-            "name": "PARMA IS TZATZIKI 150 g",
-            "price": 1.99
-        },
-        {
-            "name": "EXQUISA PASTA SFOGLIA LIGHT g 275",
-            "price": 0.99
-        },
-        {
-            "name": "BUITONI SFOGLIA DOLCE 230 g",
+            "name": "MELINDA MELE GOLDEN DEL.",
             "price": 1.69
         },
         {
-            "name": "BUITONI PAN DOLCE 350 g",
-            "price": 1.89
-        },
-        {
-            "name": "BUITONI PASTA FROLLA GRANSPESSORE 280 g",
-            "price": 1.49
-        },
-        {
-            "name": "BUITONI FROLLA CACAO 230 g",
-            "price": 1.89
-        },
-        {
-            "name": "BUITONI PIZZA RETTANGOLARE 385 g",
-            "price": 1.69
-        },
-        {
-            "name": "V.LA MAMMA TRAMEZZINO PROS.COTTO 150 g",
-            "price": 2.69
-        },
-        {
-            "name": "MILK FIOCCHI DI LATTE CON YOGURT 150 g",
-            "price": 1.19
-        },
-        {
-            "name": "CENTRALE DEL LATTE ROMA BURRO 250 g",
-            "price": 2.79
-        },
-        {
-            "name": "BURRO SORESINA 125 g",
-            "price": 1.39
-        },
-        {
-            "name": "KRAFT FETTINE CLASSICHE 175 g",
-            "price": 1.39
-        },
-        {
-            "name": "SOTTILETTE FILA E FONDI 200 g",
-            "price": 1.89
-        },
-        {
-            "name": "IBIS TRAMEZZINO PROTEICO ASSORTITO 150 g",
-            "price": 1.99
-        },
-        {
-            "name": "JOCCA SENZA LATTOSIO 150 g + 25g OMAGGIO",
-            "price": 1.59
-        },
-        {
-            "name": "VALLELATA GALBANI BOCCONCINI 200 g",
-            "price": 2.29
-        },
-        {
-            "name": "VALLELATA MOZZARELLA 125 g",
-            "price": 1.49
-        },
-        {
-            "name": "VALLELATA TRECCIA 200 g",
-            "price": 2.99
-        },
-        {
-            "name": "VALLELATA MOZZARELLA DI LATTE DI BUFALA 3x100 g",
-            "price": 3.99
-        },
-        {
-            "name": "GRANA PADANO GRATTUGIATO FERRARI 60 g",
-            "price": 1.29
-        },
-        {
-            "name": "SORESINA GRANA PADANO GRANELLI 100 g",
-            "price": 1.69
-        },
-        {
-            "name": "PARMAREGGIO PARMIGIANO REGGIANO PETALI 100 g",
-            "price": 2.19
-        },
-        {
-            "name": "PARMIGIANO REGGIANO GRATTUGIATO PARMAREGGIO 60 g",
-            "price": 1.19
-        },
-        {
-            "name": "GRANBIRAGHI GRATTUGIATO 100 g",
-            "price": 1.69
-        },
-        {
-            "name": "AMBROSI PARMIGIANO REGGIANO GRATTUGIATO 130 g",
-            "price": 2.99
-        },
-        {
-            "name": "L.SANO LATTE ESL LAZIO 1 L",
-            "price": 1.49
-        },
-        {
-            "name": "CLROMA LATTE MICROFILTRATO 1 L",
-            "price": 1.79
-        },
-        {
-            "name": "ARBOREA LATTE SARDO UHT 1 L",
-            "price": 0.99
-        },
-        {
-            "name": "GRANAROLO LATTE UHT BENESSERE 1 L",
-            "price": 0.99
-        },
-        {
-            "name": "GRANAROLO LATTE UHT INTERO 1 L",
-            "price": 1.49
-        },
-        {
-            "name": "PARMALAT LATTE ZYMIL UHT 1 L",
-            "price": 1.79
-        },
-        {
-            "name": "FIORDILATTE PETTINICCHIO 400 g",
-            "price": 3.99
-        },
-        {
-            "name": "GRANAROLO MOZZARELLA SENZA LATTOSIO 100 g",
-            "price": 0.99
-        },
-        {
-            "name": "NONNO NANNI BURRATA 125 g",
-            "price": 1.59
-        },
-        {
-            "name": "DIANO PROVOLA BIANCA/AFFUMICATA 600 g",
-            "price": 5.99
-        },
-        {
-            "name": "ROQUEFORT AOP ENTREMONT 100 g",
-            "price": 2.49
-        },
-        {
-            "name": "GRANAROLO RICOTTA OGGI PUOI 100 g X 2",
-            "price": 1.29
-        },
-        {
-            "name": "MASCARPONE SANTA LUCIA 500 g",
-            "price": 3.99
-        },
-        {
-            "name": "GALBANINO 550 g",
-            "price": 4.99
-        },
-        {
-            "name": "CENTRALE LATTE ROMA STRACCHINO 100 g",
-            "price": 0.99
-        },
-        {
-            "name": "AMBROSI PARMIGIANO REGGIANO BOCCONCINI 130 g",
-            "price": 3.19
-        },
-        {
-            "name": "PROVOLONE FETTA DOLCE AURICCHIO 200 g",
-            "price": 2.69
-        },
-        {
-            "name": "BERGADER PICCANTE 100 g",
-            "price": 1.19
-        },
-        {
-            "name": "SABELLI STRACCIATELLA 250 g",
-            "price": 2.69
-        },
-        {
-            "name": "MOZZARELLA DI BUFALA CAMPANA DOP SPINOSA 500 g",
-            "price": 5.99
-        },
-        {
-            "name": "CAPRICE DES DIEUX 200 g",
-            "price": 2.99
-        },
-        {
-            "name": "GRANAROLO STRACCHINO KEFIR 160 g",
-            "price": 1.69
-        },
-        {
-            "name": "IGOR BLU DI CAPRA 150 g",
-            "price": 2.99
-        },
-        {
-            "name": "LEERDAMMER IL FONDENTE FETTE 150 g",
-            "price": 2.19
-        },
-        {
-            "name": "NONNO NANNI SQUAQUERELLO 250 g",
-            "price": 2.79
-        },
-        {
-            "name": "LINEA OSELLA SENZA LATTOSIO 125 g",
-            "price": 1.89
-        },
-        {
-            "name": "PARMALAT BESCIAMELLA CHEF 200 ml",
-            "price": 1.19
-        },
-        {
-            "name": "PARMALAT PANNA CUCINA CHEF 200 ml",
-            "price": 1.19
-        },
-        {
-            "name": "RICOTTA SANTA LUCIA 250 g",
-            "price": 1.29
-        },
-        {
-            "name": "CERTOSA GALBANI 165 g",
-            "price": 1.59
-        },
-        {
-            "name": "BUONI SAPORI MOZZARELLA 4 X 175 g",
-            "price": 4.99
-        },
-        {
-            "name": "BUONI SAPORI CILIEGINE 250 g",
-            "price": 1.99
-        },
-        {
-            "name": "PREPARATO VEGETALE HOPLA' 500 ml",
-            "price": 1.59
-        },
-        {
-            "name": "HOPLA' MIX SPRAY 250 ml",
-            "price": 1.49
-        },
-        {
-            "name": "FATTORIE DEGLI ALBURNI MOZZARELLA 4x 100 g",
-            "price": 2.99
-        },
-        {
-            "name": "ARBOREA MOZZARELLA SENZA LATTOSIO 3x100 g",
-            "price": 2.29
-        },
-        {
-            "name": "CIRCE STRACCIATELLA DI LATTE DI BUFALA 150 g",
-            "price": 2.49
-        },
-        {
-            "name": "NODINI/GOCCE ANDRIESE 250 g",
-            "price": 3.39
-        },
-        {
-            "name": "PARMAREGGIO FORMAGGINI 140 g",
-            "price": 1.69
-        },
-        {
-            "name": "MIO FORMAGGINO CLASSICO 125 g",
-            "price": 1.39
-        },
-        {
-            "name": "PHILADELPHIA 150 g",
-            "price": 1.49
-        },
-        {
-            "name": "PHILADELPHIA TWIN LIGHT 80 g x2",
-            "price": 1.69
-        },
-        {
-            "name": "PHILADELPHIA YOGURT GRECO 175 g",
-            "price": 1.99
-        },
-        {
-            "name": "INVERNIZZI MOZARI' 3x100 g",
-            "price": 1.99
-        },
-        {
-            "name": "I NATUROSÌ RICOTTA DI CAPRA 350 g",
-            "price": 3.99
-        },
-        {
-            "name": "CENTRALE LATTE ROMA RICOTTA 100 g X 2",
-            "price": 1.39
-        },
-        {
-            "name": "EXQUISA FORMAGGIO CAPRA 175 g",
-            "price": 1.39
-        },
-        {
-            "name": "BERETTA CUBETTI PANCETTA 120 g",
-            "price": 1.69
-        },
-        {
-            "name": "BERETTA SALAMINI ASSORTITI g 85",
-            "price": 1.69
-        },
-        {
-            "name": "EDAMER ATM 120 g",
-            "price": 1.49
-        },
-        {
-            "name": "TACCHINO ARROSTO ATM 100 g",
-            "price": 1.49
-        },
-        {
-            "name": "RIGAMONTI CARPACCIO DI BRESAOLA 90 g",
-            "price": 3.49
-        },
-        {
-            "name": "EXQUISA FORMAGGIO SENZA LATTOSIO 175 g",
-            "price": 1.39
-        },
-        {
-            "name": "BERETTA FSL BACON COTTO AFF. 80 g",
-            "price": 1.99
-        },
-        {
-            "name": "BERETTA FS SALAME MILANO 100 g",
-            "price": 2.29
-        },
-        {
-            "name": "ROVAGNATI GRAN BISC. AFF. 100 g",
-            "price": 2.99
-        },
-        {
-            "name": "ROVAGNATI SNELLO CRUDO 70 g",
-            "price": 2.79
-        },
-        {
-            "name": "SENFTER SPECK ALTO ADIGE 100 g",
-            "price": 1.99
-        },
-        {
-            "name": "GRANTERRE TENERONE TORTINO 200g",
-            "price": 2.29
-        },
-        {
-            "name": "CITTERIO IRRESISTIBILI BASTONCINI SALAME 60 g",
-            "price": 1.39
-        },
-        {
-            "name": "CITTERIO IRRESIST. SALAMINI 75 g",
-            "price": 1.59
-        },
-        {
-            "name": "CITTERIO SOFFICETTE PETTO TACCHINO 80 g",
-            "price": 1.39
-        },
-        {
-            "name": "WUBERONE ORIGINALE 3 pz. 250 g",
-            "price": 1.79
-        },
-        {
-            "name": "WUBER WUBERINI 100 g",
-            "price": 0.89
-        },
-        {
-            "name": "BERETTA PROSC. COTTO 120 g x 3",
-            "price": 5.0
-        },
-        {
-            "name": "BERETTA LISTARELLE DI GUANCIALE 100 g x 2",
-            "price": 3.0
-        },
-        {
-            "name": "WUBER WUBERONE POLLO 250 g",
-            "price": 0.99
-        },
-        {
-            "name": "BERETTA SALAME MONETINE 7 NANI 70 g",
-            "price": 1.79
-        },
-        {
-            "name": "AIA AEQUILIBRIUM POLLO 130 g",
-            "price": 1.99
-        },
-        {
-            "name": "AIA AEQUILIBRIUM TACCHINO 120 g",
-            "price": 1.99
-        },
-        {
-            "name": "AIA AEQUILIBRIUM COTTOMAGRO 110 g",
-            "price": 1.99
-        },
-        {
-            "name": "AIA WURSTEL WUDY EXTRAGUSTO 2x220 g",
-            "price": 2.99
-        },
-        {
-            "name": "NEGRONI STICK DI GUANCIALE 100 g",
-            "price": 1.49
-        },
-        {
-            "name": "WUBER PROSCIUTTO COTTO PER TOAST 400 g",
-            "price": 3.99
-        },
-        {
-            "name": "BERETTA PROSC. CARPEGNA 85g",
-            "price": 3.99
-        },
-        {
-            "name": "CITTERIO SOFFICETTA PROSCIUTTO COTTO 80 g",
-            "price": 1.49
-        },
-        {
-            "name": "WUBER WURSTEL 38 ASSORTITI 240 g",
-            "price": 2.99
-        },
-        {
-            "name": "FIORUCCI SUILLO WURSTEL 100 g",
-            "price": 1.0
-        },
-        {
-            "name": "FIORUCCI REG. SPIANATA ROMANA 100 g",
-            "price": 2.49
-        },
-        {
-            "name": "FIORUCCI REG. GUANCIALE 90 g",
-            "price": 1.99
-        },
-        {
-            "name": "FIORUCCI REG. TIVOLI FUMO 100 g",
-            "price": 2.99
-        },
-        {
-            "name": "FIORUCCI AFFETTATI PALLINA 150 g",
-            "price": 1.29
-        },
-        {
-            "name": "MONEDIA BROCCOLI RIPASSATI 1 Kg",
-            "price": 8.9
-        },
-        {
-            "name": "TURCHET INSALATA DI MARE 1 kg",
-            "price": 7.99
-        },
-        {
-            "name": "NORITA FILETTI DI ARINGHE 200 g",
-            "price": 2.49
-        },
-        {
-            "name": "RE SALMONE CUBETTI 100 g",
-            "price": 3.49
-        },
-        {
-            "name": "SALMONE NORVEGESE NORITA 100 g",
-            "price": 2.99
-        },
-        {
-            "name": "FOODLAB CARPACCIO DI PESCE SPADA 100 g",
-            "price": 5.99
-        },
-        {
-            "name": "FOODLAB CARPACCIO DI TONNO 100 g",
-            "price": 4.99
-        },
-        {
-            "name": "SENFTER HOT DOG 250 g",
-            "price": 1.99
-        },
-        {
-            "name": "INCARLOPSA JAMON SERRANO 100 g",
-            "price": 1.99
-        },
-        {
-            "name": "S.VINC. SALSICCIA SPICCHIO 150 g",
-            "price": 2.99
-        },
-        {
-            "name": "CITTERIO RIASSUNTO CITTERINO 60 g",
-            "price": 1.49
-        },
-        {
-            "name": "BERETTA BAGEL ASSORTITI",
-            "price": 2.99
-        },
-        {
-            "name": "KIT KAT SPLIT POT YOGURT 115 g",
-            "price": 0.69
-        },
-        {
-            "name": "NESTLE' NESQUIK SNACK 8 x 26 g",
-            "price": 1.99
-        },
-        {
-            "name": "KINDER PARADISO X4 116 g",
-            "price": 1.99
-        },
-        {
-            "name": "PERUGINA VORTICI 4 x 90 g",
-            "price": 2.49
-        },
-        {
-            "name": "ZYMIL KEFIR 250 g",
-            "price": 0.89
-        },
-        {
-            "name": "MILK MINI PANCAKES 200 g",
-            "price": 2.49
-        },
-        {
-            "name": "NESTLE' LINDAHLS PRO DRINK 345 g",
-            "price": 1.49
-        },
-        {
-            "name": "NESTLE' LINDAHLS PRO SNACK BARRETTA 40 g x 3",
-            "price": 1.99
-        },
-        {
-            "name": "FRUTTOLO GUSTI ASSORTITI 50 g x 6",
-            "price": 1.59
-        },
-        {
-            "name": "MILA SKYR 0% 150 g",
-            "price": 0.79
-        },
-        {
-            "name": "MILK KEFIR CREMOSO 150 g",
-            "price": 0.79
-        },
-        {
-            "name": "MILK KEFIR KIDS POUCH 80 g",
-            "price": 0.79
-        },
-        {
-            "name": "YOMO BICOMPARTO OH MY YOMO 140 g",
-            "price": 0.79
-        },
-        {
-            "name": "DANONE ACTIVIA DRINK 270 g",
-            "price": 0.99
-        },
-        {
-            "name": "BONTA' VIVA YOGURT AVENA NOCI 4x125 g",
-            "price": 1.49
-        },
-        {
-            "name": "MULLER PASSIONE GRECA 0% 150 g",
-            "price": 0.89
-        },
-        {
-            "name": "MILK BENESSERE PORRIDGE 150 g",
-            "price": 0.99
-        },
-        {
-            "name": "PARMALAT YOGURT PIACERE 2 x 115 g",
-            "price": 0.69
-        },
-        {
-            "name": "PARMALAT YOGURT FRUTTA INTERO 125 g x 8",
-            "price": 2.69
-        },
-        {
-            "name": "MULLER CREMA YOGURT S/LATTOSIO 2 x 125 g",
-            "price": 0.89
-        },
-        {
-            "name": "MULLER CREMA YOGURT 0,1% 8 x 125 g",
-            "price": 2.89
-        },
-        {
-            "name": "DANONE ACTIMEL 6 x 100 g",
-            "price": 1.99
-        },
-        {
-            "name": "FAGE TOTAL BIANCO 450 g",
-            "price": 2.49
-        },
-        {
-            "name": "CARNE DI SUINO ASSORTITA al Kg",
-            "price": 2.99
-        },
-        {
-            "name": "FINDUS BASTONCINI 750 g",
-            "price": 4.99
-        },
-        {
-            "name": "ACQUA ROSABLU' EFFERVESCENTE NATURALE 1.5 LT x 6",
-            "price": 0.99
-        },
-        {
-            "name": "CONSILIA PASSATA CLASSICA 690 g x 2",
-            "price": 1.5
-        },
-        {
-            "name": "METEORA YOGURT GRECO 150 g x 2",
-            "price": 0.99
-        },
-        {
-            "name": "CLROMA LATTE UHT 1 L x 2",
-            "price": 1.5
-        },
-        {
-            "name": "MELINDA MELE RED DELICIOUS 80-85 al kg",
-            "price": 1.69
-        },
-        {
-            "name": "MELINDA MELE GOLDEN DEL. 75-80 al kg",
-            "price": 1.69
-        },
-        {
-            "name": "MELINDA MELE DOLCEVITA 75-80 al kg",
+            "name": "MELINDA MELE DOLCEVITA 75-80",
             "price": 1.99
         },
         {
@@ -2333,7 +1541,7 @@
             "price": 1.99
         },
         {
-            "name": "MELINDA MELE RENETTE CAL 80-85 al kg",
+            "name": "MELINDA MELE RENETTE CAL 80-85",
             "price": 1.99
         },
         {
@@ -2445,6 +1653,14 @@
             "price": 5.99
         },
         {
+            "name": "RIO MARE TONNO OLIO DI OLIVA 7 X 80 g",
+            "price": 6.99
+        },
+        {
+            "name": "RIO MARE FILETTI DI TONNO OLIO DI OLIVA / EXTRA VERGINE / NATURALE 180 g",
+            "price": 3.99
+        },
+        {
             "name": "BARILLA PASTA DI SEMOLA 500 g",
             "price": 0.59
         },
@@ -2457,18 +1673,6 @@
             "price": 0.79
         },
         {
-            "name": "RIO MARE TONNO OLIO DI OLIVA 7 X 80 g",
-            "price": 6.99
-        },
-        {
-            "name": "RIO MARE FILETTI DI TONNO OLIO DI OLIVA / EXTRA VERGINE / NATURALE 180 g",
-            "price": 3.99
-        },
-        {
-            "name": "RIO MARE TONNO OLIO EXTRA VERGINE DI OLIVA - PICCANTE 3 X 65 g",
-            "price": 3.59
-        },
-        {
             "name": "MOSCONI PASTINE ALL'UOVO 250 g",
             "price": 1.29
         },
@@ -2479,6 +1683,10 @@
         {
             "name": "GALLO BLOND RISOTTI 1 KG",
             "price": 2.39
+        },
+        {
+            "name": "RIO MARE TONNO OLIO EXTRA VERGINE DI OLIVA - PICCANTE 3 X 65 g",
+            "price": 3.59
         },
         {
             "name": "LA MOLISANA PASTA RIGACUORE 500 g",
@@ -2509,6 +1717,10 @@
             "price": 1.99
         },
         {
+            "name": "MULINO BIANCO PANE 400 g grano duro-integrale-cereali",
+            "price": 0.99
+        },
+        {
             "name": "LOCONTE FARINA PER FRITTURE 750 g",
             "price": 1.79
         },
@@ -2529,8 +1741,8 @@
             "price": 0.89
         },
         {
-            "name": "MULINO BIANCO PANE 400 g grano duro-integrale-cereali",
-            "price": 0.99
+            "name": "PINSAMI BASE PER PINSA GOURMET 2 x 230 g",
+            "price": 2.99
         },
         {
             "name": "GUTTIAU PANE CARASAU 250 g",
@@ -2551,10 +1763,6 @@
         {
             "name": "MORATO BOCCONCINI DI GRANO DURO 300 g",
             "price": 0.99
-        },
-        {
-            "name": "PINSAMI BASE PER PINSA GOURMET 2 x 230 g",
-            "price": 2.99
         },
         {
             "name": "PATA PATATINA CLASSICA 400 g",
@@ -2589,10 +1797,6 @@
             "price": 2.49
         },
         {
-            "name": "FIORENTINI GAL. RISO RICOP. CIOC. FONDENTE 100 g",
-            "price": 2.49
-        },
-        {
             "name": "DORIA BISCOTTI ATENE 500 g",
             "price": 1.59
         },
@@ -2605,7 +1809,7 @@
             "price": 1.99
         },
         {
-            "name": "MULINO BIANCO PANCAKE 280/350 g",
+            "name": "MULINO BIANCO PANCAKE 280/350 G",
             "price": 1.99
         },
         {
@@ -2617,7 +1821,7 @@
             "price": 1.99
         },
         {
-            "name": "GOCCIOLE PAVESI 500-400 g cioccolato - extra dark",
+            "name": "GOCCIOLE PAVESI 500-400 g",
             "price": 1.99
         },
         {
@@ -2705,6 +1909,10 @@
             "price": 11.99
         },
         {
+            "name": "MELLIN OMO 2 x 80 g PESCE",
+            "price": 2.19
+        },
+        {
             "name": "MELLIN CREME CEREALI 200 g",
             "price": 2.29
         },
@@ -2713,15 +1921,11 @@
             "price": 1.99
         },
         {
-            "name": "MELLIN OMO 2 x 80 g PESCE",
-            "price": 2.19
-        },
-        {
             "name": "MELLIN OMOG. 2x80g verdure",
             "price": 1.19
         },
         {
-            "name": "SAIWA ORO BISCOTTI 300/400 g",
+            "name": "SAIWA ORO BISCOTTI",
             "price": 1.99
         },
         {
@@ -2733,7 +1937,7 @@
             "price": 2.29
         },
         {
-            "name": "MELLIN OMO 2 x 100 g FRUTTA",
+            "name": "MELLIN OMOG. 2 X 100 g FRUTTA",
             "price": 1.19
         },
         {
@@ -2749,11 +1953,11 @@
             "price": 12.45
         },
         {
-            "name": "TROMBETTA CAPSULE COMPATIBILI L'ESPRESSO 50 pz",
+            "name": "TROMBETTA CAPSULE COMPATIBILI L'ESPRESSO",
             "price": 9.99
         },
         {
-            "name": "HAG CAPSULE ESPRESSO DECAFFEINATO CLASSICO X 30 pz.",
+            "name": "HAG CAPSULE ESPRESSO DECAFFEINATO CLASSICO X 30 pz",
             "price": 7.99
         },
         {
@@ -2765,7 +1969,7 @@
             "price": 3.89
         },
         {
-            "name": "LAVAZZA CAFFE' MACINATO CREMA E GUSTO CLASSICO 2 x 250 g",
+            "name": "LAVAZZA CAFFE' MACINATO ESPRESSO CREMA & GUSTO CLASSICO 2 x 250 g",
             "price": 9.49
         },
         {
@@ -2781,7 +1985,7 @@
             "price": 4.69
         },
         {
-            "name": "CAMEO CIOBAR ZERO x 4 76 g",
+            "name": "CAMEO CIOBAR ZERO X 4 76 g",
             "price": 1.89
         },
         {
@@ -2789,7 +1993,7 @@
             "price": 2.99
         },
         {
-            "name": "CAMEO CIOBAR FONDENTE - CLASSICO x 5 115 g",
+            "name": "CAMEO CIOBAR FONDENTE - CLASSICO X 5 115 g",
             "price": 1.89
         },
         {
@@ -2797,7 +2001,7 @@
             "price": 0.69
         },
         {
-            "name": "FERRERO SCATOLA CUORE SAN VALENTINO 100/147G",
+            "name": "FERRERO SCATOLA CUORE SAN VALENTINO",
             "price": 6.99
         },
         {
@@ -2825,7 +2029,7 @@
             "price": 7.99
         },
         {
-            "name": "LINDT LINDOR TUBINO CUORE 41 g",
+            "name": "LINDT LINDOR TUBINO CUORI 41 g",
             "price": 3.99
         },
         {
@@ -2865,16 +2069,16 @@
             "price": 12.99
         },
         {
-            "name": "PERUGINA CUORICINO 50 g",
+            "name": "PERUGINA BACI CUORICINO 50 g",
             "price": 4.49
         },
         {
-            "name": "PERUGINA BACI SCATOLA CUORE 125 g",
-            "price": 6.99
+            "name": "PERUGINA BACI TUBO",
+            "price": 5.99
         },
         {
-            "name": "PERUGINA BACI TUBO 125 g",
-            "price": 5.99
+            "name": "PERUGINA BACI SCATOLA CUORE",
+            "price": 6.99
         },
         {
             "name": "PERUGINA LATTA BACI 150 g",
@@ -2885,7 +2089,7 @@
             "price": 1.89
         },
         {
-            "name": "PERUGINA 3 BACI TUBO 37,5 g",
+            "name": "PERUGINA 3 BACI TUBO 37.5 g",
             "price": 1.99
         },
         {
@@ -2893,31 +2097,31 @@
             "price": 11.99
         },
         {
-            "name": "LEVISSIMA ACQUA 1,5 l naturale - frizzante",
+            "name": "LEVISSIMA ACQUA 1.5 l",
             "price": 2.29
         },
         {
-            "name": "FERRARELLE ACQUA 1,5 l effervescente naturale",
+            "name": "FERRARELLE ACQUA 1.5 l",
             "price": 1.79
         },
         {
-            "name": "COCA COLA BIPACK 2x1,5 l REGULAR - ZERO",
+            "name": "COCA COLA BIPACK 2X1.5 l",
             "price": 2.79
         },
         {
-            "name": "SAN BENEDETTO BIBITE 1,5 l",
+            "name": "SAN BENEDETTO BIBITE 1.5 l",
             "price": 0.75
         },
         {
-            "name": "PEPSI COLA 1 l original - zero",
+            "name": "PEPSI COLA 1 l",
             "price": 0.95
         },
         {
-            "name": "YOGA 100% 1 l PET PERA PESCA FRUTTI DI BOSCO",
+            "name": "YOGA 100% 1 l",
             "price": 1.49
         },
         {
-            "name": "SANBITTER 10x10 cl bianco - rosso",
+            "name": "SANBITTER 10x10 cl",
             "price": 5.49
         },
         {
@@ -2929,11 +2133,11 @@
             "price": 5.99
         },
         {
-            "name": "DOUBLE DUTCH GINGER BEER/ INDIAN TONIC/ LEMON/PINK GRAPEFRUIT/ REFRESHING LEMON/ SKINNY DRY TONIC/SODA WATER VAP 20 cl",
+            "name": "DOUBLE DUTCH GINGER BEER/ TONIC / SODA WATER VAP 20 cl",
             "price": 1.49
         },
         {
-            "name": "MONSTER ENERGY 50 cl vari gusti",
+            "name": "MONSTER ENERGY 50 cl",
             "price": 1.29
         },
         {
@@ -2957,7 +2161,7 @@
             "price": 1.99
         },
         {
-            "name": "CASTELLINO VINO 1 l BIANCO - ROSSO",
+            "name": "CASTELLINO VINO 1 l",
             "price": 1.79
         },
         {
@@ -2977,7 +2181,7 @@
             "price": 0.99
         },
         {
-            "name": "BIRRA NASTRO AZZURRO CAPRI 33 cl",
+            "name": "BIRRA NASTROAZZURRO CAPRI 33 cl",
             "price": 0.99
         },
         {
@@ -2989,7 +2193,7 @@
             "price": 1.09
         },
         {
-            "name": "BIRRA FAXE 10° latt 50 cl RED latt 50 cl",
+            "name": "BIRRA FAXE10° latt 50 cl",
             "price": 1.09
         },
         {
@@ -2997,7 +2201,7 @@
             "price": 3.49
         },
         {
-            "name": "BIGI VIPRA VINO 75 cl ROSSO - BIANCO",
+            "name": "BIGI VIPRA VINO 75 cl",
             "price": 3.99
         },
         {
@@ -3005,7 +2209,7 @@
             "price": 4.99
         },
         {
-            "name": "BAGLIO INCA SYRAH IGT 75 cl BAGLIO INCA NERO D'AVOLA DOC 75 cl BAGLIO INCA GRILLO IGT 75 cl",
+            "name": "BAGLIO INCA SYRAH IGT 75 cl",
             "price": 3.49
         },
         {
@@ -3025,7 +2229,7 @@
             "price": 4.49
         },
         {
-            "name": "BORTOLOMIOL PROSECCO DOCG SUP. MILL. 75 cl",
+            "name": "BORTOLOMIOL PROSECCO DOCG SUP.MILL. 75 cl",
             "price": 9.99
         },
         {
@@ -3037,11 +2241,11 @@
             "price": 2.99
         },
         {
-            "name": "VILLA GIANNA VINO CIRCEO DOP 75 cl BIANCO - ROSSO",
+            "name": "VILLA GIANNA VINO CIRCEO DOP 75 cl",
             "price": 3.49
         },
         {
-            "name": "COLLE DEI CONTI MALVASIA PUNTINATA / BUMMA ROSE' IGP LAZIO IGT cl 75",
+            "name": "COLLE DEI CONTI MALVASIA PUNTINATA 75 cl",
             "price": 6.99
         },
         {
@@ -3053,11 +2257,11 @@
             "price": 3.99
         },
         {
-            "name": "MASTRI VERNACOLI PINOT GRIGIO DOC / TEROLDEGO ROTALIANO DOC 75 cl",
+            "name": "MASTRI VERNACOLI PINOT GRIGIO DOC cl 75",
             "price": 3.99
         },
         {
-            "name": "MESSERE TOMMASO VINO ROSSO GOVERNO USO TOSCANO IGT DOCG 75 cl",
+            "name": "MESSERE TOMMASO VINO ROSSO GOVERNO 75 cl",
             "price": 2.99
         },
         {
@@ -3077,11 +2281,11 @@
             "price": 2.49
         },
         {
-            "name": "LA FRENETICA BELLONE - LA PROVOCANTE SAUVIGNON - LA TENTATRICE CHARDONNAY - L'ESUBERANTE B VERMENTINO IGT 75 CL",
+            "name": "LAGILUM LA FRENETICA BELLONE / LA PROVOCANTE / TENTATRICE / L'ESUBERANTE 75 CL",
             "price": 5.99
         },
         {
-            "name": "IL FRENETICO NERO BUONO - IL PROVOCANTE CESANESE IGT 75 CL",
+            "name": "LAGILUM IL FRENETICO NERO BUONO / IL PROVOCANTE CESANESE 75 CL",
             "price": 5.99
         },
         {
@@ -3097,11 +2301,11 @@
             "price": 5.49
         },
         {
-            "name": "ANGORIS FRIULI DOC 75 cl RIBOLLA GIALLA - SAUVIGNON",
+            "name": "ANGORIS FRIULI DOC 75 cl",
             "price": 4.99
         },
         {
-            "name": "GAIERHOF MULLER THURGAU DOC / LAGREIN DOC 75 cl - TEROLDEGO DOC 75 cl",
+            "name": "GAIERHOF MULLER THURGAU DOC 75 cl",
             "price": 5.99
         },
         {
@@ -3113,11 +2317,11 @@
             "price": 3.99
         },
         {
-            "name": "TERRE DA VINO BARBERA MONFERRATO DOC 75 cl BARBERA D'ASTI DOC 75 cl",
+            "name": "TERRE DA VINO BARBERA MONFERRATO DOC 75 cl",
             "price": 3.99
         },
         {
-            "name": "CASALE LEO PECORINO DI CHIETI IGT 75 cl PASSERINA DI CHIETI IGT 75 cl MONTEPULCIANO DOC 75 cl",
+            "name": "CASALE LEO PECORINO / PASSERINA / MONTEPULCIANO 75 cl",
             "price": 2.99
         },
         {
@@ -3153,7 +2357,7 @@
             "price": 1.99
         },
         {
-            "name": "MOLINO ROSSETTO FARINA DI MANDORLE 100 g",
+            "name": "MOLINO ROSSETTO FARINA DI MANDORLE S/G 100 g",
             "price": 2.99
         },
         {
@@ -3201,11 +2405,11 @@
             "price": 1.79
         },
         {
-            "name": "KIOENE COTOLETTE VEGETALI 2 x 100 g",
+            "name": "KIOENE COTOLETTE VEGETALI 2 X 100 g",
             "price": 2.99
         },
         {
-            "name": "KIOENE GRANTALIA 160 g",
+            "name": "KIOENE GRANTALIATA 160 g",
             "price": 2.49
         },
         {
@@ -3241,7 +2445,7 @@
             "price": 1.49
         },
         {
-            "name": "VALSOIA DESSERT ZERO 2 x 125 g FONDENTE / LA CREME",
+            "name": "VALSOIA DESSERT ZERO 2 x 125 g",
             "price": 1.19
         },
         {
@@ -3253,40 +2457,872 @@
             "price": 2.99
         },
         {
-            "name": "FILETTI DI SCORFANO al kg",
+            "name": "FILETTI DI SCORFANO",
             "price": 12.99
         },
         {
-            "name": "FILETTI DI ORATA al kg",
+            "name": "FILETTI DI ORATA",
             "price": 21.49
         },
         {
-            "name": "PAELLA DI PESCE al kg",
+            "name": "PAELLA DI PESCE",
             "price": 10.8
         },
         {
-            "name": "GAMBERI ARGENTINI al kg",
+            "name": "GAMBERI ARGENTINI",
             "price": 22.49
         },
         {
-            "name": "RONDELLE DI TOTANO al kg",
+            "name": "RONDELLE DI TOTANO",
             "price": 16.99
         },
         {
-            "name": "FISH&CHIPS merluzzo con croccanti patatine al kg",
+            "name": "FISH&CHIPS merluzzo con croccanti patatine",
             "price": 13.89
         },
         {
-            "name": "ANELLI DI TOTANO con croccante panatura al kg",
+            "name": "ANELLI DI TOTANO",
             "price": 13.79
         },
         {
-            "name": "BOCCONCINI DI ALGHE al kg",
+            "name": "BOCCONCINI DI ALGHE",
             "price": 5.8
         },
         {
-            "name": "FUNGHI PORCINI al kg",
+            "name": "FUNGHI PORCINI",
             "price": 13.89
+        },
+        {
+            "name": "Findus 4 Spiedini di Gamberi",
+            "price": 4.99
+        },
+        {
+            "name": "Findus Bastoncini",
+            "price": 2.99
+        },
+        {
+            "name": "Findus Croccole",
+            "price": 4.99
+        },
+        {
+            "name": "Findus Fiori di Merluzzo",
+            "price": 3.99
+        },
+        {
+            "name": "Findus Fiori di Merluzzo",
+            "price": 2.99
+        },
+        {
+            "name": "Findus Filetti di Platessa",
+            "price": 4.99
+        },
+        {
+            "name": "Findus Burger di Salmone",
+            "price": 3.99
+        },
+        {
+            "name": "Findus Burger di Merluzzo",
+            "price": 2.99
+        },
+        {
+            "name": "Findus Lasagne al Salmone",
+            "price": 4.99
+        },
+        {
+            "name": "Findus Filetti di Platessa",
+            "price": 3.99
+        },
+        {
+            "name": "Italpizza Margherita",
+            "price": 3.69
+        },
+        {
+            "name": "Frosta Filetti di Merluzzo",
+            "price": 4.99
+        },
+        {
+            "name": "Orogel Zucchine Grigliate",
+            "price": 1.29
+        },
+        {
+            "name": "Frosta Filetti di Platessa",
+            "price": 3.99
+        },
+        {
+            "name": "Frosta Croccantini di Pesce",
+            "price": 2.99
+        },
+        {
+            "name": "Camber Argentini",
+            "price": 6.99
+        },
+        {
+            "name": "Findus Sofficini Funghi",
+            "price": 2.99
+        },
+        {
+            "name": "Findus Sofficini Spinaci",
+            "price": 2.99
+        },
+        {
+            "name": "Findus Sofficini Mozzarella",
+            "price": 2.99
+        },
+        {
+            "name": "Findus Sofficini Formaggio e Pomodoro",
+            "price": 2.99
+        },
+        {
+            "name": "Orogel Spinaci Pronti",
+            "price": 1.99
+        },
+        {
+            "name": "Orogel Caponata di Verdure",
+            "price": 1.99
+        },
+        {
+            "name": "Frosta Funghi Misti con Porcini",
+            "price": 2.79
+        },
+        {
+            "name": "Frosta Funghi Porcini",
+            "price": 9.99
+        },
+        {
+            "name": "Buitoni Bella Napoli Margherita",
+            "price": 2.49
+        },
+        {
+            "name": "Buitoni Bella Napoli Salame",
+            "price": 2.49
+        },
+        {
+            "name": "Buitoni Bella Napoli 4 Formaggi",
+            "price": 2.49
+        },
+        {
+            "name": "Buitoni Bella Napoli Prosciutto e Funghi",
+            "price": 2.49
+        },
+        {
+            "name": "Pizza Regina 4 Formaggi",
+            "price": 2.99
+        },
+        {
+            "name": "Pizza Regina Salame Piccante",
+            "price": 2.99
+        },
+        {
+            "name": "Regina Crema di Scampi",
+            "price": 3.99
+        },
+        {
+            "name": "Frosta Valori Contorno",
+            "price": 1.99
+        },
+        {
+            "name": "Aia Sottilissima Pollo Surgelato",
+            "price": 2.49
+        },
+        {
+            "name": "Buitoni Margherita",
+            "price": 1.99
+        },
+        {
+            "name": "Ghiottifreschi Gnocchi",
+            "price": 1.99
+        },
+        {
+            "name": "Terre di Gusto Gnocchi",
+            "price": 2.99
+        },
+        {
+            "name": "Vem Panna Cucina",
+            "price": 3.99
+        },
+        {
+            "name": "McCain Patate Fritte",
+            "price": 2.39
+        },
+        {
+            "name": "Rizzoli Ve L'Amo Patate",
+            "price": 1.99
+        },
+        {
+            "name": "M Magnum Mini Mandorle",
+            "price": 3.99
+        },
+        {
+            "name": "Carte d'Or Gelato Assortito",
+            "price": 4.49
+        },
+        {
+            "name": "Carte d'Or Torta Romantica",
+            "price": 6.99
+        },
+        {
+            "name": "Motta Maxibon Gelato",
+            "price": 2.99
+        },
+        {
+            "name": "Barattoli Yogurt Mango",
+            "price": 1.99
+        },
+        {
+            "name": "Ceppa d'Oro Tiramisù",
+            "price": 2.99
+        },
+        {
+            "name": "Rana Croccole Pastificio Carne",
+            "price": 1.49
+        },
+        {
+            "name": "Rana Sfoglia Grezza",
+            "price": 1.99
+        },
+        {
+            "name": "Rana Tortelloni Prosciutto Crudo",
+            "price": 1.99
+        },
+        {
+            "name": "Finì Antica Ricetta Capellette",
+            "price": 0.99
+        },
+        {
+            "name": "Finì Nuova Tradizione Agnolotti",
+            "price": 2.19
+        },
+        {
+            "name": "Giovanni Rana Sfoglia Lasagne Rustica",
+            "price": 2.99
+        },
+        {
+            "name": "Giovanni Rana Gnocchi di Patate",
+            "price": 1.29
+        },
+        {
+            "name": "Rana Ravioli Ricotta e Spinaci",
+            "price": 2.99
+        },
+        {
+            "name": "Rana Spätzle",
+            "price": 2.99
+        },
+        {
+            "name": "Rana Spätzle Linea",
+            "price": 1.59
+        },
+        {
+            "name": "Viva la Mamma Gnocchi",
+            "price": 2.99
+        },
+        {
+            "name": "Biso Canto Gnocchi di Patate",
+            "price": 2.99
+        },
+        {
+            "name": "Crai Frollini senza Uova",
+            "price": 1.99
+        },
+        {
+            "name": "Vogliazzi Insalata Russa",
+            "price": 1.69
+        },
+        {
+            "name": "Crai Buon Vivere Mortadella",
+            "price": 2.49
+        },
+        {
+            "name": "D.O.C. Sfoglia Rotonda",
+            "price": 1.99
+        },
+        {
+            "name": "Torteria Piacentina",
+            "price": 2.49
+        },
+        {
+            "name": "Sta Zino Tzatziki",
+            "price": 1.99
+        },
+        {
+            "name": "Mialle Sfoglia",
+            "price": 0.99
+        },
+        {
+            "name": "Buitoni Sfoglia Rotonda",
+            "price": 1.69
+        },
+        {
+            "name": "Buitoni Pan Croissant",
+            "price": 1.89
+        },
+        {
+            "name": "Buitoni Pasta Frolla",
+            "price": 1.89
+        },
+        {
+            "name": "Buitoni Pan Cioccolato",
+            "price": 1.89
+        },
+        {
+            "name": "Buitoni Pizza",
+            "price": 1.69
+        },
+        {
+            "name": "Viva la Mamma Croissant",
+            "price": 2.69
+        },
+        {
+            "name": "Milk Drink Latte",
+            "price": 1.19
+        },
+        {
+            "name": "Alival Scamorza Affumicata",
+            "price": 2.79
+        },
+        {
+            "name": "Burro Soresina",
+            "price": 1.39
+        },
+        {
+            "name": "Kraft Fette Fondenti",
+            "price": 1.39
+        },
+        {
+            "name": "Fila Sottilette",
+            "price": 1.89
+        },
+        {
+            "name": "Alto 30% Proteine Greco",
+            "price": 1.99
+        },
+        {
+            "name": "Jocca senza Lattosio",
+            "price": 1.59
+        },
+        {
+            "name": "Vallelatta Mozzarella",
+            "price": 2.29
+        },
+        {
+            "name": "Vallelatta Mozzarella Mini",
+            "price": 1.49
+        },
+        {
+            "name": "Valle Mozzarella",
+            "price": 2.99
+        },
+        {
+            "name": "Valle Mozzarella di Bufala",
+            "price": 3.99
+        },
+        {
+            "name": "Terra & Gusto Grana Padano",
+            "price": 1.29
+        },
+        {
+            "name": "Agresina Grana Padano",
+            "price": 1.99
+        },
+        {
+            "name": "Parmareggio Parmigiano Reggiano Petali",
+            "price": 2.19
+        },
+        {
+            "name": "Parmareggio Parmigiano Reggiano",
+            "price": 1.69
+        },
+        {
+            "name": "Biraghi Grana Padano Grattugiato",
+            "price": 1.69
+        },
+        {
+            "name": "Biraghi Granarolo Grattugiato",
+            "price": 2.99
+        },
+        {
+            "name": "Lando Latte ESL",
+            "price": 1.49
+        },
+        {
+            "name": "Cloroma Latte Intero",
+            "price": 1.79
+        },
+        {
+            "name": "Amborella Latte UHT",
+            "price": 0.99
+        },
+        {
+            "name": "Granarolo Latte UHT senza Lattosio",
+            "price": 0.99
+        },
+        {
+            "name": "Granarolo Latte Fresco Intero",
+            "price": 1.49
+        },
+        {
+            "name": "Zymil Latte Digeribile",
+            "price": 1.79
+        },
+        {
+            "name": "Pettinicchio Fiordilatte",
+            "price": 3.99
+        },
+        {
+            "name": "Ambrosi Mozzarella",
+            "price": 0.99
+        },
+        {
+            "name": "Nonno Nanni Burrata",
+            "price": 1.59
+        },
+        {
+            "name": "Cadia Provola Bianca",
+            "price": 5.99
+        },
+        {
+            "name": "Alival Ricotta di Mucca",
+            "price": 2.49
+        },
+        {
+            "name": "Parmareggio Grana Padano",
+            "price": 1.29
+        },
+        {
+            "name": "Santa Lucia Mascarpone",
+            "price": 3.99
+        },
+        {
+            "name": "Galbanino",
+            "price": 4.99
+        },
+        {
+            "name": "Ambrosi Mozzarella di Bufala",
+            "price": 0.99
+        },
+        {
+            "name": "Granarolo Stracchino Alta Qualità",
+            "price": 3.19
+        },
+        {
+            "name": "Galbani Certosa",
+            "price": 2.69
+        },
+        {
+            "name": "Bergerdes Blu",
+            "price": 1.19
+        },
+        {
+            "name": "Stracciatella",
+            "price": 2.69
+        },
+        {
+            "name": "Spinoca Ricotta di Bufala",
+            "price": 5.99
+        },
+        {
+            "name": "Caprice des Dieux",
+            "price": 2.99
+        },
+        {
+            "name": "Kelle Formaggio Fresco",
+            "price": 1.69
+        },
+        {
+            "name": "Granarolo Yogurt Greco",
+            "price": 1.69
+        },
+        {
+            "name": "Blu Italia Formaggio",
+            "price": 2.99
+        },
+        {
+            "name": "Leerdammer Originale",
+            "price": 2.19
+        },
+        {
+            "name": "Nonno Nanni Squacquerone",
+            "price": 2.79
+        },
+        {
+            "name": "Linea Ombrellina senza Lattosio",
+            "price": 1.89
+        },
+        {
+            "name": "Hoplà Preparato Vegetale",
+            "price": 1.59
+        },
+        {
+            "name": "Hoplà Mix Spray",
+            "price": 1.49
+        },
+        {
+            "name": "Parmalat Panna Cucina Chef",
+            "price": 1.19
+        },
+        {
+            "name": "Santa Lucia Ricotta",
+            "price": 1.29
+        },
+        {
+            "name": "Galbani Certosa",
+            "price": 1.89
+        },
+        {
+            "name": "Galbani Mozzarella",
+            "price": 2.29
+        },
+        {
+            "name": "Buon Sapore Vacchetta",
+            "price": 4.99
+        },
+        {
+            "name": "Buon Sapore Mozzarella",
+            "price": 3.99
+        },
+        {
+            "name": "Parmalat Yogurt Greco",
+            "price": 1.99
+        },
+        {
+            "name": "Ambrosi Mozzarella",
+            "price": 3.39
+        },
+        {
+            "name": "Parmigiano Reggiano",
+            "price": 1.69
+        },
+        {
+            "name": "Mio Formaggino",
+            "price": 1.39
+        },
+        {
+            "name": "Philadelphia",
+            "price": 1.49
+        },
+        {
+            "name": "Philadelphia",
+            "price": 1.69
+        },
+        {
+            "name": "Phila Yogurt Greco",
+            "price": 1.99
+        },
+        {
+            "name": "Intermezzi Mozzarella",
+            "price": 1.99
+        },
+        {
+            "name": "Granarolo Ricotta di Mucca",
+            "price": 3.99
+        },
+        {
+            "name": "Rigamonti Bresaola",
+            "price": 3.49
+        },
+        {
+            "name": "Exquisa Fresco Cremoso",
+            "price": 1.39
+        },
+        {
+            "name": "Beretta Bacon Cotto",
+            "price": 1.99
+        },
+        {
+            "name": "Beretta Salame Milano",
+            "price": 1.69
+        },
+        {
+            "name": "Ghiotto Ravioli Carne",
+            "price": 1.49
+        },
+        {
+            "name": "Beretta Tacchino Arrosto",
+            "price": 1.49
+        },
+        {
+            "name": "Rigamonti Speck Alto Adige IGP",
+            "price": 3.49
+        },
+        {
+            "name": "Beretta Prosciutto Cotto",
+            "price": 2.29
+        },
+        {
+            "name": "Beretta Gran Rosticciana",
+            "price": 2.99
+        },
+        {
+            "name": "Shell Rovagnati Stracchino",
+            "price": 2.79
+        },
+        {
+            "name": "Wuberoni Würstel",
+            "price": 1.99
+        },
+        {
+            "name": "Tenarmi Tortino di Sfoglia",
+            "price": 2.29
+        },
+        {
+            "name": "Wuberoni Irresistibili Würstel",
+            "price": 1.39
+        },
+        {
+            "name": "Wuberoni Irresistibili Salamini",
+            "price": 1.59
+        },
+        {
+            "name": "Sofficetto Wuberoni Würstel",
+            "price": 1.39
+        },
+        {
+            "name": "Wuberoni Würstel",
+            "price": 1.79
+        },
+        {
+            "name": "Wuberoni Würstel",
+            "price": 0.89
+        },
+        {
+            "name": "Beretta Prosciutto Cotto",
+            "price": 5.0
+        },
+        {
+            "name": "Beretta Würstel",
+            "price": 3.0
+        },
+        {
+            "name": "Wuberoni Würstel",
+            "price": 0.99
+        },
+        {
+            "name": "Wuberoni Salame Monette",
+            "price": 1.79
+        },
+        {
+            "name": "Aequilibrium Petto di Pollo",
+            "price": 1.99
+        },
+        {
+            "name": "Aequilibrium Cotolette",
+            "price": 1.99
+        },
+        {
+            "name": "Wudy Würstel",
+            "price": 2.99
+        },
+        {
+            "name": "Regina Guanciale",
+            "price": 1.49
+        },
+        {
+            "name": "Carpegna Prosciutto Crudo",
+            "price": 3.99
+        },
+        {
+            "name": "Sofficetto Citero di Pollo",
+            "price": 1.49
+        },
+        {
+            "name": "Wuberoni Würstel Selection",
+            "price": 2.99
+        },
+        {
+            "name": "Wuberoni Würstel 38 Great",
+            "price": 2.99
+        },
+        {
+            "name": "Wuberoni Würstel 38 Krainer",
+            "price": 2.99
+        },
+        {
+            "name": "Wuberoni Würstel 38 Servelade",
+            "price": 2.99
+        },
+        {
+            "name": "Findus Surimi",
+            "price": 1.0
+        },
+        {
+            "name": "Findus Spianata Romana",
+            "price": 2.49
+        },
+        {
+            "name": "Findus Ragù Guardaiola",
+            "price": 1.99
+        },
+        {
+            "name": "Norita Salmone",
+            "price": 1.29
+        },
+        {
+            "name": "Norita Merluzzo",
+            "price": 8.9
+        },
+        {
+            "name": "Norita Trancio Salmone",
+            "price": 7.99
+        },
+        {
+            "name": "Norita Filetti di Merluzzo",
+            "price": 2.49
+        },
+        {
+            "name": "Amo Salmone Affumicato",
+            "price": 3.49
+        },
+        {
+            "name": "Norita Salmone Affumicato",
+            "price": 2.99
+        },
+        {
+            "name": "Rio Mare Cappuccio all'Olio",
+            "price": 5.99
+        },
+        {
+            "name": "Foodlab Tonno",
+            "price": 4.99
+        },
+        {
+            "name": "Vem Würstel Hot Dog",
+            "price": 1.99
+        },
+        {
+            "name": "Vem Prosciutto Crudo",
+            "price": 1.99
+        },
+        {
+            "name": "Vem Speck Alto Adige",
+            "price": 2.99
+        },
+        {
+            "name": "Citterio Würstel",
+            "price": 1.49
+        },
+        {
+            "name": "Bagel Butter",
+            "price": 2.99
+        },
+        {
+            "name": "Bagel Salmone",
+            "price": 2.99
+        },
+        {
+            "name": "Nesquik Snack",
+            "price": 0.69
+        },
+        {
+            "name": "Nesquik Latte",
+            "price": 1.99
+        },
+        {
+            "name": "Perugina Vortici Cioccolato",
+            "price": 2.49
+        },
+        {
+            "name": "Zehfy Bianco",
+            "price": 0.89
+        },
+        {
+            "name": "Milk Pancakes",
+            "price": 2.49
+        },
+        {
+            "name": "Nestlé Lindhalle Cereali",
+            "price": 1.49
+        },
+        {
+            "name": "Lundah Pro Yogurt",
+            "price": 1.99
+        },
+        {
+            "name": "Fruttoli Gusti Fragola Pera",
+            "price": 1.59
+        },
+        {
+            "name": "Milk Skir Yogurt",
+            "price": 0.79
+        },
+        {
+            "name": "Milk Yogurt Lampone",
+            "price": 0.79
+        },
+        {
+            "name": "Milk Kefir",
+            "price": 0.79
+        },
+        {
+            "name": "Milk Bonessene Yogurt Fragola",
+            "price": 0.89
+        },
+        {
+            "name": "Activia Yogurt",
+            "price": 0.79
+        },
+        {
+            "name": "Activia Granola",
+            "price": 0.99
+        },
+        {
+            "name": "Bontà Viva Yogurt Avena",
+            "price": 0.99
+        },
+        {
+            "name": "Müller Passione Yogurt",
+            "price": 0.89
+        },
+        {
+            "name": "Müller Crema Proteica",
+            "price": 0.89
+        },
+        {
+            "name": "Parmalat Pancake",
+            "price": 0.69
+        },
+        {
+            "name": "Parmalat Yogurt",
+            "price": 0.69
+        },
+        {
+            "name": "Parmalat Latte",
+            "price": 0.89
+        },
+        {
+            "name": "Parmalat Crema di Cereali",
+            "price": 2.89
+        },
+        {
+            "name": "Danone Activia Drink",
+            "price": 1.99
+        },
+        {
+            "name": "Fage Total Yogurt",
+            "price": 2.49
+        },
+        {
+            "name": "Suino assortito",
+            "price": 2.99
+        },
+        {
+            "name": "Findus Bastoncini",
+            "price": 4.99
+        },
+        {
+            "name": "Acqua Rosaliu Naturale",
+            "price": 0.99
+        },
+        {
+            "name": "Consilia Passata Classica",
+            "price": 1.5
+        },
+        {
+            "name": "Meteora Yogurt Greco Bianco",
+            "price": 0.99
+        },
+        {
+            "name": "Cloroma Latte Intero",
+            "price": 1.5
         }
     ]
 }
