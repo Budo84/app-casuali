@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "08/09/2026 21:54",
+    "data_aggiornamento": "08/09/2026 22:08",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -142,6 +142,17 @@
                         "Pepe nero macinato fresco",
                         "Acqua Bio Sorgente Monte Cimone 1,5L (servita fredda)"
                     ]
+                },
+                {
+                    "title": "Insalata Caprese Mediterranea con Olive Giganti",
+                    "ingredients": [
+                        "Mozzarella Nuvoletta Solea 400g",
+                        "Buoni Sapori Ciliegine Vaschetta 250g",
+                        "Ficacci Olive Dolci Giganti 225g",
+                        "Basilico fresco",
+                        "Olio Extra Vergine d'Oliva",
+                        "Sale, Pepe nero"
+                    ]
                 }
             ],
             "cena": [
@@ -242,6 +253,20 @@
                         "Brodo vegetale leggero (preparato con Acqua Bio Sorgente Monte Cimone 1,5L)",
                         "Couscous precotto"
                     ]
+                },
+                {
+                    "title": "Risotto al Vermentino con Gamberi e Pomodorini Confit",
+                    "ingredients": [
+                        "Riso Carnaroli (o Arborio)",
+                        "Vino Mancini Vermentino Gallura DOCG 75cl",
+                        "Buoni Sapori Ciliegine Vaschetta 250g",
+                        "Gamberi freschi sgusciati",
+                        "Brodo vegetale",
+                        "Scalogno",
+                        "Burro",
+                        "Prezzemolo fresco",
+                        "Sale, Pepe"
+                    ]
                 }
             ],
             "merenda": [
@@ -309,6 +334,18 @@
                         "RIGAMONTI CARPACCIO DI BRESAOLA 90G (leggermente scottata in padella per renderla croccante)",
                         "Acqua Bio Sorgente Monte Cimone 1,5L (per accompagnare)"
                     ]
+                },
+                {
+                    "title": "Crostini di Pane Artigianale con Mousse di Feta e Olive Mediterranee",
+                    "ingredients": [
+                        "Pane rustico tostato",
+                        "Ficacci Olive Dolci Giganti 225g",
+                        "Formaggio Feta (esterno)",
+                        "Fage Total 450g",
+                        "Olio Extra Vergine d'Oliva",
+                        "Origano secco",
+                        "Peperoncino in fiocchi (opzionale)"
+                    ]
                 }
             ]
         },
@@ -374,6 +411,15 @@
                         "Mezza banana matura",
                         "Un pezzetto di zenzero fresco",
                         "Succo di mezzo limone"
+                    ]
+                },
+                {
+                    "title": "Bowl Energetica di Yogurt Greco con Barretta Special K e Frutta Fresca",
+                    "ingredients": [
+                        "Fage Total 450g",
+                        "Kellogg's Barrette Special K 129g",
+                        "Frutta fresca di stagione (es. fragole, banane)",
+                        "Miele o sciroppo d'acero (opzionale)"
                     ]
                 }
             ],
@@ -478,6 +524,20 @@
                         "Pepe nero",
                         "Acqua Bio Sorgente Monte Cimone 1,5L (per diluire se necessario o servita a parte)"
                     ]
+                },
+                {
+                    "title": "Burger Vegetale di Lenticchie e Verdure con Salsa Allo Yogurt e Olive",
+                    "ingredients": [
+                        "Lenticchie cotte (esterne)",
+                        "Pane per burger (esterno)",
+                        "Fage Total 450g",
+                        "Ficacci Olive Dolci Giganti 225g",
+                        "Lattuga fresca (esterna)",
+                        "Pomodoro a fette (esterno)",
+                        "Cipolla rossa a fette (esterna)",
+                        "Pangrattato (esterno)",
+                        "Spezie a piacere (es. cumino, paprika)"
+                    ]
                 }
             ],
             "cena": [
@@ -560,6 +620,20 @@
                         "Sale",
                         "Pepe nero",
                         "Brodo vegetale (preparato con Acqua Bio Sorgente Monte Cimone 1,5L)"
+                    ]
+                },
+                {
+                    "title": "Lasagna Vegetariana con Spinaci Freschi, Mozzarella e Besciamella al Latte di Crescita",
+                    "ingredients": [
+                        "Sfogliatelle di lasagna all'uovo (o senza uova)",
+                        "Mozzarella Nuvoletta Solea 400g",
+                        "Spinaci freschi (esterni)",
+                        "Latte crescita 3 Conad Baby 1L",
+                        "Farina 00 (esterna)",
+                        "Burro (esterno)",
+                        "Noce moscata (esterna)",
+                        "Parmigiano Reggiano grattugiato (esterno)",
+                        "Sale, Pepe"
                     ]
                 }
             ],
@@ -744,6 +818,18 @@
                         "Sale",
                         "Pepe"
                     ]
+                },
+                {
+                    "title": "Noodle Bowl Asiatico con Verdure Croccanti e Anacardi",
+                    "ingredients": [
+                        "VIVA LA MAMMA NOODLES 220G",
+                        "Verdure miste (es. carote, zucchine, peperoni, germogli di soia) (esterne)",
+                        "Salsa di soia (esterna)",
+                        "Olio di sesamo (esterno)",
+                        "Zenzero fresco (esterno)",
+                        "Aglio (esterno)",
+                        "Anacardi tostati (esterni)"
+                    ]
                 }
             ],
             "cena": [
@@ -855,6 +941,23 @@
                         "HARIBO CARAMELLE CUORE SAN VALENTINO 160/175G (un cuore per ogni tortino)",
                         "Acqua Bio Sorgente Monte Cimone 1,5L (servita come accompagnamento per un caffè o tè)"
                     ]
+                },
+                {
+                    "title": "Stufato di Lenticchie e Verdure al Vino Rosso con Olive Esotiche",
+                    "ingredients": [
+                        "Lenticchie secche (esterne)",
+                        "Bigi Vipra Vino 75cl",
+                        "Buoni Sapori Ciliegine Vaschetta 250g",
+                        "Ficacci Olive Dolci Giganti 225g",
+                        "Carote (esterne)",
+                        "Sedano (esterno)",
+                        "Cipolla (esterno)",
+                        "Aglio (esterno)",
+                        "Brodo vegetale (esterno)",
+                        "Concentrato di pomodoro (esterno)",
+                        "Olio Extra Vergine d'Oliva",
+                        "Prezzemolo fresco"
+                    ]
                 }
             ],
             "merenda": [
@@ -920,6 +1023,15 @@
                         "Frutta fresca a cubetti (mango, ananas, litchi)",
                         "Cubetti di ghiaccio"
                     ]
+                },
+                {
+                    "title": "Coppetta di Yogurt Gelato con Baci Perugina e Barrette Special K",
+                    "ingredients": [
+                        "Fage Total 450g",
+                        "Perugina Baci Cuscino Cuore 75g",
+                        "Kellogg's Barrette Special K 129g",
+                        "Miele o sciroppo d'agave (opzionale)"
+                    ]
                 }
             ]
         },
@@ -938,6 +1050,16 @@
                         "Succo di limone",
                         "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L (per ungere la piastra)",
                         "Acqua Bio Sorgente Monte Cimone 1,5L (per l'impasto se necessario, o da bere)"
+                    ]
+                },
+                {
+                    "title": "Porridge di Riso al Latte di Crescita con Frutta Fresca e Cannella",
+                    "ingredients": [
+                        "Riso (chicchi o farina di riso, consentito)",
+                        "Latte crescita 3 Conad Baby 1L",
+                        "Frutta fresca a pezzi (es. mela, pera) (esterna)",
+                        "Cannella in polvere (esterna)",
+                        "Miele o sciroppo d'acero (opzionale)"
                     ]
                 }
             ],
@@ -979,6 +1101,18 @@
                         "Parmigiano Reggiano DOP (o Grana Padano) grattugiato",
                         "Sale",
                         "Pepe nero"
+                    ]
+                },
+                {
+                    "title": "Insalata di Riso Tricolore con Mozzarella, Olive e Pomodorini",
+                    "ingredients": [
+                        "Riso Basmati o Carnaroli (consentito)",
+                        "Mozzarella Nuvoletta Solea 400g",
+                        "Ficacci Olive Dolci Giganti 225g",
+                        "Buoni Sapori Ciliegine Vaschetta 250g",
+                        "Basilico fresco",
+                        "Olio Extra Vergine d'Oliva",
+                        "Sale, Pepe"
                     ]
                 }
             ],
@@ -1026,6 +1160,18 @@
                         "Pomodorini datterini",
                         "Lattuga fresca",
                         "Acqua Bio Sorgente Monte Cimone 1,5L (per bere)"
+                    ]
+                },
+                {
+                    "title": "Polpette di Patate e Grano Saraceno con Cuore Filante di Mozzarella",
+                    "ingredients": [
+                        "Patate (consentito)",
+                        "Farina di Grano Saraceno (consentito)",
+                        "Mozzarella Nuvoletta Solea 400g",
+                        "Uovo (esterno)",
+                        "Pangrattato di riso o mais (esterno, consentito)",
+                        "Prezzemolo fresco",
+                        "Sale, Pepe"
                     ]
                 }
             ],
