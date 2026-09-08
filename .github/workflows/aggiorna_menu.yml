@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10' 
+          python-version: '3.10'
 
       - name: Installa Librerie (NO GOOGLE SDK)
         run: |
@@ -43,22 +43,37 @@ jobs:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/gestione_offerte.py
 
+      # if: always() -> gira anche se lo step sopra e' fallito o e' stato saltato,
+      # cosi' il menu si aggiorna comunque con le offerte disponibili (vecchie o nuove).
       - name: 🍳 Aggiorna Menu
+        if: always()
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: python spesa/gestione_menu.py
 
+      # if: always() -> salva e pubblica SEMPRE quello che c'e', anche se qualcosa
+      # sopra e' fallito. Cosi' l'app mostra sempre lo stato piu' recente possibile
+      # invece di restare "silenziosamente" con i dati vecchi.
       - name: Salva su GitHub
+        if: always()
         run: |
           git config --global user.name 'Robot Spesa'
           git config --global user.email 'robot@spesa.app'
-          
+
           git add spesa/dati_settimanali.json
           git add spesa/offerte.json || true
           git add spesa/allergeni.json || true
-          
+
           git rm spesa/ricette_utenti/*.json --ignore-unmatch
-          
+
           git commit -m "🤖 Update Menu & Offerte (REST API)" || echo "Nessuna modifica"
           git pull --rebase origin main || git pull --rebase origin master
           git push
+
+      # Se l'analisi offerte e' effettivamente fallita, fai apparire il job come rosso
+      # (cosi' te ne accorgi nella tab Actions), ma SOLO DOPO aver gia' salvato/pushato.
+      - name: Segnala fallimento analisi (se avvenuto)
+        if: failure()
+        run: |
+          echo "⚠️ Uno o piu' step hanno fallito. Controlla i log sopra ('Analisi Offerte' / 'Aggiorna Menu') per il motivo esatto (es. secret GEMINI_KEY mancante o non valida, modello Gemini non disponibile, ecc)."
+          exit 1
