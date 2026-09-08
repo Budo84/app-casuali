@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "08/09/2026 21:43",
+    "data_aggiornamento": "08/09/2026 21:54",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -125,6 +125,23 @@
                         "Pepe",
                         "Montefalco Sagrantino DOCG Miracolo Rosso Benedetti&Grigi"
                     ]
+                },
+                {
+                    "title": "Salento Breeze: Insalata Fresca di Bresaola, Speck e Olive di Itrana",
+                    "ingredients": [
+                        "RIGAMONTI CARPACCIO DI BRESAOLA 90G",
+                        "KING'S GRANSPECK CON FESA all'etto",
+                        "Olive in Salamoia Sapori & Dintorni Conad di Itrana/Bella di Cerignola/Nocellara di Sicilia intere 290g",
+                        "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L",
+                        "Pomodorini ciliegino",
+                        "Cetrioli freschi",
+                        "Cipolla rossa di Tropea",
+                        "Foglie di menta fresca",
+                        "Origano siciliano",
+                        "Sale marino",
+                        "Pepe nero macinato fresco",
+                        "Acqua Bio Sorgente Monte Cimone 1,5L (servita fredda)"
+                    ]
                 }
             ],
             "cena": [
@@ -209,6 +226,22 @@
                         "Sale",
                         "Pepe"
                     ]
+                },
+                {
+                    "title": "Polpettine del Sud: Maiale, Menta e Olive Nocellara su Letto di Couscous",
+                    "ingredients": [
+                        "MACINATO SUINO al kg",
+                        "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L",
+                        "Olive in Salamoia Sapori & Dintorni Conad di Itrana/Bella di Cerignola/Nocellara di Sicilia intere 290g (denocciolate e tritate grossolanamente)",
+                        "Scorza e succo di limone bio",
+                        "Menta fresca tritata",
+                        "Pangrattato",
+                        "Uovo medio",
+                        "Sale",
+                        "Pepe nero",
+                        "Brodo vegetale leggero (preparato con Acqua Bio Sorgente Monte Cimone 1,5L)",
+                        "Couscous precotto"
+                    ]
                 }
             ],
             "merenda": [
@@ -263,6 +296,19 @@
                         "Montefalco Sagrantino DOCG Miracolo Rosso Benedetti&Grigi (ridotto a glassa)",
                         "Olio EVO"
                     ]
+                },
+                {
+                    "title": "Tramonto Salentino: Crostini con Tapenade di Olive e Bresaola Croccante",
+                    "ingredients": [
+                        "Olive in Salamoia Sapori & Dintorni Conad di Itrana/Bella di Cerignola/Nocellara di Sicilia intere 290g (denocciolate)",
+                        "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L",
+                        "Pomodori secchi sott'olio",
+                        "Capperi dissalati",
+                        "Uno spicchio d'aglio",
+                        "Pane casereccio a fette",
+                        "RIGAMONTI CARPACCIO DI BRESAOLA 90G (leggermente scottata in padella per renderla croccante)",
+                        "Acqua Bio Sorgente Monte Cimone 1,5L (per accompagnare)"
+                    ]
                 }
             ]
         },
@@ -316,6 +362,18 @@
                         "Miele d'acacia",
                         "Bevanda Müllermilch Müller (gusto cacao)",
                         "Scaglie di Tavoletta di Cioccolato Lindt"
+                    ]
+                },
+                {
+                    "title": "Energia Verde: Smoothie di Mela, Spinaci e Tè Lipton",
+                    "ingredients": [
+                        "LIPTON TE X 100 FILTRI (infuso di tè verde, raffreddato)",
+                        "Acqua Bio Sorgente Monte Cimone 1,5L (per l'infuso e lo smoothie)",
+                        "Spinaci freschi",
+                        "Una mela verde",
+                        "Mezza banana matura",
+                        "Un pezzetto di zenzero fresco",
+                        "Succo di mezzo limone"
                     ]
                 }
             ],
@@ -405,6 +463,21 @@
                         "Pomodoro",
                         "Lattuga"
                     ]
+                },
+                {
+                    "title": "Fresco Estivo: Zuppa Fredda di Cetrioli, Menta e Olive Kalamata",
+                    "ingredients": [
+                        "Cetrioli freschi",
+                        "Yogurt greco intero",
+                        "Uno spicchio d'aglio",
+                        "Foglie di menta fresca",
+                        "Aneto fresco",
+                        "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L (per guarnire)",
+                        "Olive in Salamoia Sapori & Dintorni Conad di Itrana/Bella di Cerignola/Nocellara di Sicilia intere 290g (tagliate a rondelle per guarnire)",
+                        "Sale",
+                        "Pepe nero",
+                        "Acqua Bio Sorgente Monte Cimone 1,5L (per diluire se necessario o servita a parte)"
+                    ]
                 }
             ],
             "cena": [
@@ -472,6 +545,22 @@
                         "olio"
                     ],
                     "isCustom": true
+                },
+                {
+                    "title": "Arcobaleno Veg: Peperoni Ripieni di Riso Venere e Olive Nere",
+                    "ingredients": [
+                        "Peperoni di vari colori",
+                        "Riso venere",
+                        "Zucchine",
+                        "Carote",
+                        "Cipolla rossa",
+                        "Olive in Salamoia Sapori & Dintorni Conad di Itrana/Bella di Cerignola/Nocellara di Sicilia intere 290g (tritate)",
+                        "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L",
+                        "Prezzemolo fresco tritato",
+                        "Sale",
+                        "Pepe nero",
+                        "Brodo vegetale (preparato con Acqua Bio Sorgente Monte Cimone 1,5L)"
+                    ]
                 }
             ],
             "merenda": [
@@ -734,6 +823,38 @@
                         "Peperoncino fresco",
                         "54 Capsule Caffè Espresso Corposo Conad (espresso concentrato)"
                     ]
+                },
+                {
+                    "title": "Bangkok Nights: Curry Rosso con Polpette di Maiale e Riso Jasmine",
+                    "ingredients": [
+                        "MACINATO SUINO al kg",
+                        "Pasta di curry rosso thai",
+                        "Latte di cocco",
+                        "Brodo di pollo o vegetale (preparato con Acqua Bio Sorgente Monte Cimone 1,5L)",
+                        "Radice di zenzero fresco",
+                        "Spicchi d'aglio",
+                        "Cipolla",
+                        "Peperoncino fresco (opzionale)",
+                        "Fagiolini",
+                        "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L (per rosolare)",
+                        "Riso jasmine",
+                        "Salsa di pesce (Nam Pla, opzionale)",
+                        "Coriandolo fresco"
+                    ]
+                },
+                {
+                    "title": "Sweet Volcano: Mini Lava Cake al Cioccolato Lindor con Cuore Haribo",
+                    "ingredients": [
+                        "LINDT LINDOR CORNET 200G (cioccolatini)",
+                        "Farina 00",
+                        "Zucchero semolato",
+                        "Uova intere",
+                        "Burro non salato",
+                        "Cacao amaro in polvere",
+                        "Pizzico di sale",
+                        "HARIBO CARAMELLE CUORE SAN VALENTINO 160/175G (un cuore per ogni tortino)",
+                        "Acqua Bio Sorgente Monte Cimone 1,5L (servita come accompagnamento per un caffè o tè)"
+                    ]
                 }
             ],
             "merenda": [
@@ -787,11 +908,39 @@
                         "Acqua frizzante con Concentrato per Bevande Sodastream (gusto frutta)",
                         "Ghiaccio"
                     ]
+                },
+                {
+                    "title": "Taiwan Dream: Bubble Tea al Tè Lipton con Frutta Tropicale",
+                    "ingredients": [
+                        "LIPTON TE X 100 FILTRI (infuso di tè nero forte, raffreddato)",
+                        "Acqua Bio Sorgente Monte Cimone 1,5L (per l'infuso e per cuocere le perle)",
+                        "Perle di tapioca nere",
+                        "Sciroppo di zucchero di canna",
+                        "Latte intero o bevanda vegetale (es. latte di cocco)",
+                        "Frutta fresca a cubetti (mango, ananas, litchi)",
+                        "Cubetti di ghiaccio"
+                    ]
                 }
             ]
         },
         "senza_glutine": {
-            "colazione": [],
+            "colazione": [
+                {
+                    "title": "Nordic Fusion: Pancake di Grano Saraceno con Bresaola e Crema di Avocado",
+                    "ingredients": [
+                        "Farina di Grano Saraceno",
+                        "Uova",
+                        "Latte (o bevanda vegetale senza glutine)",
+                        "Lievito per dolci senza glutine",
+                        "Un pizzico di sale",
+                        "RIGAMONTI CARPACCIO DI BRESAOLA 90G",
+                        "Avocado maturo",
+                        "Succo di limone",
+                        "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L (per ungere la piastra)",
+                        "Acqua Bio Sorgente Monte Cimone 1,5L (per l'impasto se necessario, o da bere)"
+                    ]
+                }
+            ],
             "pranzo": [
                 {
                     "title": "Pizza di budo",
@@ -815,6 +964,21 @@
                         "Olio EVO",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Primavera Sarda: Risotto Cremoso agli Asparagi e Granspeck Croccante",
+                    "ingredients": [
+                        "Riso Carnaroli (o Arborio)",
+                        "KING'S GRANSPECK CON FESA all'etto (tagliato a listarelle e reso croccante)",
+                        "Asparagi freschi",
+                        "Cipolla bianca",
+                        "Brodo vegetale (preparato con Acqua Bio Sorgente Monte Cimone 1,5L)",
+                        "Vino bianco secco (verificare sia senza glutine)",
+                        "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L",
+                        "Parmigiano Reggiano DOP (o Grana Padano) grattugiato",
+                        "Sale",
+                        "Pepe nero"
                     ]
                 }
             ],
@@ -844,6 +1008,24 @@
                         "Olio EVO",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Montanaro Senza Glutine: Burger di Maiale e Patate con Tapenade di Olive Nere",
+                    "ingredients": [
+                        "MACINATO SUINO al kg",
+                        "Patate bollite e schiacciate",
+                        "Uovo medio",
+                        "Cipolla tritata finemente",
+                        "Prezzemolo fresco",
+                        "Sale",
+                        "Pepe nero",
+                        "Olio Extra Vergine di Oliva Sapori & Dintorni Conad 1L (per la cottura)",
+                        "Olive in Salamoia Sapori & Dintorni Conad di Itrana/Bella di Cerignola/Nocellara di Sicilia intere 290g (per la tapenade)",
+                        "Mais dolce in scatola",
+                        "Pomodorini datterini",
+                        "Lattuga fresca",
+                        "Acqua Bio Sorgente Monte Cimone 1,5L (per bere)"
                     ]
                 }
             ],
