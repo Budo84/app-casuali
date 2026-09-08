@@ -230,7 +230,7 @@
             // 3. CARICA OFFERTE
             try {
                 const resOff = await fetch('offerte.json?t=' + Date.now());
-                if(resOff.ok) offersDb = await resOff.json();
+                if(resOff.ok) offersDb = normalizzaOfferte(await resOff.json());
             } catch(e) { console.log("Nessuna offerta ancora"); }
 
             updateStatus('online');
@@ -249,6 +249,22 @@
     }
 
     function updateStatus(s) { document.getElementById('statusDot').className = 'dot ' + s; document.getElementById('statusText').innerText = s === 'online' ? 'Aggiornato' : 'Offline'; }
+
+    // Converte prezzi eventualmente restituiti come stringa (es. "1,99") in numeri validi,
+    // così un dato "sporco" nel volantino non rompe più la pagina Offerte/Spesa.
+    function normalizzaOfferte(db) {
+        if(!db) return db;
+        Object.keys(db).forEach(store => {
+            if(Array.isArray(db[store])) {
+                db[store].forEach(item => {
+                    let p = item.price;
+                    if(typeof p === 'string') p = parseFloat(p.replace(',', '.'));
+                    item.price = (typeof p === 'number' && !isNaN(p)) ? p : 0;
+                });
+            }
+        });
+        return db;
+    }
 
     // --- EDIT ALLERGENI ---
     function loadAllergenKeywords() {
@@ -350,7 +366,7 @@
         } catch(e) { rStatus.innerText = "❌ Errore: " + e.message; }
     }
 
-    function saveDietSettings() { dietSettings = document.getElementById('dietType').value; localStorage.setItem('smart_diet', dietSettings); }
+    function saveDietSettings() { dietSettings = document.getElementById('dietType').value; localStorage.setItem('smart_diet', dietSettings); generateMenu(true); }
     function getPoolForMeal(type) {
         let pools = [];
         if(db && db.database_ricette) {
@@ -474,7 +490,7 @@
         family.forEach(f => {
             if(f.allergy && riskMap[f.allergy]) {
                 let keys = riskMap[f.allergy];
-                if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k)))) hits.push(f.name + " (" + f.allergy + ")");
+                if(ings.some(ing => keys.some(k => ing.toLowerCase().includes(k.toLowerCase())))) hits.push(f.name + " (" + f.allergy + ")");
             }
         });
         return hits.length ? "PERICOLO: " + hits.join(', ') : null;
