@@ -144,20 +144,74 @@ def prepara_lotti(fp, nome):
     return lotti
 
 
+import subprocess
+
+
+def trova_radice_repo():
+    try:
+        out = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, timeout=10)
+        return out.stdout.strip() if out.returncode == 0 else None
+    except Exception:
+        return None
+
+
+def ultimo_commit_timestamp(filepath, repo_root):
+    """Restituisce l'orario (unix timestamp) dell'ultimo commit che ha toccato questo file. 0 se sconosciuto."""
+    if not repo_root:
+        return 0
+    try:
+        rel = os.path.relpath(filepath, repo_root)
+        out = subprocess.run(
+            ["git", "log", "-1", "--format=%ct", "--", rel],
+            cwd=repo_root, capture_output=True, text=True, timeout=10,
+        )
+        ts = out.stdout.strip()
+        return int(ts) if out.returncode == 0 and ts else 0
+    except Exception:
+        return 0
+
+
 def analizza():
     t0 = time.time()
     base = os.path.dirname(os.path.abspath(__file__))
     paths = [os.path.join(base, "volantini"), os.path.join(os.getcwd(), "spesa", "volantini")]
     target = next((p for p in paths if os.path.exists(p)), None)
 
+    # Carica le offerte gia' salvate in precedenza: le manteniamo per i supermercati
+    # che NON stiamo rianalizzando in questa esecuzione.
+    file_out_path = os.path.join(base, "offerte.json")
     offerte = {}
+    try:
+        with open(file_out_path, "r", encoding="utf-8") as f:
+            offerte = json.load(f)
+        offerte.pop("Info", None)  # rimuovi l'eventuale placeholder di errore
+    except Exception:
+        offerte = {}
+
     errori = []
 
     if target:
-        files = glob.glob(os.path.join(target, "*.[pP][dD][fF]"))
-        print(f"🔎 Trovati {len(files)} PDF.")
+        tutti_i_pdf = glob.glob(os.path.join(target, "*.[pP][dD][fF]"))
+        print(f"🔎 Trovati {len(tutti_i_pdf)} PDF in totale nella cartella.")
 
-        # 1. Prepara TUTTI i lotti di TUTTI i PDF prima di chiamare l'AI
+        # Analizza SOLO il/i PDF caricati con l'ultimo commit (di norma un upload = un commit = un PDF),
+        # cosi' non si rianalizzano ogni volta anche i volantini gia' letti in precedenza.
+        repo_root = trova_radice_repo()
+        file_times = [(fp, ultimo_commit_timestamp(fp, repo_root)) for fp in tutti_i_pdf]
+        file_times = [(fp, t) for fp, t in file_times if t > 0]
+
+        if file_times:
+            newest_ts = max(t for _, t in file_times)
+            files = [fp for fp, t in file_times if t == newest_ts]
+            print(f"🆕 Volantino/i più recente/i (ultimo commit): {[os.path.basename(f) for f in files]}")
+            saltati = [os.path.basename(fp) for fp in tutti_i_pdf if fp not in files]
+            if saltati:
+                print(f"⏭️ Non rianalizzo (già fatto in precedenza): {saltati}")
+        else:
+            files = tutti_i_pdf
+            print("⚠️ Impossibile leggere la cronologia git (repo non trovato?): analizzo tutti i PDF per sicurezza.")
+
+        # 1. Prepara TUTTI i lotti dei PDF selezionati prima di chiamare l'AI
         job_per_store = {}   # nome -> lista di (etichetta, image_parts)
         for fp in files:
             nome = os.path.splitext(os.path.basename(fp))[0].replace("_", " ").title()
@@ -221,8 +275,7 @@ def analizza():
     if not offerte:
         offerte = {"Info": [{"name": "Nessuna offerta trovata. Controlla il PDF.", "price": 0.00}]}
 
-    file_out = os.path.join(base, "offerte.json")
-    with open(file_out, "w", encoding="utf-8") as f:
+    with open(file_out_path, "w", encoding="utf-8") as f:
         json.dump(offerte, f, indent=4, ensure_ascii=False)
 
     print(f"💾 Offerte salvate. Tempo totale: {time.time() - t0:.1f}s")
