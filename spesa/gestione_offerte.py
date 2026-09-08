@@ -6,6 +6,7 @@ import time
 import requests
 import fitz  # Libreria PyMuPDF
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 print("--- 🛒 AVVIO ANALISI OFFERTE (METODO DIRETTO REST API) ---")
 
@@ -23,15 +24,15 @@ MODELS = [
     "gemini-2.5-flash-lite",
 ]
 
-MAX_PAGES = 30           # limite di sicurezza sul totale pagine per PDF
-PAGES_PER_BATCH = 6       # poche pagine per richiesta = molta piu' precisione, meno "invenzioni"
-IMG_SCALE = 2.3           # ~166 dpi, molto piu' leggibile di prima (era 1.5 ~ 108 dpi)
+MAX_PAGES = 30            # limite di sicurezza sul totale pagine per PDF
+PAGES_PER_BATCH = 8        # meno lotti = meno chiamate = piu' veloce (ma leggermente meno "attenzione" per pagina)
+IMG_SCALE = 2.0            # leggermente ridotta da 2.3: ancora molto piu' nitida dell'originale (1.5), ma piu' leggera/veloce da inviare
 MAX_RETRIES_PER_MODEL = 2
-RETRY_DELAY_SECONDS = 5
+RETRY_DELAY_SECONDS = 4
+MAX_WORKERS = 4            # quanti lotti analizzare IN PARALLELO
 
 
 def pulisci_array_json(text):
-    """Estrae un array JSON [...] dal testo, ripulendo eventuali markdown fences."""
     text = text.replace("```json", "").replace("```", "").strip()
     s = text.find("[")
     e = text.rfind("]") + 1
@@ -41,7 +42,6 @@ def pulisci_array_json(text):
 
 
 def estrai_testo_risposta(res_json):
-    """Concatena TUTTE le parti di testo della risposta, non solo la prima."""
     try:
         parts = res_json["candidates"][0]["content"]["parts"]
         return "".join(p.get("text", "") for p in parts if "text" in p)
@@ -49,40 +49,37 @@ def estrai_testo_risposta(res_json):
         return ""
 
 
-def chiama_gemini(model_name, prompt_text, image_parts):
+def chiama_gemini(model_name, prompt_text, image_parts, etichetta):
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent"
     payload = {"contents": [{"parts": [{"text": prompt_text}] + image_parts}]}
-    headers = {
-        "Content-Type": "application/json",
-        "x-goog-api-key": API_KEY,
-    }
+    headers = {"Content-Type": "application/json", "x-goog-api-key": API_KEY}
 
     for tentativo in range(1, MAX_RETRIES_PER_MODEL + 1):
         try:
-            response = requests.post(url, headers=headers, json=payload, timeout=120)
+            response = requests.post(url, headers=headers, json=payload, timeout=90)
         except requests.exceptions.RequestException as e:
-            print(f"      ⚠️ Errore di rete con {model_name} (tentativo {tentativo}): {e}")
+            print(f"   [{etichetta}] ⚠️ Errore di rete con {model_name} (tentativo {tentativo}): {e}")
             time.sleep(RETRY_DELAY_SECONDS)
             continue
 
         if response.status_code == 200:
             return response.json()
         elif response.status_code == 404:
-            print(f"      ⚠️ Modello '{model_name}' non disponibile (404). Passo al prossimo.")
+            print(f"   [{etichetta}] ⚠️ Modello '{model_name}' non disponibile (404).")
             return None
         elif response.status_code == 429:
-            print(f"      ⏳ Rate limit (429) su {model_name}, riprovo tra {RETRY_DELAY_SECONDS}s...")
+            print(f"   [{etichetta}] ⏳ Rate limit (429) su {model_name}, riprovo tra {RETRY_DELAY_SECONDS}s...")
             time.sleep(RETRY_DELAY_SECONDS)
             continue
         else:
-            print(f"      ⚠️ Errore HTTP {response.status_code} con {model_name}: {response.text[:300]}")
+            print(f"   [{etichetta}] ⚠️ Errore HTTP {response.status_code} con {model_name}: {response.text[:200]}")
             return None
 
     return None
 
 
-def analizza_lotto(nome, image_parts, num_batch):
-    """Analizza un piccolo gruppo di pagine e restituisce una lista di prodotti (puo' essere vuota)."""
+def analizza_lotto(nome, image_parts, etichetta):
+    """Analizza un gruppo di pagine. Ritorna una lista (anche vuota) o None se fallito del tutto."""
     prompt_text = f"""
     Stai guardando {len(image_parts)} pagine (foto) di un volantino di supermercato ("{nome}").
 
@@ -101,29 +98,54 @@ def analizza_lotto(nome, image_parts, num_batch):
     """
 
     for model in MODELS:
-        res_json = chiama_gemini(model, prompt_text, image_parts)
+        res_json = chiama_gemini(model, prompt_text, image_parts, etichetta)
         if not res_json:
             continue
         ai_text = estrai_testo_risposta(res_json)
         if not ai_text:
-            print(f"      ⚠️ Risposta vuota dal modello '{model}' (lotto {num_batch}).")
+            print(f"   [{etichetta}] ⚠️ Risposta vuota dal modello '{model}'.")
             continue
         try:
             data = json.loads(pulisci_array_json(ai_text))
             if not isinstance(data, list):
                 raise ValueError("La risposta non è un array JSON")
-            print(f"      ✅ Lotto {num_batch}: {len(data)} prodotti con '{model}'.")
+            print(f"   [{etichetta}] ✅ {len(data)} prodotti con '{model}'.")
             return data
         except (json.JSONDecodeError, ValueError) as e:
-            print(f"      ❌ JSON non valido dal modello '{model}' (lotto {num_batch}): {e}")
-            print(f"      --- Risposta grezza (primi 300 char) ---\n{ai_text[:300]}")
+            print(f"   [{etichetta}] ❌ JSON non valido dal modello '{model}': {e}")
             continue
 
-    print(f"      ❌ Tutti i modelli hanno fallito per il lotto {num_batch}.")
-    return None  # None = fallimento vero e proprio, diverso da [] = "nessun prodotto in queste pagine"
+    print(f"   [{etichetta}] ❌ Tutti i modelli hanno fallito.")
+    return None
+
+
+def prepara_lotti(fp, nome):
+    """Apre il PDF e prepara la lista di lotti (etichetta, image_parts) senza ancora chiamare l'AI."""
+    doc = fitz.open(fp)
+    max_pages = min(len(doc), MAX_PAGES)
+    if len(doc) > MAX_PAGES:
+        print(f"   ℹ️ {nome}: il PDF ha {len(doc)} pagine, ne analizzo solo {MAX_PAGES}.")
+
+    lotti = []
+    num_batch = 0
+    for start in range(0, max_pages, PAGES_PER_BATCH):
+        num_batch += 1
+        end = min(start + PAGES_PER_BATCH, max_pages)
+        image_parts = []
+        for i in range(start, end):
+            page = doc.load_page(i)
+            pix = page.get_pixmap(matrix=fitz.Matrix(IMG_SCALE, IMG_SCALE))
+            img_bytes = pix.tobytes("jpeg")
+            b64_img = base64.b64encode(img_bytes).decode("utf-8")
+            image_parts.append({"inline_data": {"mime_type": "image/jpeg", "data": b64_img}})
+        etichetta = f"{nome} p.{start + 1}-{end}"
+        lotti.append((etichetta, image_parts))
+    doc.close()
+    return lotti
 
 
 def analizza():
+    t0 = time.time()
     base = os.path.dirname(os.path.abspath(__file__))
     paths = [os.path.join(base, "volantini"), os.path.join(os.getcwd(), "spesa", "volantini")]
     target = next((p for p in paths if os.path.exists(p)), None)
@@ -135,68 +157,62 @@ def analizza():
         files = glob.glob(os.path.join(target, "*.[pP][dD][fF]"))
         print(f"🔎 Trovati {len(files)} PDF.")
 
+        # 1. Prepara TUTTI i lotti di TUTTI i PDF prima di chiamare l'AI
+        job_per_store = {}   # nome -> lista di (etichetta, image_parts)
         for fp in files:
             nome = os.path.splitext(os.path.basename(fp))[0].replace("_", " ").title()
-            try:
-                print(f"📄 Elaborazione: {nome}")
-                doc = fitz.open(fp)
-                max_pages = min(len(doc), MAX_PAGES)
-                if len(doc) > MAX_PAGES:
-                    print(f"   ℹ️ Il PDF ha {len(doc)} pagine, ne analizzo solo {MAX_PAGES}.")
+            print(f"📄 Preparazione immagini: {nome}")
+            job_per_store[nome] = prepara_lotti(fp, nome)
 
-                prodotti_totali = []
-                nomi_visti = set()  # per evitare duplicati tra un lotto e l'altro
-                num_batch = 0
-                lotti_falliti = 0
-                lotti_totali = 0
+        # 2. Metti in coda TUTTI i lotti di TUTTI i PDF insieme e falli girare in parallelo
+        tutti_i_lotti = []  # (nome, etichetta, image_parts)
+        for nome, lotti in job_per_store.items():
+            for etichetta, image_parts in lotti:
+                tutti_i_lotti.append((nome, etichetta, image_parts))
 
-                for start in range(0, max_pages, PAGES_PER_BATCH):
-                    num_batch += 1
-                    lotti_totali += 1
-                    end = min(start + PAGES_PER_BATCH, max_pages)
-                    print(f"   📖 Lotto {num_batch}: pagine {start + 1}-{end}...")
+        print(f"🤖 Analisi di {len(tutti_i_lotti)} lotti in parallelo (max {MAX_WORKERS} alla volta)...")
+        risultati_per_store = {nome: [] for nome in job_per_store}
+        falliti_per_store = {nome: 0 for nome in job_per_store}
+        nomi_visti_per_store = {nome: set() for nome in job_per_store}
 
-                    image_parts = []
-                    for i in range(start, end):
-                        page = doc.load_page(i)
-                        pix = page.get_pixmap(matrix=fitz.Matrix(IMG_SCALE, IMG_SCALE))
-                        img_bytes = pix.tobytes("jpeg")
-                        b64_img = base64.b64encode(img_bytes).decode("utf-8")
-                        image_parts.append({
-                            "inline_data": {"mime_type": "image/jpeg", "data": b64_img}
-                        })
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+            future_map = {
+                executor.submit(analizza_lotto, nome, image_parts, etichetta): nome
+                for nome, etichetta, image_parts in tutti_i_lotti
+            }
+            for future in as_completed(future_map):
+                nome = future_map[future]
+                try:
+                    risultato = future.result()
+                except Exception as e:
+                    print(f"   ⚠️ Errore imprevisto per '{nome}': {e}")
+                    risultato = None
 
-                    risultato = analizza_lotto(nome, image_parts, num_batch)
-                    if risultato is None:
-                        lotti_falliti += 1
-                        continue
-
-                    for prodotto in risultato:
-                        try:
-                            key = (str(prodotto.get("name", "")).strip().lower(), round(float(prodotto.get("price", 0)), 2))
-                        except (TypeError, ValueError):
-                            continue
-                        if key[0] and key not in nomi_visti:
-                            nomi_visti.add(key)
-                            prodotto["price"] = key[1]
-                            prodotti_totali.append(prodotto)
-
-                doc.close()
-
-                if lotti_falliti == lotti_totali and lotti_totali > 0:
-                    msg = f"Tutti i {lotti_totali} lotti sono falliti per '{nome}'."
-                    print(f"   ❌ {msg}")
-                    errori.append(msg)
+                if risultato is None:
+                    falliti_per_store[nome] += 1
                     continue
 
-                offerte[nome] = prodotti_totali
-                print(f"   ✅ Totale per '{nome}': {len(prodotti_totali)} prodotti "
-                      f"({lotti_falliti}/{lotti_totali} lotti falliti).")
+                for prodotto in risultato:
+                    try:
+                        key = (str(prodotto.get("name", "")).strip().lower(), round(float(prodotto.get("price", 0)), 2))
+                    except (TypeError, ValueError):
+                        continue
+                    if key[0] and key not in nomi_visti_per_store[nome]:
+                        nomi_visti_per_store[nome].add(key)
+                        prodotto["price"] = key[1]
+                        risultati_per_store[nome].append(prodotto)
 
-            except Exception as e:
-                msg = f"Errore critico su {nome}: {e}"
-                print(f"   ⚠️ {msg}")
+        # 3. Assembla i risultati finali
+        for nome, lotti in job_per_store.items():
+            totale_lotti = len(lotti)
+            falliti = falliti_per_store[nome]
+            if totale_lotti > 0 and falliti == totale_lotti:
+                msg = f"Tutti i {totale_lotti} lotti sono falliti per '{nome}'."
+                print(f"❌ {msg}")
                 errori.append(msg)
+                continue
+            offerte[nome] = risultati_per_store[nome]
+            print(f"✅ Totale per '{nome}': {len(risultati_per_store[nome])} prodotti ({falliti}/{totale_lotti} lotti falliti).")
     else:
         print("❌ Cartella 'volantini' non trovata.")
         errori.append("Cartella 'volantini' non trovata.")
@@ -208,7 +224,8 @@ def analizza():
     file_out = os.path.join(base, "offerte.json")
     with open(file_out, "w", encoding="utf-8") as f:
         json.dump(offerte, f, indent=4, ensure_ascii=False)
-    print("💾 Offerte salvate.")
+
+    print(f"💾 Offerte salvate. Tempo totale: {time.time() - t0:.1f}s")
 
     if errori and "Info" in offerte:
         print(f"❌ Analisi fallita per tutti i volantini ({len(errori)} errori). Vedi log sopra.")
