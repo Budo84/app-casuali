@@ -1,8 +1,1012 @@
 {
-    "Info": [
+    "Conad": [
         {
-            "name": "Nessuna offerta trovata. Controlla il PDF.",
-            "price": 0.0
+            "name": "Il Cornetto Mulino Bianco Barilla",
+            "price": 1.75
+        },
+        {
+            "name": "120 Cialde Caffè Compostabili Borbone Miscela Decisa",
+            "price": 15.9
+        },
+        {
+            "name": "Pasta di Semola Barilla",
+            "price": 0.94
+        },
+        {
+            "name": "Yogurt Vellutato Danone",
+            "price": 1.99
+        },
+        {
+            "name": "Latte UHT Bontà e Linea Parmalat",
+            "price": 0.85
+        },
+        {
+            "name": "Minestrone Leggerezza Il Benessere Orogel",
+            "price": 1.49
+        },
+        {
+            "name": "15 Bastoncini di Filetti di Merluzzo Frosta",
+            "price": 3.59
+        },
+        {
+            "name": "Caffè Crema e Gusto Lavazza Risveglio Classico",
+            "price": 12.49
+        },
+        {
+            "name": "Biscotti Balocco Gocciolotti, Faccine, Saracene o Fagottini",
+            "price": 1.9
+        },
+        {
+            "name": "Olio Extra Vergine di Oliva Classico Sagra",
+            "price": 4.99
+        },
+        {
+            "name": "Passata di Pomodoro Tradizionale La Torrente",
+            "price": 4.74
+        },
+        {
+            "name": "Polpa di Pomodoro Mutti",
+            "price": 2.5
+        },
+        {
+            "name": "Tonno all'Olio di Oliva Mare Aperto",
+            "price": 3.99
+        },
+        {
+            "name": "Acqua Oligominerale San Benedetto",
+            "price": 1.68
+        },
+        {
+            "name": "Birra Peroni",
+            "price": 2.99
+        },
+        {
+            "name": "Arance Tarocco Conad Percorso Qualità",
+            "price": 2.23
+        },
+        {
+            "name": "Banane Chiquita",
+            "price": 1.59
+        },
+        {
+            "name": "Frullà 100% Polpa di Frutta",
+            "price": 0.75
+        },
+        {
+            "name": "Spinaci Conad",
+            "price": 1.69
+        },
+        {
+            "name": "Uva Sultanina Biologica Verso Natura Conad",
+            "price": 1.99
+        },
+        {
+            "name": "Finocchi",
+            "price": 1.65
+        },
+        {
+            "name": "Carciofi C3",
+            "price": 0.89
+        },
+        {
+            "name": "Mele Golden Val Venosta",
+            "price": 1.79
+        },
+        {
+            "name": "Melanzane Oblunghe",
+            "price": 2.49
+        },
+        {
+            "name": "Cipollotto Nocerino DOP",
+            "price": 1.19
+        },
+        {
+            "name": "Filetto di Baccalà Ammollato",
+            "price": 18.9
+        },
+        {
+            "name": "Filetto di Platessa",
+            "price": 15.9
+        },
+        {
+            "name": "Spigola",
+            "price": 9.9
+        },
+        {
+            "name": "Totani",
+            "price": 7.9
+        },
+        {
+            "name": "Lupini",
+            "price": 4.9
+        },
+        {
+            "name": "Tartare di Salmone o di Tonno Sapori&Idee Conad",
+            "price": 4.99
+        },
+        {
+            "name": "Polpette di Baccalà Pronti d'Amare Tagliapietra",
+            "price": 4.99
+        },
+        {
+            "name": "Filetti di Trota Salmonata Conad",
+            "price": 13.9
+        },
+        {
+            "name": "Chardonnay Trentino DOC Costalta",
+            "price": 4.29
+        },
+        {
+            "name": "Hamburger di Scottona Sapori&Idee Conad",
+            "price": 3.5
+        },
+        {
+            "name": "Fettine di Girello Bovino Adulto",
+            "price": 20.9
+        },
+        {
+            "name": "Macinato di Bovino Adulto",
+            "price": 13.95
+        },
+        {
+            "name": "Salsiccia di Suino Umbro",
+            "price": 7.95
+        },
+        {
+            "name": "Coppa di Suino Senza Osso",
+            "price": 6.95
+        },
+        {
+            "name": "Braciole Miste di Suino",
+            "price": 4.9
+        },
+        {
+            "name": "Gallo Golden in Parti Conad",
+            "price": 7.95
+        },
+        {
+            "name": "Mini Rollè di Pollo Fileni",
+            "price": 7.99
+        },
+        {
+            "name": "Gran Dorate alla Valdostana AIA",
+            "price": 3.19
+        },
+        {
+            "name": "Verdicchio dei Castelli di Jesi DOC Classico Superiore Casalfarneto",
+            "price": 4.75
+        },
+        {
+            "name": "Pinot Grigio DOC Biele Zoe Cuveè Tenimenti Civa",
+            "price": 5.49
+        },
+        {
+            "name": "Badalei Vermentino Toscana IGT Banfi",
+            "price": 5.95
+        },
+        {
+            "name": "Traminer Aromatico Glère DOC Forchir",
+            "price": 6.7
+        },
+        {
+            "name": "Poggio Belvedere Umbria Rosso IGT Arnaldo Caprai",
+            "price": 5.95
+        },
+        {
+            "name": "Chianti Classico DOCG Contessa di Radda Geografico",
+            "price": 7.49
+        },
+        {
+            "name": "Montefalco Sagrantino DOCG Colpetrone Tenute del Cerro",
+            "price": 11.9
+        },
+        {
+            "name": "Valpolicella Ripasso DOC Superiore Valdimezzo Sartori di Verona",
+            "price": 7.9
+        },
+        {
+            "name": "Rosso di Montalcino DOC Cantina di Montalcino",
+            "price": 7.99
+        },
+        {
+            "name": "Teroldego Rotaliano DOC Gaierhof",
+            "price": 5.69
+        },
+        {
+            "name": "Rosso di Montepulciano DOC Tenuta Tre Rose",
+            "price": 7.9
+        },
+        {
+            "name": "Primitivo di Manduria DOC Feudi di San Gregorio",
+            "price": 7.49
+        },
+        {
+            "name": "Montasio DOP Sapori&Dintorni Conad",
+            "price": 1.29
+        },
+        {
+            "name": "Pecorino Sardo Maturo DOP Sapori&Dintorni Conad",
+            "price": 2.19
+        },
+        {
+            "name": "Camoscio d'Oro",
+            "price": 1.49
+        },
+        {
+            "name": "Bel Paese Galbani",
+            "price": 1.29
+        },
+        {
+            "name": "Asiago Fresco DOP Conad",
+            "price": 0.99
+        },
+        {
+            "name": "Mozzarella Fresca Fiordilatte Vallelata",
+            "price": 1.09
+        },
+        {
+            "name": "Grana Padano DOP Conad",
+            "price": 1.19
+        },
+        {
+            "name": "Prosciutto Cotto di Alta Qualità Arrosto Conad",
+            "price": 1.69
+        },
+        {
+            "name": "Petto di Tacchino Arrosto o Prosciutto Cotto Arrosto Rostello Fiorucci",
+            "price": 1.29
+        },
+        {
+            "name": "Prosciutto Cotto Il Norcino Fiorucci",
+            "price": 1.29
+        },
+        {
+            "name": "Prosciutto di San Daniele DOP Sapori&Dintorni Conad",
+            "price": 2.69
+        },
+        {
+            "name": "Salame Milano, Ungherese o Ventricina Fiorucci",
+            "price": 1.59
+        },
+        {
+            "name": "Salame Spianata Romana o Piccante Fiorucci",
+            "price": 1.49
+        },
+        {
+            "name": "Mortadella Suprema Fiorucci",
+            "price": 0.89
+        },
+        {
+            "name": "Latte Intero Prodotto di Montagna Sapori&Dintorni Conad",
+            "price": 1.69
+        },
+        {
+            "name": "Latte UHT Accadì Granarolo",
+            "price": 1.19
+        },
+        {
+            "name": "Panna Cucina Ad Arte Granarolo",
+            "price": 1.29
+        },
+        {
+            "name": "Bevanda Vegetale Verso Natura Conad",
+            "price": 1.49
+        },
+        {
+            "name": "Bevanda Vegetale Alpro",
+            "price": 2.59
+        },
+        {
+            "name": "Bevanda Müllermilch Müller",
+            "price": 1.0
+        },
+        {
+            "name": "Yogurt Mix Müller",
+            "price": 0.79
+        },
+        {
+            "name": "Yogurt Conad Alimentum",
+            "price": 0.79
+        },
+        {
+            "name": "Kefir Piacersi Conad",
+            "price": 0.89
+        },
+        {
+            "name": "Actimel Danone",
+            "price": 1.99
+        },
+        {
+            "name": "Yogurt Cremoso 100% Naturale Mio Nestlé",
+            "price": 1.49
+        },
+        {
+            "name": "Mozzarella di Bufala Campana DOP Conad Alimentum",
+            "price": 2.89
+        },
+        {
+            "name": "Alternativa Vegetale allo Yogurt Alpro",
+            "price": 1.89
+        },
+        {
+            "name": "Crema Dessert High Protein 20g Milk Pro",
+            "price": 1.29
+        },
+        {
+            "name": "Frùttolo Maxi Duo Nestlé",
+            "price": 2.0
+        },
+        {
+            "name": "Stracchino Conad Alimentum",
+            "price": 1.29
+        },
+        {
+            "name": "Formaggio Spalmabile Conad Alimentum",
+            "price": 1.89
+        },
+        {
+            "name": "3 Mozzarelle Fior di Latte Vallelata",
+            "price": 3.49
+        },
+        {
+            "name": "Bocconcini Ripieni Vallelata",
+            "price": 2.99
+        },
+        {
+            "name": "Mozzarella di Latte di Bufala Pettinicchio",
+            "price": 3.59
+        },
+        {
+            "name": "Sfoglia Rotonda Senza Glutine Conad Alimentum",
+            "price": 2.29
+        },
+        {
+            "name": "Mascarpone Conad",
+            "price": 1.79
+        },
+        {
+            "name": "Robiola Osella",
+            "price": 2.49
+        },
+        {
+            "name": "Il Fresco Cremoso Classico Exquisa",
+            "price": 1.75
+        },
+        {
+            "name": "Emmental Francese Conad",
+            "price": 2.69
+        },
+        {
+            "name": "Burro Parmareggio Gran Terre",
+            "price": 1.99
+        },
+        {
+            "name": "Galbanino L'Originale Galbani",
+            "price": 4.99
+        },
+        {
+            "name": "Gorgonzola Dolce DOP Conad",
+            "price": 2.59
+        },
+        {
+            "name": "Sottilette Le Originali Classiche",
+            "price": 1.69
+        },
+        {
+            "name": "Mini Babybel Original",
+            "price": 1.99
+        },
+        {
+            "name": "Formaggi a Fette Conad",
+            "price": 1.99
+        },
+        {
+            "name": "Formaggio Grattugiato Biraghi",
+            "price": 1.69
+        },
+        {
+            "name": "Parmigiano Reggiano oltre 30 mesi Parmareggio GranTerre",
+            "price": 5.99
+        },
+        {
+            "name": "Chicche di Patate Fresche Sapori&Idee Conad",
+            "price": 1.59
+        },
+        {
+            "name": "Salmone Affumicato Riunione",
+            "price": 5.99
+        },
+        {
+            "name": "Hummus NOA",
+            "price": 2.19
+        },
+        {
+            "name": "10 Uova Fresche Fattore Umbro",
+            "price": 2.59
+        },
+        {
+            "name": "Affettati Fresca Salumeria Beretta",
+            "price": 1.65
+        },
+        {
+            "name": "Pancetta Dolce o Affumicata Un Tocco In + Fiorucci",
+            "price": 1.99
+        },
+        {
+            "name": "Pallina di Suprema La Mortadella Fiorucci",
+            "price": 1.29
+        },
+        {
+            "name": "Würstel Suillo Fiorucci",
+            "price": 1.49
+        },
+        {
+            "name": "Minestrone di Legumi Piacersi Conad",
+            "price": 1.69
+        },
+        {
+            "name": "Frutti di Mare o Misto Scoglio Arbi",
+            "price": 3.49
+        },
+        {
+            "name": "Filetti di Platessa del Pacifico Conad",
+            "price": 5.49
+        },
+        {
+            "name": "Gambero Argentino Sapori&Idee Conad",
+            "price": 6.79
+        },
+        {
+            "name": "Fagiolini Finissimi Biologici Verso Natura Conad",
+            "price": 1.5
+        },
+        {
+            "name": "4 Croccanti Filetti di Merluzzo Conad",
+            "price": 2.99
+        },
+        {
+            "name": "Filetto di Merluzzo d'Alaska Uno Più",
+            "price": 3.69
+        },
+        {
+            "name": "I Gratinati Findus",
+            "price": 2.99
+        },
+        {
+            "name": "Polpette di Mare al Sugo Arbi",
+            "price": 3.29
+        },
+        {
+            "name": "4 Hamburger di Carne Bovina Conad",
+            "price": 4.69
+        },
+        {
+            "name": "Piselli Novelli Findus",
+            "price": 3.79
+        },
+        {
+            "name": "Melanzane e Zucchine Grigliate Natura in Padella Bonduelle",
+            "price": 1.95
+        },
+        {
+            "name": "Biscotti Armonia Mulino Bianco Barilla",
+            "price": 1.49
+        },
+        {
+            "name": "Pasta Senza Glutine Garofalo",
+            "price": 1.39
+        },
+        {
+            "name": "Cicoria Catalogna Cubello Foglia Più Orogel",
+            "price": 2.49
+        },
+        {
+            "name": "Funghi Champignon a Fette Conad",
+            "price": 1.19
+        },
+        {
+            "name": "Patatine Patasnella Pizzoli",
+            "price": 1.79
+        },
+        {
+            "name": "Cornetto Algida",
+            "price": 4.79
+        },
+        {
+            "name": "80 Capsule Caffè Espresso Napoli Kimbo",
+            "price": 13.99
+        },
+        {
+            "name": "50 Capsule Caffè Espresso Classico Segafredo",
+            "price": 11.99
+        },
+        {
+            "name": "Caffè Macinato per Moka Original Mauro",
+            "price": 5.49
+        },
+        {
+            "name": "Caffè Solubile Conad",
+            "price": 2.99
+        },
+        {
+            "name": "Nescafé Cappuccino",
+            "price": 4.9
+        },
+        {
+            "name": "Tè Yellow Label Lipton",
+            "price": 2.99
+        },
+        {
+            "name": "Infuso Conad",
+            "price": 1.49
+        },
+        {
+            "name": "80 Fette Granfetta Delverde",
+            "price": 1.5
+        },
+        {
+            "name": "Cereali Integrali KitKat Nestlé",
+            "price": 2.79
+        },
+        {
+            "name": "Granola con Avena Special K",
+            "price": 2.09
+        },
+        {
+            "name": "Biscotti Atene Doria",
+            "price": 2.59
+        },
+        {
+            "name": "Savoiardi Conad",
+            "price": 1.55
+        },
+        {
+            "name": "Biscotti Gran Cereale",
+            "price": 1.35
+        },
+        {
+            "name": "Biscotti Ringo",
+            "price": 3.99
+        },
+        {
+            "name": "Pasta all'Uovo Conad",
+            "price": 0.95
+        },
+        {
+            "name": "Linea Salumi Affettati Freschi & Convenienti Conad",
+            "price": 1.89
+        },
+        {
+            "name": "Grana Padano DOP Grattugiato Conad",
+            "price": 1.69
+        },
+        {
+            "name": "Riso Basmati Conad",
+            "price": 1.85
+        },
+        {
+            "name": "Mini Crostini Conad",
+            "price": 1.0
+        },
+        {
+            "name": "Pesto Conad",
+            "price": 1.19
+        },
+        {
+            "name": "Confettura Zero Zuccheri Aggiunti Zuegg",
+            "price": 1.95
+        },
+        {
+            "name": "Piadelle Mulino Bianco Barilla",
+            "price": 1.59
+        },
+        {
+            "name": "Spremi e Gusta Plasmon",
+            "price": 0.85
+        },
+        {
+            "name": "Granetti Mulino Bianco Barilla",
+            "price": 1.5
+        },
+        {
+            "name": "Patatine Conad",
+            "price": 1.09
+        },
+        {
+            "name": "Pasta all'Uovo Luciana Mosconi",
+            "price": 2.45
+        },
+        {
+            "name": "Farina Integrale Conad",
+            "price": 0.99
+        },
+        {
+            "name": "Gran Purè Knorr",
+            "price": 1.49
+        },
+        {
+            "name": "Saucy Noodles Maggi",
+            "price": 0.99
+        },
+        {
+            "name": "Riso Apri Scalda Scotti",
+            "price": 0.85
+        },
+        {
+            "name": "Dado Classico Conad",
+            "price": 1.19
+        },
+        {
+            "name": "Risotto Knorr",
+            "price": 1.45
+        },
+        {
+            "name": "Cuore di Brodo Knorr",
+            "price": 1.49
+        },
+        {
+            "name": "Pasta di Farro Integrale Verso Natura Conad",
+            "price": 1.6
+        },
+        {
+            "name": "Pasta di Kamut Verso Natura Conad",
+            "price": 2.55
+        },
+        {
+            "name": "Coppa Cacao con Panna Montata Conad",
+            "price": 1.29
+        },
+        {
+            "name": "Panna Montata Spray Conad",
+            "price": 1.89
+        },
+        {
+            "name": "Mini Pancakes Milk",
+            "price": 2.19
+        },
+        {
+            "name": "Crêpes Fresche Milk",
+            "price": 1.99
+        },
+        {
+            "name": "Danette o Twix, Mars Danone",
+            "price": 1.99
+        },
+        {
+            "name": "54 Capsule Caffè Espresso Corposo Conad",
+            "price": 11.9
+        },
+        {
+            "name": "Crema Novi",
+            "price": 3.99
+        },
+        {
+            "name": "Choco Wafer, Choco Brownie o Cookie Milka",
+            "price": 2.1
+        },
+        {
+            "name": "Kinder Cereali o Kinder Bueno Ferrero",
+            "price": 2.99
+        },
+        {
+            "name": "Ciobar Cameo",
+            "price": 1.65
+        },
+        {
+            "name": "Tavoletta di Cioccolato Ritter Sport",
+            "price": 2.39
+        },
+        {
+            "name": "Tavoletta di Cioccolato Conad",
+            "price": 1.89
+        },
+        {
+            "name": "Tavoletta di Cioccolato Novi",
+            "price": 1.99
+        },
+        {
+            "name": "Tavoletta di Cioccolato Perugina",
+            "price": 2.29
+        },
+        {
+            "name": "Tavoletta di Cioccolato Lindt",
+            "price": 2.99
+        },
+        {
+            "name": "Scatola Cuore o in Latta Baci Perugina",
+            "price": 10.9
+        },
+        {
+            "name": "Tubo Baci Perugina 37,5 g",
+            "price": 1.99
+        },
+        {
+            "name": "Tubo Baci Perugina 125 g",
+            "price": 5.99
+        },
+        {
+            "name": "Salmone Scozzese Affumicato Ti Amo Re Salmone",
+            "price": 7.99
+        },
+        {
+            "name": "Spumante Santero 958 Extra Dry",
+            "price": 4.95
+        },
+        {
+            "name": "Scatola Cuore Cioccolatini Lindor Lindt",
+            "price": 11.99
+        },
+        {
+            "name": "Baci Perugina",
+            "price": 6.49
+        },
+        {
+            "name": "Cioccolatini Cuore Lindor Lindt",
+            "price": 3.65
+        },
+        {
+            "name": "Praline di Cioccolato Lindor Lindt",
+            "price": 7.45
+        },
+        {
+            "name": "Praline di Cioccolato Witor's",
+            "price": 6.99
+        },
+        {
+            "name": "Cioccolatini o Praline Novi",
+            "price": 4.39
+        },
+        {
+            "name": "Bouquet Cioccolatini Dolcerie Veneziane",
+            "price": 4.99
+        },
+        {
+            "name": "Aceto di Mele Non Filtrato Verso Natura Conad",
+            "price": 1.29
+        },
+        {
+            "name": "Salsa Pronta Mutti",
+            "price": 1.39
+        },
+        {
+            "name": "Passata di Pomodoro Garofalo",
+            "price": 1.29
+        },
+        {
+            "name": "Olio di Semi di Girasole Giglio Oro",
+            "price": 2.2
+        },
+        {
+            "name": "Olio di Mais Cuore",
+            "price": 4.49
+        },
+        {
+            "name": "Tonno all'Olio di Oliva Rio Mare",
+            "price": 5.59
+        },
+        {
+            "name": "Tonno Rio Mare",
+            "price": 3.89
+        },
+        {
+            "name": "Tonno al Naturale Rio Mare",
+            "price": 2.99
+        },
+        {
+            "name": "I Filettini di Tonno Rio Mare",
+            "price": 3.49
+        },
+        {
+            "name": "Filetti di Tonno all'Olio di Oliva As Do Mar",
+            "price": 4.98
+        },
+        {
+            "name": "Filetti di Sgombro Nostromo",
+            "price": 1.99
+        },
+        {
+            "name": "Acqua Minerale Naturale Uliveto",
+            "price": 0.45
+        },
+        {
+            "name": "Legumi e Cereali Cirio",
+            "price": 1.59
+        },
+        {
+            "name": "Olive Verdi o Nere Denocciolate Alisa",
+            "price": 1.0
+        },
+        {
+            "name": "Maionese o Tomato Ketchup Develey",
+            "price": 1.19
+        },
+        {
+            "name": "Acqua Minerale Naturale Sant'Anna",
+            "price": 2.49
+        },
+        {
+            "name": "Salsa Tartufata Urbani",
+            "price": 4.29
+        },
+        {
+            "name": "Salse Conad",
+            "price": 1.99
+        },
+        {
+            "name": "Succo e Polpa di Frutta Valfrutta",
+            "price": 2.09
+        },
+        {
+            "name": "Le Spremute 100% Frutta Sapori&Idee Conad",
+            "price": 2.9
+        },
+        {
+            "name": "Bevanda Zero San Benedetto",
+            "price": 0.49
+        },
+        {
+            "name": "Bevanda I Classici Conad",
+            "price": 1.39
+        },
+        {
+            "name": "Aranciata Conad",
+            "price": 1.59
+        },
+        {
+            "name": "Tonica Schweppes",
+            "price": 0.99
+        },
+        {
+            "name": "Birra 5 Luppoli Chiara o 6 Luppoli Rossa Angelo Poretti",
+            "price": 2.99
+        },
+        {
+            "name": "Birra Artigianale I Cavalieri",
+            "price": 2.49
+        },
+        {
+            "name": "Birra Super Strong Lager Tennent's",
+            "price": 1.5
+        },
+        {
+            "name": "Orvieto DOC Classico Bigi",
+            "price": 3.39
+        },
+        {
+            "name": "Est! Est!! Est!!! di Montefiascone DOC Vescovo",
+            "price": 2.59
+        },
+        {
+            "name": "Prosecco DOC Fiocco di Vite Toso",
+            "price": 4.99
+        },
+        {
+            "name": "Valdobbiadene Prosecco Superiore DOCG Casa Sant'Orsola",
+            "price": 6.9
+        },
+        {
+            "name": "Campo della Fiera Umbria IGT Sangiovese Castello di Corbara",
+            "price": 3.69
+        },
+        {
+            "name": "Montefalco Sagrantino DOCG Miracolo Rosso Benedetti&Grigi",
+            "price": 5.9
+        },
+        {
+            "name": "Aperitivo Conad",
+            "price": 2.95
+        },
+        {
+            "name": "Amaro Jagermeister",
+            "price": 12.9
+        },
+        {
+            "name": "Triple Distilled Irish Whiskey Black Barrel Jameson",
+            "price": 23.9
+        },
+        {
+            "name": "London Dry Gin No.3",
+            "price": 19.9
+        },
+        {
+            "name": "Concentrato per Bevande Sodastream",
+            "price": 5.9
+        },
+        {
+            "name": "Pizza Margherita 26x38 Italpizza",
+            "price": 2.19
+        },
+        {
+            "name": "Arance Tarocco Rosaria",
+            "price": 2.29
+        },
+        {
+            "name": "Limoni Conad",
+            "price": 1.49
+        },
+        {
+            "name": "Pomodoro Marzanino Valfrutta",
+            "price": 2.49
+        },
+        {
+            "name": "Cicoria a Mazzi",
+            "price": 1.89
+        },
+        {
+            "name": "Arista di Suino a Fette Conad",
+            "price": 7.9
+        },
+        {
+            "name": "Coscia di Tacchino Conad",
+            "price": 4.9
+        },
+        {
+            "name": "Fettine o Lombatine di Vitello Conad",
+            "price": 21.9
+        },
+        {
+            "name": "Braciole di Agnello",
+            "price": 18.9
+        },
+        {
+            "name": "Salmone Intero",
+            "price": 9.9
+        },
+        {
+            "name": "Cuore di Merluzzo",
+            "price": 23.9
+        },
+        {
+            "name": "Yogurt Greco Piacersi Conad",
+            "price": 0.99
+        },
+        {
+            "name": "Panna UHT per Caffè Conad",
+            "price": 0.9
+        },
+        {
+            "name": "Supplì o Crocchette Findus",
+            "price": 2.69
+        },
+        {
+            "name": "Fiocchi di Latte Santa Lucia Galbani",
+            "price": 1.49
+        },
+        {
+            "name": "Certosa Galbani",
+            "price": 2.69
+        },
+        {
+            "name": "Burro Panetto Conad",
+            "price": 1.49
+        },
+        {
+            "name": "Bocconcini di Grana Padano DOP Conad",
+            "price": 5.99
+        },
+        {
+            "name": "Pecorino Romano DOP Sapori&Dintorni Conad",
+            "price": 6.99
+        },
+        {
+            "name": "Listarelle di Guanciale Beretta",
+            "price": 1.69
+        },
+        {
+            "name": "Stick di Pancetta Beretta",
+            "price": 1.49
+        },
+        {
+            "name": "Würstel Gli Originali Wüber",
+            "price": 0.79
+        },
+        {
+            "name": "Paciocotti Beretta",
+            "price": 1.99
+        },
+        {
+            "name": "Teneroni L'ABC della Merenda Gran Terre",
+            "price": 1.69
         }
     ]
 }

@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "07/09/2026 10:59",
+    "data_aggiornamento": "08/09/2026 21:43",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -110,6 +110,21 @@
                         "olio"
                     ],
                     "isCustom": true
+                },
+                {
+                    "title": "Platessa Mediterranea al Forno con Capperi e Olive, sfumata al Sagrantino",
+                    "ingredients": [
+                        "Filetti di Platessa del Pacifico Conad",
+                        "Pomodorini ciliegino",
+                        "Olive taggiasche",
+                        "Capperi sotto sale",
+                        "Prezzemolo fresco",
+                        "Aglio",
+                        "Olio extra vergine d'oliva",
+                        "Sale",
+                        "Pepe",
+                        "Montefalco Sagrantino DOCG Miracolo Rosso Benedetti&Grigi"
+                    ]
                 }
             ],
             "cena": [
@@ -178,6 +193,22 @@
                         "olio"
                     ],
                     "isCustom": true
+                },
+                {
+                    "title": "Spiedini di Mortadella, Fichi e Halloumi con Salsa Fresca al Formaggio Spalmabile",
+                    "ingredients": [
+                        "Pallina di Suprema La Mortadella Fiorucci (a cubetti)",
+                        "Fichi freschi",
+                        "Formaggio Halloumi",
+                        "Zucchine",
+                        "Pomodorini",
+                        "Formaggio Spalmabile Conad Alimentum",
+                        "Foglie di menta fresca",
+                        "Succo di limone",
+                        "Olio EVO",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "merenda": [
@@ -220,6 +251,18 @@
                         "olio"
                     ],
                     "isCustom": true
+                },
+                {
+                    "title": "Bruschetta Croccante con Crema di Formaggio, Melanzane Grigliate e Glassa al Sagrantino",
+                    "ingredients": [
+                        "Pane integrale o di segale (per bruschetta)",
+                        "Formaggio Spalmabile Conad Alimentum",
+                        "Melanzane grigliate",
+                        "Pomodorini confit",
+                        "Basilico fresco",
+                        "Montefalco Sagrantino DOCG Miracolo Rosso Benedetti&Grigi (ridotto a glassa)",
+                        "Olio EVO"
+                    ]
                 }
             ]
         },
@@ -262,6 +305,17 @@
                     "ingredients": [
                         "Tè",
                         "Biscotti senza uova"
+                    ]
+                },
+                {
+                    "title": "Power Bowl Mattutina con Granola, Frutti di Bosco e Crema Müllermilch al Cacao",
+                    "ingredients": [
+                        "Yogurt greco naturale",
+                        "Granola con Avena Special K",
+                        "Frutti di bosco misti (freschi o surgelati)",
+                        "Miele d'acacia",
+                        "Bevanda Müllermilch Müller (gusto cacao)",
+                        "Scaglie di Tavoletta di Cioccolato Lindt"
                     ]
                 }
             ],
@@ -333,6 +387,24 @@
                         "olio"
                     ],
                     "isCustom": true
+                },
+                {
+                    "title": "Burger Vegetariano di Ceci e Spinaci con Salsa Rosa al Formaggio Spalmabile",
+                    "ingredients": [
+                        "Ceci precotti",
+                        "Spinaci freschi",
+                        "Pangrattato (o farina di ceci)",
+                        "Cipolla rossa",
+                        "Aglio",
+                        "Cumino",
+                        "Paprika dolce",
+                        "Formaggio Spalmabile Conad Alimentum",
+                        "Ketchup",
+                        "Maionese vegana",
+                        "Pane per burger",
+                        "Pomodoro",
+                        "Lattuga"
+                    ]
                 }
             ],
             "cena": [
@@ -444,6 +516,17 @@
                         "olio"
                     ],
                     "isCustom": true
+                },
+                {
+                    "title": "Mousse Leggera al Cioccolato Fondente con Cuore Lindor e Spuma di Müllermilch alla Vaniglia",
+                    "ingredients": [
+                        "Tavoletta di Cioccolato Lindt (fondente)",
+                        "Panna vegetale da montare",
+                        "Zucchero a velo",
+                        "Bevanda Müllermilch Müller (gusto vaniglia)",
+                        "Cioccolatini Cuore Lindor Lindt (per guarnire)",
+                        "Cacao amaro in polvere"
+                    ]
                 }
             ]
         },
@@ -556,6 +639,22 @@
                         "Pomodori",
                         "Cipolla"
                     ]
+                },
+                {
+                    "title": "Tacos Rivisitati con Mortadella Croccante, Pico de Gallo e Crema di Avocado al Lime",
+                    "ingredients": [
+                        "Tortillas di mais (piccole)",
+                        "Pallina di Suprema La Mortadella Fiorucci (tagliata a julienne e rosolata)",
+                        "Avocado maturo",
+                        "Cipolla rossa",
+                        "Pomodoro",
+                        "Coriandolo fresco",
+                        "Lime",
+                        "Jalapeño (facoltativo)",
+                        "Formaggio Spalmabile Conad Alimentum (come base o per guarnire)",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -619,6 +718,22 @@
                         "Pastella",
                         "Patate fritte"
                     ]
+                },
+                {
+                    "title": "Fish & Chips d'Oriente: Platessa Croccante con Patate Dolci e Salsa Agrodolce all'Espresso",
+                    "ingredients": [
+                        "Filetti di Platessa del Pacifico Conad",
+                        "Farina 00",
+                        "Birra fredda",
+                        "Patate dolci",
+                        "Olio per friggere",
+                        "Sale grosso",
+                        "Aceto di riso",
+                        "Zucchero di canna",
+                        "Salsa di soia",
+                        "Peperoncino fresco",
+                        "54 Capsule Caffè Espresso Corposo Conad (espresso concentrato)"
+                    ]
                 }
             ],
             "merenda": [
@@ -661,6 +776,17 @@
                         "Farina",
                         "Burro"
                     ]
+                },
+                {
+                    "title": "Bubble Tea al Caffè Freddo Lindt con Perle di Frutta al Sodastream",
+                    "ingredients": [
+                        "54 Capsule Caffè Espresso Corposo Conad (freddo)",
+                        "Latte condensato o sciroppo d'agave",
+                        "Tavoletta di Cioccolato Lindt (sciolto e raffreddato)",
+                        "Perle di tapioca o popping boba alla frutta",
+                        "Acqua frizzante con Concentrato per Bevande Sodastream (gusto frutta)",
+                        "Ghiaccio"
+                    ]
                 }
             ]
         },
@@ -675,6 +801,21 @@
                         "olio"
                     ],
                     "isCustom": true
+                },
+                {
+                    "title": "Tortino di Patate e Platessa con Cuore Cremoso al Formaggio Spalmabile ed Erbe",
+                    "ingredients": [
+                        "Patate",
+                        "Filetti di Platessa del Pacifico Conad (cotti a vapore e sfaldati)",
+                        "Formaggio Spalmabile Conad Alimentum",
+                        "Erba cipollina",
+                        "Aneto",
+                        "Uova",
+                        "Pangrattato senza glutine (es. di mais o riso)",
+                        "Olio EVO",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -686,6 +827,24 @@
                         "olio"
                     ],
                     "isCustom": true
+                },
+                {
+                    "title": "Polenta di Mais Cremosa con Ragù di Mortadella, Funghi e Montefalco Sagrantino",
+                    "ingredients": [
+                        "Farina di mais per polenta",
+                        "Acqua/brodo vegetale",
+                        "Pallina di Suprema La Mortadella Fiorucci (tritata grossolanamente)",
+                        "Funghi porcini (o misti)",
+                        "Passata di pomodoro",
+                        "Cipolla",
+                        "Carota",
+                        "Sedano",
+                        "Montefalco Sagrantino DOCG Miracolo Rosso Benedetti&Grigi",
+                        "Parmigiano Reggiano (facoltativo)",
+                        "Olio EVO",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "merenda": [
@@ -697,6 +856,19 @@
                         "olio"
                     ],
                     "isCustom": true
+                },
+                {
+                    "title": "Risotto Dolce al Grano Saraceno con Crema al Cioccolato Lindt e Cuore Lindor Sciolto",
+                    "ingredients": [
+                        "Grano saraceno decorticato",
+                        "Latte (o bevanda vegetale)",
+                        "Zucchero di canna",
+                        "Cacao amaro in polvere",
+                        "Tavoletta di Cioccolato Lindt (fondente)",
+                        "Cioccolatini Cuore Lindor Lindt",
+                        "Scorza d'arancia grattugiata",
+                        "Un pizzico di sale"
+                    ]
                 }
             ]
         }
