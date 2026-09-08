@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "08/09/2026 22:22",
+    "data_aggiornamento": "08/09/2026 22:32",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -187,6 +187,17 @@
                         "Misticanza",
                         "Limone"
                     ]
+                },
+                {
+                    "title": "Eliche Barilla al Bronzo con Fiordicotto croccante e crema di Pisellini Primavera",
+                    "ingredients": [
+                        "BARILLA PASTA DI SEMOLA AL BRONZO",
+                        "FIORUCCI FIORDICOTTO",
+                        "Pisellini Primavera Findus",
+                        "VINO MANCINI VERMENTINO GALLURA DOCG",
+                        "Olio EVO",
+                        "Scalogno"
+                    ]
                 }
             ],
             "cena": [
@@ -325,6 +336,17 @@
                         "Ambrosi Mozzarella",
                         "VALLE' NATURALMENTE MARGARINA 250 g"
                     ]
+                },
+                {
+                    "title": "Scaloppine di Fiordicotto al Vermentino con Uva bianca e Mele Golden",
+                    "ingredients": [
+                        "FIORUCCI FIORDICOTTO",
+                        "VINO MANCINI VERMENTINO GALLURA DOCG",
+                        "Uva bianca",
+                        "MELINDA MELE GOLDEN DEL.",
+                        "Burro",
+                        "Salvia"
+                    ]
                 }
             ],
             "merenda": [
@@ -415,6 +437,16 @@
                         "cannella in polvere",
                         "zest di limone",
                         "menta fresca per guarnire"
+                    ]
+                },
+                {
+                    "title": "Crostino rustico al Taleggio e composta di Uva bianca al Tavernello",
+                    "ingredients": [
+                        "TALEGGIO CADEMARTORI",
+                        "Uva bianca",
+                        "VINO IN BRIK TAVERNELLO bianco",
+                        "Pane di Altamura",
+                        "Rosmarino"
                     ]
                 }
             ]
@@ -510,6 +542,17 @@
                         "Parmalat Yogurt Greco",
                         "PERUGINA BACI TUBO",
                         "NETTARINE A POLPA GIALLA"
+                    ]
+                },
+                {
+                    "title": "Pancake soffici al Latte Cloroma con topping di Yogurt al Lampone e Mele",
+                    "ingredients": [
+                        "Cloroma Latte Intero",
+                        "Milk Yogurt Lampone",
+                        "MELINDA MELE GOLDEN DEL.",
+                        "Farina 00",
+                        "Uova",
+                        "Zucchero"
                     ]
                 }
             ],
@@ -656,6 +699,16 @@
                         "Ambrosi Mozzarella",
                         "VALLE' NATURALMENTE MARGARINA 250 g"
                     ]
+                },
+                {
+                    "title": "Mezze Maniche Barilla al Bronzo con fonduta di Taleggio e noci",
+                    "ingredients": [
+                        "BARILLA PASTA DI SEMOLA AL BRONZO",
+                        "TALEGGIO CADEMARTORI",
+                        "Cloroma Latte Intero",
+                        "Gherigli di noce",
+                        "Pepe nero"
+                    ]
                 }
             ],
             "cena": [
@@ -766,6 +819,16 @@
                         "sale",
                         "pepe",
                         "olio extra vergine d'oliva"
+                    ]
+                },
+                {
+                    "title": "Vellutata di Pisellini Primavera al profumo di Vermentino e crostini al Taleggio",
+                    "ingredients": [
+                        "Pisellini Primavera Findus",
+                        "VINO MANCINI VERMENTINO GALLURA DOCG",
+                        "TALEGGIO CADEMARTORI",
+                        "Cipolla bianca",
+                        "Brodo vegetale"
                     ]
                 }
             ],
@@ -996,6 +1059,17 @@
                         "Cetriolo",
                         "Aneto"
                     ]
+                },
+                {
+                    "title": "Fried Pasta 'Stile Orientale' con Fiordicotto, Pisellini e riduzione di Tavernello",
+                    "ingredients": [
+                        "BARILLA PASTA DI SEMOLA AL BRONZO",
+                        "FIORUCCI FIORDICOTTO",
+                        "Pisellini Primavera Findus",
+                        "VINO IN BRIK TAVERNELLO rosso",
+                        "Zenzero fresco",
+                        "Salsa di soia"
+                    ]
                 }
             ],
             "cena": [
@@ -1153,6 +1227,17 @@
                         "Spezie Curry",
                         "Riso Basmati"
                     ]
+                },
+                {
+                    "title": "Quesadillas di Mais fusion con Taleggio, Fiordicotto e chutney di Mele Golden",
+                    "ingredients": [
+                        "TALEGGIO CADEMARTORI",
+                        "FIORUCCI FIORDICOTTO",
+                        "MELINDA MELE GOLDEN DEL.",
+                        "Tortillas di mais",
+                        "Peperoncino",
+                        "VINO IN BRIK TAVERNELLO bianco"
+                    ]
                 }
             ],
             "merenda": [
@@ -1248,6 +1333,16 @@
                         "PERUGINA BACI TUBO",
                         "Parmalat Yogurt Greco"
                     ]
+                },
+                {
+                    "title": "Lassi ai lamponi e uva bianca con Latte Intero",
+                    "ingredients": [
+                        "Milk Yogurt Lampone",
+                        "Cloroma Latte Intero",
+                        "Uva bianca",
+                        "Cardamomo",
+                        "Miele"
+                    ]
                 }
             ]
         },
@@ -1299,6 +1394,16 @@
                         "Parmalat Yogurt Greco",
                         "NETTARINE A POLPA GIALLA",
                         "Miele"
+                    ]
+                },
+                {
+                    "title": "Porridge di Grano Saraceno al Latte Intero e Mele Golden caramellate",
+                    "ingredients": [
+                        "Grano Saraceno",
+                        "Cloroma Latte Intero",
+                        "MELINDA MELE GOLDEN DEL.",
+                        "Cannella",
+                        "VINO IN BRIK TAVERNELLO bianco"
                     ]
                 }
             ],
@@ -1378,6 +1483,16 @@
                         "Norita Salmone Affumicato",
                         "Parmalat Yogurt Greco",
                         "Zenzero"
+                    ]
+                },
+                {
+                    "title": "Risotto al Vermentino con Pisellini Primavera e petali di Fiordicotto",
+                    "ingredients": [
+                        "Riso",
+                        "VINO MANCINI VERMENTINO GALLURA DOCG",
+                        "Pisellini Primavera Findus",
+                        "FIORUCCI FIORDICOTTO",
+                        "Parmigiano Reggiano"
                     ]
                 }
             ],
@@ -1463,6 +1578,16 @@
                         "Orogel Spinaci Pronti",
                         "Ambrosi Mozzarella",
                         "VALLE' NATURALMENTE MARGARINA 250 g"
+                    ]
+                },
+                {
+                    "title": "Gnocchi di Patate al Taleggio e riduzione di Tavernello Rosso",
+                    "ingredients": [
+                        "Patate",
+                        "TALEGGIO CADEMARTORI",
+                        "VINO IN BRIK TAVERNELLO rosso",
+                        "Fecola di patate",
+                        "Cloroma Latte Intero"
                     ]
                 }
             ],

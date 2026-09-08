@@ -3324,5 +3324,499 @@
             "name": "Cloroma Latte Intero",
             "price": 1.5
         }
+    ],
+    "Lidl": [
+        {
+            "name": "ALPENFESTSTYLE Torta Sacher",
+            "price": 4.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Dolce con granella di pasta frolla e farcitura",
+            "price": 1.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Frutta secca",
+            "price": 2.49
+        },
+        {
+            "name": "ALPENFESTSTYLE Palle di Mozart",
+            "price": 2.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Confettura extra",
+            "price": 2.79
+        },
+        {
+            "name": "ALPENFESTSTYLE Rote Grütze",
+            "price": 2.49
+        },
+        {
+            "name": "ALPENFESTSTYLE Stinco di suino",
+            "price": 3.79
+        },
+        {
+            "name": "ROVAGNATI Prosciutto cotto di alta qualità",
+            "price": 1.89
+        },
+        {
+            "name": "BAULI Croissant Passione alla ciliegia",
+            "price": 1.99
+        },
+        {
+            "name": "AIA Salsiccia di pollo, tacchino e suino",
+            "price": 2.79
+        },
+        {
+            "name": "AIA Polpettine di pollo e tacchino con carote e spinaci",
+            "price": 3.29
+        },
+        {
+            "name": "WUDY Würstel classico small",
+            "price": 0.89
+        },
+        {
+            "name": "BIRAGHI Gran Biraghi Grattugiato",
+            "price": 2.59
+        },
+        {
+            "name": "RIO MARE Tonno in olio di oliva",
+            "price": 9.99
+        },
+        {
+            "name": "CRUDODOLCE Prosciutto crudo stagionato",
+            "price": 2.89
+        },
+        {
+            "name": "GRANAROLO Mozzarella",
+            "price": 2.29
+        },
+        {
+            "name": "PARMALAT Bontà e Leggerezza Latte UHT",
+            "price": 0.79
+        },
+        {
+            "name": "GRANAROLO Stracchino",
+            "price": 1.09
+        },
+        {
+            "name": "BECK'S Birra Pils",
+            "price": 0.75
+        },
+        {
+            "name": "CAMEO Pizza Big Americans Supreme",
+            "price": 2.49
+        },
+        {
+            "name": "FINI Tortellini al prosciutto crudo",
+            "price": 0.99
+        },
+        {
+            "name": "GRANAROLO Yogurt intero alla frutta",
+            "price": 1.99
+        },
+        {
+            "name": "MUTTI Passata di pomodoro",
+            "price": 0.89
+        },
+        {
+            "name": "SANT'ANNA SanThè",
+            "price": 0.59
+        },
+        {
+            "name": "DERBY BLUE Zero Bevande",
+            "price": 0.89
+        },
+        {
+            "name": "ALPENFESTSTYLE Leberkäse",
+            "price": 2.99
+        },
+        {
+            "name": "ALPENFEST STYLE Canederli",
+            "price": 2.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Crauti al vino bianco",
+            "price": 1.49
+        },
+        {
+            "name": "ALPENFEST STYLE Cavolo rosso in agrodolce",
+            "price": 1.49
+        },
+        {
+            "name": "ALPENFEST STYLE Cetrioli a strisce",
+            "price": 1.29
+        },
+        {
+            "name": "ALPENFESTSTYLE Salsicce alla birra",
+            "price": 2.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Würstel con formaggio",
+            "price": 2.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Salamini affumicati",
+            "price": 3.49
+        },
+        {
+            "name": "ALPENFESTSTYLE Grissini brezel",
+            "price": 1.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Brezel a forma di cuore",
+            "price": 0.99
+        },
+        {
+            "name": "PERLENBACHER Birra Helles",
+            "price": 0.65
+        },
+        {
+            "name": "ALPENFESTSTYLE Kabanos salamini affumicati",
+            "price": 2.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Specialità a base di aglio orsino",
+            "price": 1.49
+        },
+        {
+            "name": "ALPENFEST STYLE Fettuccine all'aglio orsino",
+            "price": 1.29
+        },
+        {
+            "name": "ALPENFESTSTYLE Crema all'aglio orsino",
+            "price": 1.49
+        },
+        {
+            "name": "ALPENFESTSTYLE Formaggio all'aglio orsino ed erbe",
+            "price": 2.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Cotoletta di maiale alla viennese",
+            "price": 5.99
+        },
+        {
+            "name": "ALPENFESTSTYLE Crocchette di patate ripiene",
+            "price": 2.99
+        },
+        {
+            "name": "Uva bianca",
+            "price": 1.69
+        },
+        {
+            "name": "Quarto posteriore di pollo",
+            "price": 7.29
+        },
+        {
+            "name": "ANTICHI MAESTRI Formaggio grattugiato italiano",
+            "price": 1.0
+        },
+        {
+            "name": "DAL SALUMIERE Carpaccio di bresaola",
+            "price": 2.0
+        },
+        {
+            "name": "NIXE Filetti di tonno a pinne gialle",
+            "price": 9.87
+        },
+        {
+            "name": "Nettarine IGP di Romagna",
+            "price": 1.5
+        },
+        {
+            "name": "DAL SALUMIERE Salame Nostrano",
+            "price": 1.59
+        },
+        {
+            "name": "Salsiccia di suino alla toscana",
+            "price": 2.89
+        },
+        {
+            "name": "GASTRONOMIA DI MARE Salmone norvegese affumicato",
+            "price": 3.99
+        },
+        {
+            "name": "CORTE ALLE MURA Chianti DOCG Riserva",
+            "price": 8.78
+        },
+        {
+            "name": "BELBAKE Mandorle al naturale",
+            "price": 1.69
+        },
+        {
+            "name": "MULINO BIANCO Fette Dorate",
+            "price": 1.65
+        },
+        {
+            "name": "MULINO BIANCO Pan Bauletto bianco",
+            "price": 0.79
+        },
+        {
+            "name": "MULINO BIANCO Plumcake",
+            "price": 1.39
+        },
+        {
+            "name": "Patate Bologna DOP",
+            "price": 1.99
+        },
+        {
+            "name": "Avocado",
+            "price": 1.19
+        },
+        {
+            "name": "Carote",
+            "price": 0.89
+        },
+        {
+            "name": "Melone Giallo",
+            "price": 0.99
+        },
+        {
+            "name": "Cetrioli lunghi",
+            "price": 0.99
+        },
+        {
+            "name": "Pere Carmen",
+            "price": 2.19
+        },
+        {
+            "name": "Mele Gala del Trentino IGP/Alto Adige IGP",
+            "price": 1.49
+        },
+        {
+            "name": "Fichi Freschi",
+            "price": 0.55
+        },
+        {
+            "name": "Braciole di suino",
+            "price": 2.19
+        },
+        {
+            "name": "Tagliata di coppa di suino marinata",
+            "price": 1.99
+        },
+        {
+            "name": "Macinato magro di bovino adulto",
+            "price": 4.79
+        },
+        {
+            "name": "Hamburger di tacchino con speck",
+            "price": 1.49
+        },
+        {
+            "name": "Carpaccio di bovino adulto scottona",
+            "price": 19.99
+        },
+        {
+            "name": "Tagliata di petto di pollo",
+            "price": 3.19
+        },
+        {
+            "name": "Maxi cotoletta di tacchino",
+            "price": 2.79
+        },
+        {
+            "name": "GASTRONOMIA DI MARE 2 Burger di merluzzo d'Alaska",
+            "price": 2.19
+        },
+        {
+            "name": "GASTRONOMIA DI MARE Filetto di salmone marinato",
+            "price": 4.79
+        },
+        {
+            "name": "GASTRONOMIA DI MARE Orata eviscerata",
+            "price": 5.59
+        },
+        {
+            "name": "ACENTINO Aceto di vino bianco",
+            "price": 0.5
+        },
+        {
+            "name": "CAMPO LARGO Fagioli rossi",
+            "price": 0.5
+        },
+        {
+            "name": "MILBONA Yogurt bio alla frutta",
+            "price": 0.5
+        },
+        {
+            "name": "SCOIATTOLO Quadrucci alla carne",
+            "price": 1.0
+        },
+        {
+            "name": "MERIVIO Mozzarella di latte di bufala",
+            "price": 1.0
+        },
+        {
+            "name": "CHEF SELECT Insalata russa o capricciosa",
+            "price": 1.0
+        },
+        {
+            "name": "SONDEY Strudelini",
+            "price": 1.0
+        },
+        {
+            "name": "DAL SALUMIERE Pancetta arrotolata",
+            "price": 1.0
+        },
+        {
+            "name": "SNACK DAY Cornetti di mais e arachidi",
+            "price": 1.0
+        },
+        {
+            "name": "VEMONDO Bevanda di cocco e riso bio",
+            "price": 1.0
+        },
+        {
+            "name": "MILBONA Crema dessert",
+            "price": 1.0
+        },
+        {
+            "name": "MUTTI Salsa pronta di pomodori ciliegini",
+            "price": 1.5
+        },
+        {
+            "name": "GRANAROLO Stracchino con fermenti del Kefir",
+            "price": 1.5
+        },
+        {
+            "name": "REALFORNO Biscotti Fior di panna",
+            "price": 1.5
+        },
+        {
+            "name": "YOEGGS Dessert a base di albume d'uovo",
+            "price": 1.5
+        },
+        {
+            "name": "LATTERIA Primosale",
+            "price": 1.5
+        },
+        {
+            "name": "MILBONA Brie",
+            "price": 1.5
+        },
+        {
+            "name": "VEMONDO Crunchy burger con lenticchie e spinaci",
+            "price": 1.5
+        },
+        {
+            "name": "ALLINI Chardonnay Frizzante",
+            "price": 1.5
+        },
+        {
+            "name": "BARESA Peperoncini ripieni con tonno",
+            "price": 1.5
+        },
+        {
+            "name": "MARIBEL Confettura Light",
+            "price": 1.5
+        },
+        {
+            "name": "J.D. GROSS Cioccolato fondente Ecuador",
+            "price": 1.5
+        },
+        {
+            "name": "OCEAN SEA Sugo pronto per pasta e risotti",
+            "price": 2.0
+        },
+        {
+            "name": "SALUMEO Salsiccia tipo Napoli",
+            "price": 2.0
+        },
+        {
+            "name": "DELUXE Porchetta arrosto",
+            "price": 2.0
+        },
+        {
+            "name": "MILBONA Cheddar a fette Mature",
+            "price": 2.0
+        },
+        {
+            "name": "GALBUSERA Cracker Protein-G",
+            "price": 2.0
+        },
+        {
+            "name": "OLIDÌ Olio spray per friggitrice ad aria",
+            "price": 2.0
+        },
+        {
+            "name": "VALSOIA Yosoi bianco cremoso",
+            "price": 1.0
+        },
+        {
+            "name": "VALSOIA Yosoi caffè",
+            "price": 1.0
+        },
+        {
+            "name": "RIZZOLI Filetti di alici in olio di girasole",
+            "price": 2.0
+        },
+        {
+            "name": "MILK PRO Porridge con yogurt avena e cioccolato",
+            "price": 1.5
+        },
+        {
+            "name": "ITALPIZZA Pizza Margherita 26x38",
+            "price": 2.79
+        },
+        {
+            "name": "COCA-COLA Zero",
+            "price": 2.69
+        },
+        {
+            "name": "OCEAN SEA Bastoncini di filetto di merluzzo d'Alaska",
+            "price": 2.79
+        },
+        {
+            "name": "BON GELATI Coni gelato",
+            "price": 2.29
+        },
+        {
+            "name": "MILBONA Budino High Protein",
+            "price": 0.89
+        },
+        {
+            "name": "RIO MARE Insalatissime Cous cous",
+            "price": 2.99
+        },
+        {
+            "name": "PHILADELPHIA Light",
+            "price": 1.79
+        },
+        {
+            "name": "MELLIN Omogeneizzato",
+            "price": 2.85
+        },
+        {
+            "name": "MELLIN Merenda alla frutta",
+            "price": 0.69
+        },
+        {
+            "name": "BON GELATI Stecco gelato con cioccolato al latte e mandorle",
+            "price": 2.89
+        },
+        {
+            "name": "Nostro PANE Girella con uvetta",
+            "price": 0.69
+        },
+        {
+            "name": "MULINO BIANCO Galletti",
+            "price": 2.69
+        },
+        {
+            "name": "PFANNER Bevanda alla pesca",
+            "price": 1.69
+        },
+        {
+            "name": "BRIOSCHI Brioschi al volo Digestivo orosolubile",
+            "price": 3.69
+        },
+        {
+            "name": "BAVARIA Birra lager",
+            "price": 0.79
+        },
+        {
+            "name": "PERONI Nastro Azzurro \"Stile Capri\"",
+            "price": 0.99
+        }
     ]
 }
