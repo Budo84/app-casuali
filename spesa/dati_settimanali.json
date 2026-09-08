@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "08/09/2026 22:08",
+    "data_aggiornamento": "08/09/2026 22:17",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -153,6 +153,22 @@
                         "Olio Extra Vergine d'Oliva",
                         "Sale, Pepe nero"
                     ]
+                },
+                {
+                    "title": "Vitello al Profumo di Rosmarino e Pomodori Secchi con Grano Saraceno Estivo",
+                    "ingredients": [
+                        "Fettine scelte di vitella",
+                        "Ortoetruria pomodori secchi",
+                        "PIANTA BASILICO",
+                        "Grano Saraceno",
+                        "pomodorini",
+                        "cetrioli",
+                        "olive taggiasche",
+                        "olio extra vergine d'oliva",
+                        "rosmarino fresco",
+                        "sale marino",
+                        "pepe nero"
+                    ]
                 }
             ],
             "cena": [
@@ -267,6 +283,21 @@
                         "Prezzemolo fresco",
                         "Sale, Pepe"
                     ]
+                },
+                {
+                    "title": "Tortino Morbido di Mais e Formaggio Exquisa al Profumo di Menta e Basilico",
+                    "ingredients": [
+                        "Mais Valfrutta",
+                        "EXQUISA FORMAGGIO SENZA LATTOSIO 175 g",
+                        "PIANTA BASILICO",
+                        "uova",
+                        "farina di riso",
+                        "pane grattugiato senza glutine",
+                        "menta fresca",
+                        "olio extra vergine d'oliva",
+                        "sale",
+                        "pepe"
+                    ]
                 }
             ],
             "merenda": [
@@ -346,6 +377,18 @@
                         "Origano secco",
                         "Peperoncino in fiocchi (opzionale)"
                     ]
+                },
+                {
+                    "title": "Semifreddo Velato al Kefir, Mandorle Tostate e Coulis di Prugne Speziate",
+                    "ingredients": [
+                        "ZYMIL KEFIR 250 g",
+                        "PRUGNE DENOCCIOLATE CONAD",
+                        "MOLINO ROSSETTO FARINA DI MANDORLE 100 g",
+                        "miele d'acacia",
+                        "cannella in polvere",
+                        "zest di limone",
+                        "menta fresca per guarnire"
+                    ]
                 }
             ]
         },
@@ -420,6 +463,18 @@
                         "Kellogg's Barrette Special K 129g",
                         "Frutta fresca di stagione (es. fragole, banane)",
                         "Miele o sciroppo d'acero (opzionale)"
+                    ]
+                },
+                {
+                    "title": "Parfait Rivitalizzante di Kefir, Prugne Caramellate e Crumble di Mandorle Croccanti",
+                    "ingredients": [
+                        "ZYMIL KEFIR 250 g",
+                        "PRUGNE DENOCCIOLATE CONAD",
+                        "MOLINO ROSSETTO FARINA DI MANDORLE 100 g",
+                        "miele di bosco",
+                        "zucchero di canna",
+                        "estratto di vaniglia",
+                        "cannella in polvere"
                     ]
                 }
             ],
@@ -538,6 +593,25 @@
                         "Pangrattato (esterno)",
                         "Spezie a piacere (es. cumino, paprika)"
                     ]
+                },
+                {
+                    "title": "Burger di Mais e Mandorle con Salsa Fresca al Kefir, Erbe Aromatiche e Patate al Forno",
+                    "ingredients": [
+                        "Mais Valfrutta",
+                        "MOLINO ROSSETTO FARINA DI MANDORLE 100 g",
+                        "ZYMIL KEFIR 250 g",
+                        "PIANTA BASILICO",
+                        "Patate",
+                        "uovo",
+                        "cipolla rossa",
+                        "aglio",
+                        "prezzemolo fresco",
+                        "farina di ceci",
+                        "olio d'oliva",
+                        "succo di limone",
+                        "sale",
+                        "pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -634,6 +708,20 @@
                         "Noce moscata (esterna)",
                         "Parmigiano Reggiano grattugiato (esterno)",
                         "Sale, Pepe"
+                    ]
+                },
+                {
+                    "title": "Lasagnetta di Patate Gratinata con Crema di Formaggio Exquisa, Pomodori Secchi e Spinaci",
+                    "ingredients": [
+                        "Patate",
+                        "PARMALAT BESCIAMELLA CHEF 200 ml",
+                        "EXQUISA FORMAGGIO SENZA LATTOSIO 175 g",
+                        "Ortoetruria pomodori secchi",
+                        "spinaci freschi",
+                        "noce moscata",
+                        "sale",
+                        "pepe",
+                        "olio extra vergine d'oliva"
                     ]
                 }
             ],
@@ -830,6 +918,22 @@
                         "Aglio (esterno)",
                         "Anacardi tostati (esterni)"
                     ]
+                },
+                {
+                    "title": "Tacos di Vitella Orientale con Salsa Piccante al Kefir, Mais e Coriandolo Fresco",
+                    "ingredients": [
+                        "Fettine scelte di vitella",
+                        "ZYMIL KEFIR 250 g",
+                        "Mais Valfrutta",
+                        "tortillas di mais",
+                        "salsa di soia",
+                        "zenzero fresco",
+                        "aglio",
+                        "peperoncino fresco",
+                        "lime",
+                        "coriandolo fresco",
+                        "olio di sesamo"
+                    ]
                 }
             ],
             "cena": [
@@ -958,6 +1062,25 @@
                         "Olio Extra Vergine d'Oliva",
                         "Prezzemolo fresco"
                     ]
+                },
+                {
+                    "title": "Curry Indiano di Vitella e Mais, con Riso Basmati al Profumo di Caffè e Cardamomo",
+                    "ingredients": [
+                        "Fettine scelte di vitella (a cubetti)",
+                        "CIALDE CAFFÈ BORBONE miscela decisa (espresso)",
+                        "Riso Basmati",
+                        "Mais Valfrutta",
+                        "latte di cocco",
+                        "pasta curry rossa",
+                        "cipolla",
+                        "aglio",
+                        "zenzero fresco",
+                        "cardamomo in baccelli",
+                        "cumino in polvere",
+                        "coriandolo in polvere",
+                        "olio vegetale",
+                        "PIANTA BASILICO (per guarnire)"
+                    ]
                 }
             ],
             "merenda": [
@@ -1032,6 +1155,18 @@
                         "Kellogg's Barrette Special K 129g",
                         "Miele o sciroppo d'agave (opzionale)"
                     ]
+                },
+                {
+                    "title": "Mousse Esotica al Formaggio Exquisa, Caffè e Cocco con Granella di Mandorle",
+                    "ingredients": [
+                        "EXQUISA FORMAGGIO SENZA LATTOSIO 175 g",
+                        "CIALDE CAFFÈ BORBONE miscela decisa (espresso)",
+                        "MOLINO ROSSETTO FARINA DI MANDORLE 100 g",
+                        "latte di cocco",
+                        "zucchero a velo",
+                        "estratto di vaniglia",
+                        "burro"
+                    ]
                 }
             ]
         },
@@ -1060,6 +1195,20 @@
                         "Frutta fresca a pezzi (es. mela, pera) (esterna)",
                         "Cannella in polvere (esterna)",
                         "Miele o sciroppo d'acero (opzionale)"
+                    ]
+                },
+                {
+                    "title": "Pancake Soffici di Grano Saraceno e Mandorle con Composta Tiepida di Prugne e Kefir",
+                    "ingredients": [
+                        "Farina di Grano Saraceno",
+                        "MOLINO ROSSETTO FARINA DI MANDORLE 100 g",
+                        "ZYMIL KEFIR 250 g",
+                        "PRUGNE DENOCCIOLATE CONAD",
+                        "uovo",
+                        "latte senza lattosio",
+                        "lievito per dolci senza glutine",
+                        "sciroppo d'acero",
+                        "estratto di vaniglia"
                     ]
                 }
             ],
@@ -1113,6 +1262,23 @@
                         "Basilico fresco",
                         "Olio Extra Vergine d'Oliva",
                         "Sale, Pepe"
+                    ]
+                },
+                {
+                    "title": "Insalata Estiva di Riso Tricolore (Venere, Basmati), Mais, Pomodori Secchi e Basilico",
+                    "ingredients": [
+                        "Riso Venere",
+                        "Riso Basmati",
+                        "Mais Valfrutta",
+                        "Ortoetruria pomodori secchi",
+                        "PIANTA BASILICO",
+                        "pomodorini ciliegino",
+                        "cetrioli",
+                        "olive denocciolate",
+                        "olio extra vergine d'oliva",
+                        "aceto di mele",
+                        "sale",
+                        "pepe"
                     ]
                 }
             ],
@@ -1172,6 +1338,23 @@
                         "Pangrattato di riso o mais (esterno, consentito)",
                         "Prezzemolo fresco",
                         "Sale, Pepe"
+                    ]
+                },
+                {
+                    "title": "Pastorella di Patate e Vitella con Cuore Cremoso di Besciamella e Formaggio Exquisa",
+                    "ingredients": [
+                        "Patate",
+                        "Fettine scelte di vitella (macinata)",
+                        "PARMALAT BESCIAMELLA CHEF 200 ml",
+                        "EXQUISA FORMAGGIO SENZA LATTOSIO 175 g",
+                        "carote",
+                        "sedano",
+                        "cipolla",
+                        "brodo vegetale",
+                        "olio d'oliva",
+                        "sale",
+                        "pepe",
+                        "noce moscata"
                     ]
                 }
             ],
