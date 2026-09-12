@@ -329,6 +329,64 @@
     margin-right:6px;
     font-variant-numeric:tabular-nums;
   }
+  .ev-line .ev-text{
+    flex:1;
+  }
+  .ev-edit-btn{
+    border:none;
+    background:none;
+    cursor:pointer;
+    font-size:14px;
+    color:var(--muted);
+    padding:0 4px;
+    line-height:1.45;
+    flex-shrink:0;
+  }
+  .ev-edit-btn:hover{ color:var(--maroon); }
+  .ev-edit-form{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+    flex:1;
+  }
+  .ev-edit-form .ev-edit-tag{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    color:var(--row-color, var(--maroon));
+    flex-shrink:0;
+  }
+  .ev-edit-form input[type=text]{
+    flex:1;
+    min-width:140px;
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:13px;
+    padding:4px 7px;
+    border:1.5px solid var(--line);
+    border-radius:3px;
+    background:#fff;
+  }
+  .ev-edit-form input[type=time]{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:12.5px;
+    padding:3px 5px;
+    border:1.5px solid var(--line);
+    border-radius:3px;
+    background:#fff;
+    width:96px;
+  }
+  .ev-edit-form .icon-btn{
+    border:none;
+    background:none;
+    cursor:pointer;
+    font-size:16px;
+    padding:2px 5px;
+    flex-shrink:0;
+  }
+  .ev-edit-form .icon-btn.save{ color:var(--good); }
+  .ev-edit-form .icon-btn.cancel{ color:var(--maroon-bright); }
   .empty{
     font-family:'Helvetica Neue',Arial,sans-serif;
     font-size:13px;
@@ -435,6 +493,33 @@
     </p>
   </div>
 
+  <div class="card" id="imageCard" style="display:none">
+    <h2><span class="num">3</span>Scarica un'immagine da condividere</h2>
+    <p class="sub">Genera un'immagine PNG del calendario — vista mensile o settimanale — con solo gli eventi che hai selezionato sopra, colorati per categoria. Comoda da inviare su chat o email senza far importare nulla a nessuno.</p>
+
+    <div class="chips" id="viewModeChips">
+      <div class="chip active" data-mode="month" id="modeMonthChip">Vista mensile</div>
+      <div class="chip" data-mode="week" id="modeWeekChip">Vista settimanale</div>
+    </div>
+
+    <div class="row" id="weekPickerRow" style="display:none; margin-top:14px">
+      <div>
+        <label class="field-label">Quale settimana</label>
+        <select id="weekSel"></select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="secondary" id="previewImgBtn">Genera anteprima</button>
+      <button class="primary" id="downloadImgBtn">Scarica immagine PNG</button>
+    </div>
+
+    <div id="imgPreviewWrap" style="margin-top:18px; display:none;">
+      <canvas id="calCanvas" style="width:100%; height:auto; border:1px solid var(--line); border-radius:4px; display:block;"></canvas>
+    </div>
+    <div class="status" id="imgStatus"></div>
+  </div>
+
 </div>
 
 <script>
@@ -507,6 +592,7 @@ SAVE THE DATE
 let parsedRows = [];   // flat list of selectable event rows
 let activeCats = new Set();
 let userOverrodeMonthYear = false;
+let editingRowId = null;
 
 // ---------------------------------------------------------------
 // PARSER (validated against the real PDF text layout)
@@ -753,6 +839,23 @@ function initUI(){
   document.getElementById('downloadPerCatBtn').addEventListener('click', downloadICSPerCategory);
   document.getElementById('selectAllBtn').addEventListener('click', ()=>{ setAllChecked(true); });
   document.getElementById('selectNoneBtn').addEventListener('click', ()=>{ setAllChecked(false); });
+
+  document.getElementById('modeMonthChip').addEventListener('click', ()=>{
+    currentViewMode = 'month';
+    document.getElementById('modeMonthChip').classList.add('active');
+    document.getElementById('modeWeekChip').classList.remove('active');
+    document.getElementById('weekPickerRow').style.display = 'none';
+    document.getElementById('imgPreviewWrap').style.display = 'none';
+  });
+  document.getElementById('modeWeekChip').addEventListener('click', ()=>{
+    currentViewMode = 'week';
+    document.getElementById('modeWeekChip').classList.add('active');
+    document.getElementById('modeMonthChip').classList.remove('active');
+    document.getElementById('weekPickerRow').style.display = 'block';
+    document.getElementById('imgPreviewWrap').style.display = 'none';
+  });
+  document.getElementById('previewImgBtn').addEventListener('click', renderImagePreview);
+  document.getElementById('downloadImgBtn').addEventListener('click', downloadCalendarImage);
 }
 
 function updateDetectedLabel(){
@@ -843,6 +946,13 @@ function runParse(){
   status.className = 'status ok';
   document.getElementById('previewCard').style.display = 'block';
   document.getElementById('previewCard').scrollIntoView({behavior:'smooth', block:'start'});
+
+  currentMonth = month;
+  currentYear = year;
+  populateWeekSelector(month, year);
+  document.getElementById('imageCard').style.display = 'block';
+  document.getElementById('imgPreviewWrap').style.display = 'none';
+  document.getElementById('imgStatus').textContent = '';
 }
 
 let rowIdCounter = 0;
@@ -960,8 +1070,75 @@ function renderPreview(){
 
       g.rows.forEach(r=>{
         const line = document.createElement('div');
-        line.className = 'ev-line' + (r.checked ? '' : ' unchecked');
         const rowColor = (CAT_COLORS[r.type] && CAT_COLORS[r.type].hex) || '#7a1f2b';
+
+        if(editingRowId === r.id){
+          line.className = 'ev-line editing';
+          line.style.setProperty('--row-color', rowColor);
+
+          const form = document.createElement('div');
+          form.className = 'ev-edit-form';
+
+          const tag = document.createElement('span');
+          tag.className = 'ev-edit-tag';
+          tag.textContent = CAT_LABELS[r.type] || r.type;
+          form.appendChild(tag);
+
+          const editable = isTimeEditableType(r.type);
+          let startInput, endInput;
+          if(editable){
+            startInput = document.createElement('input');
+            startInput.type = 'time';
+            startInput.id = 'edit-start-' + r.id;
+            if(r.startH !== null && r.startH !== undefined) startInput.value = `${pad2(r.startH)}:${pad2(r.startM)}`;
+            startInput.title = 'Orario di inizio (lascia vuoto per un evento senza orario)';
+            form.appendChild(startInput);
+
+            endInput = document.createElement('input');
+            endInput.type = 'time';
+            endInput.id = 'edit-end-' + r.id;
+            if(r.endH !== null && r.endH !== undefined) endInput.value = `${pad2(r.endH)}:${pad2(r.endM)}`;
+            endInput.title = 'Orario di fine (facoltativo)';
+            form.appendChild(endInput);
+          }
+
+          const labelInput = document.createElement('input');
+          labelInput.type = 'text';
+          labelInput.id = 'edit-label-' + r.id;
+          labelInput.value = r.label;
+          labelInput.addEventListener('keydown', e=>{
+            if(e.key === 'Enter'){ e.preventDefault(); saveEditRow(r.id); }
+            if(e.key === 'Escape'){ e.preventDefault(); cancelEditRow(); }
+          });
+          form.appendChild(labelInput);
+
+          const saveBtn = document.createElement('button');
+          saveBtn.type = 'button';
+          saveBtn.className = 'icon-btn save';
+          saveBtn.title = 'Salva';
+          saveBtn.textContent = '✓';
+          saveBtn.addEventListener('click', ()=> saveEditRow(r.id));
+          form.appendChild(saveBtn);
+
+          const cancelBtn = document.createElement('button');
+          cancelBtn.type = 'button';
+          cancelBtn.className = 'icon-btn cancel';
+          cancelBtn.title = 'Annulla';
+          cancelBtn.textContent = '✕';
+          cancelBtn.addEventListener('click', cancelEditRow);
+          form.appendChild(cancelBtn);
+
+          line.appendChild(form);
+          group.appendChild(line);
+
+          if(!line.dataset.focused){
+            line.dataset.focused = '1';
+            setTimeout(()=> labelInput.focus(), 0);
+          }
+          return;
+        }
+
+        line.className = 'ev-line' + (r.checked ? '' : ' unchecked');
         line.style.setProperty('--row-color', rowColor);
         const cb = document.createElement('input');
         cb.type = 'checkbox';
@@ -972,6 +1149,7 @@ function renderPreview(){
           renderPreview();
         });
         const label = document.createElement('label');
+        label.className = 'ev-text';
         label.setAttribute('for', r.id);
         let timeStr = '';
         if(r.startH !== null && r.startH !== undefined){
@@ -980,8 +1158,17 @@ function renderPreview(){
           timeStr = `→ ${String(r.endDay).padStart(2,'0')}/${String(r.endMonth).padStart(2,'0')}`;
         }
         label.innerHTML = `<span class="tag">${CAT_LABELS[r.type]||r.type}</span>${timeStr?`<span class="time">${timeStr}</span>`:''}${escapeHtml(r.label)}`;
+
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'ev-edit-btn';
+        editBtn.title = 'Modifica testo/orario';
+        editBtn.textContent = '✎';
+        editBtn.addEventListener('click', ()=> startEditRow(r.id));
+
         line.appendChild(cb);
         line.appendChild(label);
+        line.appendChild(editBtn);
         group.appendChild(line);
       });
       box.appendChild(group);
@@ -989,6 +1176,57 @@ function renderPreview(){
   }
 
   document.getElementById('evCount').textContent = `${checkedCount} di ${parsedRows.length} eventi selezionati`;
+}
+
+function isTimeEditableType(type){
+  return type !== 'GIORNO' && type !== 'SCADENZE';
+}
+
+function startEditRow(id){
+  editingRowId = id;
+  renderPreview();
+}
+
+function cancelEditRow(){
+  editingRowId = null;
+  renderPreview();
+}
+
+function saveEditRow(id){
+  const row = parsedRows.find(r=>r.id===id);
+  if(!row) return;
+
+  const labelInput = document.getElementById('edit-label-'+id);
+  if(labelInput){
+    const newLabel = labelInput.value.trim();
+    if(newLabel) row.label = newLabel;
+  }
+
+  if(isTimeEditableType(row.type)){
+    const startInput = document.getElementById('edit-start-'+id);
+    const endInput = document.getElementById('edit-end-'+id);
+    const sv = startInput ? startInput.value : '';
+    const ev = endInput ? endInput.value : '';
+
+    if(sv){
+      const [sh, sm] = sv.split(':').map(Number);
+      row.startH = sh; row.startM = sm;
+      row.allDay = false;
+    } else {
+      row.startH = null; row.startM = null;
+      row.allDay = true;
+    }
+
+    if(sv && ev){
+      const [eh, em] = ev.split(':').map(Number);
+      row.endH = eh; row.endM = em;
+    } else {
+      row.endH = null; row.endM = null;
+    }
+  }
+
+  editingRowId = null;
+  renderPreview();
 }
 
 function pad2(n){ return String(n).padStart(2,'0'); }
@@ -1100,6 +1338,296 @@ function downloadICSPerCategory(){
   const status = document.getElementById('parseStatus');
   status.textContent = `In scaricamento ${presentCats.length} file, uno per categoria — se il browser chiede il permesso di scaricare più file, consenti.`;
   status.className = 'status ok';
+}
+
+// ---------------------------------------------------------------
+// SHAREABLE CALENDAR IMAGE (month / week view, PNG)
+// ---------------------------------------------------------------
+let currentMonth = null, currentYear = null, currentViewMode = 'month';
+const ITA_WEEKDAY_SHORT = ["LUN","MAR","MER","GIO","VEN","SAB","DOM"];
+const ITA_MONTH_SHORT = ["gen","feb","mar","apr","mag","giu","lug","ago","set","ott","nov","dic"];
+
+function getMonthGrid(year, month){
+  const firstOfMonth = new Date(year, month-1, 1);
+  const startWeekday = (firstOfMonth.getDay()+6)%7; // 0=Mon..6=Sun
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const cells = [];
+  for(let i=0;i<startWeekday;i++){
+    const d = new Date(year, month-1, 1-(startWeekday-i));
+    cells.push({date:d, inMonth:false});
+  }
+  for(let d=1; d<=daysInMonth; d++){
+    cells.push({date:new Date(year,month-1,d), inMonth:true});
+  }
+  while(cells.length % 7 !== 0){
+    const last = cells[cells.length-1].date;
+    const d = new Date(last); d.setDate(d.getDate()+1);
+    cells.push({date:d, inMonth:false});
+  }
+  const weeks = [];
+  for(let i=0;i<cells.length;i+=7) weeks.push(cells.slice(i,i+7));
+  return weeks;
+}
+
+function weekLabel(week){
+  const a = week[0].date, b = week[6].date;
+  const fmt = (d) => `${d.getDate()} ${ITA_MONTH_SHORT[d.getMonth()]}`;
+  return `${fmt(a)} – ${fmt(b)}`;
+}
+
+function populateWeekSelector(month, year){
+  const sel = document.getElementById('weekSel');
+  sel.innerHTML = '';
+  const weeks = getMonthGrid(year, month);
+  weeks.forEach((w, i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = weekLabel(w);
+    // default-select the first week that actually contains an in-month day with data
+    if(w.some(c=>c.inMonth)) opt.dataset.hasMonth = '1';
+    sel.appendChild(opt);
+  });
+  const firstReal = [...sel.options].find(o=>o.dataset.hasMonth==='1');
+  if(firstReal) sel.value = firstReal.value;
+}
+
+function cellRowsFor(dateObj){
+  const y = dateObj.getFullYear(), m = dateObj.getMonth()+1, d = dateObj.getDate();
+  const rows = parsedRows.filter(r=> r.checked && r.year===y && r.month===m && r.day===d);
+  // Timed appointments first (chronological) since they're the most actionable
+  // info at a glance; untimed generic notices follow.
+  return rows.slice().sort((a,b)=>{
+    const ta = (a.startH===null||a.startH===undefined) ? 9999 : a.startH*60+a.startM;
+    const tb = (b.startH===null||b.startH===undefined) ? 9999 : b.startH*60+b.startM;
+    return ta - tb;
+  });
+}
+
+function wrapCanvasText(ctx, text, maxWidth){
+  const words = String(text).split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(w=>{
+    const test = line ? line + ' ' + w : w;
+    if(ctx.measureText(test).width > maxWidth && line){
+      lines.push(line);
+      line = w;
+    } else {
+      line = test;
+    }
+  });
+  if(line) lines.push(line);
+  return lines;
+}
+
+function buildCalendarCanvas(mode){
+  const month = currentMonth, year = currentYear;
+  const weeks = getMonthGrid(year, month);
+  let gridWeeks;
+  if(mode === 'week'){
+    const idx = parseInt(document.getElementById('weekSel').value, 10) || 0;
+    gridWeeks = [weeks[idx]];
+  } else {
+    gridWeeks = weeks;
+  }
+
+  const isWeek = mode === 'week';
+  const cellW = isWeek ? 460 : 340;
+  const cellH = isWeek ? 760 : 232;
+  const titleH = 96;
+  const weekdayHeaderH = 46;
+  const pad = 14;
+  const dayNumFont = isWeek ? 30 : 25;
+  const eventFont = isWeek ? 21 : 17;
+  const lineH = isWeek ? 27 : 21;
+
+  // figure out which categories actually appear in this view, for the legend
+  const catsPresent = new Set();
+  gridWeeks.forEach(w=>w.forEach(c=>{
+    cellRowsFor(c.date).forEach(r=> catsPresent.add(r.type));
+  }));
+  const legendItems = CAT_ORDER.filter(c=>catsPresent.has(c));
+  const legendH = legendItems.length ? 46 : 0;
+
+  const width = cellW * 7;
+  const height = titleH + legendH + weekdayHeaderH + cellH * gridWeeks.length;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+
+  // background
+  ctx.fillStyle = '#f6f4ee';
+  ctx.fillRect(0,0,width,height);
+
+  // title
+  const monthName = MONTH_NAMES[month-1][0] + MONTH_NAMES[month-1].slice(1).toLowerCase();
+  ctx.fillStyle = '#1c2b4a';
+  ctx.font = 'bold 40px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  const titleText = isWeek ? `Settimana del ${weekLabel(gridWeeks[0])} — ${year}` : `${monthName} ${year}`;
+  ctx.fillText(titleText, width/2, 54);
+  ctx.strokeStyle = '#a8283a';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(width/2 - 90, 70);
+  ctx.lineTo(width/2 + 90, 70);
+  ctx.stroke();
+
+  // legend
+  if(legendItems.length){
+    ctx.font = '15px "Helvetica Neue", Arial, sans-serif';
+    ctx.textAlign = 'left';
+    const swatches = legendItems.map(c=>({cat:c, label: CAT_LABELS[c]||c}));
+    const gap = 26;
+    const swW = 16;
+    const widths = swatches.map(s => swW + 6 + ctx.measureText(s.label).width);
+    const totalW = widths.reduce((a,b)=>a+b,0) + gap*(swatches.length-1);
+    let x = (width - totalW)/2;
+    const y = titleH + legendH/2 + 5;
+    swatches.forEach((s,i)=>{
+      ctx.fillStyle = (CAT_COLORS[s.cat]&&CAT_COLORS[s.cat].hex) || '#333';
+      ctx.fillRect(x, y-13, swW, swW);
+      ctx.fillStyle = '#20242e';
+      ctx.fillText(s.label, x + swW + 6, y);
+      x += widths[i] + gap;
+    });
+  }
+
+  const gridTop = titleH + legendH;
+
+  // weekday header
+  ctx.fillStyle = '#1c2b4a';
+  ctx.fillRect(0, gridTop, width, weekdayHeaderH);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 15px "Helvetica Neue", Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ITA_WEEKDAY_SHORT.forEach((wd,i)=>{
+    ctx.fillText(wd, cellW*i + cellW/2, gridTop + weekdayHeaderH/2 + 5);
+  });
+
+  // day cells
+  const cellsTop = gridTop + weekdayHeaderH;
+  gridWeeks.forEach((week, wi)=>{
+    week.forEach((cell, di)=>{
+      const x = cellW*di;
+      const y = cellsTop + cellH*wi;
+      const isWeekend = di===5 || di===6;
+
+      ctx.fillStyle = !cell.inMonth ? '#efece3' : (isWeekend ? '#f8f1ee' : '#ffffff');
+      ctx.fillRect(x, y, cellW, cellH);
+      ctx.strokeStyle = '#e3e0d6';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x+0.5, y+0.5, cellW-1, cellH-1);
+
+      ctx.fillStyle = !cell.inMonth ? '#b7b3a8' : '#1c2b4a';
+      ctx.font = `bold ${dayNumFont}px Georgia, serif`;
+      ctx.textAlign = 'left';
+      ctx.fillText(String(cell.date.getDate()), x+pad, y+pad+dayNumFont*0.8);
+
+      const allRows = cellRowsFor(cell.date);
+      const giornoRow = allRows.find(r=>r.type==='GIORNO');
+      const rows = allRows.filter(r=>r.type!=='GIORNO');
+      let curY = y + pad + dayNumFont + 14;
+      const maxY = y + cellH - 10;
+      const maxWidth = cellW - pad*2;
+      let shown = 0, hiddenCount = 0;
+
+      if(giornoRow){
+        const giornoColor = (CAT_COLORS.GIORNO && CAT_COLORS.GIORNO.hex) || '#8a5a3b';
+        ctx.font = `italic ${Math.max(eventFont-1,13)}px "Helvetica Neue", Arial, sans-serif`;
+        ctx.fillStyle = giornoColor;
+        ctx.textAlign = 'left';
+        const giornoLines = wrapCanvasText(ctx, giornoRow.label, maxWidth);
+        const maxGiornoLines = isWeek ? Math.min(giornoLines.length, 3) : 1;
+        for(let li=0; li<maxGiornoLines; li++){
+          let t = giornoLines[li];
+          if(li === maxGiornoLines-1 && giornoLines.length > maxGiornoLines){
+            t = t.replace(/\s+\S*$/, '') + '…';
+          }
+          ctx.fillText(t, x+pad, curY);
+          curY += lineH;
+        }
+        curY += 6;
+      }
+
+      for(let ri=0; ri<rows.length; ri++){
+        const r = rows[ri];
+        const color = (CAT_COLORS[r.type]&&CAT_COLORS[r.type].hex) || '#333';
+        let text = r.label;
+        if(r.startH !== null && r.startH !== undefined){
+          text = `${pad2(r.startH)}:${pad2(r.startM)} ${text}`;
+        }
+        ctx.font = `${eventFont}px "Helvetica Neue", Arial, sans-serif`;
+        const dotSize = Math.round(eventFont*0.42);
+        const textMaxW = maxWidth - dotSize - 8;
+        const lines = wrapCanvasText(ctx, text, textMaxW);
+        const maxLinesForThisEvent = isWeek ? lines.length : Math.min(lines.length, 2);
+
+        if(curY + lineH*maxLinesForThisEvent > maxY - (isWeek?0:14)){
+          hiddenCount = rows.length - ri;
+          break;
+        }
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x+pad+dotSize/2, curY - eventFont*0.36, dotSize/2, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.fillStyle = '#20242e';
+        ctx.textAlign = 'left';
+        for(let li=0; li<maxLinesForThisEvent; li++){
+          let lineText = lines[li];
+          if(li === maxLinesForThisEvent-1 && lines.length > maxLinesForThisEvent){
+            lineText = lineText.replace(/\s+\S*$/, '') + '…';
+          }
+          ctx.fillText(lineText, x+pad+dotSize+8, curY);
+          curY += lineH;
+        }
+        curY += 4;
+        shown++;
+      }
+
+      if(hiddenCount > 0){
+        ctx.fillStyle = '#6b7280';
+        ctx.font = `italic ${Math.max(eventFont-3,12)}px "Helvetica Neue", Arial, sans-serif`;
+        ctx.fillText(`+${hiddenCount} altri`, x+pad, maxY - 4);
+      }
+    });
+  });
+
+  return canvas;
+}
+
+function renderImagePreview(){
+  const canvas = buildCalendarCanvas(currentViewMode);
+  const target = document.getElementById('calCanvas');
+  target.width = canvas.width;
+  target.height = canvas.height;
+  target.getContext('2d').drawImage(canvas, 0, 0);
+  document.getElementById('imgPreviewWrap').style.display = 'block';
+  const status = document.getElementById('imgStatus');
+  status.textContent = 'Anteprima generata. Se ti va bene, scarica il PNG.';
+  status.className = 'status ok';
+}
+
+function downloadCalendarImage(){
+  if(!currentMonth){ return; }
+  const canvas = buildCalendarCanvas(currentViewMode);
+  canvas.toBlob(blob=>{
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const monthStr = String(currentMonth).padStart(2,'0');
+    const suffix = currentViewMode === 'week' ? `_settimana${parseInt(document.getElementById('weekSel').value,10)+1}` : '';
+    a.href = url;
+    a.download = `calendario_villa_flaminia_${currentYear}-${monthStr}${suffix}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 'image/png');
 }
 
 initUI();
