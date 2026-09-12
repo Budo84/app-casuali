@@ -11,6 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logos/icon-192.png">
 
+    <!-- Librerie esterne -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
@@ -76,7 +77,6 @@
         .back-btn-container { text-align: left; margin-bottom: 20px; }
         .back-btn { background: none; border: none; font-size: 16px; font-weight: 600; color: var(--text-main); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 
-        /* Contenitore grafico della tessera (da catturare in screenshot) */
         .detail-card-graphic { background: var(--card-bg); border-radius: 24px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center; border: 1px solid #f2f2f7; margin-bottom: 24px; }
         .detail-card-header { width: 100%; border-radius: 16px; padding: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; text-align: left; position: relative; }
         .detail-title { font-family: "Futura", "Trebuchet MS", sans-serif; font-size: 22px; font-weight: 700; color: #ffffff; word-break: break-word; max-width: 80%; }
@@ -158,6 +158,11 @@
         </div>
             
         <div class="detail-actions">
+            <!-- Nuovo pulsante di modifica -->
+            <button class="btn btn-primary" id="editCardBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Modifica Carta
+            </button>
             <button class="btn btn-outline" id="shareCardBtn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                 <span>Condividi Carta</span>
@@ -169,7 +174,7 @@
         </div>
     </div>
 
-    <div class="fab" id="fabBtn" onclick="showView('addModal')">+</div>
+    <div class="fab" id="fabBtn" onclick="openAddModal()">+</div>
 
     <div id="addModal" class="modal-overlay">
         <div class="modal-content">
@@ -179,12 +184,15 @@
                     Indietro
                 </button>
             </div>
-            <div class="modal-header" style="margin-top: 0;">Aggiungi Carta</div>
+            
+            <div class="modal-header" id="modalTitle" style="margin-top: 0;">Aggiungi Carta</div>
+            
             <button class="btn btn-secondary" onclick="startScanner()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                 Scansiona Codice
             </button>
             <div id="reader"></div>
+            
             <div class="form-group">
                 <label>Nome Negozio:</label><input type="text" id="shopName" placeholder="Es. Conad, Coop...">
             </div>
@@ -201,7 +209,8 @@
             <div class="form-group">
                 <label>Seleziona Colore Sfondo:</label><div class="color-selector" id="colorSelector"></div>
             </div>
-            <button class="btn btn-primary" onclick="saveNewCard()">Salva Carta</button>
+            
+            <button class="btn btn-primary" onclick="saveCard()">Salva Carta</button>
         </div>
     </div>
 
@@ -233,6 +242,7 @@
         let cards = JSON.parse(localStorage.getItem('myCards')) || [];
         let html5QrcodeScanner = null;
         let sortableInstance = null;
+        let editingIndex = -1; // Traccia quale carta stiamo modificando (-1 significa nuova carta)
         
         const colorPalette = [
             "#0a84ff", "#30d158", "#ff9f0a", "#bf5af2", "#ff375f", 
@@ -279,6 +289,29 @@
             showView('mainView');
         }
 
+        function openAddModal() {
+            editingIndex = -1;
+            document.getElementById('modalTitle').innerText = 'Aggiungi Carta';
+            document.getElementById('shopName').value = '';
+            document.getElementById('barcodeNumber').value = '';
+            document.getElementById('codeFormat').value = 'CODE128';
+            selectedColor = colorPalette[0];
+            buildColorSelector();
+            showView('addModal');
+        }
+
+        function openEditModal(index) {
+            editingIndex = index;
+            const card = cards[index];
+            document.getElementById('modalTitle').innerText = 'Modifica Carta';
+            document.getElementById('shopName').value = card.name;
+            document.getElementById('barcodeNumber').value = card.number;
+            document.getElementById('codeFormat').value = card.format || 'CODE128';
+            selectedColor = card.color || colorPalette[0];
+            buildColorSelector();
+            showView('addModal');
+        }
+
         function startScanner() {
             document.getElementById('reader').style.display = 'block';
             if(!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
@@ -294,21 +327,22 @@
             }
         }
 
-        function saveNewCard() {
+        function saveCard() {
             const name = document.getElementById('shopName').value.trim();
             const number = document.getElementById('barcodeNumber').value.trim();
             const format = document.getElementById('codeFormat').value;
             
             if (!name || !number) { alert('Nome e numero sono obbligatori.'); return; }
             
-            cards.push({ name, number, color: selectedColor, format: format });
+            const cardData = { name, number, color: selectedColor, format: format };
+
+            if (editingIndex > -1) {
+                cards[editingIndex] = cardData; // Aggiorna esistente
+            } else {
+                cards.push(cardData); // Aggiunge nuova
+            }
+
             localStorage.setItem('myCards', JSON.stringify(cards));
-            
-            document.getElementById('shopName').value = '';
-            document.getElementById('barcodeNumber').value = '';
-            document.getElementById('codeFormat').value = 'CODE128';
-            selectedColor = colorPalette[0];
-            buildColorSelector();
             closeModals();
         }
 
@@ -368,33 +402,30 @@
             document.getElementById('detailCardHeader').style.backgroundColor = card.color || '#3a3a3c';
             document.getElementById('detailName').innerText = card.name;
             document.getElementById('detailNumber').innerText = card.number;
+            
+            // Assegnazione funzioni ai pulsanti di azione
+            document.getElementById('editCardBtn').onclick = () => openEditModal(index);
             document.getElementById('deleteCardBtn').onclick = () => deleteCard(index);
             
             const shareBtn = document.getElementById('shareCardBtn');
             const shareTextSpan = shareBtn.querySelector('span');
 
-            // Logica di scatto screenshot con html2canvas
             shareBtn.onclick = async () => {
                 try {
-                    // Feedback visivo
                     shareBtn.disabled = true;
                     const originalText = shareTextSpan.innerText;
                     shareTextSpan.innerText = 'Generazione in corso...';
                     
-                    // Elemento da fotografare
                     const captureTarget = document.getElementById('captureCard');
-                    
-                    // html2canvas fa uno screenshot del DOM
                     const canvas = await html2canvas(captureTarget, {
-                        scale: 3, // Ottima risoluzione per essere letta dai laser
-                        backgroundColor: "#f9f9fb", // Evita sfondi neri su JPEG trasparenti
+                        scale: 3, 
+                        backgroundColor: "#f9f9fb",
                         logging: false
                     });
 
                     canvas.toBlob(async (blob) => {
                         shareBtn.disabled = false;
                         shareTextSpan.innerText = originalText;
-
                         if (!blob) return alert("Impossibile generare l'immagine.");
 
                         const fileName = `Tessera_${card.name.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
@@ -408,13 +439,12 @@
                         if (navigator.canShare && navigator.canShare({ files: [file] })) {
                             navigator.share(shareData).catch(e => console.log('Condivisione annullata.'));
                         } else {
-                            // Fallback per PC/Browser non supportati: Scarica file e copia testo
                             const url = URL.createObjectURL(file);
                             const a = document.createElement('a');
                             a.href = url; a.download = file.name;
                             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
                             if (navigator.clipboard) navigator.clipboard.writeText(`Tessera ${card.name}: ${card.number}`);
-                            alert("Dispositivo non compatibile con l'invio diretto dell'immagine sulle app di messaggistica.\nLo screenshot della tessera è stato scaricato sul tuo dispositivo.");
+                            alert("Screenshot scaricato e testo copiato negli appunti.");
                         }
                     }, 'image/png');
 
@@ -422,13 +452,12 @@
                     console.error(e);
                     shareBtn.disabled = false;
                     shareTextSpan.innerText = 'Condividi Carta';
-                    alert("Si è verificato un errore durante la generazione della foto.");
+                    alert("Errore durante la generazione della foto.");
                 }
             };
             
             showView('detailView');
 
-            // Generazione del codice visivo
             const cardFormat = card.format || 'CODE128';
             const container = document.getElementById('barcodeContainerDiv');
             container.innerHTML = ''; 
@@ -442,7 +471,6 @@
                 } catch (e) { console.error("Errore QR Code:", e); }
             } else {
                 try {
-                    // Usiamo <img> invece di <svg> per garantire che html2canvas lo catturi
                     const img = document.createElement("img");
                     container.appendChild(img);
                     JsBarcode(img, card.number, {
