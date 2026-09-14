@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "08/09/2026 22:32",
+    "data_aggiornamento": "14/09/2026 11:12",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -198,6 +198,16 @@
                         "Olio EVO",
                         "Scalogno"
                     ]
+                },
+                {
+                    "title": "Saltimbocca di Suino alla Birra e Alici",
+                    "ingredients": [
+                        "FETTINE SUINO",
+                        "RIZZOLI Filetti di alici in olio di girasole",
+                        "BIRRA CORONA extra/zero 33cl",
+                        "Salvia fresca",
+                        "Farina 00"
+                    ]
                 }
             ],
             "cena": [
@@ -347,6 +357,16 @@
                         "Burro",
                         "Salvia"
                     ]
+                },
+                {
+                    "title": "Zuppetta di Mare e Pollo ai Peperoni Misti",
+                    "ingredients": [
+                        "STRACCETTI DI POLLO",
+                        "OCEAN SEA Sugo pronto per pasta e risotti",
+                        "PEPERONI MISTI",
+                        "SANT'ANNA ACQUA SPORT 750 ml",
+                        "Aglio e Prezzemolo"
+                    ]
                 }
             ],
             "merenda": [
@@ -447,6 +467,15 @@
                         "VINO IN BRIK TAVERNELLO bianco",
                         "Pane di Altamura",
                         "Rosmarino"
+                    ]
+                },
+                {
+                    "title": "Bruschetta Piccante al Tonno e Peperoni",
+                    "ingredients": [
+                        "RIO MARE TONNO OLIO EXTRA VERGINE DI OLIVA - PICCANTE 3 X 65 g",
+                        "PEPERONI MISTI",
+                        "Pane casereccio",
+                        "Origano"
                     ]
                 }
             ]
@@ -553,6 +582,15 @@
                         "Farina 00",
                         "Uova",
                         "Zucchero"
+                    ]
+                },
+                {
+                    "title": "Smoothie Proteico al Latte e Frutti di Bosco",
+                    "ingredients": [
+                        "Lando Latte ESL",
+                        "SANT'ANNA ACQUA SPORT 750 ml",
+                        "Frutti di bosco surgelati",
+                        "Miele"
                     ]
                 }
             ],
@@ -709,6 +747,15 @@
                         "Gherigli di noce",
                         "Pepe nero"
                     ]
+                },
+                {
+                    "title": "Sofficini Dorati con Peperonata Leggera",
+                    "ingredients": [
+                        "Sofficini Findus varie ricette 250g (versione formaggio/spinaci)",
+                        "PEPERONI MISTI",
+                        "Basilico fresco",
+                        "Olio EVO"
+                    ]
                 }
             ],
             "cena": [
@@ -829,6 +876,15 @@
                         "TALEGGIO CADEMARTORI",
                         "Cipolla bianca",
                         "Brodo vegetale"
+                    ]
+                },
+                {
+                    "title": "Vellutata di Peperoni e Latte ESL con Crostini di Mais",
+                    "ingredients": [
+                        "PEPERONI MISTI",
+                        "Lando Latte ESL",
+                        "Gallette di mais",
+                        "Curcuma"
                     ]
                 }
             ],
@@ -1070,6 +1126,16 @@
                         "Zenzero fresco",
                         "Salsa di soia"
                     ]
+                },
+                {
+                    "title": "Tacos Messicani di Suino alla Birra Corona",
+                    "ingredients": [
+                        "FETTINE SUINO",
+                        "BIRRA CORONA extra/zero 33cl",
+                        "PEPERONI MISTI",
+                        "Tortillas di mais",
+                        "Lime"
+                    ]
                 }
             ],
             "cena": [
@@ -1238,6 +1304,16 @@
                         "Peperoncino",
                         "VINO IN BRIK TAVERNELLO bianco"
                     ]
+                },
+                {
+                    "title": "Stir-fry Fusion di Pollo e Tonno Piccante",
+                    "ingredients": [
+                        "STRACCETTI DI POLLO",
+                        "RIO MARE TONNO OLIO EXTRA VERGINE DI OLIVA - PICCANTE 3 X 65 g",
+                        "Zenzero fresco",
+                        "Salsa di soia",
+                        "Cipollotto"
+                    ]
                 }
             ],
             "merenda": [
@@ -1342,6 +1418,15 @@
                         "Uva bianca",
                         "Cardamomo",
                         "Miele"
+                    ]
+                },
+                {
+                    "title": "Onigiri Mediterranei alle Alici e Peperoni",
+                    "ingredients": [
+                        "RIZZOLI Filetti di alici in olio di girasole",
+                        "PEPERONI MISTI",
+                        "Riso per sushi",
+                        "Alga Nori"
                     ]
                 }
             ]
@@ -1494,6 +1579,15 @@
                         "FIORUCCI FIORDICOTTO",
                         "Parmigiano Reggiano"
                     ]
+                },
+                {
+                    "title": "Risotto ai Frutti di Mare e Peperoni Arrostiti",
+                    "ingredients": [
+                        "Riso Carnaroli",
+                        "OCEAN SEA Sugo pronto per pasta e risotti",
+                        "PEPERONI MISTI",
+                        "SANT'ANNA ACQUA SPORT 750 ml (per brodo)"
+                    ]
                 }
             ],
             "cena": [
@@ -1589,6 +1683,15 @@
                         "Fecola di patate",
                         "Cloroma Latte Intero"
                     ]
+                },
+                {
+                    "title": "Millefoglie di Patate e Suino al Tonno Piccante",
+                    "ingredients": [
+                        "Patate",
+                        "FETTINE SUINO",
+                        "RIO MARE TONNO OLIO EXTRA VERGINE DI OLIVA - PICCANTE 3 X 65 g",
+                        "Rosmarino"
+                    ]
                 }
             ],
             "merenda": [
@@ -1612,6 +1715,15 @@
                         "Cioccolatini Cuore Lindor Lindt",
                         "Scorza d'arancia grattugiata",
                         "Un pizzico di sale"
+                    ]
+                },
+                {
+                    "title": "Porridge di Grano Saraceno e Latte ESL",
+                    "ingredients": [
+                        "Grano Saraceno in chicchi",
+                        "Lando Latte ESL",
+                        "Cannella",
+                        "Mela a cubetti"
                     ]
                 }
             ]
