@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "14/09/2026 11:12",
+    "data_aggiornamento": "21/09/2026 11:23",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -208,6 +208,20 @@
                         "Salvia fresca",
                         "Farina 00"
                     ]
+                },
+                {
+                    "title": "Filetti di Platessa Mediterranei con Zucchine Grigliate e Salsa al Cappero",
+                    "ingredients": [
+                        "Findus Filetti di Platessa",
+                        "Orogel Zucchine Grigliate",
+                        "Pomodorini datterini",
+                        "Olive taggiasche denocciolate",
+                        "Capperi sotto sale",
+                        "Olio extra vergine d'oliva",
+                        "Prezzemolo fresco",
+                        "Succo di limone",
+                        "Sale e pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -367,6 +381,22 @@
                         "SANT'ANNA ACQUA SPORT 750 ml",
                         "Aglio e Prezzemolo"
                     ]
+                },
+                {
+                    "title": "Insalata di Salmone Affumicato, Fichi Freschi e Feta con Crostini all'Origano",
+                    "ingredients": [
+                        "CONSILIA SALMONE AFF. SCOZ. 100g",
+                        "Fichi Freschi",
+                        "Misticanza",
+                        "Feta greca",
+                        "Pomodorini secchi sott'olio",
+                        "Olive nere denocciolate",
+                        "Pane casereccio per crostini",
+                        "Olio extra vergine d'oliva",
+                        "Aceto balsamico",
+                        "Origano secco",
+                        "Noci pecan"
+                    ]
                 }
             ],
             "merenda": [
@@ -476,6 +506,18 @@
                         "PEPERONI MISTI",
                         "Pane casereccio",
                         "Origano"
+                    ]
+                },
+                {
+                    "title": "Bruschetta ai Fichi, Prosciutto Crudo e Miele con Anacardi Tostati",
+                    "ingredients": [
+                        "Fichi Freschi",
+                        "Pane rustico a fette",
+                        "Prosciutto crudo stagionato",
+                        "Miele di acacia",
+                        "VENTURA ANACARDI SGUSC. TOST.SAL. 150 g",
+                        "Timo fresco",
+                        "Olio extra vergine d'oliva"
                     ]
                 }
             ]
@@ -591,6 +633,18 @@
                         "SANT'ANNA ACQUA SPORT 750 ml",
                         "Frutti di bosco surgelati",
                         "Miele"
+                    ]
+                },
+                {
+                    "title": "Smoothie Bowl ai Fichi, Anacardi e Avena con Latte Senza Lattosio",
+                    "ingredients": [
+                        "Fichi Freschi",
+                        "CONSILIA LATTE MICROFILTRATO SENZA LATTOSIO PS 1 L",
+                        "Fiocchi d'avena",
+                        "VENTURA ANACARDI SGUSC. TOST.SAL. 150 g",
+                        "Semi di chia",
+                        "Miele o sciroppo d'agave",
+                        "Banana (opzionale, per cremosità)"
                     ]
                 }
             ],
@@ -756,6 +810,21 @@
                         "Basilico fresco",
                         "Olio EVO"
                     ]
+                },
+                {
+                    "title": "Spätzle ai Funghi Porcini e Crema di Zucchine al Timo con Latte Senza Lattosio",
+                    "ingredients": [
+                        "Rana Spätzle Linea",
+                        "Funghi porcini (freschi o surgelati)",
+                        "Orogel Zucchine Grigliate",
+                        "CONSILIA LATTE MICROFILTRATO SENZA LATTOSIO PS 1 L",
+                        "Aglio",
+                        "Timo fresco",
+                        "Brodo vegetale",
+                        "Parmigiano Reggiano (opzionale, se lacto-vegetariano)",
+                        "Olio extra vergine d'oliva",
+                        "Sale e pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -885,6 +954,24 @@
                         "Lando Latte ESL",
                         "Gallette di mais",
                         "Curcuma"
+                    ]
+                },
+                {
+                    "title": "Polpette di Lenticchie e Frosta Valori Contorno con Salsa allo Yogurt e Menta",
+                    "ingredients": [
+                        "Frosta Valori Contorno (scongelato e tritato)",
+                        "Lenticchie rosse decorticate (già cotte)",
+                        "Pangrattato (senza glutine se necessario)",
+                        "Uovo (se lacto-ovo vegetariano)",
+                        "Cipolla rossa",
+                        "Aglio",
+                        "Cumino in polvere",
+                        "Coriandolo in polvere",
+                        "Yogurt greco (senza lattosio se necessario)",
+                        "Menta fresca",
+                        "Succo di limone",
+                        "Olio di semi per friggere (o EVO per cottura al forno)",
+                        "Sale e pepe"
                     ]
                 }
             ],
@@ -1136,6 +1223,24 @@
                         "Tortillas di mais",
                         "Lime"
                     ]
+                },
+                {
+                    "title": "Wrap Messicano di Salmone Affumicato, Fagioli Neri e Frosta Valori Contorno con Guacamole Esotico",
+                    "ingredients": [
+                        "CONSILIA SALMONE AFF. SCOZ. 100g",
+                        "Frosta Valori Contorno",
+                        "Tortillas di farina (grano)",
+                        "Fagioli neri (precotti)",
+                        "Mais dolce in scatola",
+                        "Pomodorini",
+                        "Cipolla rossa",
+                        "Avocado",
+                        "Lime",
+                        "Coriandolo fresco",
+                        "Peperoncino fresco o in polvere",
+                        "Olio extra vergine d'oliva",
+                        "Sale e pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -1314,6 +1419,23 @@
                         "Salsa di soia",
                         "Cipollotto"
                     ]
+                },
+                {
+                    "title": "Poke Bowl di Platessa Croccante con Riso Venere, Mango e Salsa Teriyaki agli Anacardi",
+                    "ingredients": [
+                        "Findus Filetti di Platessa",
+                        "Riso Venere",
+                        "Avocado",
+                        "Mango fresco",
+                        "Edamame (surgelati)",
+                        "Cetrioli",
+                        "Alga nori (a striscioline)",
+                        "VENTURA ANACARDI SGUSC. TOST.SAL. 150 g",
+                        "Salsa Teriyaki",
+                        "Salsa di soia",
+                        "Zenzero fresco grattugiato",
+                        "Semi di sesamo"
+                    ]
                 }
             ],
             "merenda": [
@@ -1428,6 +1550,19 @@
                         "Riso per sushi",
                         "Alga Nori"
                     ]
+                },
+                {
+                    "title": "Mousse al Caffè e Cioccolato Lindt con Crumble di Anacardi Caramellati",
+                    "ingredients": [
+                        "LINDT LINDOR CORNET 200 g (cioccolato al latte o fondente)",
+                        "CAFFÈ QUALITÀ ESPRESSO BAR CONAD in grani 1kg (per espresso forte)",
+                        "Panna fresca da montare",
+                        "Zucchero a velo",
+                        "Uova (solo tuorli)",
+                        "VENTURA ANACARDI SGUSC. TOST.SAL. 150 g",
+                        "Burro",
+                        "Sale"
+                    ]
                 }
             ]
         },
@@ -1489,6 +1624,20 @@
                         "MELINDA MELE GOLDEN DEL.",
                         "Cannella",
                         "VINO IN BRIK TAVERNELLO bianco"
+                    ]
+                },
+                {
+                    "title": "Pancake di Riso e Mais con Fichi Freschi, Sciroppo d'Acero e Crema Chantilly Senza Lattosio",
+                    "ingredients": [
+                        "Farina di riso",
+                        "Farina di mais fioretto",
+                        "Uova",
+                        "CONSILIA LATTE MICROFILTRATO SENZA LATTOSIO PS 1 L",
+                        "Lievito per dolci senza glutine",
+                        "Fichi Freschi",
+                        "Sciroppo d'acero",
+                        "Panna fresca senza lattosio (per la chantilly)",
+                        "Zucchero a velo senza glutine"
                     ]
                 }
             ],
@@ -1587,6 +1736,21 @@
                         "OCEAN SEA Sugo pronto per pasta e risotti",
                         "PEPERONI MISTI",
                         "SANT'ANNA ACQUA SPORT 750 ml (per brodo)"
+                    ]
+                },
+                {
+                    "title": "Tortino di Patate e Platessa con Cuore Filante di Zucchine Grigliate e Erbe Aromatiche",
+                    "ingredients": [
+                        "Patate",
+                        "Findus Filetti di Platessa",
+                        "Orogel Zucchine Grigliate",
+                        "CONSILIA LATTE MICROFILTRATO SENZA LATTOSIO PS 1 L",
+                        "Uova",
+                        "Prezzemolo fresco",
+                        "Erba cipollina",
+                        "Formaggio a pasta filata senza lattosio (opzionale)",
+                        "Olio extra vergine d'oliva",
+                        "Sale e pepe"
                     ]
                 }
             ],
@@ -1691,6 +1855,22 @@
                         "FETTINE SUINO",
                         "RIO MARE TONNO OLIO EXTRA VERGINE DI OLIVA - PICCANTE 3 X 65 g",
                         "Rosmarino"
+                    ]
+                },
+                {
+                    "title": "Risotto Cremoso al Grano Saraceno con Salmone Affumicato, Asparagi e Profumo di Limone",
+                    "ingredients": [
+                        "Grano saraceno decorticato",
+                        "CONSILIA SALMONE AFF. SCOZ. 100g",
+                        "Asparagi freschi",
+                        "Cipolla",
+                        "Vino bianco (senza solfiti aggiunti)",
+                        "Brodo vegetale",
+                        "CONSILIA LATTE MICROFILTRATO SENZA LATTOSIO PS 1 L",
+                        "Scorza di limone biologico",
+                        "Aneto fresco",
+                        "Olio extra vergine d'oliva",
+                        "Sale e pepe"
                     ]
                 }
             ],
