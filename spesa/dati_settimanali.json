@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "28/09/2026 20:30",
+    "data_aggiornamento": "28/09/2026 20:39",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -253,6 +253,23 @@
                         "Sale",
                         "Pepe nero"
                     ]
+                },
+                {
+                    "title": "Insalata di Faro Perla con Tonno Mare Aperto, Carciofi e Olive Taggiasche",
+                    "ingredients": [
+                        "Faro Perla precotto",
+                        "TONNO MARE APERTO all'olio di oliva",
+                        "CONSERVE COSTANZA carciofi a metà",
+                        "CONSERVE COSTANZA olive Taggiasche denocciolate",
+                        "Pomodorini gialli e rossi",
+                        "Cetrioli freschi",
+                        "Rucola selvatica",
+                        "Cipolla rossa di Tropea",
+                        "Olio extra vergine d'oliva",
+                        "Aceto di mele",
+                        "Origano secco",
+                        "Sale e pepe nero"
+                    ]
                 }
             ],
             "cena": [
@@ -455,6 +472,20 @@
                         "Olio extra vergine d'oliva",
                         "Prezzemolo fresco"
                     ]
+                },
+                {
+                    "title": "Fiocchi di Rana ai Gamberi e Porchetta Croccante su Crema di Ciliegino",
+                    "ingredients": [
+                        "PASTA FRESCA RIPIENA RANA sfogliagrezza (es. fiocchi con gamberi)",
+                        "DELUXE Porchetta arrosto (tagliata a cubetti e rosolata)",
+                        "MUTTI Salsa pronta di pomodori ciliegini",
+                        "Aglio fresco",
+                        "Peperoncino rosso (opzionale)",
+                        "Basilico fresco",
+                        "Prezzemolo tritato",
+                        "Olio extra vergine d'oliva",
+                        "Parmigiano Reggiano grattugiato"
+                    ]
                 }
             ],
             "merenda": [
@@ -602,6 +633,18 @@
                         "Olio extra vergine d'oliva",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Cracker Protein-G con Mousse di Tonno al Limone e Cuore di Olive Nere",
+                    "ingredients": [
+                        "GALBUSERA Cracker Protein-G",
+                        "TONNO MARE APERTO al naturale",
+                        "Formaggio spalmabile leggero",
+                        "Scorza e succo di mezzo limone",
+                        "Erba cipollina fresca tritata",
+                        "CONSERVE COSTANZA olive nere denocciolate (tritate finemente per il cuore)",
+                        "Sale e pepe bianco"
                     ]
                 }
             ]
@@ -950,6 +993,20 @@
                         "Prezzemolo fresco",
                         "Parmigiano Reggiano grattugiato (facoltativo)"
                     ]
+                },
+                {
+                    "title": "Risotto Knorr ai Funghi Porcini con Profumo di Mela Gala e Salvia",
+                    "ingredients": [
+                        "RISOTTO KNORR ai funghi porcini",
+                        "Mele Gala del Trentino IGP (a cubetti)",
+                        "Brodo vegetale",
+                        "Burro vegetale",
+                        "Parmigiano Reggiano (o alternativa vegana)",
+                        "Salvia fresca",
+                        "Cipolla dorata",
+                        "Olio extra vergine d'oliva",
+                        "Vino bianco secco"
+                    ]
                 }
             ],
             "cena": [
@@ -1131,6 +1188,24 @@
                         "Sale",
                         "Pepe"
                     ]
+                },
+                {
+                    "title": "Cotoletta di Cavolfiore e Ceci con Contorno di Carciofi Saltati e Salsa Verde",
+                    "ingredients": [
+                        "Cavolfiore",
+                        "Ceci precotti",
+                        "Pangrattato aromatico",
+                        "Uovo (o sostituto vegano)",
+                        "Prezzemolo fresco",
+                        "Aglio in polvere",
+                        "Curcuma in polvere",
+                        "CONSERVE COSTANZA carciofi a metà",
+                        "Spinacino fresco",
+                        "Pinoli tostati",
+                        "Olio extra vergine d'oliva",
+                        "Succo di limone",
+                        "Sale e pepe"
+                    ]
                 }
             ],
             "merenda": [
@@ -1210,6 +1285,17 @@
                         "OLIDÌ Olio spray per friggitrice ad aria",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Spiedini di Mela Gala e Formaggio con Glassa al SanThè Limone",
+                    "ingredients": [
+                        "Mele Gala del Trentino IGP (a spicchi)",
+                        "Formaggio stagionato a cubetti (es. Emmental o Cheddar)",
+                        "SANT'ANNA SanThè al limone",
+                        "Miele o sciroppo d'acero",
+                        "Menta fresca per guarnire",
+                        "Spiedini di legno"
                     ]
                 }
             ]
@@ -1460,6 +1546,22 @@
                         "Semi di sesamo",
                         "Zenzero fresco grattugiato"
                     ]
+                },
+                {
+                    "title": "Poke Bowl Mediterranea con Tonno Mare Aperto, Bulgur e Melanzane Grigliate",
+                    "ingredients": [
+                        "Bulgur cotto",
+                        "TONNO MARE APERTO al naturale",
+                        "Melanzane grigliate a cubetti",
+                        "Pomodorini datterini",
+                        "Ceci cotti",
+                        "Cetrioli a julienne",
+                        "CONSERVE COSTANZA olive Kalamata",
+                        "Feta greca a cubetti",
+                        "Salsa tahini-limone (tahini, succo di limone, acqua)",
+                        "Menta e prezzemolo freschi",
+                        "Semi di sesamo tostati"
+                    ]
                 }
             ],
             "cena": [
@@ -1685,6 +1787,20 @@
                         "Olio vegetale",
                         "COCA-COLA Zero (come bevanda rinfrescante di accompagnamento)"
                     ]
+                },
+                {
+                    "title": "Cotoletta Viennese 'Oriental Fusion' con Glassa Teriyaki e Noodle di Verdure",
+                    "ingredients": [
+                        "Cotoletta alla viennese 300g",
+                        "Salsa Teriyaki",
+                        "Verdure miste per wok (carote, zucchine, peperoni, cavolo)",
+                        "Noodle di riso (o soba)",
+                        "Zenzero fresco grattugiato",
+                        "Aglio tritato",
+                        "Olio di sesamo",
+                        "Semi di sesamo neri e bianchi",
+                        "Cipollotto fresco"
+                    ]
                 }
             ],
             "merenda": [
@@ -1811,6 +1927,17 @@
                         "VENTURA ANACARDI SGUSC. TOST.SAL. 150 g",
                         "Burro",
                         "Sale"
+                    ]
+                },
+                {
+                    "title": "Frullato 'Tropical SanThè' con Mela Gala, SanThè Pesca e Frutti Esotici",
+                    "ingredients": [
+                        "SANT'ANNA SanThè alla pesca",
+                        "Mele Gala del Trentino IGP (a pezzi)",
+                        "Banana matura",
+                        "Mango fresco (a pezzi)",
+                        "Succo di lime",
+                        "Ghiaccio"
                     ]
                 }
             ],
@@ -2060,6 +2187,20 @@
                         "Sale",
                         "Pepe"
                     ]
+                },
+                {
+                    "title": "Risotto del Contadino con Zucca, Funghi e Rosmarino Croccante",
+                    "ingredients": [
+                        "Riso Carnaroli (senza glutine)",
+                        "RISOTTO KNORR ai funghi porcini (base, senza glutine)",
+                        "Zucca Delica (a cubetti)",
+                        "Brodo vegetale",
+                        "Vino bianco secco (senza glutine)",
+                        "Parmigiano Reggiano grattugiato (senza glutine)",
+                        "Burro",
+                        "Olio extra vergine d'oliva",
+                        "Rosmarino fresco"
+                    ]
                 }
             ],
             "cena": [
@@ -2211,6 +2352,20 @@
                         "Sale",
                         "Pepe"
                     ]
+                },
+                {
+                    "title": "Gnocchi di Patate e Grano Saraceno con Salsa di Pomodori Ciliegino e Ricotta Salata",
+                    "ingredients": [
+                        "Patate bollite e schiacciate",
+                        "Farina di grano saraceno",
+                        "Uovo",
+                        "MUTTI Salsa pronta di pomodori ciliegini",
+                        "Aglio fresco",
+                        "Basilico fresco",
+                        "Olio extra vergine d'oliva",
+                        "Ricotta salata (grattugiata)",
+                        "Sale e pepe nero"
+                    ]
                 }
             ],
             "merenda": [
@@ -2258,6 +2413,20 @@
                         "OLIDÌ Olio spray per friggitrice ad aria",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Gallette di Mais con Crema Leggera di Carciofi al Tonno e Erbe Aromatiche",
+                    "ingredients": [
+                        "Gallette di mais (100% mais, senza glutine)",
+                        "TONNO MARE APERTO al naturale",
+                        "CONSERVE COSTANZA carciofi a metà",
+                        "Yogurt greco naturale (senza lattosio se necessario)",
+                        "Succo di limone",
+                        "Menta fresca tritata",
+                        "Prezzemolo fresco tritato",
+                        "Peperoncino in polvere (opzionale)",
+                        "Sale e pepe nero"
                     ]
                 }
             ]
