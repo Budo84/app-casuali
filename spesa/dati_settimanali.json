@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "28/09/2026 12:19",
+    "data_aggiornamento": "28/09/2026 20:30",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -238,6 +238,21 @@
                         "Sale marino",
                         "Pepe nero macinato fresco"
                     ]
+                },
+                {
+                    "title": "Insalata Mediterranea di Salmone Fresco e Verdure Grigliate",
+                    "ingredients": [
+                        "SASHIMI DI SALMONE SAPORI & IDEE CONAD limone e pepe rosa 100g",
+                        "I GRIGLIATI SOTTOLIO CONAD (es. melanzane e zucchine)",
+                        "Misticanza fresca",
+                        "Pomodorini datterini",
+                        "Olive taggiasche",
+                        "Cetrioli",
+                        "Olio extra vergine d'oliva",
+                        "Aceto balsamico",
+                        "Sale",
+                        "Pepe nero"
+                    ]
                 }
             ],
             "cena": [
@@ -426,6 +441,20 @@
                         "Sale",
                         "Pepe bianco"
                     ]
+                },
+                {
+                    "title": "Risotto ai Sapori del Sud con Bocconcini di Pollo e Peperoni Grigliati",
+                    "ingredients": [
+                        "RISOTTO KNORR (es. ai Funghi Porcini) 175g",
+                        "Hamburger classico di pollo 200g (tagliato a cubetti)",
+                        "I GRIGLIATI SOTTOLIO CONAD (es. peperoni e cipolle)",
+                        "Brodo vegetale",
+                        "Cipolla",
+                        "Vino bianco secco",
+                        "Parmigiano Reggiano grattugiato",
+                        "Olio extra vergine d'oliva",
+                        "Prezzemolo fresco"
+                    ]
                 }
             ],
             "merenda": [
@@ -560,6 +589,20 @@
                         "OLIDÌ Olio spray per friggitrice ad aria",
                         "Sale Maldon"
                     ]
+                },
+                {
+                    "title": "Patatine Croccanti con Dip di Grigliati Aromatici e Menta",
+                    "ingredients": [
+                        "PATATINE CONAD classiche/rustiche 6x25g",
+                        "I GRIGLIATI SOTTOLIO CONAD (es. melanzane e carciofini - per il dip)",
+                        "Yogurt greco naturale",
+                        "Spicchio d'aglio",
+                        "Menta fresca",
+                        "Succo di limone",
+                        "Olio extra vergine d'oliva",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ]
         },
@@ -686,6 +729,17 @@
                         "Semi di chia",
                         "Miele o sciroppo d'agave",
                         "Banana (opzionale, per cremosità)"
+                    ]
+                },
+                {
+                    "title": "Bowl Mattutina di Yogurt e Miele d'Arancio con Frutta e Semi",
+                    "ingredients": [
+                        "MIELE DI ARANCIO SAPORI & IDEE CONAD 500g",
+                        "Yogurt greco naturale",
+                        "Fiocchi d'avena",
+                        "Frutta di stagione (es. frutti di bosco, banana)",
+                        "Semi di chia",
+                        "Noci tritate"
                     ]
                 }
             ],
@@ -883,6 +937,19 @@
                         "Sale",
                         "Pepe"
                     ]
+                },
+                {
+                    "title": "Risotto ai Funghi Porcini con Zucchine e Pomodorini Grigliati",
+                    "ingredients": [
+                        "RISOTTO KNORR (ai Funghi Porcini) 175g",
+                        "I GRIGLIATI SOTTOLIO CONAD (es. zucchine e pomodori secchi)",
+                        "Brodo vegetale",
+                        "Cipolla",
+                        "Vino bianco secco",
+                        "Olio extra vergine d'oliva",
+                        "Prezzemolo fresco",
+                        "Parmigiano Reggiano grattugiato (facoltativo)"
+                    ]
                 }
             ],
             "cena": [
@@ -1046,6 +1113,21 @@
                         "PATA PATATINA CLASSICA 400 g (sbriciolata per topping croccante)",
                         "OLIDÌ Olio spray per friggitrice ad aria",
                         "Noce moscata",
+                        "Sale",
+                        "Pepe"
+                    ]
+                },
+                {
+                    "title": "Insalata Arcobaleno di Grigliati e Verdure Fresche con Croccante di Patatine",
+                    "ingredients": [
+                        "I GRIGLIATI SOTTOLIO CONAD (es. peperoni, melanzane e carciofini)",
+                        "PATATINE CONAD classiche/rustiche 6x25g (sbriciolate)",
+                        "Misticanza fresca",
+                        "Pomodorini ciliegino",
+                        "Cetrioli",
+                        "Mais dolce",
+                        "Aceto balsamico",
+                        "Olio extra vergine d'oliva",
                         "Sale",
                         "Pepe"
                     ]
@@ -1364,6 +1446,20 @@
                         "Pepe di cayenna",
                         "Sale"
                     ]
+                },
+                {
+                    "title": "Poke Bowl Hawaiiana con Salmone Marinato e Riso Venere",
+                    "ingredients": [
+                        "SASHIMI DI SALMONE SAPORI & IDEE CONAD limone e pepe rosa 100g",
+                        "Riso Venere (o basmati)",
+                        "Avocado",
+                        "Edamame",
+                        "Cetrioli",
+                        "Carote julienne",
+                        "Salsa di soia",
+                        "Semi di sesamo",
+                        "Zenzero fresco grattugiato"
+                    ]
                 }
             ],
             "cena": [
@@ -1575,6 +1671,20 @@
                         "Cetriolini sottaceto",
                         "OLIDÌ Olio spray per friggitrice ad aria"
                     ]
+                },
+                {
+                    "title": "Tacos di Pollo Sfilacciato con Salsa al Miele e Verdure Grigliate",
+                    "ingredients": [
+                        "Hamburger classico di pollo 200g (sfilacciato o a cubetti)",
+                        "I GRIGLIATI SOTTOLIO CONAD (es. peperoni e cipolle - a striscioline)",
+                        "MIELE DI ARANCIO SAPORI & IDEE CONAD 500g",
+                        "Tortillas di mais",
+                        "Succo di lime",
+                        "Coriandolo fresco",
+                        "Peperoncino in polvere",
+                        "Olio vegetale",
+                        "COCA-COLA Zero (come bevanda rinfrescante di accompagnamento)"
+                    ]
                 }
             ],
             "merenda": [
@@ -1703,6 +1813,19 @@
                         "Sale"
                     ]
                 }
+            ],
+            "aperitivo": [
+                {
+                    "title": "Mediterranean Gin & Vermouth Cocktail con Olive e Limone",
+                    "ingredients": [
+                        "GIN MARE 70cl",
+                        "VERMOUTH MARTINI bianco 1L",
+                        "Olive verdi grandi",
+                        "Scorza di limone",
+                        "Ghiaccio",
+                        "Fetta d'arancia (per guarnire)"
+                    ]
+                }
             ]
         },
         "senza_glutine": {
@@ -1777,6 +1900,19 @@
                         "Sciroppo d'acero",
                         "Panna fresca senza lattosio (per la chantilly)",
                         "Zucchero a velo senza glutine"
+                    ]
+                },
+                {
+                    "title": "Pancakes Morbidi di Grano Saraceno con Miele d'Arancio e Frutti Rossi",
+                    "ingredients": [
+                        "Farina di grano saraceno",
+                        "MIELE DI ARANCIO SAPORI & IDEE CONAD 500g",
+                        "Uova",
+                        "Latte (o bevanda vegetale senza glutine)",
+                        "Lievito per dolci senza glutine",
+                        "Frutti di bosco freschi",
+                        "Pizzico di sale",
+                        "Olio per ungere la padella"
                     ]
                 }
             ],
@@ -1905,6 +2041,22 @@
                         "OLIDÌ Olio spray per friggitrice ad aria",
                         "Parmigiano Reggiano DOP (senza glutine)",
                         "Prezzemolo fresco",
+                        "Sale",
+                        "Pepe"
+                    ]
+                },
+                {
+                    "title": "Risotto Cremoso al Mais e Pollo con Croccante di Patatine al Rosmarino",
+                    "ingredients": [
+                        "Riso Carnaroli (o altro riso per risotti, naturalmente senza glutine)",
+                        "Hamburger classico di pollo 200g (tagliato a cubetti)",
+                        "PATATINE CONAD classiche/rustiche 6x25g (sbriciolate come topping)",
+                        "Mais in grani (fresco o in scatola)",
+                        "Brodo vegetale (assicurarsi sia senza glutine)",
+                        "Cipolla",
+                        "Vino bianco secco (senza glutine)",
+                        "Rosmarino fresco",
+                        "Olio extra vergine d'oliva",
                         "Sale",
                         "Pepe"
                     ]
@@ -2042,6 +2194,20 @@
                         "Peperoncino fresco",
                         "Prezzemolo",
                         "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Sale",
+                        "Pepe"
+                    ]
+                },
+                {
+                    "title": "Salmone al Forno con Patate Novelle e Grigliati Meditarranei Aromatizzati",
+                    "ingredients": [
+                        "SASHIMI DI SALMONE SAPORI & IDEE CONAD limone e pepe rosa 100g",
+                        "Patate novelle",
+                        "I GRIGLIATI SOTTOLIO CONAD (es. peperoni e zucchine)",
+                        "Olio extra vergine d'oliva",
+                        "Succo di limone",
+                        "Aglio (spicchi)",
+                        "Timo fresco",
                         "Sale",
                         "Pepe"
                     ]
