@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "21/09/2026 11:23",
+    "data_aggiornamento": "28/09/2026 12:19",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -222,6 +222,22 @@
                         "Succo di limone",
                         "Sale e pepe"
                     ]
+                },
+                {
+                    "title": "Insalata Mediterranea di Burrata, Carciofi e Olive su Crostino Aromatizzato",
+                    "ingredients": [
+                        "Nonno Nanni Burrata",
+                        "CONSERVE COSTANZA carciofi a metà 200g",
+                        "CONSERVE COSTANZA olive varie ricette",
+                        "Pomodorini datterini",
+                        "Rucola selvatica",
+                        "Pane tostato integrale",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Basilico fresco",
+                        "Origano secco",
+                        "Sale marino",
+                        "Pepe nero macinato fresco"
+                    ]
                 }
             ],
             "cena": [
@@ -397,6 +413,19 @@
                         "Origano secco",
                         "Noci pecan"
                     ]
+                },
+                {
+                    "title": "Ostriche Gratinate al Profumo di Agrumi e Erbe Mediterranee",
+                    "ingredients": [
+                        "OSTRICHE",
+                        "Pangrattato aromatizzato (con prezzemolo e aglio)",
+                        "Scorza di limone e arancia non trattati",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Vino bianco secco",
+                        "Timo fresco",
+                        "Sale",
+                        "Pepe bianco"
+                    ]
                 }
             ],
             "merenda": [
@@ -518,6 +547,18 @@
                         "VENTURA ANACARDI SGUSC. TOST.SAL. 150 g",
                         "Timo fresco",
                         "Olio extra vergine d'oliva"
+                    ]
+                },
+                {
+                    "title": "Spiedini Caprese Destrutturati con Bacon Croccante e Balsamico",
+                    "ingredients": [
+                        "Pomodorini ciliegino",
+                        "Mozzarella di bufala (bocconcini)",
+                        "Beretta Bacon Cotto",
+                        "Basilico fresco",
+                        "Glassa di aceto balsamico",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Sale Maldon"
                     ]
                 }
             ]
@@ -825,6 +866,23 @@
                         "Olio extra vergine d'oliva",
                         "Sale e pepe"
                     ]
+                },
+                {
+                    "title": "Bowl Arcobaleno di Couscous Aromatizzato con Funghi e Carciofi Grigliati",
+                    "ingredients": [
+                        "Couscous integrale",
+                        "CONSERVE COSTANZA funghi varie ricette",
+                        "CONSERVE COSTANZA carciofi a metà 200g",
+                        "Zucchine grigliate",
+                        "Peperoni arrostiti",
+                        "Pomodorini confit",
+                        "Menta fresca",
+                        "Prezzemolo fresco",
+                        "Succo di limone",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -973,6 +1031,24 @@
                         "Olio di semi per friggere (o EVO per cottura al forno)",
                         "Sale e pepe"
                     ]
+                },
+                {
+                    "title": "Tortino di Patate e Burrata con Olive Taggiasche e Rosmarino",
+                    "ingredients": [
+                        "Patate a pasta gialla",
+                        "Nonno Nanni Burrata",
+                        "CONSERVE COSTANZA olive varie ricette (Taggiasche)",
+                        "Rosmarino fresco",
+                        "Uova biologiche",
+                        "Parmigiano Reggiano",
+                        "Latte intero",
+                        "Panna fresca",
+                        "PATA PATATINA CLASSICA 400 g (sbriciolata per topping croccante)",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Noce moscata",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "merenda": [
@@ -1036,6 +1112,23 @@
                         "FERRERO SCATOLA CUORE SAN VALENTINO",
                         "VALLE' NATURALMENTE MARGARINA 250 g"
                     ]
+                },
+                {
+                    "title": "Frittelle Croccanti di Carciofi e Funghi con Salsa allo Yogurt e Erbe",
+                    "ingredients": [
+                        "CONSERVE COSTANZA carciofi a metà 200g",
+                        "CONSERVE COSTANZA funghi varie ricette",
+                        "Farina 00",
+                        "Uova",
+                        "Latte",
+                        "Lievito istantaneo per torte salate",
+                        "Yogurt greco naturale",
+                        "Erba cipollina",
+                        "Anneto fresco",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ]
         },
@@ -1081,6 +1174,22 @@
                         "Brodo dashi",
                         "Miso",
                         "Tofu"
+                    ]
+                },
+                {
+                    "title": "Pancakes Salati con Bacon Cotto, Scamorza Affumicata e Sciroppo d'Acero Piccante",
+                    "ingredients": [
+                        "Farina 00",
+                        "Latte",
+                        "Uova",
+                        "Lievito in polvere",
+                        "Beretta Bacon Cotto",
+                        "Scamorza affumicata",
+                        "Sciroppo d'acero puro",
+                        "Peperoncino in polvere",
+                        "Burro fuso",
+                        "Sale",
+                        "Pepe"
                     ]
                 }
             ],
@@ -1240,6 +1349,20 @@
                         "Peperoncino fresco o in polvere",
                         "Olio extra vergine d'oliva",
                         "Sale e pepe"
+                    ]
+                },
+                {
+                    "title": "Ravioli Croccanti all'Aria con Salsa Agrodolce al Sesamo e Patatine Speziate",
+                    "ingredients": [
+                        "Ghiotto Ravioli Carne",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Salsa agrodolce pronta",
+                        "Semi di sesamo tostati",
+                        "Cipollina fresca",
+                        "PATA PATATINA CLASSICA 400 g",
+                        "Paprika affumicata",
+                        "Pepe di cayenna",
+                        "Sale"
                     ]
                 }
             ],
@@ -1435,6 +1558,22 @@
                         "Salsa di soia",
                         "Zenzero fresco grattugiato",
                         "Semi di sesamo"
+                    ]
+                },
+                {
+                    "title": "Hot Dog Gourmet 'Wuber-Fusion' con Cipolle Caramellate e Salsa Speciale",
+                    "ingredients": [
+                        "Wuberoni Würstel 38 Servelade",
+                        "Pane brioche per hot dog",
+                        "Cipolle rosse",
+                        "Zucchero di canna",
+                        "Aceto balsamico",
+                        "Senape di Digione",
+                        "Maionese",
+                        "Ketchup",
+                        "Salsa Worcestershire",
+                        "Cetriolini sottaceto",
+                        "OLIDÌ Olio spray per friggitrice ad aria"
                     ]
                 }
             ],
@@ -1752,6 +1891,23 @@
                         "Olio extra vergine d'oliva",
                         "Sale e pepe"
                     ]
+                },
+                {
+                    "title": "Risotto Cremoso ai Funghi Porcini e Burrata con Crumble di Bacon Croccante",
+                    "ingredients": [
+                        "Riso Carnaroli",
+                        "CONSERVE COSTANZA funghi varie ricette (porcini sott'olio)",
+                        "Nonno Nanni Burrata",
+                        "Brodo vegetale (senza glutine)",
+                        "Cipolla bianca",
+                        "Vino bianco secco (senza glutine)",
+                        "Beretta Bacon Cotto",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Parmigiano Reggiano DOP (senza glutine)",
+                        "Prezzemolo fresco",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -1872,6 +2028,23 @@
                         "Olio extra vergine d'oliva",
                         "Sale e pepe"
                     ]
+                },
+                {
+                    "title": "Gnocchi di Patate e Grano Saraceno con Carciofi, Olive e Pomodorini Confit",
+                    "ingredients": [
+                        "Patate a pasta bianca",
+                        "Farina di grano saraceno",
+                        "Fecola di patate",
+                        "CONSERVE COSTANZA carciofi a metà 200g",
+                        "CONSERVE COSTANZA olive varie ricette",
+                        "Pomodorini confit (fatti in casa)",
+                        "Aglio",
+                        "Peperoncino fresco",
+                        "Prezzemolo",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "merenda": [
@@ -1904,6 +2077,21 @@
                         "Lando Latte ESL",
                         "Cannella",
                         "Mela a cubetti"
+                    ]
+                },
+                {
+                    "title": "Spiedini di Würstel e Patatine Croccanti con Salsa allo Yogurt e Mais Affumicato",
+                    "ingredients": [
+                        "Wuberoni Würstel 38 Servelade",
+                        "PATA PATATINA CLASSICA 400 g",
+                        "Mais dolce in scatola",
+                        "Yogurt greco naturale",
+                        "Paprika affumicata",
+                        "Succo di lime",
+                        "Coriandolo fresco",
+                        "OLIDÌ Olio spray per friggitrice ad aria",
+                        "Sale",
+                        "Pepe"
                     ]
                 }
             ]
