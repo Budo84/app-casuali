@@ -1,0 +1,44 @@
+REGISTRO ORE DOCENTE - app installabile
+=======================================
+
+Dentro la cartella "ore-docente" c'e' l'app completa. Per farla usare ai colleghi
+basta metterla online (e' un sito statico, non serve nessun server) e mandare
+il link. Ognuno la apre dal proprio telefono e la installa.
+
+1) METTERLA ONLINE (scegli un modo)
+
+   A. Netlify Drop (il piu' veloce, circa 2 minuti)
+      - vai su https://app.netlify.com/drop
+      - trascina dentro la cartella "ore-docente" (decompressa)
+      - ottieni subito un indirizzo https://....netlify.app
+      - crea un account gratuito per tenere il sito attivo (senza account puo'
+        essere rimosso dopo poco)
+
+   B. GitHub Pages (gratuito e stabile)
+      - crea un repository pubblico su github.com
+      - carica dentro i file della cartella "ore-docente" (index.html,
+        sw.js, manifest.webmanifest, exceljs.min.js e la cartella icons)
+      - Settings > Pages > "Deploy from a branch" > main / root
+      - l'indirizzo sara' https://TUONOME.github.io/NOME-REPOSITORY/
+
+   L'indirizzo deve iniziare con https:// (e' obbligatorio per l'installazione).
+
+2) COSA FANNO I COLLEGHI
+
+   - Aprono il link dal telefono.
+   - iPhone/iPad: in Safari toccano Condividi > "Aggiungi alla schermata Home".
+   - Android: in Chrome menu (tre puntini) > "Installa app".
+   - Alla prima apertura scrivono il nome e inseriscono il proprio orario.
+
+3) DATI E PRIVACY
+
+   - I dati di ciascuno restano solo nel suo telefono: nessuno vede quelli degli altri
+     e non passano da nessun server.
+   - Nella scheda Orario c'e' "Salva copia" / "Ripristina da copia" per fare
+     il backup o passare i dati a un nuovo telefono.
+   - Cancellare i dati del sito dal browser cancella anche i dati dell'app.
+
+4) AGGIORNAMENTI
+
+   Se in futuro cambia qualcosa, si sostituiscono i file online. L'app si aggiorna
+   da sola alla riapertura (con connessione).
