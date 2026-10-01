@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="it"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f1f4f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f131a" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Registro delle ore di lavoro per docenti: orario, sostituzioni, funzione docente, gite ed esportazione in Excel.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ore Docente">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>:root{color-scheme:light}</style>
+<title>Registro Ore Docente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: app a una colonna, intestazione fissa in alto, barra di navigazione in basso; schede larghe come lo schermo, max 720px su tablet.
+   Palette ripresa dal foglio Excel: azzurro (intestazioni), arancione (attività), grigio (giorni). */
+:root{
+  --bg:#f1f4f9; --surface:#ffffff; --surface2:#e8edf5; --fg:#18202e; --muted:#5b677a; --line:#d5dce7;
+  --amber:#ffc000; --on-amber:#2a1f00; --amber-soft:#fff0bf;
+  --blue:#9bc2e6; --blue-soft:#dcebf8; --blue-ink:#1c4468;
+  --good:#17784d; --good-soft:#d6f0e3; --bad:#b3261e; --bad-soft:#fde3e0;
+  --shadow:0 1px 2px rgba(20,30,50,.08),0 2px 10px rgba(20,30,50,.04);
+  --f-ui:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-disp:'Bricolage Grotesque','Figtree',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f131a; --surface:#182029; --surface2:#222b38; --fg:#e9edf5; --muted:#95a2b7; --line:#2b3544;
+  --amber-soft:#3b2f09; --blue:#3b6a95; --blue-soft:#1b3248; --blue-ink:#a9d1f2;
+  --good:#52c58c; --good-soft:#12382a; --bad:#ff8b80; --bad-soft:#3f1c19; --shadow:none; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f131a; --surface:#182029; --surface2:#222b38; --fg:#e9edf5; --muted:#95a2b7; --line:#2b3544;
+  --amber-soft:#3b2f09; --blue:#3b6a95; --blue-soft:#1b3248; --blue-ink:#a9d1f2;
+  --good:#52c58c; --good-soft:#12382a; --bad:#ff8b80; --bad-soft:#3f1c19; --shadow:none; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:15px;line-height:1.4;-webkit-tap-highlight-color:transparent;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+:focus-visible{outline:2px solid var(--blue-ink);outline-offset:2px;border-radius:6px}
+.num{font-variant-numeric:tabular-nums}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-in{max-width:720px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.brand{font-family:var(--f-disp);font-weight:700;font-size:1.15rem;letter-spacing:-.01em;flex:1;min-width:0}
+.brand small{display:block;font-family:var(--f-ui);font-weight:500;font-size:.72rem;color:var(--muted);letter-spacing:0}
+.sync{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.sync[data-s="ok"] i{background:var(--good)} .sync[data-s="err"] i{background:var(--bad)} .sync[data-s="local"] i{background:var(--amber)}
+main{max-width:720px;margin:0 auto;padding:14px 16px;display:flex;flex-direction:column;gap:14px}
+nav.bar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.bar div{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav.bar button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px 8px;font-size:.72rem;font-weight:600;color:var(--muted)}
+nav.bar button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav.bar button[aria-current="page"]{color:var(--blue-ink)}
+nav.bar button[aria-current="page"] span{box-shadow:inset 0 -3px 0 var(--amber)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px;font-family:var(--f-disp);font-size:1.02rem;letter-spacing:-.01em}
+.navrow{display:flex;align-items:center;gap:8px}
+.navrow .lbl{flex:1;position:relative;text-align:center;font-family:var(--f-disp);font-weight:700;font-size:1.2rem;letter-spacing:-.01em;padding:8px 4px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.navrow .lbl input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.ib{width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-size:1.3rem;line-height:1;display:grid;place-items:center}
+.pill{border-radius:999px;padding:7px 14px;font-weight:600;font-size:.85rem;background:var(--blue-soft);color:var(--blue-ink)}
+.pill.amber{background:var(--amber);color:var(--on-amber)}
+.hero{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:end}
+.big{font-family:var(--f-disp);font-weight:700;font-size:3rem;line-height:1;letter-spacing:-.03em}
+.big small{font-family:var(--f-ui);font-size:.9rem;font-weight:600;color:var(--muted);letter-spacing:0;margin-left:6px}
+.diff{font-weight:700;border-radius:999px;padding:3px 10px;font-size:.85rem;background:var(--surface2);color:var(--muted)}
+.diff.up{background:var(--good-soft);color:var(--good)} .diff.down{background:var(--bad-soft);color:var(--bad)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:var(--surface2);border-radius:10px;padding:8px 10px}
+.stat b{display:block;font-size:1.15rem;font-family:var(--f-disp)} .stat span{font-size:.72rem;color:var(--muted);font-weight:600}
+.sec{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 2px -4px}
+.sec h2{margin:0;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sec .acts{display:flex;gap:6px}
+.mini{font-size:.78rem;font-weight:600;padding:6px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line)}
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:30px 1fr auto auto;align-items:center;gap:10px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:56px}
+.chk{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center}
+.row[aria-pressed="true"] .chk{background:var(--amber);border-color:var(--amber);color:var(--on-amber)}
+.row[aria-pressed="true"] .chk::after{content:"✓";font-weight:800;font-size:.95rem}
+.row[aria-pressed="false"]{background:transparent;border-style:dashed}
+.row[aria-pressed="false"] .nm{text-decoration:line-through;color:var(--muted)}
+.nm{font-weight:700} .nm small{display:block;font-weight:500;color:var(--muted);font-size:.78rem}
+.cls{font-family:var(--f-disp);font-weight:700;font-size:1rem;background:var(--blue-soft);color:var(--blue-ink);border-radius:8px;padding:3px 9px;min-width:2.6rem;text-align:center}
+.mn{font-weight:600;color:var(--muted);min-width:3.2rem;text-align:right}
+.row.o .cls{background:var(--amber-soft);color:var(--fg)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 12px;font-weight:600;font-size:.85rem;min-height:40px}
+.chip small{color:var(--muted);font-weight:500;margin-left:4px}
+.chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#0b2236}
+.chip[aria-pressed="true"] small{color:#0b2236}
+textarea{width:100%;min-height:76px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:10px 12px;resize:vertical}
+.empty{padding:18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}
+.days{display:flex;flex-direction:column;gap:6px}
+.day{display:grid;grid-template-columns:2rem 2.2rem 1fr auto 3.6rem;align-items:center;gap:8px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:48px}
+.day.wk{background:var(--amber-soft);border-color:transparent}
+.day.today{outline:2px solid var(--blue-ink);outline-offset:-2px}
+.day .dn{font-family:var(--f-disp);font-weight:700;font-size:1.05rem}
+.day .dw{color:var(--muted);font-weight:600;font-size:.85rem}
+.day .tg{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:.72rem;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--surface2);color:var(--muted)}
+.tag.m{background:var(--bad-soft);color:var(--bad)} .tag.p{background:var(--good-soft);color:var(--good)} .tag.n{background:var(--blue-soft);color:var(--blue-ink)}
+.day .tt{font-weight:700;text-align:right}
+.day .df{font-size:.8rem;font-weight:700;text-align:right;color:var(--muted)}
+.df.up{color:var(--good)} .df.down{color:var(--bad)}
+.bar-p{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden;margin:6px 0 10px}
+.bar-p i{display:block;height:100%;background:var(--amber);border-radius:99px;transition:width .3s}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nums b{display:block;font-family:var(--f-disp);font-size:1.3rem} .nums span{font-size:.72rem;color:var(--muted);font-weight:600}
+.qh{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--muted);font-weight:600}
+.step button{width:36px;height:36px;border-radius:9px;background:var(--surface2);font-size:1.2rem;font-weight:700}
+input[type=number],input[type=month],input.cell{border:1px solid var(--line);border-radius:9px;background:var(--surface);padding:8px 10px;width:100%}
+.step input{width:64px;text-align:center;font-weight:700}
+.mc .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.mc label{font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px}
+.mc .qa{display:flex;gap:6px;margin-top:6px}
+.mc .qa button{flex:1;padding:7px 0;border-radius:8px;background:var(--surface2);font-weight:700;font-size:.8rem}
+.mc .hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.mc .hd b{font-family:var(--f-disp);font-size:1.05rem}
+.mc .sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+.mc .rem{margin-top:10px;font-size:.78rem;color:var(--muted)}
+.scroll{overflow-x:auto;border-radius:12px;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:340px}
+th,td{padding:5px 3px;text-align:center;border-bottom:1px solid var(--line)}
+th{background:var(--blue);color:#0b2236;font-weight:600;font-size:.82rem}
+td.l{text-align:left;background:var(--surface2);font-weight:700;white-space:nowrap;padding-left:8px;font-size:.88rem}
+td.l small{display:block;color:var(--muted);font-weight:500;font-size:.72rem}
+td.l.o{background:var(--amber-soft)}
+tr.tot td{font-weight:700;background:var(--surface2)}
+input.cell{padding:6px 0;text-align:center;font-weight:700;text-transform:uppercase;min-width:0;width:100%;font-size:.9rem}
+.hint{font-size:.8rem;color:var(--muted);margin:0 2px}
+header.top{top:0;padding-top:env(safe-area-inset-top,0px)}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 16px;border-radius:12px;font-weight:700;background:var(--amber);color:var(--on-amber)}
+.btn.alt{background:var(--surface2);color:var(--fg)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.card p{margin:0 0 10px} .card p:last-child{margin-bottom:0}
+.card.welcome{border-color:var(--amber);background:var(--amber-soft)}
+.card ol{margin:6px 0 0;padding-left:20px} .card li{margin:3px 0}
+.field{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--surface);padding:10px 12px}
+#toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:.88rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:9;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (min-width:600px){.stats{grid-template-columns:repeat(3,1fr)} .big{font-size:3.4rem}}
+</style>
+
+
+</head><body>
+<header class="top"><div class="top-in">
+  <div class="brand">Registro ore<small id="who"></small></div>
+  <div class="sync" id="sync" data-s="local"><i></i><span id="syncT">Avvio…</span></div>
+</div></header>
+<main id="app" aria-live="polite"></main>
+<div id="toast" role="status"></div>
+<nav class="bar" aria-label="Sezioni"><div>
+  <button data-act="go" data-v="oggi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg><span>Giorno</span></button>
+  <button data-act="go" data-v="mese"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Mese</span></button>
+  <button data-act="go" data-v="riep"><svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg><span>Riepilogo</span></button>
+  <button data-act="go" data-v="orario"><svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9h17M9.5 9v11"/></svg><span>Orario</span></button>
+</div></nav>
+
+<script src="exceljs.min.js"></script>
+<script>
+/* piattaforma: app installabile (dati solo nel telefono di chi la usa) */
+const PRESET={on:false,name:''};
+const PLATFORM={pwa:true,
+  async saveFile(name,blob){
+    const file=new File([blob],name,{type:blob.type});
+    if(navigator.canShare&&navigator.canShare({files:[file]})&&/iPhone|iPad|Android/i.test(navigator.userAgent)){
+      try{await navigator.share({files:[file],title:name});return}catch(e){if(e&&e.name==='AbortError')return}}
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},4000);
+  },
+  start(){
+    lsLoad();setSync('ok','Salvato sul dispositivo');
+    if(S.cfg.sched.every(r=>r.every(c=>!c)))S.view='orario';
+    render();
+    try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;render()});
+    window.addEventListener('appinstalled',()=>{deferredPrompt=null;render()});
+    if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }};
+
+/* ---------- dati fissi: le 15 righe dell'orario (come nel foglio Excel) ---------- */
+const ROWS=[['1 ora','8.00–9.00',60,'c'],['2 ora','9.00–9.50',50,'c'],['3 ora','9.50–10.40',50,'c'],['Ricr.','10.40–11.00',20,'o'],
+ ['4 ora','11.00–11.50',50,'c'],['5 ora','11.50–12.40',50,'c'],['6 ora','12.40–13.30',50,'c'],['Pranzo 1','13.30–14.00',30,'o'],
+ ['Ricr P','14.00–14.30',30,'o'],['7 ora','13.30–14.15',45,'o'],['Pranzo 2','14.15–15.00',45,'o'],['8 ora','14.30–15.30',60,'c'],
+ ['9 ora','15.30–16.30',60,'c'],['TSP 1','14.30–15.00',30,'o'],['TSP 2','15.30–16.30',60,'o']].map(([name,time,min,g])=>({name,time,min,g}));
+const WD=['lun','mar','mer','gio','ven','sab','dom'], WDF=['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì'];
+function defSched(){const s=ROWS.map(()=>['','','','','']);
+  const set=(i,d,c)=>{s[i][d]=c}; if(!PRESET.on)return s;
+  set(0,2,'2C');set(0,3,'2A');set(1,0,'2C');set(1,3,'2B');set(2,1,'2B');set(2,4,'3A');set(3,1,'2B');set(3,4,'3A');
+  set(4,0,'2B');set(4,2,'3B');set(4,3,'3C');set(5,0,'2B');set(5,3,'2C');set(6,0,'2A');set(6,4,'2A');
+  set(7,0,'2A');set(7,1,'2B');set(8,0,'2A');set(8,1,'2C');set(11,1,'2C');set(12,1,'2A');set(13,0,'2A');set(14,0,'2A');return s}
+const defCfg=()=>({name:PRESET.name,qFD:50,qGite:70,start:'2026-09',sched:defSched()});
+
+/* ---------- utilità ---------- */
+const $=s=>document.querySelector(s), app=$('#app');
+const pad=n=>String(n).padStart(2,'0'), cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const isoOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=iso=>new Date(+iso.slice(0,4),+iso.slice(5,7)-1,+iso.slice(8,10),12);
+const addDays=(iso,n)=>{const d=parse(iso);d.setDate(d.getDate()+n);return isoOf(d)};
+const shiftYm=(ym,n)=>{const d=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+n,1);return d.getFullYear()+'-'+pad(d.getMonth()+1)};
+const monthLabel=ym=>cap(new Intl.DateTimeFormat('it-IT',{month:'long',year:'numeric'}).format(new Date(+ym.slice(0,4),+ym.slice(5,7)-1,1)));
+const dateLabel=iso=>cap(new Intl.DateTimeFormat('it-IT',{weekday:'long',day:'numeric',month:'long'}).format(parse(iso)));
+const wdOf=iso=>(parse(iso).getDay()+6)%7;
+const sgn=n=>n>0?'+'+n:n<0?'−'+Math.abs(n):'0';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const TODAY=isoOf(new Date());
+
+/* ---------- stato ---------- */
+const S={cfg:defCfg(),days:{},months:{},view:'oggi',date:TODAY,month:TODAY.slice(0,7)};
+let db=null, dirty=false;
+
+function normCfg(v){const d=defCfg();const c=Object.assign(d,v||{});
+  if(!Array.isArray(c.sched)||c.sched.length!==ROWS.length)c.sched=defSched();
+  c.sched=c.sched.map(r=>{r=Array.isArray(r)?r:[];return [0,1,2,3,4].map(i=>r[i]||'')});return c}
+
+/* ---------- calcoli ---------- */
+function dayInfo(iso){
+  const wd=wdOf(iso), d=S.days[iso]||{}, off=new Set(d.off||[]), subs=d.subs||[];
+  const items=[]; let planned=0,cl=0,ot=0;
+  ROWS.forEach((r,i)=>{const cls=wd<5?(S.cfg.sched[i][wd]||''):''; if(!cls)return;
+    const done=!off.has(r.name); items.push({...r,i,cls,done}); planned+=r.min;
+    if(done){if(r.g==='c')cl+=r.min;else ot+=r.min}});
+  let sub=0; subs.forEach(n=>{const r=ROWS.find(x=>x.name===n); if(r)sub+=r.min});
+  const missed=items.filter(x=>!x.done).length;
+  return {wd,items,planned,cl,ot,sub,total:cl+ot+sub,subs,missed,note:d.note||''};
+}
+function monthSum(ym){
+  const n=new Date(+ym.slice(0,4),+ym.slice(5,7),0).getDate(); const t={planned:0,total:0,cl:0,ot:0,sub:0,n};
+  for(let i=1;i<=n;i++){const x=dayInfo(ym+'-'+pad(i)); t.planned+=x.planned;t.total+=x.total;t.cl+=x.cl;t.ot+=x.ot;t.sub+=x.sub}
+  return t;
+}
+const monthsList=()=>Array.from({length:10},(_,i)=>shiftYm(S.cfg.start,i));
+
+/* ---------- salvataggio: db condiviso (telefono e tablet), altrimenti memoria del browser ---------- */
+const LS='registro-ore-docente-v1', timers={}, queues={};
+function setSync(s,t){const el=$('#sync');el.dataset.s=s;$('#syncT').textContent=t}
+function lsSave(){try{localStorage.setItem(LS,JSON.stringify({cfg:S.cfg,days:S.days,months:S.months}))}catch(e){}}
+function lsLoad(){try{const v=JSON.parse(localStorage.getItem(LS)||'null');if(v){S.cfg=normCfg(v.cfg);S.days=v.days||{};S.months=v.months||{}}}catch(e){}}
+function writeDoc(path,getter,delay){
+  clearTimeout(timers[path]);
+  timers[path]=setTimeout(()=>{
+    if(!db){lsSave();return}
+    queues[path]=(queues[path]||Promise.resolve()).then(async()=>{
+      try{const data=getter();const ref=db.doc(path);if(data===null)await ref.delete();else await ref.set(clone(data));setSync('ok','Sincronizzato')}
+      catch(e){setSync('err','Non salvato')}});
+  },delay||0);
+}
+function saveDay(iso){const d=S.days[iso];
+  if(d&&!(d.off||[]).length&&!(d.subs||[]).length&&!d.note)delete S.days[iso];
+  writeDoc('days/'+iso,()=>S.days[iso]||null,350)}
+const saveMonth=ym=>writeDoc('months/'+ym,()=>S.months[ym]||null,350);
+const saveCfg=()=>writeDoc('cfg/main',()=>S.cfg,350);
+const dayDoc=iso=>S.days[iso]||(S.days[iso]={off:[],subs:[],note:''});
+const monthDoc=ym=>S.months[ym]||(S.months[ym]={fd:0,gite:0});
+
+function subscribe(){
+  const err=()=>setSync('err','Connessione persa');
+  db.doc('cfg/main').onSnapshot(s=>{if(s.exists)S.cfg=normCfg(clone(s.data()));render()},err);
+  db.collection('days').onSnapshot(q=>{const n={};q.docs.forEach(d=>{n[d.id]=clone(d.data())});S.days=n;render()},err);
+  db.collection('months').onSnapshot(q=>{const n={};q.docs.forEach(d=>{n[d.id]=clone(d.data())});S.months=n;render()},err);
+}
+
+/* ---------- viste ---------- */
+function vOggi(){
+  const iso=S.date, di=dayInfo(iso), diff=di.total-di.planned;
+  const grp=g=>di.items.filter(x=>x.g===g).map(x=>`<button class="row ${x.g}" data-act="tog" data-i="${x.i}" aria-pressed="${x.done}">
+    <span class="chk"></span><span class="nm">${esc(x.name)}<small>${x.time}</small></span><span class="cls">${esc(x.cls)}</span><span class="mn num">${x.min} min</span></button>`).join('');
+  const hasC=di.items.some(x=>x.g==='c'), hasO=di.items.some(x=>x.g==='o');
+  return `
+  <div class="navrow"><button class="ib" data-act="dshift" data-n="-1" aria-label="Giorno precedente">‹</button>
+    <label class="lbl">${esc(dateLabel(iso))}<input type="date" data-in="date" value="${iso}" aria-label="Scegli una data"></label>
+    <button class="ib" data-act="dshift" data-n="1" aria-label="Giorno successivo">›</button></div>
+  ${iso!==TODAY?`<button class="pill amber" data-act="today" style="align-self:center">Torna a oggi</button>`:''}
+  <section class="card"><div class="hero"><div class="big num">${di.total}<small>min svolti</small></div>
+    <span class="diff num ${diff>0?'up':diff<0?'down':''}">${sgn(diff)} min</span></div>
+    <div class="sub hint" style="margin-top:6px">Previsti da orario: <b class="num">${di.planned}</b> min</div>
+    <div class="stats"><div class="stat"><b class="num">${di.cl}</b><span>In classe</span></div>
+      <div class="stat"><b class="num">${di.ot}</b><span>Altre attività</span></div>
+      <div class="stat"><b class="num">${di.sub}</b><span>Sostituzioni</span></div></div></section>
+  <div class="sec"><h2>Attività del giorno</h2>${di.items.length?`<div class="acts"><button class="mini" data-act="alldone">Tutto svolto</button><button class="mini" data-act="nonedone">Niente svolto</button></div>`:''}</div>
+  ${di.items.length?`<div class="list">${hasC?grp('c'):''}${hasO?grp('o'):''}</div>
+    <p class="hint">Tocca un'attività per segnarla come non svolta (barrata) e di nuovo per ripristinarla.</p>`
+    :`<div class="empty">${di.wd>4?'Weekend: nessuna attività in orario.':'Nessuna attività in orario per questo giorno.'}<br>Puoi comunque aggiungere una sostituzione qui sotto.</div>`}
+  <div class="sec"><h2>Sostituzioni (in più)</h2></div>
+  <div class="chips">${ROWS.map(r=>`<button class="chip" data-act="sub" data-n="${esc(r.name)}" aria-pressed="${di.subs.includes(r.name)}">${esc(r.name)}<small class="num">${r.min}</small></button>`).join('')}</div>
+  <div class="sec"><h2>Note</h2></div>
+  <textarea id="note" data-in="note" placeholder="Appunti del giorno (opzionale)">${esc(di.note)}</textarea>`;
+}
+
+function vMese(){
+  const ym=S.month, t=monthSum(ym), diff=t.total-t.planned;
+  const rows=Array.from({length:t.n},(_,k)=>{const iso=ym+'-'+pad(k+1), x=dayInfo(iso), df=x.total-x.planned;
+    const tags=(x.missed?`<span class="tag m">−${x.missed} non svolte</span>`:'')+(x.subs.length?`<span class="tag p">+${x.subs.length} sost.</span>`:'')+(x.note?`<span class="tag n">nota</span>`:'');
+    return `<button class="day ${x.wd>4?'wk':''} ${iso===TODAY?'today':''}" data-act="openday" data-d="${iso}">
+      <span class="dn num">${pad(k+1)}</span><span class="dw">${WD[x.wd]}</span><span class="tg">${tags}</span>
+      <span class="tt num">${x.total||''}</span><span class="df num ${df>0?'up':df<0?'down':''}">${df?sgn(df):''}</span></button>`}).join('');
+  return `
+  <div class="navrow"><button class="ib" data-act="mshift" data-n="-1" aria-label="Mese precedente">‹</button>
+    <div class="lbl">${esc(monthLabel(ym))}</div><button class="ib" data-act="mshift" data-n="1" aria-label="Mese successivo">›</button></div>
+  <section class="card"><div class="hero"><div class="big num">${t.total}<small>min svolti</small></div>
+    <span class="diff num ${diff>0?'up':diff<0?'down':''}">${sgn(diff)} min</span></div>
+    <div class="hint" style="margin-top:6px">Previsti da orario: <b class="num">${t.planned}</b> min</div>
+    <div class="stats"><div class="stat"><b class="num">${t.cl}</b><span>In classe</span></div>
+      <div class="stat"><b class="num">${t.ot}</b><span>Altre attività</span></div>
+      <div class="stat"><b class="num">${t.sub}</b><span>Sostituzioni</span></div></div></section>
+  <button class="btn" data-act="export" data-m="${ym}">Esporta ${esc(monthLabel(ym))} in Excel</button>
+  <div class="sec"><h2>Giorni (minuti svolti e differenza)</h2></div>
+  <div class="days">${rows}</div>`;
+}
+
+function vRiep(){
+  const ms=monthsList(), qFD=S.cfg.qFD*60, qG=S.cfg.qGite*60;
+  let totP=0,totD=0,totCl=0,fd=0,g=0;
+  ms.forEach(ym=>{const s=monthSum(ym),m=S.months[ym]||{};totP+=s.planned;totD+=s.total;totCl+=s.cl;fd+=+m.fd||0;g+=+m.gite||0});
+  const pct=(a,b)=>b?Math.min(100,Math.round(a/b*100)):0;
+  const quota=(k,label,q,done,max)=>`<section class="card"><div class="qh"><h3 style="margin:0">${label}</h3>
+    <div class="step"><button data-act="qstep" data-k="${k}" data-n="-1" aria-label="Meno un'ora">−</button>
+    <input type="number" inputmode="numeric" min="0" max="${max}" data-in="quota" data-k="${k}" value="${q/60}" aria-label="Ore totali ${label}"><button data-act="qstep" data-k="${k}" data-n="1" aria-label="Più un'ora">+</button>ore (max ${max})</div></div>
+    <div class="bar-p"><i style="width:${pct(done,q)}%"></i></div>
+    <div class="nums"><div><b class="num">${done}</b><span>svolti (min)</span></div><div><b class="num">${Math.max(0,q-done)}</b><span>mancanti (min)</span></div><div><b class="num">${pct(done,q)}%</b><span>di ${q} min</span></div></div></section>`;
+  let cF=0,cG=0;
+  const cards=ms.map(ym=>{const s=monthSum(ym),m=S.months[ym]||{},a=+m.fd||0,b=+m.gite||0;cF+=a;cG+=b;const df=s.total-s.planned;
+    return `<section class="card mc"><div class="hd"><b>${esc(monthLabel(ym))}</b><span class="num" style="font-weight:700">${s.total} <span class="hint">/ ${s.planned} min</span></span></div>
+    <div class="sub num">In orario: ${s.planned} · Svolti: ${s.total} · Differenza <span class="df ${df>0?'up':df<0?'down':''}">${sgn(df)}</span></div>
+    <div class="grid2">
+      <div><label for="fd-${ym}">Funzione docente (min)</label><input id="fd-${ym}" type="number" inputmode="numeric" min="0" data-in="mval" data-m="${ym}" data-k="fd" value="${a||''}" placeholder="0">
+        <div class="qa"><button data-act="add" data-m="${ym}" data-k="fd" data-n="30">+30</button><button data-act="add" data-m="${ym}" data-k="fd" data-n="60">+60</button></div></div>
+      <div><label for="gt-${ym}">Gite (min)</label><input id="gt-${ym}" type="number" inputmode="numeric" min="0" data-in="mval" data-m="${ym}" data-k="gite" value="${b||''}" placeholder="0">
+        <div class="qa"><button data-act="add" data-m="${ym}" data-k="gite" data-n="30">+30</button><button data-act="add" data-m="${ym}" data-k="gite" data-n="60">+60</button></div></div></div>
+    <div class="rem num">Mancanti dopo questo mese: funzione docente <b>${Math.max(0,qFD-cF)}</b> min · gite <b>${Math.max(0,qG-cG)}</b> min</div></section>`}).join('');
+  return `
+  ${quota('fd','Funzione docente',qFD,fd,50)}
+  ${quota('gite','Gite',qG,g,70)}
+  <section class="card"><h3>Ore in classe e attività (anno)</h3>
+    <div class="nums"><div><b class="num">${totP}</b><span>previsti (min)</span></div><div><b class="num">${totD}</b><span>svolti (min)</span></div><div><b class="num">${sgn(totD-totP)}</b><span>differenza</span></div></div>
+    <p class="hint" style="margin:10px 0 0">Di cui in classe (1–6, 8, 9 ora): <b class="num">${totCl}</b> min.</p></section>
+  <div class="sec"><h2>Andamento mensile</h2></div>
+  ${cards}
+  <button class="btn alt" data-act="exportyear">Esporta tutto l'anno in Excel</button>
+  <p class="hint">Le quote si scelgono in ore; i versamenti mensili e tutti i conteggi sono in minuti.</p>`;
+}
+
+function installCard(){
+  if(!PLATFORM.pwa||isStandalone())return '';
+  const ios=/iPhone|iPad|iPod/.test(navigator.userAgent);
+  return `<section class="card"><h3>Installa l'app</h3>`+(deferredPrompt?`<p>Aggiungila alla schermata Home: si apre a schermo intero e funziona anche senza connessione.</p><button class="btn" data-act="install">Installa</button>`
+    :ios?`<p>Su iPhone e iPad: apri questa pagina in Safari, tocca <b>Condividi</b> e poi <b>Aggiungi alla schermata Home</b>.</p>`
+    :`<p>Su Android: dal menu del browser (⋮) scegli <b>Installa app</b> o <b>Aggiungi a schermata Home</b>.</p>`)+`</section>`}
+function vOrario(){
+  const empty=S.cfg.sched.every(r=>r.every(c=>!c));
+  const tot=[0,1,2,3,4].map(d=>{let c=0,o=0;ROWS.forEach((r,i)=>{if(S.cfg.sched[i][d]){r.g==='c'?c+=r.min:o+=r.min}});return {c,o}});
+  const body=ROWS.map((r,i)=>`<tr><td class="l ${r.g==='o'?'o':''}">${esc(r.name)}<small>${r.time} · ${r.min} min</small></td>${[0,1,2,3,4].map(d=>`<td><input class="cell" data-in="sched" data-i="${i}" data-d="${d}" value="${esc(S.cfg.sched[i][d])}" maxlength="6" aria-label="${esc(r.name)} ${WDF[d]}"></td>`).join('')}</tr>`).join('');
+  const sum=(lab,f)=>`<tr class="tot"><td class="l">${lab}</td>${tot.map(x=>`<td class="num">${f(x)}</td>`).join('')}</tr>`;
+  return `
+  ${empty?`<section class="card welcome"><h3>Benvenuto/a</h3><ol><li>Scrivi il tuo nome qui sotto.</li><li>Inserisci la classe nelle celle dell'orario (lascia vuoto dove non hai lezione).</li><li>Ogni giorno apri <b>Giorno</b> e tocca le attività che non hai svolto, oppure aggiungi una sostituzione.</li></ol></section>`:''}
+  ${installCard()}
+  <section class="card"><h3>Il tuo nome</h3><input class="field" type="text" data-in="name" value="${esc(S.cfg.name)}" placeholder="Cognome" autocomplete="off" aria-label="Il tuo nome"></section>
+  <div class="sec"><h2>Orario settimanale</h2></div>
+  <div class="scroll"><table><thead><tr><th>Ora</th>${WDF.map(d=>`<th>${d.slice(0,3)}</th>`).join('')}</tr></thead><tbody>${body}</tbody>
+   <tfoot>${sum('In classe',x=>x.c)}${sum('Altre attività',x=>x.o)}${sum('Totale min',x=>x.c+x.o)}</tfoot></table></div>
+  <p class="hint">Scrivi la classe (es. 2A) nella cella; lascia vuoto se non hai lezione. Gli altri fogli si aggiornano da soli. Totale settimana: <b class="num">${tot.reduce((a,x)=>a+x.c+x.o,0)}</b> min.</p>
+  <section class="card"><h3>Primo mese del riepilogo</h3>
+    <input type="month" data-in="start" value="${S.cfg.start}" aria-label="Primo mese">
+    <p class="hint" style="margin:8px 0 0">Il riepilogo mostra 10 mesi a partire da questo (settembre–giugno).</p></section>
+  <section class="card"><h3>Copia dei dati</h3><p class="hint">Salva una copia per non perdere i dati se cambi telefono.</p>
+    <div class="btns"><button class="btn alt" data-act="backup">Salva copia</button><button class="btn alt" data-act="restore">Ripristina da copia</button></div>
+    <input type="file" id="restoreFile" accept=".json,application/json" hidden data-in="restore"></section>`;
+}
+
+/* ---------- disegno ---------- */
+const typing=()=>{const a=document.activeElement;return !!a&&a!==document.body&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&app.contains(a)};
+function render(){
+  if(typing()){dirty=true;return}
+  dirty=false;
+  $('#who').textContent=S.cfg.name?'Docente '+S.cfg.name:'Scrivi il tuo nome in Orario';
+  app.innerHTML=({oggi:vOggi,mese:vMese,riep:vRiep,orario:vOrario})[S.view]();
+  document.querySelectorAll('nav.bar button').forEach(b=>{if(b.dataset.v===S.view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+}
+
+/* ---------- azioni ---------- */
+function act(a,ds){
+  const doc=()=>dayDoc(S.date);
+  if(a==='export'){exportXlsx([ds.m],false);return}
+  if(a==='exportyear'){exportXlsx(monthsList(),true);return}
+  if(a==='backup'){exportBackup();return}
+  if(a==='restore'){$('#restoreFile').click();return}
+  if(a==='install'){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.finally(()=>{deferredPrompt=null;render()})}return}
+  if(a==='go'){S.view=ds.v;window.scrollTo(0,0)}
+  else if(a==='dshift'){S.date=addDays(S.date,+ds.n)}
+  else if(a==='today'){S.date=TODAY}
+  else if(a==='tog'){const n=ROWS[+ds.i].name,d=doc(),k=d.off.indexOf(n);k<0?d.off.push(n):d.off.splice(k,1);saveDay(S.date)}
+  else if(a==='alldone'){doc().off=[];saveDay(S.date)}
+  else if(a==='nonedone'){doc().off=dayInfo(S.date).items.map(x=>x.name);saveDay(S.date)}
+  else if(a==='sub'){const d=doc(),k=d.subs.indexOf(ds.n);k<0?d.subs.push(ds.n):d.subs.splice(k,1);saveDay(S.date)}
+  else if(a==='mshift'){S.month=shiftYm(S.month,+ds.n)}
+  else if(a==='openday'){S.date=ds.d;S.view='oggi';window.scrollTo(0,0)}
+  else if(a==='add'){const m=monthDoc(ds.m);m[ds.k]=(+m[ds.k]||0)+(+ds.n);saveMonth(ds.m)}
+  else if(a==='qstep'){const key=ds.k==='fd'?'qFD':'qGite',max=ds.k==='fd'?50:70;S.cfg[key]=Math.max(0,Math.min(max,S.cfg[key]+(+ds.n)));saveCfg()}
+  render();
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b)act(b.dataset.act,b.dataset)});
+app.addEventListener('input',e=>{
+  const t=e.target,k=t.dataset.in; if(!k||k==='date'||k==='start')return;
+  if(k==='note'){dayDoc(S.date).note=t.value;saveDay(S.date)}
+  else if(k==='name'){S.cfg.name=t.value.trim();saveCfg();$('#who').textContent=S.cfg.name?'Docente '+S.cfg.name:'Scrivi il tuo nome in Orario'}
+  else if(k==='mval'){monthDoc(t.dataset.m)[t.dataset.k]=Math.max(0,Math.round(+t.value||0));saveMonth(t.dataset.m)}
+  else if(k==='quota'){const fd=t.dataset.k==='fd';S.cfg[fd?'qFD':'qGite']=Math.max(0,Math.min(fd?50:70,Math.round(+t.value||0)));saveCfg()}
+  else if(k==='sched'){S.cfg.sched[+t.dataset.i][+t.dataset.d]=t.value.trim().toUpperCase();saveCfg()}
+  dirty=true;
+});
+app.addEventListener('change',e=>{
+  const t=e.target,k=t.dataset.in;
+  if(k==='date'&&t.value){S.date=t.value;t.blur();render()}
+  else if(k==='start'&&t.value){S.cfg.start=t.value;saveCfg();t.blur();render()}
+  else if(k==='restore'&&t.files&&t.files[0]){importBackup(t.files[0]);t.value=''}
+});
+app.addEventListener('focusout',()=>setTimeout(()=>{if(dirty&&!typing())render()},0));
+
+/* ---------- esportazione Excel, copia dati, toast ---------- */
+let deferredPrompt=null;
+const isStandalone=()=>(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+const XLSX_MIME='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),3400)}
+const fillOf=c=>({type:'pattern',pattern:'solid',fgColor:{argb:'FF'+c}});
+const THIN={style:'thin',color:{argb:'FF000000'}}, BORD={top:THIN,left:THIN,bottom:THIN,right:THIN};
+function sty(c,o){o=o||{};c.font={name:'Calibri',size:o.size||11,bold:!!o.bold,italic:!!o.italic,color:{argb:'FF'+(o.color||'000000')}};
+  c.alignment={horizontal:o.left?'left':'center',vertical:'middle',wrapText:true};c.border=BORD;if(o.fill)c.fill=fillOf(o.fill);if(o.fmt)c.numFmt=o.fmt}
+function put(ws,r,c,v,o){const cell=ws.getCell(r,c);cell.value=v;sty(cell,o);return cell}
+function mrg(ws,r1,c1,r2,c2,v,o){ws.mergeCells(r1,c1,r2,c2);for(let r=r1;r<=r2;r++)for(let c=c1;c<=c2;c++)sty(ws.getCell(r,c),o);ws.getCell(r1,c1).value=v}
+const ACT=[['Ricr.','Ricr'],['Pranzo 1','Pranzo 1'],['Ricr P','Ricr Pranzo'],['7 ora','7 ora'],['Pranzo 2','Pranzo 2'],['TSP 1','TSP1'],['TSP 2','TSP2']];
+const ORANGE_ACT=['Ricr.','Pranzo 1','Ricr P','Pranzo 2','TSP 1','TSP 2'];
+const minOf=n=>ROWS.find(r=>r.name===n).min;
+
+function addMonthSheet(wb,ym){
+  const ws=wb.addWorksheet(monthLabel(ym));
+  const n=new Date(+ym.slice(0,4),+ym.slice(5,7),0).getDate();
+  [7,7,13,8,9,11,8,9,8,8,11,11,11,11,16,38,3,13,6].forEach((w,i)=>{ws.getColumn(i+1).width=w});
+  mrg(ws,1,1,1,2,'DOCENTE',{bold:true,size:14});
+  mrg(ws,1,3,1,4,S.cfg.name||'',{bold:true,size:14,fill:'FFC000'});
+  mrg(ws,1,6,1,7,'MESE',{bold:true,size:14});
+  mrg(ws,1,11,1,14,monthLabel(ym),{bold:true,size:14,fill:'FFC000'});
+  ws.getRow(1).height=24;
+  mrg(ws,2,1,2,2,'GIORNO',{bold:true,fill:'D9D9D9'});
+  put(ws,2,3,'Ore in classe',{fill:'9BC2E6'});
+  ACT.forEach(([nm,lab],i)=>put(ws,2,4+i,lab,{fill:ORANGE_ACT.includes(nm)?'FFC000':'9BC2E6'}));
+  mrg(ws,2,11,2,14,'Sostituzioni',{fill:'9BC2E6'});
+  put(ws,2,15,'Ore TOTALI (min)',{fill:'9BC2E6'});put(ws,2,16,'NOTE',{fill:'9BC2E6'});
+  put(ws,2,18,'Elenco sostituzioni',{fill:'9BC2E6',size:9});put(ws,2,19,'min',{fill:'9BC2E6',size:9});
+  ws.getRow(2).height=32;
+  mrg(ws,3,1,3,3,'minuti →',{italic:true,color:'595959',fill:'D9D9D9',size:10});
+  ACT.forEach(([nm],i)=>put(ws,3,4+i,minOf(nm),{italic:true,color:'595959',fill:'D9D9D9',size:10}));
+  mrg(ws,3,11,3,14,"scegli dall'elenco (fino a 4)",{italic:true,color:'595959',fill:'D9D9D9',size:10});
+  put(ws,3,15,'',{fill:'D9D9D9'});put(ws,3,16,'',{fill:'D9D9D9'});
+  ROWS.forEach((r,i)=>{put(ws,3+i,18,r.name,{size:9});put(ws,3+i,19,r.min,{size:9})});
+  let sumC=0,sumO=0,planned=0;
+  for(let k=1;k<=n;k++){
+    const r=3+k, iso=ym+'-'+pad(k), x=dayInfo(iso), wk=x.wd>4, f=wk?'FFC000':null;
+    put(ws,r,1,k,{bold:true,fill:wk?'FFC000':'D9D9D9',fmt:'00'});put(ws,r,2,WD[x.wd],{bold:true,fill:wk?'FFC000':'D9D9D9'});
+    put(ws,r,3,x.cl,{fill:f,fmt:'0;;'});
+    ACT.forEach(([nm],i)=>{const it=x.items.find(z=>z.name===nm);put(ws,r,4+i,it&&it.done?'x':'',{fill:f})});
+    for(let j=0;j<4;j++){const c=put(ws,r,11+j,x.subs[j]||'',{fill:f});c.dataValidation={type:'list',allowBlank:true,formulae:['$R$3:$R$17']}}
+    const over=x.subs.slice(4);
+    const note=(x.note||'')+(over.length?(x.note?' · ':'')+'Altre sostituzioni: '+over.join(', '):'');
+    if(over.length){put(ws,r,15,x.total,{bold:true,fill:f,fmt:'0;;'})}
+    else put(ws,r,15,{formula:`C${r}+SUMPRODUCT((D${r}:J${r}="x")*$D$3:$J$3)+SUMPRODUCT(COUNTIF(K${r}:N${r},$R$3:$R$17)*$S$3:$S$17)`,result:x.total},{bold:true,fill:f,fmt:'0;;'});
+    put(ws,r,16,note,{fill:f,left:true});
+    sumC+=x.cl;sumO+=x.total;planned+=x.planned;
+  }
+  const T=4+n;
+  mrg(ws,T,1,T,2,'TOTALE MESE (minuti)',{bold:true,fill:'D9D9D9'});
+  put(ws,T,3,{formula:`SUM(C4:C${T-1})`,result:sumC},{bold:true,fmt:'0'});
+  put(ws,T,15,{formula:`SUM(O4:O${T-1})`,result:sumO},{bold:true,fmt:'0'});
+  mrg(ws,T+1,1,T+1,2,'Previsti da orario (minuti)',{bold:true,fill:'D9D9D9'});put(ws,T+1,15,planned,{bold:true,fmt:'0'});
+  mrg(ws,T+2,1,T+2,2,'Differenza (totali − previsti)',{bold:true,fill:'D9D9D9'});
+  put(ws,T+2,15,{formula:`O${T}-O${T+1}`,result:sumO-planned},{bold:true,fmt:'+0;[Red]-0;0'});
+  [T,T+1,T+2].forEach(r=>{ws.getRow(r).height=30});
+  ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9};
+  ws.pageSetup.printArea='A1:P'+(T+2);
+}
+
+function addSummarySheet(wb){
+  const ws=wb.addWorksheet('Riepilogo');
+  [16,13,13,13,15,15,15,13,13,13].forEach((w,i)=>{ws.getColumn(i+1).width=w});
+  ws.getColumn(1).width=34;
+  mrg(ws,1,1,1,10,'RIEPILOGO ORE',{bold:true,size:16});mrg(ws,2,1,2,3,S.cfg.name?'Docente '+S.cfg.name:'',{bold:true,left:true,size:12});
+  ['Voce','Totale ore','Totale minuti','Svolti (min)','Mancanti (min)'].forEach((h,i)=>put(ws,4,1+i,h,{fill:'9BC2E6'}));
+  const ms=monthsList(), M0=11, M1=20, MT=21;
+  let cF=0,cG=0,totP=0,totD=0,fdT=0,gT=0;
+  const sums=ms.map(ym=>{const s=monthSum(ym),m=S.months[ym]||{};return {ym,s,fd:+m.fd||0,g:+m.gite||0}});
+  sums.forEach(z=>{totP+=z.s.planned;totD+=z.s.total;fdT+=z.fd;gT+=z.g});
+  const qFD=S.cfg.qFD*60,qG=S.cfg.qGite*60;
+  put(ws,5,1,'Funzione docente',{bold:true,fill:'D9D9D9',left:true});put(ws,5,2,S.cfg.qFD,{fill:'FFF2CC'});
+  put(ws,5,3,{formula:'B5*60',result:qFD},{});put(ws,5,4,{formula:`E${MT}`,result:fdT},{});put(ws,5,5,{formula:'MAX(0,C5-D5)',result:Math.max(0,qFD-fdT)},{bold:true});
+  put(ws,6,1,'Gite',{bold:true,fill:'D9D9D9',left:true});put(ws,6,2,S.cfg.qGite,{fill:'FFF2CC'});
+  put(ws,6,3,{formula:'B6*60',result:qG},{});put(ws,6,4,{formula:`H${MT}`,result:gT},{});put(ws,6,5,{formula:'MAX(0,C6-D6)',result:Math.max(0,qG-gT)},{bold:true});
+  put(ws,7,1,'Ore in classe e attività (da orario)',{bold:true,fill:'D9D9D9',left:true});put(ws,7,2,'—',{});
+  put(ws,7,3,{formula:`B${MT}`,result:totP},{});put(ws,7,4,{formula:`C${MT}`,result:totD},{});put(ws,7,5,{formula:'MAX(0,C7-D7)',result:Math.max(0,totP-totD)},{bold:true});
+  ['Mese','Previsti da orario','Svolti (Ore TOTALI)','Differenza','Funzione docente: svolti nel mese','Funzione docente: cumulati','Funzione docente: mancanti','Gite: svolte nel mese','Gite: cumulate','Gite: mancanti']
+    .forEach((h,i)=>put(ws,10,1+i,h,{fill:'9BC2E6',size:10}));
+  ws.getRow(10).height=48;
+  sums.forEach((z,i)=>{const r=M0+i;cF+=z.fd;cG+=z.g;
+    put(ws,r,1,monthLabel(z.ym),{bold:true,fill:'D9D9D9',left:true});put(ws,r,2,z.s.planned,{});put(ws,r,3,z.s.total,{});
+    put(ws,r,4,{formula:`C${r}-B${r}`,result:z.s.total-z.s.planned},{fmt:'+0;[Red]-0;0'});
+    put(ws,r,5,z.fd,{fill:'FFF2CC'});put(ws,r,6,{formula:`SUM(E$${M0}:E${r})`,result:cF},{});put(ws,r,7,{formula:`MAX(0,$C$5-F${r})`,result:Math.max(0,qFD-cF)},{});
+    put(ws,r,8,z.g,{fill:'FFF2CC'});put(ws,r,9,{formula:`SUM(H$${M0}:H${r})`,result:cG},{});put(ws,r,10,{formula:`MAX(0,$C$6-I${r})`,result:Math.max(0,qG-cG)},{})});
+  put(ws,MT,1,'TOTALE',{bold:true,fill:'D9D9D9',left:true});
+  [['B',totP],['C',totD],['E',fdT],['H',gT]].forEach(([c,v])=>put(ws,MT,c.charCodeAt(0)-64,{formula:`SUM(${c}${M0}:${c}${M1})`,result:v},{bold:true,fill:'D9D9D9'}));
+  put(ws,MT,4,{formula:`C${MT}-B${MT}`,result:totD-totP},{bold:true,fill:'D9D9D9',fmt:'+0;[Red]-0;0'});
+  put(ws,MT,6,{formula:`F${M1}`,result:cF},{bold:true,fill:'D9D9D9'});put(ws,MT,7,{formula:`G${M1}`,result:Math.max(0,qFD-cF)},{bold:true,fill:'D9D9D9'});
+  put(ws,MT,9,{formula:`I${M1}`,result:cG},{bold:true,fill:'D9D9D9'});put(ws,MT,10,{formula:`J${M1}`,result:Math.max(0,qG-cG)},{bold:true,fill:'D9D9D9'});
+  ws.getCell(23,1).value='Tutti i conteggi sono in minuti; le quote (celle gialle) sono in ore.';ws.getCell(23,1).font={name:'Calibri',size:10,italic:true,color:{argb:'FF595959'}};
+  ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9};
+}
+
+let exporting=false;
+async function exportXlsx(yms,whole){
+  if(exporting)return;
+  if(!window.ExcelJS){toast('Libreria Excel non caricata: controlla la connessione');return}
+  exporting=true;
+  try{
+    const wb=new ExcelJS.Workbook();wb.creator='Registro Ore Docente';
+    if(whole)addSummarySheet(wb);
+    yms.forEach(ym=>addMonthSheet(wb,ym));
+    const buf=await wb.xlsx.writeBuffer();
+    const who=(S.cfg.name||'').replace(/[^\w\- ]+/g,'').trim().replace(/ +/g,'-');
+    const label=whole?'Anno':monthLabel(yms[0]).replace(/ /g,'-');
+    const name='Ore-'+(who?who+'-':'')+label+'.xlsx';
+    await PLATFORM.saveFile(name,new Blob([buf],{type:XLSX_MIME}));
+    toast('File Excel pronto');
+  }catch(e){
+    if(e&&e.code==='declined')toast('Download annullato');
+    else if(e&&(e.code==='unavailable'||e.code==='not_granted'))toast('Download non disponibile qui');
+    else toast('Non sono riuscito a creare il file');
+  }finally{exporting=false}
+}
+
+function exportBackup(){
+  const blob=new Blob([JSON.stringify({v:1,cfg:S.cfg,days:S.days,months:S.months})],{type:'application/json'});
+  PLATFORM.saveFile('registro-ore-copia.json',blob).then(()=>toast('Copia salvata')).catch(e=>{if(!(e&&e.code==='declined'))toast('Copia non riuscita')});
+}
+function importBackup(file){
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const v=JSON.parse(r.result);if(!v||!v.cfg||typeof v.days!=='object'||typeof v.months!=='object')throw new Error('bad');
+    const oldD=Object.keys(S.days),oldM=Object.keys(S.months);
+    const okD=k=>/^\d{4}-\d{2}-\d{2}$/.test(k), okM=k=>/^\d{4}-\d{2}$/.test(k);
+    S.cfg=normCfg(v.cfg);S.days={};S.months={};
+    Object.keys(v.days).filter(okD).forEach(k=>{S.days[k]=v.days[k]});Object.keys(v.months).filter(okM).forEach(k=>{S.months[k]=v.months[k]});
+    saveCfg();
+    new Set([...oldD,...Object.keys(S.days)]).forEach(k=>writeDoc('days/'+k,()=>S.days[k]||null,0));
+    new Set([...oldM,...Object.keys(S.months)]).forEach(k=>writeDoc('months/'+k,()=>S.months[k]||null,0));
+    render();toast('Dati ripristinati');
+  }catch(e){toast('File non valido')}};
+  r.readAsText(file);
+}
+
+/* ---------- avvio ---------- */
+render();
+PLATFORM.start();
+</script>
+
+</body></html>
