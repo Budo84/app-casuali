@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "28/09/2026 20:39",
+    "data_aggiornamento": "05/10/2026 12:58",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -269,6 +269,48 @@
                         "Aceto di mele",
                         "Origano secco",
                         "Sale e pepe nero"
+                    ]
+                },
+                {
+                    "title": "Insalata Rinfrescante di Salmone Sockeye e Agrumi",
+                    "ingredients": [
+                        "SALMONE SELVAGGIO D'ALASKA SOCKEYE ICELANDER affumicato 100g",
+                        "Misto di insalata verde (es. rucola, spinacino)",
+                        "Arance a fette",
+                        "Pompelmo rosa a spicchi",
+                        "Olive taggiasche denocciolate",
+                        "Finocchio tagliato sottile",
+                        "Olio extra vergine d'oliva",
+                        "Sale, pepe nero",
+                        "Menta fresca"
+                    ]
+                },
+                {
+                    "title": "Focaccine Mediterranee con Cacio e Pomodorini Secchi",
+                    "ingredients": [
+                        "MISCELA DI FARINE PER PIZZA CONAD 1kg",
+                        "Acqua tiepida",
+                        "Lievito di birra fresco",
+                        "Olio extra vergine d'oliva",
+                        "Sale",
+                        "Cacio fresco a cubetti",
+                        "Pomodorini secchi sott'olio",
+                        "Origano fresco o secco"
+                    ]
+                },
+                {
+                    "title": "Polpette di Manzo al Muller Thurgau e Erbe Fini",
+                    "ingredients": [
+                        "CARNE DI BOVINO CONAD in gelatina 6x90g (usata come base per polpette)",
+                        "ANTICHI MAESTRI Formaggio grattugiato italiano",
+                        "Uovo",
+                        "Pangrattato (senza glutine se preferibile)",
+                        "Prezzemolo tritato",
+                        "Aglio tritato",
+                        "VINO MULLER THURGAU TRENTINO DOC COSTALTA 75cl",
+                        "Brodo vegetale",
+                        "Olio extra vergine d'oliva",
+                        "Sale, pepe"
                     ]
                 }
             ],
@@ -1206,6 +1248,53 @@
                         "Succo di limone",
                         "Sale e pepe"
                     ]
+                },
+                {
+                    "title": "Burger di Legumi e Funghi con Crema Vegana al Peperoncino",
+                    "ingredients": [
+                        "Lenticchie rosse",
+                        "Funghi champignon",
+                        "Cipolla rossa",
+                        "Carota",
+                        "Pangrattato",
+                        "Spezie (paprika affumicata, cumino)",
+                        "Pane per burger (integrale o ai cereali)",
+                        "BEVANDE VEGETALI ALPRO vari tipi 1L (per maionese vegana)",
+                        "Olio di semi",
+                        "Aceto di mele",
+                        "Peperoncino fresco",
+                        "Lattuga, pomodoro"
+                    ]
+                },
+                {
+                    "title": "Spiedini Arcobaleno al Pesto di Rucola e Noci con Cacio Fresco",
+                    "ingredients": [
+                        "Zucchine",
+                        "Peperoni colorati",
+                        "Pomodorini ciliegino",
+                        "Cipolla rossa",
+                        "Cacio fresco a cubetti",
+                        "Rucola",
+                        "Noci",
+                        "Parmigiano Reggiano (opzionale, per chi non vegano)",
+                        "Aglio",
+                        "Olio extra vergine d'oliva",
+                        "Sale, pepe"
+                    ]
+                },
+                {
+                    "title": "Zuppa Cremosa di Zucca e Zenzero al Latte di Cocco e Riso",
+                    "ingredients": [
+                        "Zucca Butternut",
+                        "Cipolla",
+                        "Zenzero fresco",
+                        "Brodo vegetale",
+                        "VEMONDO Bevanda di cocco e riso bio",
+                        "Curry in polvere",
+                        "Olio extra vergine d'oliva",
+                        "Sale, pepe",
+                        "Semi di zucca tostati (per guarnire)"
+                    ]
                 }
             ],
             "merenda": [
@@ -1939,6 +2028,42 @@
                         "Succo di lime",
                         "Ghiaccio"
                     ]
+                },
+                {
+                    "title": "Mars/Twix/Snickers Spring Rolls Dolci con Salsa al Mango",
+                    "ingredients": [
+                        "BARRETTE SNACK Mars/Twix/Snickers x3",
+                        "Pasta fillo",
+                        "Olio di semi (per friggere)",
+                        "Mango fresco",
+                        "Lime",
+                        "Menta fresca"
+                    ]
+                },
+                {
+                    "title": "Tropical Fuze Tea Cooler con Cocco e Frutti di Bosco",
+                    "ingredients": [
+                        "FUZE TEA vari gusti 1,25L (gusto pesca o limone)",
+                        "VEMONDO Bevanda di cocco e riso bio",
+                        "Frutti di bosco misti (freschi o congelati)",
+                        "Fette d'arancia o lime",
+                        "Menta fresca",
+                        "Ghiaccio"
+                    ]
+                },
+                {
+                    "title": "Mini Empanadas al Cacio Stagionato e Peperoni Affumicati",
+                    "ingredients": [
+                        "MISCELA DI FARINE PER PIZZA CONAD 1kg (per l'impasto)",
+                        "Acqua fredda",
+                        "Burro freddo a cubetti",
+                        "Sale",
+                        "Cacio stagionato grattugiato",
+                        "Peperoni rossi arrostiti (sott'olio o freschi)",
+                        "Cipolla rossa",
+                        "Paprika affumicata",
+                        "Uovo (per spennellare)"
+                    ]
                 }
             ],
             "aperitivo": [
@@ -2040,6 +2165,42 @@
                         "Frutti di bosco freschi",
                         "Pizzico di sale",
                         "Olio per ungere la padella"
+                    ]
+                },
+                {
+                    "title": "Pancakes di Grano Saraceno e Banana con Sciroppo d'Acero",
+                    "ingredients": [
+                        "Farina di grano saraceno",
+                        "Banana matura schiacciata",
+                        "Uovo",
+                        "BEVANDE VEGETALI ALPRO vari tipi 1L (es. mandorla o avena senza glutine)",
+                        "Lievito per dolci (senza glutine)",
+                        "Sciroppo d'acero",
+                        "Frutti di bosco freschi"
+                    ]
+                },
+                {
+                    "title": "Porridge Cremoso di Riso e Cocco con Frutta Esotica",
+                    "ingredients": [
+                        "Riso per risotti (o fiocchi di riso)",
+                        "VEMONDO Bevanda di cocco e riso bio",
+                        "Acqua",
+                        "Zucchero di canna o sciroppo d'agave",
+                        "Ananas fresco a cubetti",
+                        "Mango fresco a cubetti",
+                        "Scaglie di cocco tostate"
+                    ]
+                },
+                {
+                    "title": "Frittata Rustica di Patate e Salmone Affumicato",
+                    "ingredients": [
+                        "Patate",
+                        "Uova",
+                        "SALMONE SELVAGGIO D'ALASKA SOCKEYE ICELANDER affumicato 100g",
+                        "Cipollotto fresco",
+                        "Olio extra vergine d'oliva",
+                        "Sale, pepe",
+                        "Erba cipollina fresca"
                     ]
                 }
             ],
