@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "05/10/2026 12:58",
+    "data_aggiornamento": "12/10/2026 13:50",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -312,6 +312,20 @@
                         "Olio extra vergine d'oliva",
                         "Sale, pepe"
                     ]
+                },
+                {
+                    "title": "Insalata Mediterranea Ricca con Prosciutto Cotto e Mais",
+                    "ingredients": [
+                        "Merenda Unduetris! Citterio Prosciutto Cotto (100g, a cubetti)",
+                        "Mais Valfrutta (160g, scolato)",
+                        "Olive nere o verdi Costanza (50g, snocciolate)",
+                        "Pomodori Secchi di Calabria Sapori & Dintorni Conad (30g, tritati)",
+                        "Foglie miste di insalata (es. rucola, spinacino)",
+                        "Olio d'oliva extra vergine",
+                        "Aceto balsamico",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -528,6 +542,19 @@
                         "Olio extra vergine d'oliva",
                         "Parmigiano Reggiano grattugiato"
                     ]
+                },
+                {
+                    "title": "Spiedini di Merluzzo e Sapori del Sud su Crema di Squacquerone",
+                    "ingredients": [
+                        "Burger di merluzzo d'Alaska (2, tagliati a cubetti)",
+                        "Pomodori Secchi di Calabria Sapori & Dintorni Conad (50g, a striscioline)",
+                        "Carciofi a metà Costanza (100g, scolati e tagliati)",
+                        "Squacquerone di Romagna DOP Sapori & Dintorni Conad (100g)",
+                        "Olio d'oliva",
+                        "Sale",
+                        "Pepe",
+                        "Erbe aromatiche fresche (es. origano o timo)"
+                    ]
                 }
             ],
             "merenda": [
@@ -687,6 +714,18 @@
                         "Erba cipollina fresca tritata",
                         "CONSERVE COSTANZA olive nere denocciolate (tritate finemente per il cuore)",
                         "Sale e pepe bianco"
+                    ]
+                },
+                {
+                    "title": "Fagottini di Prosciutto e Squacquerone con Funghi Trifolati",
+                    "ingredients": [
+                        "Merenda Unduetris! Citterio Prosciutto Cotto (80g, affettato sottile)",
+                        "Squacquerone di Romagna DOP Sapori & Dintorni Conad (80g)",
+                        "Funghi Costanza (100g, scolati e saltati)",
+                        "Olio d'oliva",
+                        "Prezzemolo fresco (tritato)",
+                        "Sale",
+                        "Pepe"
                     ]
                 }
             ]
@@ -1049,6 +1088,19 @@
                         "Olio extra vergine d'oliva",
                         "Vino bianco secco"
                     ]
+                },
+                {
+                    "title": "Insalata di Funghi, Olive e Pomodori Secchi con Vinaigrette al Bitter",
+                    "ingredients": [
+                        "Funghi Costanza (100g, scolati)",
+                        "Olive varie Costanza (50g, snocciolate)",
+                        "Pomodori Secchi di Calabria Sapori & Dintorni Conad (40g, a filetti)",
+                        "Misticanza fresca (100g)",
+                        "Olio d'oliva extra vergine",
+                        "Bitter Conad (5ml, per la vinaigrette)",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -1295,6 +1347,21 @@
                         "Sale, pepe",
                         "Semi di zucca tostati (per guarnire)"
                     ]
+                },
+                {
+                    "title": "Polpette Croccanti di Mais e Carciofi con Salsa allo Squacquerone",
+                    "ingredients": [
+                        "Mais Valfrutta (160g, frullato grossolanamente)",
+                        "Carciofi a metà Costanza (100g, tritati finemente)",
+                        "Dado Knorr vegetale (1/2 cubetto, sciolto in acqua calda)",
+                        "Pangrattato (50g)",
+                        "Uovo (1, per legare)",
+                        "Squacquerone di Romagna DOP Sapori & Dintorni Conad (50g, per la salsa)",
+                        "Erba cipollina fresca (per la salsa)",
+                        "Olio per friggere",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "merenda": [
@@ -1385,6 +1452,20 @@
                         "Miele o sciroppo d'acero",
                         "Menta fresca per guarnire",
                         "Spiedini di legno"
+                    ]
+                },
+                {
+                    "title": "Spiedini Veggie Colorati con Dip di Squacquerone e Erbe",
+                    "ingredients": [
+                        "Carciofi a metà Costanza (100g, tagliati a pezzi)",
+                        "Peperoni colorati (1, tagliato a cubetti)",
+                        "Zucchine (1, tagliata a rondelle spesse)",
+                        "Pomodorini ciliegino (100g)",
+                        "Squacquerone di Romagna DOP Sapori & Dintorni Conad (100g, per il dip)",
+                        "Olio d'oliva",
+                        "Sale",
+                        "Pepe",
+                        "Basilico fresco (tritato, per il dip)"
                     ]
                 }
             ]
@@ -1651,6 +1732,20 @@
                         "Menta e prezzemolo freschi",
                         "Semi di sesamo tostati"
                     ]
+                },
+                {
+                    "title": "Poke Bowl con Sashimi di Salmone, Mais e Salsa Orientale",
+                    "ingredients": [
+                        "Sashimi di Salmone Sapori & Idee Conad limone e pepe rosa (100g, a cubetti)",
+                        "Mais Valfrutta (160g, scolato)",
+                        "Riso Basmati (150g, cotto)",
+                        "Cetrioli (1/2, a julienne)",
+                        "Avocado (1/2, a fette)",
+                        "Salsa di soia",
+                        "Aceto di riso",
+                        "Semi di sesamo",
+                        "Coriandolo fresco"
+                    ]
                 }
             ],
             "cena": [
@@ -1890,6 +1985,18 @@
                         "Semi di sesamo neri e bianchi",
                         "Cipollotto fresco"
                     ]
+                },
+                {
+                    "title": "Wrap Tex-Mex con Kabanos Affumicati e Crema di Squacquerone",
+                    "ingredients": [
+                        "Alpenfeststyle Kabanos salamini affumicati (100g, affettati e scottati)",
+                        "Mais Valfrutta (160g, scolato)",
+                        "Pomodori Secchi di Calabria Sapori & Dintorni Conad (30g, tritati)",
+                        "Squacquerone di Romagna DOP Sapori & Dintorni Conad (50g, per la crema)",
+                        "Tortillas di farina (2-3)",
+                        "Cipolla rossa (1/4, a julienne)",
+                        "Lattuga iceberg (50g, a striscioline)"
+                    ]
                 }
             ],
             "merenda": [
@@ -2063,6 +2170,18 @@
                         "Cipolla rossa",
                         "Paprika affumicata",
                         "Uovo (per spennellare)"
+                    ]
+                },
+                {
+                    "title": "Mini Tacos di Merluzzo Croccante con Salsa di Mais e Pomodori Secchi",
+                    "ingredients": [
+                        "Burger di merluzzo d'Alaska (2, cotti e sbriciolati)",
+                        "Mais Valfrutta (160g, per la salsa)",
+                        "Pomodori Secchi di Calabria Sapori & Dintorni Conad (40g, per la salsa)",
+                        "Mini tortillas di mais (6-8)",
+                        "Lime (1/2, succo)",
+                        "Coriandolo fresco (per guarnire)",
+                        "Olio per cuocere"
                     ]
                 }
             ],
@@ -2362,6 +2481,22 @@
                         "Olio extra vergine d'oliva",
                         "Rosmarino fresco"
                     ]
+                },
+                {
+                    "title": "Frittelle di Mais e Kabanos su Crema Morbida di Patate",
+                    "ingredients": [
+                        "Mais Valfrutta (160g, scolato)",
+                        "Alpenfeststyle Kabanos salamini affumicati (100g, tritati finemente)",
+                        "Patate (400g, per la crema)",
+                        "Farina di mais (50g, per le frittelle)",
+                        "Uovo (1, per legare le frittelle)",
+                        "Dado Knorr classico (1/2 cubetto, per la crema)",
+                        "Latte (100ml, per la crema)",
+                        "Burro (20g, per la crema)",
+                        "Olio per friggere",
+                        "Sale",
+                        "Pepe"
+                    ]
                 }
             ],
             "cena": [
@@ -2527,6 +2662,21 @@
                         "Ricotta salata (grattugiata)",
                         "Sale e pepe nero"
                     ]
+                },
+                {
+                    "title": "Risotto Cremoso ai Funghi Porcini e Squacquerone",
+                    "ingredients": [
+                        "Riso Carnaroli (320g)",
+                        "Funghi Costanza (200g, scolati)",
+                        "Dado Knorr vegetale (1 cubetto)",
+                        "Squacquerone di Romagna DOP Sapori & Dintorni Conad (100g)",
+                        "Cipolla (1/2, tritata)",
+                        "Vino bianco secco (50ml, per sfumare)",
+                        "Olio d'oliva",
+                        "Sale",
+                        "Pepe",
+                        "Prezzemolo fresco"
+                    ]
                 }
             ],
             "merenda": [
@@ -2588,6 +2738,21 @@
                         "Prezzemolo fresco tritato",
                         "Peperoncino in polvere (opzionale)",
                         "Sale e pepe nero"
+                    ]
+                },
+                {
+                    "title": "Insalata Fresca di Grano Saraceno con Sashimi di Salmone e Pomodori Secchi",
+                    "ingredients": [
+                        "Grano Saraceno (150g, cotto)",
+                        "Sashimi di Salmone Sapori & Idee Conad limone e pepe rosa (100g, a cubetti)",
+                        "Pomodori Secchi di Calabria Sapori & Dintorni Conad (50g, a striscioline)",
+                        "Cetrioli (1/2, a cubetti)",
+                        "Olive verdi o nere Costanza (30g, snocciolate e tagliate)",
+                        "Olio d'oliva extra vergine",
+                        "Succo di limone (1 cucchiaio)",
+                        "Menta fresca (tritata)",
+                        "Sale",
+                        "Pepe"
                     ]
                 }
             ]
