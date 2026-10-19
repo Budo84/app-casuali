@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "12/10/2026 13:50",
+    "data_aggiornamento": "19/10/2026 11:31",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -49,6 +49,16 @@
                         "BUONDI CLASSICO 6 pz 198 g",
                         "VALLE' NATURALMENTE MARGARINA 250 g",
                         "NETTARINE A POLPA GIALLA"
+                    ]
+                },
+                {
+                    "title": "Coppa di ricotta montata, scorza d'arancia e crumble di Macine al miele",
+                    "ingredients": [
+                        "MACINE MULINO BIANCO 700g/800g",
+                        "Ricotta di pecora fresca",
+                        "Scorza di arancia non trattata",
+                        "Miele millefiori",
+                        "Foglie di menta"
                     ]
                 }
             ],
@@ -326,6 +336,16 @@
                         "Sale",
                         "Pepe"
                     ]
+                },
+                {
+                    "title": "Carpaccio caldo di bresaola con coulis di pomodoro al basilico e burrata",
+                    "ingredients": [
+                        "BRESAOLA DELLA VALTELLINA IGP RIGAMONTI punta d'anca 70g",
+                        "PASSATA DI POMODORO CONAD classica 700g",
+                        "Burrata pugliese",
+                        "Basilico fresco",
+                        "Olio extravergine d'oliva"
+                    ]
                 }
             ],
             "cena": [
@@ -554,6 +574,16 @@
                         "Sale",
                         "Pepe",
                         "Erbe aromatiche fresche (es. origano o timo)"
+                    ]
+                },
+                {
+                    "title": "Tagliata di coppa laccata alla riduzione di Pepsi, rosmarino e purea di carote",
+                    "ingredients": [
+                        "Tagliata di coppa di suino marinata",
+                        "PEPSI vari tipi 1,5L",
+                        "Carote",
+                        "Rosmarino fresco",
+                        "Olio extravergine d'oliva"
                     ]
                 }
             ],
@@ -865,6 +895,16 @@
                         "Semi di chia",
                         "Noci tritate"
                     ]
+                },
+                {
+                    "title": "Biscotto-dessert Oro Ciok inzuppato nel thè deteinato alla pesca con crema allo yogurt",
+                    "ingredients": [
+                        "BISCOTTI ORO CIOK SAIWA fondente 200g/classico/nocciola 250g/bianco 150g",
+                        "THÈ DETEINATO CONAD limone/pesca 25cl",
+                        "Yogurt greco colato",
+                        "Miele d'acacia",
+                        "Mirtilli freschi"
+                    ]
                 }
             ],
             "pranzo": [
@@ -1100,6 +1140,17 @@
                         "Bitter Conad (5ml, per la vinaigrette)",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Vellutata rustica di ceci e pomodoro al profumo di maggiorana con crostoni",
+                    "ingredients": [
+                        "PASSATA DI POMODORO CONAD classica 700g",
+                        "Ceci precotti",
+                        "Sedano, carota e cipolla",
+                        "Maggiorana fresca",
+                        "Pane casereccio tostato",
+                        "Olio extravergine d'oliva"
                     ]
                 }
             ],
@@ -1467,6 +1518,17 @@
                         "Pepe",
                         "Basilico fresco (tritato, per il dip)"
                     ]
+                },
+                {
+                    "title": "Spiedini di tofu e verdure glassati alla salsa di soia con granella di cornetti di mais e arachidi",
+                    "ingredients": [
+                        "SALSA DI SOIA SAPORI & IDEE CONAD classica/meno sale 150ml",
+                        "SNACK DAY Cornetti di mais e arachidi",
+                        "Tofu compatto",
+                        "Zucchine",
+                        "Peperoni rossi",
+                        "Olio di sesamo"
+                    ]
                 }
             ]
         },
@@ -1746,6 +1808,17 @@
                         "Semi di sesamo",
                         "Coriandolo fresco"
                     ]
+                },
+                {
+                    "title": "Ramen fusion con brodo saporito alla soia, uovo marinato e prosciutto cotto piastrato",
+                    "ingredients": [
+                        "ROVAGNATI Prosciutto cotto di alta qualità",
+                        "SALSA DI SOIA SAPORI & IDEE CONAD classica/meno sale 150ml",
+                        "Noodles freschi",
+                        "Uova",
+                        "Cipollotto fresco",
+                        "Brodo vegetale e zenzero"
+                    ]
                 }
             ],
             "cena": [
@@ -1997,6 +2070,17 @@
                         "Cipolla rossa (1/4, a julienne)",
                         "Lattuga iceberg (50g, a striscioline)"
                     ]
+                },
+                {
+                    "title": "Pork Bao estilo char siu con coppa caramellata alla Pepsi e spezie orientali",
+                    "ingredients": [
+                        "Tagliata di coppa di suino marinata",
+                        "PEPSI vari tipi 1,5L",
+                        "Panini bao al vapore",
+                        "SALSA DI SOIA SAPORI & IDEE CONAD classica/meno sale 150ml",
+                        "Cinque spezie cinesi",
+                        "Cetriolo a fette"
+                    ]
                 }
             ],
             "merenda": [
@@ -2183,6 +2267,16 @@
                         "Coriandolo fresco (per guarnire)",
                         "Olio per cuocere"
                     ]
+                },
+                {
+                    "title": "Peach Milk Tea freddo con perle di tapioca e sbriciolata di biscotti Oro Ciok fondente",
+                    "ingredients": [
+                        "THÈ DETEINATO CONAD limone/pesca 25cl",
+                        "BISCOTTI ORO CIOK SAIWA fondente 200g/classico/nocciola 250g/bianco 150g",
+                        "Latte intero o di soia",
+                        "Perle di tapioca nere",
+                        "Sciroppo di canna"
+                    ]
                 }
             ],
             "aperitivo": [
@@ -2320,6 +2414,16 @@
                         "Olio extra vergine d'oliva",
                         "Sale, pepe",
                         "Erba cipollina fresca"
+                    ]
+                },
+                {
+                    "title": "Porridge di grano saraceno e patate dolci all'aroma di thè alla pesca",
+                    "ingredients": [
+                        "Fiocchi di grano saraceno",
+                        "Patate dolci cotte a vapore",
+                        "THÈ DETEINATO CONAD limone/pesca 25cl",
+                        "Latte di riso",
+                        "Cannella in polvere"
                     ]
                 }
             ],
@@ -2496,6 +2600,17 @@
                         "Olio per friggere",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Risotto cremoso alla passata di pomodoro con julienne croccante di Bresaola",
+                    "ingredients": [
+                        "Riso Carnaroli",
+                        "PASSATA DI POMODORO CONAD classica 700g",
+                        "BRESAOLA DELLA VALTELLINA IGP RIGAMONTI punta d'anca 70g",
+                        "Brodo vegetale di patate e carote",
+                        "Parmigiano Reggiano DOP",
+                        "Olio extravergine d'oliva"
                     ]
                 }
             ],
@@ -2676,6 +2791,17 @@
                         "Sale",
                         "Pepe",
                         "Prezzemolo fresco"
+                    ]
+                },
+                {
+                    "title": "Bocconcini di coppa croccante in panatura di cornetti di mais e soia su vellutata di patate",
+                    "ingredients": [
+                        "Tagliata di coppa di suino marinata",
+                        "SNACK DAY Cornetti di mais e arachidi",
+                        "Patate",
+                        "SALSA DI SOIA SAPORI & IDEE CONAD classica/meno sale 150ml",
+                        "Farina di mais bramata per spolvero",
+                        "Rosmarino"
                     ]
                 }
             ],
