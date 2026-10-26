@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "19/10/2026 11:31",
+    "data_aggiornamento": "26/10/2026 11:50",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -346,6 +346,17 @@
                         "Basilico fresco",
                         "Olio extravergine d'oliva"
                     ]
+                },
+                {
+                    "title": "Risotto al Müller Thurgau con Fagiolini Boby e Scaglie di Antichi Maestri",
+                    "ingredients": [
+                        "Riso Carnaroli",
+                        "VINO MULLER THURGAU TRENTINO DOC COSTALTA",
+                        "FAGIOLINI BOBY",
+                        "ANTICHI MAESTRI Formaggio grattugiato italiano",
+                        "Brodo vegetale",
+                        "Burro"
+                    ]
                 }
             ],
             "cena": [
@@ -585,6 +596,16 @@
                         "Rosmarino fresco",
                         "Olio extravergine d'oliva"
                     ]
+                },
+                {
+                    "title": "Cotoletta Viennese farcita al Paté Toscano e Olive Verdi",
+                    "ingredients": [
+                        "Cotoletta alla viennese 300g",
+                        "PATÈ PER CROSTINO TOSCANO SAPORI & IDEE CONAD",
+                        "OLIVE VERDI RIPIENE LO MONACO LI CASTRI",
+                        "Pomodorini",
+                        "Rucola"
+                    ]
                 }
             ],
             "merenda": [
@@ -757,6 +778,15 @@
                         "Sale",
                         "Pepe"
                     ]
+                },
+                {
+                    "title": "Bruschetta di Kinder Brioss con Fichi Neri e Riduzione di Cocktail Zero",
+                    "ingredients": [
+                        "KINDER BRIOSS latte/latte e cacao",
+                        "FICHI NERI",
+                        "BIBITE ZERO ZUCCHERI CONAD cocktail",
+                        "Mellin Omogeneizzato alla frutta"
+                    ]
                 }
             ]
         },
@@ -904,6 +934,16 @@
                         "Yogurt greco colato",
                         "Miele d'acacia",
                         "Mirtilli freschi"
+                    ]
+                },
+                {
+                    "title": "Kinder Brioss 'Pain Perdu' con Crema Mellin e Limonata",
+                    "ingredients": [
+                        "KINDER BRIOSS latte",
+                        "Mellin Omogeneizzato alla mela",
+                        "BIBITE ZERO ZUCCHERI CONAD limonata",
+                        "Latte",
+                        "Zucchero a velo"
                     ]
                 }
             ],
@@ -1151,6 +1191,16 @@
                         "Maggiorana fresca",
                         "Pane casereccio tostato",
                         "Olio extravergine d'oliva"
+                    ]
+                },
+                {
+                    "title": "Tortino di Patate e Fagiolini al Profumo di Müller Thurgau",
+                    "ingredients": [
+                        "Patate",
+                        "FAGIOLINI BOBY",
+                        "ANTICHI MAESTRI Formaggio grattugiato italiano",
+                        "VINO MULLER THURGAU TRENTINO DOC COSTALTA",
+                        "Uova"
                     ]
                 }
             ],
@@ -1412,6 +1462,16 @@
                         "Olio per friggere",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Fichi Neri Gratinati con Cuore di Formaggio e Olive",
+                    "ingredients": [
+                        "FICHI NERI",
+                        "ANTICHI MAESTRI Formaggio grattugiato italiano",
+                        "OLIVE VERDI RIPIENE LO MONACO LI CASTRI",
+                        "Mellin Omogeneizzato alla pera",
+                        "Granella di noci"
                     ]
                 }
             ],
@@ -1819,6 +1879,16 @@
                         "Cipollotto fresco",
                         "Brodo vegetale e zenzero"
                     ]
+                },
+                {
+                    "title": "Schnitzel-Bao con Glassa all'Aranciata Zero e Fagiolini",
+                    "ingredients": [
+                        "Cotoletta alla viennese 300g",
+                        "BIBITE ZERO ZUCCHERI CONAD aranciata",
+                        "FAGIOLINI BOBY",
+                        "Zenzero fresco",
+                        "Pane tipo bao"
+                    ]
                 }
             ],
             "cena": [
@@ -2081,6 +2151,16 @@
                         "Cinque spezie cinesi",
                         "Cetriolo a fette"
                     ]
+                },
+                {
+                    "title": "Tapas Fusion: Olive Fritte e Paté Toscano sfumati al Müller Thurgau",
+                    "ingredients": [
+                        "OLIVE VERDI RIPIENE LO MONACO LI CASTRI",
+                        "PATÈ PER CROSTINO TOSCANO SAPORI & IDEE CONAD",
+                        "VINO MULLER THURGAU TRENTINO DOC COSTALTA",
+                        "Farina di mais",
+                        "Paprika dolce"
+                    ]
                 }
             ],
             "merenda": [
@@ -2277,6 +2357,15 @@
                         "Perle di tapioca nere",
                         "Sciroppo di canna"
                     ]
+                },
+                {
+                    "title": "Sushi Sweet Roll di Brioss, Fichi e Riduzione di Cola",
+                    "ingredients": [
+                        "KINDER BRIOSS latte e cacao",
+                        "FICHI NERI",
+                        "BIBITE ZERO ZUCCHERI CONAD cola",
+                        "Mellin Omogeneizzato alla frutta"
+                    ]
                 }
             ],
             "aperitivo": [
@@ -2424,6 +2513,16 @@
                         "THÈ DETEINATO CONAD limone/pesca 25cl",
                         "Latte di riso",
                         "Cannella in polvere"
+                    ]
+                },
+                {
+                    "title": "Crema di Riso ai Fichi Neri e Sciroppo di Aranciata Zero",
+                    "ingredients": [
+                        "Farina di Riso",
+                        "FICHI NERI",
+                        "BIBITE ZERO ZUCCHERI CONAD aranciata",
+                        "Mellin Omogeneizzato alla mela",
+                        "Acqua"
                     ]
                 }
             ],
@@ -2610,6 +2709,16 @@
                         "BRESAOLA DELLA VALTELLINA IGP RIGAMONTI punta d'anca 70g",
                         "Brodo vegetale di patate e carote",
                         "Parmigiano Reggiano DOP",
+                        "Olio extravergine d'oliva"
+                    ]
+                },
+                {
+                    "title": "Sformato di Grano Saraceno, Fagiolini e Antichi Maestri",
+                    "ingredients": [
+                        "Grano Saraceno in chicchi",
+                        "FAGIOLINI BOBY",
+                        "ANTICHI MAESTRI Formaggio grattugiato italiano",
+                        "Uova",
                         "Olio extravergine d'oliva"
                     ]
                 }
@@ -2802,6 +2911,16 @@
                         "SALSA DI SOIA SAPORI & IDEE CONAD classica/meno sale 150ml",
                         "Farina di mais bramata per spolvero",
                         "Rosmarino"
+                    ]
+                },
+                {
+                    "title": "Gateau di Patate Bianco al Müller Thurgau e Olive",
+                    "ingredients": [
+                        "Patate",
+                        "VINO MULLER THURGAU TRENTINO DOC COSTALTA",
+                        "OLIVE VERDI RIPIENE LO MONACO LI CASTRI",
+                        "ANTICHI MAESTRI Formaggio grattugiato italiano",
+                        "Latte"
                     ]
                 }
             ],
