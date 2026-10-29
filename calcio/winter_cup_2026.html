@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winter Cup 2026</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1f2937">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .tab-btn.active { border-bottom: 2px solid #3b82f6; color: #3b82f6; font-weight: bold; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 py-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-2xl font-bold text-white flex items-center justify-center gap-2">
+                <span>⚽</span> Winter Cup 2026
+            </h1>
+        </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="bg-gray-800 flex justify-around border-b border-gray-700 sticky top-16 z-10">
+        <button class="tab-btn active px-4 py-3 flex-1 text-gray-400" onclick="switchTab('cal')">Calendario</button>
+        <button class="tab-btn px-4 py-3 flex-1 text-gray-400" onclick="switchTab('cla')">Classifica</button>
+        <button class="tab-btn px-4 py-3 flex-1 text-gray-400" onclick="switchTab('imp')">Impegni</button>
+    </nav>
+
+    <!-- Content -->
+    <main class="container mx-auto px-2 py-4 flex-1">
+        
+        <!-- CALENDARIO -->
+        <section id="cal" class="tab-content block">
+            <h2 class="text-xl font-bold mb-4 text-blue-400 text-center">Risultati e Calendario</h2>
+            <div id="matches-container" class="space-y-4"></div>
+        </section>
+
+        <!-- CLASSIFICA -->
+        <section id="cla" class="tab-content hidden">
+            <h2 class="text-xl font-bold mb-4 text-blue-400 text-center">Classifica Generale</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-center border-collapse">
+                    <thead>
+                        <tr class="bg-gray-700 text-gray-200">
+                            <th class="p-2 border border-gray-600">Pos</th>
+                            <th class="p-2 border border-gray-600 text-left">Squadra</th>
+                            <th class="p-2 border border-gray-600 text-blue-300 font-bold">PT</th>
+                            <th class="p-2 border border-gray-600">G</th>
+                            <th class="p-2 border border-gray-600">V</th>
+                            <th class="p-2 border border-gray-600">N</th>
+                            <th class="p-2 border border-gray-600">P</th>
+                            <th class="p-2 border border-gray-600">GF</th>
+                            <th class="p-2 border border-gray-600">GS</th>
+                            <th class="p-2 border border-gray-600">DR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="classifica-body"></tbody>
+                </table>
+            </div>
+            <div class="mt-4 text-xs text-gray-400 space-y-1">
+                <p><span class="inline-block w-3 h-3 bg-green-900 mr-1"></span> Qualificate alle Semifinali (1°-4° posto)</p>
+                <p><span class="inline-block w-3 h-3 bg-red-900 mr-1"></span> Eliminate / Finalina</p>
+            </div>
+        </section>
+
+        <!-- IMPEGNI SAM 89 -->
+        <section id="imp" class="tab-content hidden">
+            <h2 class="text-xl font-bold mb-4 text-green-400 text-center">Impegni Sam 89</h2>
+            
+            <!-- SLIDER PROSSIMO IMPEGNO -->
+            <div class="bg-gray-800 rounded-lg p-4 mb-6 shadow-lg border border-gray-700">
+                <div class="text-center text-gray-400 text-sm font-semibold tracking-wide mb-2 uppercase" id="slider-title">In Programma</div>
+                <div class="flex items-center justify-between">
+                    <button id="btn-prev" class="p-2 rounded bg-gray-700 hover:bg-gray-600 flex-shrink-0" onclick="moveSlider(-1)">⬅️</button>
+                    <div id="slider-content" class="text-center flex-1 min-w-0 px-2">
+                        <div id="s-type" class="text-sm text-gray-300 truncate"></div>
+                        <div id="s-date" class="text-lg font-bold text-white my-1 truncate"></div>
+                        <div id="s-detail" class="text-sm font-semibold truncate"></div>
+                    </div>
+                    <button id="btn-next" class="p-2 rounded bg-gray-700 hover:bg-gray-600 flex-shrink-0" onclick="moveSlider(1)">➡️</button>
+                </div>
+                <div class="text-center mt-3 hidden" id="btn-oggi-container">
+                    <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-500 transition" onclick="goToday()">Torna a Oggi</button>
+                </div>
+            </div>
+
+            <!-- LISTA COMPLETA -->
+            <h3 class="text-md font-bold mb-2 text-gray-400 border-b border-gray-700 pb-1">Calendario Completo</h3>
+            <div id="impegni-list" class="space-y-3"></div>
+        </section>
+
+    </main>
+
+    <!-- MODAL RECUPERO -->
+    <div id="modal-recupero" class="modal fixed inset-0 bg-black bg-opacity-70 z-50 items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 w-full max-w-sm p-5 relative">
+            <h3 class="text-lg font-bold text-white mb-2">Rimanda Partita</h3>
+            <p class="text-gray-400 text-sm mb-4" id="modal-match-name"></p>
+            
+            <label class="block text-gray-300 text-sm mb-1">Nuova Data (GG/MM/AAAA)</label>
+            <input type="text" id="modal-date-input" placeholder="es. 15/11/2026" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white mb-5 focus:outline-none focus:border-blue-500">
+            
+            <div class="flex flex-col gap-2">
+                <button onclick="saveRecupero()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded">Salva Nuova Data</button>
+                <button onclick="clearRecupero()" class="bg-red-900 hover:bg-red-800 text-red-100 font-bold py-2 rounded border border-red-700">Rimuovi Recupero</button>
+                <button onclick="closeModal()" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-2 rounded">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const initialMatches = [
+            { id: 1, date: "17/10/2026", time: "15:00", home: "Cr Sport", away: "Calcutta Team", s1: "3", s2: "1", newDate: "" },
+            { id: 2, date: "17/10/2026", time: "16:00", home: "Soccer Sgl", away: "San Vincenzo De Paoli", s1: "2", s2: "1", newDate: "" },
+            { id: 3, date: "24/10/2026", time: "16:00", home: "San Vincenzo De Paoli", away: "Sam 89", s1: "2", s2: "1", newDate: "" },
+            { id: 4, date: "26/10/2026", time: "18:15", home: "Soccer Sgl", away: "Calcutta Team", s1: "1", s2: "3", newDate: "" },
+            { id: 5, date: "02/11/2026", time: "18:15", home: "Cr Sport", away: "Soccer Sgl", s1: "", s2: "", newDate: "" },
+            { id: 6, date: "05/11/2026", time: "17:15", home: "Soccer Sgl", away: "Sam 89", s1: "", s2: "", newDate: "" },
+            { id: 7, date: "07/11/2026", time: "16:30", home: "San Vincenzo De Paoli", away: "Calcutta Team", s1: "", s2: "", newDate: "" },
+            { id: 8, date: "07/11/2026", time: "17:30", home: "Soccer Sgl", away: "Atl Lodigiani", s1: "", s2: "", newDate: "" },
+            { id: 9, date: "09/11/2026", time: "17:15", home: "San Vincenzo De Paoli", away: "Atl Lodigiani", s1: "", s2: "", newDate: "" },
+            { id: 10, date: "09/11/2026", time: "17:15", home: "Calcutta Team", away: "Sam 89", s1: "", s2: "", newDate: "" },
+            { id: 11, date: "09/11/2026", time: "18:15", home: "Cr Sport", away: "San Vincenzo De Paoli", s1: "", s2: "", newDate: "" },
+            { id: 12, date: "14/11/2026", time: "15:30", home: "Sam 89", away: "Atl Lodigiani", s1: "", s2: "", newDate: "" },
+            { id: 13, date: "14/11/2026", time: "16:30", home: "Calcutta Team", away: "Atl Lodigiani", s1: "", s2: "", newDate: "" },
+            { id: 14, date: "16/11/2026", time: "18:15", home: "Cr Sport", away: "Atl Lodigiani", s1: "", s2: "", newDate: "" },
+            { id: 15, date: "16/11/2026", time: "19:15", home: "Cr Sport", away: "Sam 89", s1: "", s2: "", newDate: "" },
+            { id: 16, date: "19/11/2026", time: "17:15", home: "Sam 89", away: "San Vincenzo De Paoli", s1: "", s2: "", newDate: "" },
+            { id: 17, date: "21/11/2026", time: "16:00", home: "Calcutta Team", away: "Cr Sport", s1: "", s2: "", newDate: "" },
+            { id: 18, date: "21/11/2026", time: "17:00", home: "Atl Lodigiani", away: "Soccer Sgl", s1: "", s2: "", newDate: "" },
+            { id: 19, date: "21/11/2026", time: "18:00", home: "Atl Lodigiani", away: "San Vincenzo De Paoli", s1: "", s2: "", newDate: "" },
+            { id: 20, date: "23/11/2026", time: "17:15", home: "San Vincenzo De Paoli", away: "Soccer Sgl", s1: "", s2: "", newDate: "" },
+            { id: 21, date: "23/11/2026", time: "18:15", home: "Calcutta Team", away: "Soccer Sgl", s1: "", s2: "", newDate: "" },
+            { id: 22, date: "26/11/2026", time: "17:15", home: "Sam 89", away: "Calcutta Team", s1: "", s2: "", newDate: "" },
+            { id: 23, date: "28/11/2026", time: "17:00", home: "Atl Lodigiani", away: "San Vincenzo De Paoli", s1: "", s2: "", newDate: "" },
+            { id: 24, date: "28/11/2026", time: "18:00", home: "Atl Lodigiani", away: "Cr Sport", s1: "", s2: "", newDate: "" },
+            { id: 25, date: "30/11/2026", time: "17:15", home: "San Vincenzo De Paoli", away: "Cr Sport", s1: "", s2: "", newDate: "" },
+            { id: 26, date: "30/11/2026", time: "18:15", home: "Soccer Sgl", away: "Cr Sport", s1: "", s2: "", newDate: "" },
+            { id: 27, date: "03/12/2026", time: "17:15", home: "Sam 89", away: "Calcutta Team", s1: "", s2: "", newDate: "" },
+            { id: 28, date: "03/12/2026", time: "18:15", home: "Atl Lodigiani", away: "Sam 89", s1: "", s2: "", newDate: "" },
+            { id: 29, date: "05/12/2026", time: "17:00", home: "Calcutta Team", away: "Soccer Sgl", s1: "", s2: "", newDate: "" },
+            { id: 30, date: "05/12/2026", time: "18:00", home: "Sam 89", away: "Cr Sport", s1: "", s2: "", newDate: "" }
+        ];
+
+        let stateMatches = JSON.parse(localStorage.getItem('winterCupData26')) || initialMatches;
+        
+        let currentModalId = null;
+        let impegniList = [];
+        let currentSliderIndex = 0;
+        let todayIndex = 0;
+
+        // TABS
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('block'); el.classList.add('hidden');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'border-blue-500'));
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
+            event.currentTarget.classList.add('active');
+        }
+
+        // RENDER CALENDARIO
+        function renderCalendario() {
+            const container = document.getElementById('matches-container');
+            container.innerHTML = '';
+            
+            stateMatches.forEach((m, idx) => {
+                let dateHtml = m.newDate 
+                    ? `<span class="line-through text-gray-500 mr-2">${m.date}</span> <span class="text-green-400 font-bold">${m.newDate}</span>` 
+                    : `<span class="text-gray-300">${m.date}</span>`;
+
+                container.innerHTML += `
+                    <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 shadow flex flex-col gap-2">
+                        <div class="flex justify-between items-center text-xs border-b border-gray-700 pb-1">
+                            <div>${dateHtml} - ${m.time}</div>
+                            <button onclick="openModal(${m.id})" class="text-blue-400 hover:text-blue-300 bg-gray-900 px-2 py-1 rounded border border-gray-600">🔄 Rimanda</button>
+                        </div>
+                        <div class="flex justify-between items-center px-2">
+                            <div class="flex-1 text-right font-semibold">${m.home}</div>
+                            <div class="px-3 flex gap-2">
+                                <input type="number" min="0" class="w-10 h-10 text-center bg-gray-900 border border-gray-600 rounded text-lg font-bold text-white focus:border-blue-500 focus:outline-none" value="${m.s1}" onchange="updateScore(${idx}, 's1', this.value)">
+                                <span class="self-center text-gray-400">-</span>
+                                <input type="number" min="0" class="w-10 h-10 text-center bg-gray-900 border border-gray-600 rounded text-lg font-bold text-white focus:border-blue-500 focus:outline-none" value="${m.s2}" onchange="updateScore(${idx}, 's2', this.value)">
+                            </div>
+                            <div class="flex-1 text-left font-semibold">${m.away}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateScore(idx, field, val) {
+            stateMatches[idx][field] = val;
+            saveData();
+        }
+
+        function saveData() {
+            localStorage.setItem('winterCupData26', JSON.stringify(stateMatches));
+            renderClassifica();
+            renderImpegni();
+        }
+
+        // MODAL
+        function openModal(id) {
+            currentModalId = id;
+            const m = stateMatches.find(x => x.id === id);
+            document.getElementById('modal-match-name').innerText = `${m.home} vs ${m.away} (Orig: ${m.date})`;
+            document.getElementById('modal-date-input').value = m.newDate || "";
+            document.getElementById('modal-recupero').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('modal-recupero').classList.remove('active');
+            currentModalId = null;
+        }
+        function saveRecupero() {
+            const m = stateMatches.find(x => x.id === currentModalId);
+            m.newDate = document.getElementById('modal-date-input').value.trim();
+            saveData();
+            renderCalendario();
+            closeModal();
+        }
+        function clearRecupero() {
+            const m = stateMatches.find(x => x.id === currentModalId);
+            m.newDate = "";
+            saveData();
+            renderCalendario();
+            closeModal();
+        }
+
+        // CLASSIFICA
+        function renderClassifica() {
+            let teams = {};
+            ['Cr Sport', 'Calcutta Team', 'San Vincenzo De Paoli', 'Soccer Sgl', 'Sam 89', 'Atl Lodigiani'].forEach(t => {
+                teams[t] = { nome: t, pt: 0, g: 0, v: 0, n: 0, p: 0, gf: 0, gs: 0, dr: 0 };
+            });
+
+            stateMatches.forEach(m => {
+                if(m.s1 !== "" && m.s2 !== "") {
+                    let s1 = parseInt(m.s1), s2 = parseInt(m.s2);
+                    teams[m.home].g++; teams[m.home].gf += s1; teams[m.home].gs += s2;
+                    teams[m.away].g++; teams[m.away].gf += s2; teams[m.away].gs += s1;
+                    if(s1 > s2) { teams[m.home].v++; teams[m.home].pt += 3; teams[m.away].p++; }
+                    else if(s1 < s2) { teams[m.away].v++; teams[m.away].pt += 3; teams[m.home].p++; }
+                    else { teams[m.home].n++; teams[m.away].n++; teams[m.home].pt += 1; teams[m.away].pt += 1; }
+                }
+            });
+
+            let arr = Object.values(teams);
+            arr.forEach(t => t.dr = t.gf - t.gs);
+            
+            // ORDINAMENTO: PT, poi DR, poi GF
+            arr.sort((a, b) => {
+                if(b.pt !== a.pt) return b.pt - a.pt;
+                if(b.dr !== a.dr) return b.dr - a.dr;
+                return b.gf - a.gf;
+            });
+
+            const tbody = document.getElementById('classifica-body');
+            tbody.innerHTML = '';
+            arr.forEach((t, i) => {
+                let bg = i < 4 ? "bg-green-900 bg-opacity-20" : "bg-red-900 bg-opacity-20";
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-700 ${bg}">
+                        <td class="p-2 font-bold">${i+1}</td>
+                        <td class="p-2 text-left font-semibold">${t.nome}</td>
+                        <td class="p-2 text-blue-400 font-bold">${t.pt}</td>
+                        <td class="p-2 text-gray-400">${t.g}</td>
+                        <td class="p-2 text-gray-400">${t.v}</td>
+                        <td class="p-2 text-gray-400">${t.n}</td>
+                        <td class="p-2 text-gray-400">${t.p}</td>
+                        <td class="p-2">${t.gf}</td>
+                        <td class="p-2">${t.gs}</td>
+                        <td class="p-2 font-bold ${t.dr > 0 ? 'text-green-400' : (t.dr < 0 ? 'text-red-400' : '')}">${t.dr > 0 ? '+'+t.dr : t.dr}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // IMPEGNI SAM 89 (SOLO LORO E ALLENAMENTI)
+        function renderImpegni() {
+            impegniList = [];
+            let start = new Date('2026-10-13T00:00:00');
+            let end = new Date('2026-12-12T00:00:00');
+            let cur = new Date(start);
+
+            while(cur <= end) {
+                let curStr = cur.toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'});
+                let dayName = cur.toLocaleDateString('it-IT', {weekday:'long'});
+                let isTueThu = (cur.getDay() === 2 || cur.getDay() === 4);
+
+                let samMatches = stateMatches.filter(m => {
+                    let refDate = m.newDate ? m.newDate : m.date;
+                    return refDate === curStr && (m.home === 'Sam 89' || m.away === 'Sam 89');
+                });
+
+                if (samMatches.length > 0) {
+                    // SE C'E PARTITA SAM89, SOVRASCRIVE L'ALLENAMENTO
+                    samMatches.forEach(m => {
+                        let avversario = m.home === 'Sam 89' ? m.away : m.home;
+                        impegniList.push({
+                            dateStr: curStr, realDate: new Date(cur), title: dayName + ' ' + curStr,
+                            type: 'Campionato', detail: `Vs ${avversario} (${m.time})`, color: 'bg-blue-900 border-blue-600', txt: 'text-blue-300'
+                        });
+                    });
+                } else if (isTueThu) {
+                    impegniList.push({
+                        dateStr: curStr, realDate: new Date(cur), title: dayName + ' ' + curStr,
+                        type: 'Allenamento', detail: 'Sessione Standard', color: 'bg-green-900 border-green-600', txt: 'text-green-300'
+                    });
+                }
+                cur.setDate(cur.getDate() + 1);
+            }
+
+            // Aggiungi le Fasi Finali Manualmente se coinvolti (Assumiamo generiche)
+            impegniList.push({ dateStr: '10/12/2026', realDate: new Date('2026-12-10T00:00:00'), title: 'Giovedì 10/12/2026', type: 'Fasi Finali', detail: 'Semifinali (Se Qualificati)', color: 'bg-yellow-900 border-yellow-600', txt: 'text-yellow-300' });
+            impegniList.push({ dateStr: '12/12/2026', realDate: new Date('2026-12-12T00:00:00'), title: 'Sabato 12/12/2026', type: 'Fasi Finali', detail: 'Finali / Finaline', color: 'bg-yellow-900 border-yellow-600', txt: 'text-yellow-300' });
+            
+            impegniList.sort((a,b) => a.realDate - b.realDate);
+
+            // Trova "Oggi" (usiamo data di sistema)
+            let now = new Date();
+            let minDiff = Infinity;
+            todayIndex = 0;
+            impegniList.forEach((imp, i) => {
+                let diff = Math.abs(imp.realDate - now);
+                if (diff < minDiff) { minDiff = diff; todayIndex = i; }
+            });
+            currentSliderIndex = todayIndex;
+            
+            updateSlider();
+            renderListaImpegni();
+        }
+
+        function updateSlider() {
+            let imp = impegniList[currentSliderIndex];
+            document.getElementById('s-type').innerText = imp.title;
+            document.getElementById('s-date').innerText = imp.type;
+            document.getElementById('s-date').className = `text-lg font-bold my-1 truncate ${imp.txt}`;
+            document.getElementById('s-detail').innerText = imp.detail;
+            
+            document.getElementById('btn-prev').disabled = currentSliderIndex === 0;
+            document.getElementById('btn-prev').style.opacity = currentSliderIndex === 0 ? 0.3 : 1;
+            document.getElementById('btn-next').disabled = currentSliderIndex === impegniList.length - 1;
+            document.getElementById('btn-next').style.opacity = currentSliderIndex === impegniList.length - 1 ? 0.3 : 1;
+
+            let title = document.getElementById('slider-title');
+            if (currentSliderIndex === todayIndex) title.innerText = "Prossimo Impegno (Oggi)";
+            else if (currentSliderIndex < todayIndex) title.innerText = "Impegno Passato";
+            else title.innerText = "Impegno Futuro";
+
+            document.getElementById('btn-oggi-container').classList.toggle('hidden', currentSliderIndex === todayIndex);
+        }
+
+        function moveSlider(dir) {
+            currentSliderIndex += dir;
+            updateSlider();
+        }
+
+        function goToday() {
+            currentSliderIndex = todayIndex;
+            updateSlider();
+        }
+
+        function renderListaImpegni() {
+            const container = document.getElementById('impegni-list');
+            container.innerHTML = '';
+            impegniList.forEach((imp, i) => {
+                let isPast = i < todayIndex ? 'opacity-50' : '';
+                container.innerHTML += `
+                    <div class="${imp.color} border p-3 rounded flex justify-between items-center ${isPast}">
+                        <div>
+                            <div class="text-xs text-gray-300 capitalize">${imp.title}</div>
+                            <div class="font-bold ${imp.txt}">${imp.type}</div>
+                        </div>
+                        <div class="text-sm font-semibold text-right max-w-[50%]">${imp.detail}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // INIT
+        renderCalendario();
+        renderClassifica();
+        renderImpegni();
+    </script>
+</body>
+</html>
