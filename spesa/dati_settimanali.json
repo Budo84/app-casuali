@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "26/10/2026 11:50",
+    "data_aggiornamento": "02/11/2026 14:08",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -357,6 +357,21 @@
                         "Brodo vegetale",
                         "Burro"
                     ]
+                },
+                {
+                    "title": "Orata Mediterranea al Cartoccio con Chicche al Pesto Rosso e Olive",
+                    "ingredients": [
+                        "1 Orata eviscerata Gastronomia di Mare",
+                        "250g Chicche di Patate Fresche Sapori & Idee Conad",
+                        "90g Pesto di Pomodoro Mutti rosso",
+                        "50g Pomodori Secchi di Calabria Sapori & Dintorni Conad in olio d'oliva",
+                        "100g pomodorini ciliegino",
+                        "50g olive taggiasche denocciolate",
+                        "2 cucchiai olio extra vergine d'oliva",
+                        "1 spicchio d'aglio",
+                        "prezzemolo fresco q.b.",
+                        "sale e pepe q.b."
+                    ]
                 }
             ],
             "cena": [
@@ -606,6 +621,20 @@
                         "Pomodorini",
                         "Rucola"
                     ]
+                },
+                {
+                    "title": "Involtini di Orata e Verdure con Salsa Pesto Verde e Timo",
+                    "ingredients": [
+                        "1 Orata eviscerata Gastronomia di Mare (filettata)",
+                        "90g Pesto di Pomodoro Mutti verde",
+                        "1 zucchina (tagliata a julienne)",
+                        "1 carota (tagliata a julienne)",
+                        "1/2 peperone rosso (tagliato a julienne)",
+                        "olio extra vergine d'oliva q.b.",
+                        "timo fresco q.b.",
+                        "succo di mezzo limone",
+                        "sale e pepe q.b."
+                    ]
                 }
             ],
             "merenda": [
@@ -786,6 +815,16 @@
                         "FICHI NERI",
                         "BIBITE ZERO ZUCCHERI CONAD cocktail",
                         "Mellin Omogeneizzato alla frutta"
+                    ]
+                },
+                {
+                    "title": "Macedonia di Nettarine e Susine con Gelato allo Yogurt e Ringo Croccante",
+                    "ingredients": [
+                        "2 Nettarine a polpa gialla",
+                        "2 Susine di Vignola nere Sapori & Dintorni Conad",
+                        "100g Gelato Senza Zuccheri Aggiunti Piacersi Conad yogurt",
+                        "30g Ringo Pavesi nocciola/cacao (sbriciolato)",
+                        "qualche fogliolina di menta fresca"
                     ]
                 }
             ]
@@ -1202,6 +1241,24 @@
                         "VINO MULLER THURGAU TRENTINO DOC COSTALTA",
                         "Uova"
                     ]
+                },
+                {
+                    "title": "Burger di Chicche di Patate e Pesto Rosso con Salsa allo Yogurt e Cetrioli",
+                    "ingredients": [
+                        "500g Chicche di Patate Fresche Sapori & Idee Conad",
+                        "90g Pesto di Pomodoro Mutti rosso",
+                        "50g Pomodori Secchi di Calabria Sapori & Dintorni Conad in olio d'oliva",
+                        "100g pangrattato",
+                        "1 uovo",
+                        "1/2 cipolla tritata",
+                        "olio extra vergine d'oliva q.b.",
+                        "sale e pepe q.b.",
+                        "Per la salsa:",
+                        "100g Gelato Senza Zuccheri Aggiunti Piacersi Conad yogurt",
+                        "1/2 cetriolo grattugiato",
+                        "menta fresca tritata q.b.",
+                        "succo di limone q.b."
+                    ]
                 }
             ],
             "cena": [
@@ -1473,6 +1530,19 @@
                         "Mellin Omogeneizzato alla pera",
                         "Granella di noci"
                     ]
+                },
+                {
+                    "title": "Tatin di Nettarine e Pomodori Secchi con Glassa Balsamica e Timo",
+                    "ingredients": [
+                        "2 Nettarine a polpa gialla (affettate)",
+                        "50g Pomodori Secchi di Calabria Sapori & Dintorni Conad in olio d'oliva",
+                        "1 rotolo di pasta sfoglia vegetariana",
+                        "2 cucchiai zucchero di canna",
+                        "1 cucchiaio aceto balsamico",
+                        "timo fresco q.b.",
+                        "olio extra vergine d'oliva q.b.",
+                        "sale e pepe q.b."
+                    ]
                 }
             ],
             "merenda": [
@@ -1588,6 +1658,16 @@
                         "Zucchine",
                         "Peperoni rossi",
                         "Olio di sesamo"
+                    ]
+                },
+                {
+                    "title": "Smoothie Cremoso Susine, Gelato al Cacao e Ringo Croccante",
+                    "ingredients": [
+                        "3 Susine di Vignola nere Sapori & Dintorni Conad",
+                        "100g Gelato Senza Zuccheri Aggiunti Piacersi Conad cacao",
+                        "200ml Succhi Pfanner (gusto frutti rossi o mela)",
+                        "30g Ringo Pavesi nocciola/cacao (sbriciolato)",
+                        "latte vegetale (opzionale)"
                     ]
                 }
             ]
@@ -1889,6 +1969,22 @@
                         "Zenzero fresco",
                         "Pane tipo bao"
                     ]
+                },
+                {
+                    "title": "Poke Bowl Tropicale con Orata Marinata, Nettarine e M&M's Salate",
+                    "ingredients": [
+                        "1 Orata eviscerata Gastronomia di Mare (filettata e marinata)",
+                        "150g riso per sushi",
+                        "1 Nettarina a polpa gialla (a cubetti)",
+                        "50g M&M's arachidi/crispy",
+                        "1/2 cetriolo (a julienne)",
+                        "1/2 avocado (a fette)",
+                        "2 cucchiai salsa di soia",
+                        "1 cucchiaio olio di sesamo",
+                        "succo di mezzo lime",
+                        "1 cucchiaino zenzero fresco grattugiato",
+                        "semi di sesamo q.b."
+                    ]
                 }
             ],
             "cena": [
@@ -2161,6 +2257,21 @@
                         "Farina di mais",
                         "Paprika dolce"
                     ]
+                },
+                {
+                    "title": "Curry Rosso di Chicche di Patate e Verdure con Salsa al Pesto Verde e Latte di Cocco",
+                    "ingredients": [
+                        "500g Chicche di Patate Fresche Sapori & Idee Conad",
+                        "90g Pesto di Pomodoro Mutti verde",
+                        "400ml latte di cocco",
+                        "200g verdure miste (broccoli, fagiolini, peperoni)",
+                        "1 cipolla",
+                        "2 spicchi d'aglio",
+                        "1 cucchiaino pasta di curry rosso",
+                        "olio vegetale q.b.",
+                        "coriandolo fresco q.b.",
+                        "riso basmati (per accompagnare)"
+                    ]
                 }
             ],
             "merenda": [
@@ -2365,6 +2476,19 @@
                         "FICHI NERI",
                         "BIBITE ZERO ZUCCHERI CONAD cola",
                         "Mellin Omogeneizzato alla frutta"
+                    ]
+                },
+                {
+                    "title": "Sushi Dolce di Ringo e M&M's con Salsa Fruttata allo Yogurt e Susine",
+                    "ingredients": [
+                        "150g Ringo Pavesi nocciola/cacao (tritati finemente)",
+                        "50g M&M's choco (o minis)",
+                        "2 Susine di Vignola nere Sapori & Dintorni Conad (tritate)",
+                        "50g formaggio spalmabile cremoso",
+                        "Per la salsa:",
+                        "100g Gelato Senza Zuccheri Aggiunti Piacersi Conad yogurt",
+                        "100ml Succhi Pfanner (gusto esotico)",
+                        "cocco grattugiato per decorare"
                     ]
                 }
             ],
@@ -2721,6 +2845,22 @@
                         "Uova",
                         "Olio extravergine d'oliva"
                     ]
+                },
+                {
+                    "title": "Insalata di Orata, Patate e Pomodori Secchi con Dressing al Pesto Rosso e Mais",
+                    "ingredients": [
+                        "1 Orata eviscerata Gastronomia di Mare (cotta al vapore)",
+                        "500g Chicche di Patate Fresche Sapori & Idee Conad (bollite e tagliate a tocchetti)",
+                        "50g Pomodori Secchi di Calabria Sapori & Dintorni Conad in olio d'oliva",
+                        "90g Pesto di Pomodoro Mutti rosso",
+                        "150g mais dolce (in scatola o fresco)",
+                        "50g olive nere denocciolate",
+                        "1/2 cipolla rossa (finemente affettata)",
+                        "prezzemolo fresco tritato q.b.",
+                        "3 cucchiai olio extra vergine d'oliva",
+                        "1 cucchiaio aceto di mele",
+                        "sale e pepe q.b."
+                    ]
                 }
             ],
             "cena": [
@@ -2922,6 +3062,20 @@
                         "ANTICHI MAESTRI Formaggio grattugiato italiano",
                         "Latte"
                     ]
+                },
+                {
+                    "title": "Gallette di Grano Saraceno e Verdure con Cuore al Pesto Verde e Crema di Pistacchio",
+                    "ingredients": [
+                        "200g farina di grano saraceno",
+                        "2 uova",
+                        "200ml acqua (o brodo vegetale)",
+                        "100g verdure miste grattugiate (es. zucchine, carote)",
+                        "90g Pesto di Pomodoro Mutti verde",
+                        "50g Gelato Senza Zuccheri Aggiunti Piacersi Conad pistacchio",
+                        "olio extra vergine d'oliva q.b.",
+                        "sale e pepe q.b.",
+                        "erba cipollina fresca per guarnire"
+                    ]
                 }
             ],
             "merenda": [
@@ -2998,6 +3152,17 @@
                         "Menta fresca (tritata)",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Spiedini di Frutta Fresca con M&M's Croccanti e Dip allo Yogurt e Succhi di Frutta",
+                    "ingredients": [
+                        "2 Nettarine a polpa gialla (a spicchi)",
+                        "2 Susine di Vignola nere Sapori & Dintorni Conad (a spicchi)",
+                        "50g M&M's crispy (verificare l'etichetta per la certificazione senza glutine)",
+                        "100g Gelato Senza Zuccheri Aggiunti Piacersi Conad yogurt",
+                        "100ml Succhi Pfanner (gusto frutti rossi)",
+                        "foglie di menta fresca per decorare"
                     ]
                 }
             ]
