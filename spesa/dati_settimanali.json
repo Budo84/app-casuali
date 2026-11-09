@@ -1,5 +1,5 @@
 {
-    "data_aggiornamento": "02/11/2026 14:08",
+    "data_aggiornamento": "09/11/2026 14:39",
     "database_ricette": {
         "mediterranea": {
             "colazione": [
@@ -59,6 +59,16 @@
                         "Scorza di arancia non trattata",
                         "Miele millefiori",
                         "Foglie di menta"
+                    ]
+                },
+                {
+                    "title": "Parfait di Cereali al Cioccolato, Anguria e Yogurt Greco",
+                    "ingredients": [
+                        "CEREALI CIOCCOLATO FITNESS NESTLÉ latte/fondente 50g",
+                        "Angurie nere midi Kokomero 150g (a cubetti)",
+                        "Yogurt greco naturale 150g",
+                        "Miele d'acacia 1 cucchiaio",
+                        "Foglie di menta fresca per guarnire"
                     ]
                 }
             ],
@@ -372,6 +382,19 @@
                         "prezzemolo fresco q.b.",
                         "sale e pepe q.b."
                     ]
+                },
+                {
+                    "title": "Insalata di Bresaola, Anguria e Menta con Riduzione alla Birra Zero",
+                    "ingredients": [
+                        "Bresaola Rigamonti Blu 100g",
+                        "Angurie nere midi Kokomero 200g (a cubetti)",
+                        "BIRRA BAVARIA zero 100ml",
+                        "Menta fresca q.b.",
+                        "Rucola selvatica 50g",
+                        "Scaglie di Parmigiano Reggiano 30g",
+                        "Olio Extra Vergine d'Oliva 2 cucchiai",
+                        "Aceto Balsamico q.b."
+                    ]
                 }
             ],
             "cena": [
@@ -634,6 +657,19 @@
                         "timo fresco q.b.",
                         "succo di mezzo limone",
                         "sale e pepe q.b."
+                    ]
+                },
+                {
+                    "title": "Burger Mediterraneo di Lenticchie e Spinaci con Emmental e Patatine al Forno Aromatiche",
+                    "ingredients": [
+                        "VEMONDO Crunchy burger con lenticchie e spinaci 2 pezzi",
+                        "Formaggio a fette emmental president/galbanone 4 fette",
+                        "Patatine al forno bocconci patate Coppola 1kg (porzione per 2 persone)",
+                        "Rosmarino fresco q.b.",
+                        "Olio Extra Vergine d'Oliva q.b.",
+                        "Sale marino q.b.",
+                        "Pepe nero macinato fresco q.b.",
+                        "Salsa allo yogurt greco e cetrioli (tzatziki leggero) 100g"
                     ]
                 }
             ],
@@ -1259,6 +1295,20 @@
                         "menta fresca tritata q.b.",
                         "succo di limone q.b."
                     ]
+                },
+                {
+                    "title": "Polpette Croccanti di Lenticchie e Spinaci con Insalata Tiepida di Patate e Carote",
+                    "ingredients": [
+                        "VEMONDO Crunchy burger con lenticchie e spinaci 2 pezzi (schiacciati e formati in polpette)",
+                        "Patate Bologna DOP 300g",
+                        "Carote 200g",
+                        "Cipollotto fresco 1",
+                        "Prezzemolo fresco tritato 2 cucchiai",
+                        "Aceto di mele 2 cucchiai",
+                        "Senape di Digione 1 cucchiaino",
+                        "Olio Extra Vergine d'Oliva 3 cucchiai",
+                        "Sale e Pepe nero q.b."
+                    ]
                 }
             ],
             "cena": [
@@ -1543,6 +1593,21 @@
                         "olio extra vergine d'oliva q.b.",
                         "sale e pepe q.b."
                     ]
+                },
+                {
+                    "title": "Gratin di Patate, Carote e Emmental con Crema di Zucca e Rosmarino",
+                    "ingredients": [
+                        "Patate Bologna DOP 500g (affettate sottilmente)",
+                        "Carote 300g (affettate sottilmente)",
+                        "Formaggio a fette emmental president/galbanone 140g (a listarelle o grattugiato)",
+                        "Zucca Delica 200g (per la crema)",
+                        "Latte intero 200ml",
+                        "Rosmarino fresco 2 rametti",
+                        "Aglio 1 spicchio",
+                        "Olio Extra Vergine d'Oliva q.b.",
+                        "Noce moscata q.b.",
+                        "Sale e Pepe nero q.b."
+                    ]
                 }
             ],
             "merenda": [
@@ -1669,6 +1734,19 @@
                         "30g Ringo Pavesi nocciola/cacao (sbriciolato)",
                         "latte vegetale (opzionale)"
                     ]
+                },
+                {
+                    "title": "Frittelle Dolci di Patate e Carote con Nutella e Anguria Fresca",
+                    "ingredients": [
+                        "Patate Bologna DOP 200g (grattugiate finemente)",
+                        "Carote 100g (grattugiate finemente)",
+                        "Nutella Ferrero 750g (porzione a piacere)",
+                        "Angurie nere midi Kokomero 100g (a cubetti)",
+                        "Uovo 1",
+                        "Farina di riso (o altro tipo a scelta) 50g",
+                        "Zucchero a velo q.b.",
+                        "Olio di semi per friggere q.b."
+                    ]
                 }
             ]
         },
@@ -1730,6 +1808,21 @@
                         "Burro fuso",
                         "Sale",
                         "Pepe"
+                    ]
+                },
+                {
+                    "title": "Pancake Giapponesi al Cioccolato con Coulis di Anguria e Birra Zero",
+                    "ingredients": [
+                        "CEREALI CIOCCOLATO FITNESS NESTLÉ latte/fondente 50g (sbriciolati)",
+                        "Angurie nere midi Kokomero 200g (per coulis)",
+                        "BIRRA BAVARIA zero 50ml (per coulis)",
+                        "Farina 150g (per pancake)",
+                        "Uova 2",
+                        "Latte 100ml",
+                        "Zucchero 30g",
+                        "Lievito per dolci 1 cucchiaino",
+                        "Estratto di vaniglia q.b.",
+                        "Olio di semi per ungere la padella"
                     ]
                 }
             ],
@@ -2272,6 +2365,23 @@
                         "coriandolo fresco q.b.",
                         "riso basmati (per accompagnare)"
                     ]
+                },
+                {
+                    "title": "Curry di Patate e Carote con Burger di Lenticchie Croccante e Riso Basmati",
+                    "ingredients": [
+                        "VEMONDO Crunchy burger con lenticchie e spinaci 2 pezzi",
+                        "Patate Bologna DOP 300g (a cubetti)",
+                        "Carote 200g (a rondelle)",
+                        "Latte di cocco 400ml",
+                        "Pasta di curry rosso 2 cucchiai",
+                        "Cipolla 1 piccola (tritata)",
+                        "Zenzero fresco 1 pezzetto (grattugiato)",
+                        "Aglio 2 spicchi (tritati)",
+                        "Riso Basmati 150g",
+                        "Coriandolo fresco per guarnire",
+                        "Olio vegetale q.b.",
+                        "Sale q.b."
+                    ]
                 }
             ],
             "merenda": [
@@ -2490,6 +2600,21 @@
                         "100ml Succhi Pfanner (gusto esotico)",
                         "cocco grattugiato per decorare"
                     ]
+                },
+                {
+                    "title": "Tacos Croccanti di Bresaola, Emmental e Salsa Esotica di Anguria e Peperoncino",
+                    "ingredients": [
+                        "Bresaola Rigamonti Blu 100g",
+                        "Formaggio a fette emmental president/galbanone 100g (a listarelle)",
+                        "Angurie nere midi Kokomero 200g (a cubetti per salsa)",
+                        "Mini tortillas di mais 8 pezzi",
+                        "Peperoncino fresco 1 (tritato finemente)",
+                        "Cipolla rossa 1/4 (tritata finemente)",
+                        "Menta fresca 1 cucchiaio (tritata)",
+                        "Succo di lime 1 cucchiaio",
+                        "Olio Extra Vergine d'Oliva q.b.",
+                        "Sale q.b."
+                    ]
                 }
             ],
             "aperitivo": [
@@ -2647,6 +2772,18 @@
                         "BIBITE ZERO ZUCCHERI CONAD aranciata",
                         "Mellin Omogeneizzato alla mela",
                         "Acqua"
+                    ]
+                },
+                {
+                    "title": "Porridge Cremoso di Mais al Cacao con Anguria e Scaglie di Mandorle",
+                    "ingredients": [
+                        "Farina di mais (polenta istantanea) 80g",
+                        "Cacao amaro in polvere 1 cucchiaio",
+                        "Angurie nere midi Kokomero 100g (a cubetti)",
+                        "Latte (o bevanda vegetale) 300ml",
+                        "Miele o sciroppo d'agave 1 cucchiaio",
+                        "Scaglie di mandorle (per guarnire) 1 cucchiaio",
+                        "Pizzico di sale"
                     ]
                 }
             ],
@@ -2860,6 +2997,19 @@
                         "3 cucchiai olio extra vergine d'oliva",
                         "1 cucchiaio aceto di mele",
                         "sale e pepe q.b."
+                    ]
+                },
+                {
+                    "title": "Gnocchi di Patate al Mais con Bresaola Croccante e Fonduta di Emmental alla Salvia",
+                    "ingredients": [
+                        "Patate Bologna DOP 500g",
+                        "Farina di mais fine 150g (per gnocchi)",
+                        "Bresaola Rigamonti Blu 80g",
+                        "Formaggio a fette emmental president/galbanone 70g",
+                        "Latte intero 100ml",
+                        "Burro 30g",
+                        "Salvia fresca 5-6 foglie",
+                        "Sale e Pepe nero q.b."
                     ]
                 }
             ],
@@ -3075,6 +3225,20 @@
                         "olio extra vergine d'oliva q.b.",
                         "sale e pepe q.b.",
                         "erba cipollina fresca per guarnire"
+                    ]
+                },
+                {
+                    "title": "Risotto di Grano Saraceno con Burger di Lenticchie e Carote Saltate",
+                    "ingredients": [
+                        "Grano Saraceno in chicchi 200g",
+                        "VEMONDO Crunchy burger con lenticchie e spinaci 2 pezzi (sbriciolati)",
+                        "Carote 150g (a julienne)",
+                        "Brodo vegetale 700ml",
+                        "Cipolla 1/2 (tritata)",
+                        "Vino bianco secco (senza glutine) 50ml",
+                        "Olio Extra Vergine d'Oliva q.b.",
+                        "Prezzemolo fresco tritato q.b.",
+                        "Sale e Pepe nero q.b."
                     ]
                 }
             ],
